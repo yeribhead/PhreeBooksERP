@@ -16,12 +16,15 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/application_top.php
 //
-if (!get_cfg_var('safe_mode')) if (ini_get('max_execution_time') < 60) set_time_limit(60);
+define('PAGE_EXECUTION_START_TIME', microtime(true));
+if (!get_cfg_var('safe_mode')) {
+	if (ini_get('max_execution_time') < 60) set_time_limit(60);
+}
+$currencies        = ''; 
 $force_reset_cache = false;
 // set php_self in the local scope
 if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 // Check for application configuration parameters
-$trace .= 'Loading config time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
 if     (file_exists('includes/configure.php')) { require('includes/configure.php'); } 
 elseif (file_exists('install/index.php')) { header('Location: install/index.php'); exit(); }
 else   die('Phreedom cannot find the configuration file. Aborting!');
@@ -43,7 +46,6 @@ $request_type = (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '
 define('COG_ITEM_TYPES','si,sr,ms,mi,ma,sa');
 @ini_set('session.gc_maxlifetime', (SESSION_TIMEOUT_ADMIN < 900 ? (SESSION_TIMEOUT_ADMIN + 900) : SESSION_TIMEOUT_ADMIN));
 $_REQUEST = array_merge($_GET, $_POST);
-$trace .= 'Starting Sessiong time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
 session_start();
 $session_started = true;
 // set the language
@@ -52,18 +54,17 @@ elseif (!$_SESSION['language']) { $_SESSION['language'] = defined('DEFAULT_LANGU
 // see if the user is logged in
 $user_validated = ($_SESSION['admin_id']) ? true : false;
 // load general language translation, Check for global define overrides first
-$trace .= 'Loading Language time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
 $path = DIR_FS_MODULES . 'phreedom/custom/language/' . $_SESSION['language'] . '/language.php';
 if (file_exists($path)) { include($path); }
 $path = DIR_FS_MODULES . 'phreedom/language/' . $_SESSION['language'] . '/language.php';
 if (file_exists($path)) { require_once($path); } 
 else { require_once(DIR_FS_MODULES . 'phreedom/language/en_us/language.php'); }
 // define general functions and classes used application-wide
-$trace .= 'Pulling Common functions time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
 require_once(DIR_FS_MODULES  . 'phreedom/defaults.php');
 require_once(DIR_FS_INCLUDES . 'common_functions.php');
 require_once(DIR_FS_INCLUDES . 'common_classes.php');
 set_error_handler("PhreebooksErrorHandler");
+set_exception_handler('PhreebooksExceptionHandler');
 // pull in the custom language over-rides for this module/page
 $custom_path = DIR_FS_MODULES . $module . '/custom/pages/' . $page . '/extra_defines.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -79,17 +80,14 @@ $toolbar      = new toolbar;
 // determine what company to connect to
 $db_company = (isset($_SESSION['company'])) ? $_SESSION['company'] : $_SESSION['companies'][$_POST['company']];
 if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
-  $trace .= 'Initializing DB time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
   define('DB_DATABASE', $db_company);
   require_once(DIR_FS_MY_FILES . $db_company . '/config.php');
   define('DB_SERVER_HOST',DB_SERVER); // for old PhreeBooks installs
   // Load queryFactory db classes
   require_once(DIR_FS_INCLUDES . 'db/' . DB_TYPE . '/query_factory.php');
   $db = new queryFactory();
-  $trace .= 'Establishing connection to DB time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
   $db->connect(DB_SERVER_HOST, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE);
   // set application wide parameters for phreebooks module
-  $trace .= 'Loading config constants time: '.(int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME))." ms\n";
   $result = $db->Execute_return_error("select configuration_key, configuration_value from " . DB_PREFIX . "configuration");
   if ($db->error_number != '' || $result->RecordCount() == 0) trigger_error(LOAD_CONFIG_ERROR, E_USER_ERROR);
   while (!$result->EOF) {
@@ -99,19 +97,16 @@ if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
   // search the list modules and load configuration files and language files
   gen_pull_language('phreedom', 'menu');
   require_once(DIR_FS_MODULES . 'phreedom/config.php');
-  $messageStack->debug_header($trace);
+  $messageStack->debug_header();
   $loaded_modules = array();
   $dirs = scandir(DIR_FS_MODULES);
   foreach ($dirs as $dir) { // first pull all module language files, loaded or not
     if ($dir == '.' || $dir == '..') continue;
-	if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu'); 
-  }
-  foreach ($dirs as $dir) {
-    if ($dir == '.' || $dir == '..') continue;
-    if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
+	if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu');
+  	if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
 	  $loaded_modules[] = $dir;
       require_once(DIR_FS_MODULES . $dir . '/config.php');
-    }
+    } 
   }
   // pull in the custom language over-rides for this module (to pre-define the standard language)
   $path = DIR_FS_MODULES . $module . '/custom/pages/' . $page . '/extra_menus.php';

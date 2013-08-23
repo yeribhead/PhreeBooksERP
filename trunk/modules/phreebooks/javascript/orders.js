@@ -294,7 +294,7 @@ function fillOrder(xml) {
 	    case 'sos':
 	    case 'poo':
 	    case 'por':
-	      if(action == 'prc_so' && $(this).find("purch_package_quantity").text() != '' ){
+	      if (action == 'prc_so' && parseFloat($(this).find("purch_package_quantity").text()) > 0 ){
 	    	quantity  = $(this).find("qty").text() * $(this).find("purch_package_quantity").text();
 	    	unitPrice = formatCurrency(cleanCurrency($(this).find("unit_price").text()) / $(this).find("purch_package_quantity").text());
 	      }else{
@@ -321,7 +321,7 @@ function fillOrder(xml) {
 		  insertValue('price_' + jIndex,             unitPrice);
 		  insertValue('total_' + jIndex,             $(this).find("total").text());
 		  if(journalID == 4){
-			  if($(this).find("purch_package_quantity").text() != '' ){
+			  if(parseFloat($(this).find("purch_package_quantity").text()) > 0 ){
 				  insertValue('purch_package_quantity_' + jIndex, $(this).find("purch_package_quantity").text());
 			  }else{
 				  insertValue('purch_package_quantity_' + jIndex, 1);
@@ -756,7 +756,8 @@ function removeInvRow(index) {
 	document.getElementById('serial_'+i).value            		= document.getElementById('serial_'+(i+1)).value;
 	document.getElementById('full_'+i).value              		= document.getElementById('full_'+(i+1)).value;
 	document.getElementById('disc_'+i).value              		= document.getElementById('disc_'+(i+1)).value;
-	document.getElementById('purch_package_quantity_'+i).value	= document.getElementById('purch_package_quantity_'+(i+1)).value;
+	if (document.getElementById('purch_package_quantity_'+i))
+		document.getElementById('purch_package_quantity_'+i).value=document.getElementById('purch_package_quantity_'+(i+1)).value;
 // End hidden fields
 	document.getElementById('total_'+i).value             		= document.getElementById('total_'+(i+1)).value;
 	document.getElementById('sku_'+i).style.color         		= (document.getElementById('sku_'+i).value == text_search) ? inactive_text_color : '';
@@ -1205,9 +1206,9 @@ function fillInventory(sXml) {
   document.getElementById('lead_'    +rowCnt).value       = $(xml).find("lead_time").text();
   document.getElementById('inactive_'+rowCnt).value       = $(xml).find("inactive").text();
   switch (journalID) {
-	case  '4':
-	  document.getElementById('purch_package_quantity_'  +rowCnt).value     = $(xml).find("purch_package_quantity").text();
 	case  '3':
+	case  '4':
+	  document.getElementById('purch_package_quantity_'+rowCnt).value= $(xml).find("purch_package_quantity").text();
 	  qty_pstd = 'qty_';
 	  document.getElementById('qty_'   +rowCnt).value     = $(xml).find("qty").first().text();
 	  document.getElementById('acct_'  +rowCnt).value     = $(xml).find("account_inventory_wage").text();

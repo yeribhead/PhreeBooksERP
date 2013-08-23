@@ -34,7 +34,7 @@ $f2 = isset($_REQUEST['f2']) ? $_REQUEST['f2'] : ''; // limit to preferred_vendo
 $_GET['f0'] = $f0;
 $_GET['f1'] = $f1;
 $_GET['f2'] = $f2;
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
+if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 $search_text = db_input($_REQUEST['search_text']);
 if ($search_text == TEXT_SEARCH) $search_text = '';
 $action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
@@ -54,10 +54,10 @@ if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
 switch ($action) {
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':

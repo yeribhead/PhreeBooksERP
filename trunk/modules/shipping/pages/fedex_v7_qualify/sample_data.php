@@ -2,8 +2,8 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
+// | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,6 +19,7 @@
 //
 
 $shipto = array();
+/*
 $shipto[] = array( // Domestic Ground, COD, Prepaid
 	'ship_primary_name'   => 'John Smith',
 	'ship_address1'       => '456 Peach St',
@@ -48,7 +49,7 @@ $shipto[] = array( // Domestic Ground, COD, Prepaid
 		),
 	),
 );
-
+*/
 $shipto[] = array( // Domestic Ground, Prepaid
 	'ship_primary_name'   => 'Jane Doe',
 	'ship_address1'       => '20 FedEx Parkway',

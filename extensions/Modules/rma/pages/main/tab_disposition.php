@@ -48,11 +48,11 @@ if (sizeof($close_details) > 0) {
 	for ($i=0; $i<sizeof($close_details); $i++) { ?>
 		<tr>
 		  <td><?php echo html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick = "if (confirm(image_delete_msg)) $(this).parent().parent().remove();"'); ?></td>
-		  <td><?php echo html_input_field('qty[]', $close_details[$i]['qty'], 'size="7" maxlength="6" style="text-align:right"'); ?></td>
-		  <td nowrap="nowrap" ><?php echo html_input_field('sku[]' . $i, $close_details[$i]['sku'], 'size="24" onfocus="activeField(this, \''.TEXT_SEARCH.'\')" onblur="inactiveField(this, \''.TEXT_SEARCH.'\')"'); ?>
-		  <?php echo '&nbsp;' . html_icon('status/folder-open.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="ItemList(' . $i . ')"'); ?>
+		  <td><?php echo html_input_field("dis_qty[".($i+1)."]", $close_details[$i]['qty'], 'size="7" maxlength="6" style="text-align:right"'); ?></td>
+		  <td nowrap="nowrap" ><?php echo html_input_field("dis_sku[".($i+1)."]", $close_details[$i]['sku'], 'size="24" onfocus="activeField(this, \''.TEXT_SEARCH.'\')" onblur="inactiveField(this, \''.TEXT_SEARCH.'\')"'); ?>
+		  <?php echo '&nbsp;' . html_icon('status/folder-open.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="ItemList(\'dis_\','.($i+1).')"'); ?>
 		  </td>
-		  <td><?php echo html_input_field('notes[]', $close_details[$i]['notes'], 'size="48"'); ?></td>
+		  <td><?php echo html_input_field("dis_notes[".($i+1)."]", $close_details[$i]['notes'], 'size="48"'); ?></td>
 		  <td><?php echo html_pull_down_menu('action[]', gen_build_pull_down($action_codes), $close_details[$i]['action']); ?></td>
 		</tr>
 <?php

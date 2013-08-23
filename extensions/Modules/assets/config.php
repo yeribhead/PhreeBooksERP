@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright (c) 2008 - 2013 PhreeSoft, LLC  (www.PhreeSoft.com)   |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,14 +21,14 @@
 // 3.1 => 2011-04-15 - Bug fixes
 // 3.3 => 2011-11-15 - Theme conversion
 // Module software version information
-define('MODULE_ASSETS_VERSION',       '3.3');
+define('MODULE_ASSETS_VERSION',    '3.3');
 // Menu sort positions
-define('MENU_HEADING_ASSETS_ORDER',      77);
-define('BOX_ASSETS_MODULE_ORDER',        90);
+define('MENU_HEADING_ASSETS_ORDER',  77);
+define('BOX_ASSETS_MODULE_ORDER',    90);
 // Menu security id's
-define('SECURITY_ASSETS_MGT',            170);
+define('SECURITY_ASSETS_MGT',       170);
 // New database tables
-define('TABLE_ASSETS',        DB_PREFIX . 'assets');
+define('TABLE_ASSETS', DB_PREFIX.'assets');
 if (defined('MODULE_ASSETS_STATUS')) {
 /*
   // Set the title menu

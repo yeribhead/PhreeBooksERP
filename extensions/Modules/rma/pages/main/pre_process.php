@@ -34,6 +34,10 @@ $search_text 	= db_input($_REQUEST['search_text']);
 if ($search_text == TEXT_SEARCH) $search_text = '';
 $action        = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_RMA_ID);
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -74,11 +78,11 @@ switch ($action) {
 		  'wrnty' => $_POST['rcv_wrnty'][$key],
 		);
 	} 
-	if (is_array($_POST['sku'])) foreach ($_POST['sku'] as $key => $value) {
+	if (is_array($_POST['sku'])) foreach ($_POST['dis_sku'] as $key => $value) {
 		$close_details[] = array(
-		  'qty'    => $_POST['qty'][$key],
-		  'sku'    => $_POST['sku'][$key],
-		  'notes'  => $_POST['notes'][$key],
+		  'qty'    => $_POST['dis_qty'][$key],
+		  'sku'    => $_POST['dis_sku'][$key],
+		  'notes'  => $_POST['dis_notes'][$key],
 		  'action' => $_POST['action'][$key],
 		);
 	} 
@@ -221,10 +225,10 @@ switch ($action) {
 	}
     break;
 	
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -278,8 +282,6 @@ $cal_invoice = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
-$include_tabs     = false;
 
 switch ($action) {
   case 'new':
@@ -306,10 +308,9 @@ switch ($action) {
 	  'status'              => TEXT_STATUS,
 	  'closed_date'         => TEXT_CLOSED,
 	);
-	$result = html_heading_bar($heading_array, $_GET['list_order']);
+	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
-	if (!isset($_GET['list_order'])) $disp_order = 'rma_num DESC';
 	// build the list for the page selected
     if (isset($search_text) && $search_text <> '') {
       $search_fields = array('rma_num', 'purchase_invoice_id', 'caller_name', 'caller_telephone1');

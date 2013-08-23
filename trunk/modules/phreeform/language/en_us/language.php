@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -100,7 +101,6 @@ define('TEXT_TABLE_NAME','Table Name');
 define('TEXT_TOTAL_ONLY','Show Totals Only');
 define('TEXT_SAVE_PREVIEW','Save and Preview');
 define('TEXT_SET_PRINTED_FLAG','Set Printed Flag');
-define('TEXT_SKIP_NULL_FIELD','Skip if No Data Field');
 define('TEXT_STORED_IMAGES','Stored Images');
 define('TEXT_UNCAT_FORM','Uncategorized Form');
 define('TEXT_UPLOAD_MAGE','Upload New Image');

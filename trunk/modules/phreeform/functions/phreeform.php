@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -391,8 +392,7 @@ function BuildForm($report, $delivery_method = 'D') { // for forms only
 	foreach ($report->fieldlist as $key => $field) { // check for a data field and build sql field list
 	  if (in_array($field->type, array('Data','BarCode','ImgLink'))) { // then it's data field make sure it's not empty
 		if ($field->boxfield[0]->fieldname) {
-		  $strField[] = prefixTables($field->boxfield[0]->fieldname) . ' AS d' . $key;
-		  if ($field->boxfield[0]->fieldname == $report->skipnullfield) $report->skipNullFieldIndex = 'd'.$key;
+		  $strField[] = prefixTables($field->boxfield[0]->fieldname) . ' as d' . $key;
 		} else { // the field is empty, bad news, error and exit
 		  return $messageStack->add(PHREEFORM_EMPTYFIELD . $key, 'error');
 		}
@@ -484,8 +484,9 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 	$output = array();
 	$pdf    = new PDF();
 	foreach ($report->recordID as $formNum => $Fvalue) {
+	  $pdf->StartPageGroup();
 	  // find the single line data from the query for the current form page
-	  $TrailingSQL = " FROM $report->sqlTable WHERE ".($report->sqlCrit ? "$report->sqlCrit AND " : '').prefixTables($report->formbreakfield)."='$Fvalue'";
+	  $TrailingSQL = " from " . $report->sqlTable . " where " . ($report->sqlCrit ? $report->sqlCrit . " AND " : '') . prefixTables($report->formbreakfield) . " = '" . $Fvalue . "'";
 	  $FieldValues = array();
 	  if ($report->special_class) {
 	    $form_class   = $report->special_class;
@@ -494,14 +495,14 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 	  } else {
 		if (strlen($report->sqlField) > 0) {
 //echo 'sql = select ' . $report->sqlField . $TrailingSQL . '<br />'; exit();
-		  $result      = $db->Execute("SELECT $report->sqlField " . $TrailingSQL);
+		  $result      = $db->Execute("select " . $report->sqlField . $TrailingSQL);
 		  $FieldValues = $result->fields;
 		}
 	  }
 	  // load the posted currency values
 	  $posted_currencies = array();
 	  if (ENABLE_MULTI_CURRENCY && strpos($report->sqlTable, TABLE_JOURNAL_MAIN) !== false) {
-	    $sql    = "SELECT currencies_code, currencies_value $TrailingSQL";
+	    $sql    = "select currencies_code, currencies_value " . $TrailingSQL;
 	    $result = $db->Execute($sql);
 	    $posted_currencies = array(
 		  'currencies_code'  => $result->fields['currencies_code'],
@@ -510,9 +511,6 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 	  } else {
 	    $posted_currencies = array('currencies_code' => DEFAULT_CURRENCY, 'currencies_value' => 1);
 	  }
-	  if ($report->skipNullFieldIndex && !$FieldValues[$report->skipNullFieldIndex]) continue;
-
-	  $pdf->StartPageGroup();
 	  foreach ($report->fieldlist as $key => $field) { // Build the text block strings
 	    if ($field->type == 'TBlk') {
 		  if (!$field->boxfield[0]->fieldname) {
@@ -522,7 +520,7 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 		    $TextField = $special_form->load_text_block_data($field->boxfield);
 		  } else {
 		    $arrTxtBlk = array(); // Build the fieldlist
-		    foreach ($field->boxfield as $idx => $entry) $arrTxtBlk[] = prefixTables($entry->fieldname) . ' AS r' . $idx; 
+		    foreach ($field->boxfield as $idx => $entry) $arrTxtBlk[] = prefixTables($entry->fieldname) . ' as r' . $idx; 
 		    $strTxtBlk = implode(', ', $arrTxtBlk); 
 		    $result    = $db->Execute("select " . $strTxtBlk . $TrailingSQL);
 		    $TextField = '';

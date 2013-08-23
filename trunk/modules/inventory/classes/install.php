@@ -17,8 +17,13 @@
 //  Path: /modules/inventory/classes/install.php
 //
 class inventory_admin {
+	public $notes 			= array();// placeholder for any operational notes
+	public $prerequisites 	= array();// modules required and rev level for this module to work properly
+	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
+	public $dirlist			= array();// add new directories to store images and data
+	public $tables			= array();// Load tables
+	
   function __construct() {
-    $this->notes = array();
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'   => 3.71,
 	  'phreedom'   => 3.6,
@@ -322,7 +327,7 @@ class inventory_admin {
 		$db->Execute("alter table " . TABLE_INVENTORY . " CHANGE `inactive` `inactive` ENUM( '0', '1' ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '0'");
 		xtra_field_sync_list('inventory', TABLE_INVENTORY);
 		$db->Execute("update " . TABLE_INVENTORY . " set inventory_type = 'ma' where inventory_type = 'as'");
-		$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory' and tab_id = '0'"); 
+		$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'"); 
 		while (!$result->EOF) {
 			$temp = unserialize($result->fields['params']);
 			switch($result->fields['field_name']){
@@ -386,16 +391,14 @@ class inventory_admin {
 			$result->MoveNext();
 	  	}
 		if(!db_table_exists(TABLE_INVENTORY_PURCHASE)){ 
-			foreach ($this->tables as $table => $sql) {
-				if ($table == TABLE_INVENTORY_PURCHASE) admin_install_tables(array($table => $sql));
-	  		}
-		  	if (db_field_exists(TABLE_INVENTORY, 'purch_package_quantity')){
-	  			$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
-	  			$db->Execute("ALTER TABLE " . TABLE_INVENTORY . " DROP `purch_package_quantity`");
-	  		}else{
-	  			$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, 1, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
-	  		}
+			foreach ($this->tables as $table => $sql) if ($table == TABLE_INVENTORY_PURCHASE) admin_install_tables(array($table => $sql));
 		}
+	  	if (db_field_exists(TABLE_INVENTORY, 'purch_package_quantity')){
+	  		$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
+	  		$db->Execute("ALTER TABLE " . TABLE_INVENTORY . " DROP `purch_package_quantity`");
+	  	} else {
+	  		$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, 1, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
+	  	}
 		require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 		$tax_rates = ord_calculate_tax_drop_down('c');
 		$result = $db->Execute("SELECT id, item_taxable, full_price, item_cost FROM ".TABLE_INVENTORY);

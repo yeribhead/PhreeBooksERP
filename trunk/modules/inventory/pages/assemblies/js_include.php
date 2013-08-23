@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -70,7 +69,7 @@ function clearForm() {
 function InventoryList(rowCnt) {
   var bID = document.getElementById('store_id').value;
   var sku = document.getElementById('sku_1').value;
-  window.open("index.php?module=inventory&page=popup_inv&list=1&type=v&f1=as&rowID="+rowCnt+"&storeID="+bID+"&search_text="+sku,"inventory","width=700,height=550,resizable=1,scrollbars=1,top=150,left=200");
+  window.open("index.php?module=inventory&page=popup_inv&list=1&type=v&f1=ma&rowID="+rowCnt+"&storeID="+bID+"&search_text="+sku,"inventory","width=700,height=550,resizable=1,scrollbars=1,top=150,left=200");
 }
 
 function OpenAssyList() {

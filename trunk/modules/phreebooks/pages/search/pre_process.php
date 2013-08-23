@@ -56,10 +56,10 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/search/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
 switch ($action) {
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'reset':
 	$_REQUEST['date_id']         = 'l';
 	$_REQUEST['date_from']       = gen_locale_date(CURRENT_ACCOUNTING_PERIOD_START);

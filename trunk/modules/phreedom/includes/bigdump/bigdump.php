@@ -117,7 +117,7 @@ foreach ($_REQUEST as $key => $val)
 
 <?php // ****************************** BOF - Mods by PhreeSoft **************************************** ?>
   <title><?php echo PAGE_TITLE; ?></title>
-  <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES . 'css/stylesheet.css'; ?>" />
+  <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES . 'css/start/stylesheet.css'; ?>" />
   <link rel="shortcut icon" type="image/ico" href="favicon.ico" />
   <script type="text/javascript">
   // Variables for script generated combo boxes
@@ -126,8 +126,9 @@ foreach ($_REQUEST as $key => $val)
   var combo_image_on  = '<?php echo DIR_WS_ICONS . '16x16/phreebooks/pull_down_active.gif'; ?>';
   var combo_image_off = '<?php echo DIR_WS_ICONS . '16x16/phreebooks/pull_down_inactive.gif'; ?>';
   </script>
+  <script type="text/javascript" src="includes/jquery-1.6.2.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="includes/common.js"></script>
-  <script type="text/javascript" src="modules/phreedom/includes/jquery/jquery-1.4.3.min.js"></script>
   <?php 
   if (!$_SESSION['admin_prefs']['theme']) $_SESSION['admin_prefs']['theme'] = 'default';
   require_once(DIR_FS_ADMIN . 'themes/' . $_SESSION['admin_prefs']['theme'] . '/config.php');
@@ -837,7 +838,7 @@ skin_open();
 
 // ****************************** BOF - Mods by PhreeSoft ****************************************
 //    { echo ("<p class=\"successcentr\">".BIGDUMP_READ_SUCCESS."</p>\n");
-    { echo ("<p class=\"successcentr\">" . html_button_field('logout', BIGDUMP_IMPORT_MSG_17, 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, 'module=phreedom&page=main&action=logout', 'SSL') . '\'"') . "</p>\n");
+    { echo ("<p class=\"successcentr\">" . html_input_field('finish', BIGDUMP_IMPORT_MSG_17, 'onClick="location.href=\''.html_href_link(FILENAME_DEFAULT, 'module=phreedom&page=main&action=logout', 'SSL').'\'"', false, 'button')."</p>\n");
 /*
       echo ("<p class=\"centr\">Thank you for using this tool! Please rate <a href=\"http://www.hotscripts.com/Detailed/20922.html\" target=\"_blank\">Bigdump at Hotscripts.com</a></p>\n");
       echo ("<p class=\"centr\">You can send me some bucks or euros as appreciation via PayPal. Thank you!</p>\n");

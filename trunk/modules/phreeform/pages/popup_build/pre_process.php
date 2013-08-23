@@ -125,7 +125,6 @@ switch ($action) {
 
 	if ($report->reporttype == 'frm') {
 	  $report->setprintedfield    = db_prepare_input($_POST['setprintedfield']);
-	  $report->skipnullfield      = db_prepare_input($_POST['skipnullfield']);
 	  $report->formbreakfield     = db_prepare_input($_POST['formbreakfield']);
 	  $report->serialform         = isset($_POST['serialform']) ? '1' : '0';
 	  $report->fieldlist          = array();

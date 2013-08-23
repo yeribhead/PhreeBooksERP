@@ -42,7 +42,7 @@ $f0 = $_GET['f0'] = isset($_POST['todo']) ? (isset($_POST['f0']) ? '1' : '0') : 
 $f1 = $_GET['f1'] = isset($_POST['f1']) ? $_POST['f1'] : $_GET['f1']; // inventory_type dropdown
 $id = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['cID']);
 $type = db_prepare_input($_POST['inventory_type']);
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
+if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 // getting the right inventory type.
 if (is_null($type)){
 	$result = $db->Execute("SELECT inventory_type FROM ".TABLE_INVENTORY." WHERE id='$id'");
@@ -119,10 +119,10 @@ switch ($action) {
 		      die;
 		   }
   	    }
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -164,26 +164,21 @@ for ($i = 0; $i < count($tax_rates); $i++) {
 $gl_array_list    = gen_coa_pull_down();
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 
 switch ($action) {
   case 'new':
     define('PAGE_TITLE', BOX_INV_NEW);
-	$include_tabs     = false;
     $include_template = 'template_id.php';
 	break;
   case 'create':
   case 'edit':
     define('PAGE_TITLE', BOX_INV_MAINTAIN);
-    $include_tabs     = true;
     $include_template = 'template_detail.php';
     break;
   case 'properties':
     define('PAGE_TITLE', BOX_INV_MAINTAIN);
 	$include_header   = false;
 	$include_footer   = false;
-    $include_tabs     = true;
     $include_template = 'template_detail.php';
     break;
   default:
@@ -222,11 +217,11 @@ switch ($action) {
 	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
-	if ($disp_order == 'a.sku ASC') $disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) ASC';
-	if ($disp_order == 'a.sku DESC')$disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) DESC';
+//	if ($disp_order == 'a.sku ASC') $disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) ASC';
+//	if ($disp_order == 'a.sku DESC')$disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) DESC';
 	// build the list for the page selected
     if (isset($search_text) && $search_text <> '') {
-      $search_fields = array('a.sku', 'a.description_short', 'p.description_purchase');
+      $search_fields = array('a.sku', 'a.description_short', 'a.description_sales', 'p.description_purchase');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
   	  $criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';

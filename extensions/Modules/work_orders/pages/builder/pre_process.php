@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -32,6 +32,10 @@ $action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
 // load the filters
 $f0 = $_GET['f0'] = isset($_POST['todo']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/builder/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -40,12 +44,8 @@ switch ($action) {
   case 'new':
 	break;
   case 'save':
-	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
-	$id          = db_prepare_input($_POST['id']);
+	validate_security($security_level, 2);
+  	$id          = db_prepare_input($_POST['id']);
 	$wo_title    = db_prepare_input($_POST['wo_title']);
 	$sku_id      = db_prepare_input($_POST['sku_id']);
 	$sku         = db_prepare_input($_POST['sku']);
@@ -138,12 +138,8 @@ switch ($action) {
 	}
 	break;
   case 'copy':
-	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION, 'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
-	$id    = db_prepare_input($_GET['cID']);
+	validate_security($security_level, 2);
+  	$id    = db_prepare_input($_GET['cID']);
 	$title = db_prepare_input($_GET['title']);
 	// check for duplicate skus
 	$result = $db->Execute("select id from " . TABLE_WO_MAIN . " where wo_title = '" . $title . "'");
@@ -226,12 +222,8 @@ switch ($action) {
 	}
 	break;
   case 'delete':
-	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
-    $id = db_prepare_input($_GET['id']);
+	validate_security($security_level, 4);
+      $id = db_prepare_input($_GET['id']);
 	if (!$id) {
 	  $action = '';
 	  $error = true;
@@ -252,10 +244,10 @@ switch ($action) {
 	}
     $action = '';
 	break;
-  case 'go_first':    $_GET['list'] = 1;     break;
-  case 'go_previous': $_GET['list']--;       break;
-  case 'go_next':     $_GET['list']++;       break;
-  case 'go_last':     $_GET['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -287,7 +279,7 @@ switch ($action) {
 	  'm.revision'      => TEXT_REVISION,
 	  'm.revision_date' => TEXT_REVISION_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['list_order']);
+	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
@@ -304,10 +296,10 @@ switch ($action) {
 	  'm.revision_date');
 	// hook to add new fields to the query return results
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
-    $query_raw = "select " . implode(', ', $field_list) . " 
+    $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " 
 	  from " . TABLE_WO_MAIN . " m inner join " . TABLE_INVENTORY . " i on m.sku_id = i.id" . $search . " order by $disp_order, m.revision DESC";
-    $query_split = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-    $query_result = $db->Execute($query_raw);
+    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    $query_split  = new splitPageResults($_REQUEST['list'], '');
 	// build highest rev level list, reset results
 	$rev_list = array();
 	while (!$query_result->EOF) {

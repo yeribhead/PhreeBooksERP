@@ -32,10 +32,10 @@ if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
 switch ($action) {
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':

@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -28,18 +28,18 @@ $search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_in
 if ($search_text == TEXT_SEARCH) $search_text = '';
 $action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/tasks/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
 switch ($action) {
   case 'save':
-	if ($security_level < 2) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	  break;
-	}
-	$id          = db_prepare_input($_POST['id']);
+	validate_security($security_level, 2);
+  	$id          = db_prepare_input($_POST['id']);
 	$task_name   = db_prepare_input($_POST['task_name']);
 	$description = db_prepare_input($_POST['description']);
 	$ref_doc     = db_prepare_input($_POST['ref_doc']);
@@ -107,10 +107,10 @@ switch ($action) {
 	  $messageStack->add(sprintf(WO_ERROR_CANNOT_DELETE . $result->fields['ref_id']), 'error');
 	}
 	break;
-  case 'go_first':    $_GET['list'] = 1;     break;
-  case 'go_previous': $_GET['list']--;       break;
-  case 'go_next':     $_GET['list']++;       break;
-  case 'go_last':     $_GET['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -139,7 +139,7 @@ $heading_array = array(
   'ref_spec'    => TEXT_DRAWINGS,
   'dept_id'     => TEXT_DEPARTMENT,
 );
-$result      = html_heading_bar($heading_array, $_GET['list_order']);
+$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 // build the list for the page selected
@@ -155,14 +155,12 @@ $field_list = array('id', 'task_name', 'description', 'ref_doc', 'ref_spec','dep
 // hook to add new fields to the query return results
 if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 
-$query_raw    = "select " . implode(', ', $field_list)  . " from " . TABLE_WO_TASK . $search . " order by $disp_order";
-$query_split  = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-$query_result = $db->Execute($query_raw);
+$query_raw    = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . " from " . TABLE_WO_TASK . $search . " order by $disp_order";
+$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+$query_split  = new splitPageResults($_REQUEST['list'], '');
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_WORK_ORDERS_MODULE_TASK);
 

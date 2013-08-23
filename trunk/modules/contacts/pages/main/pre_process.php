@@ -193,10 +193,10 @@ switch ($action) {
 		   }
   	    }
 
-    case 'go_first':    $_REQUEST['list'] = 1;     break;
-    case 'go_previous': $_REQUEST['list']--;       break;
-    case 'go_next':     $_REQUEST['list']++;       break; 
-    case 'go_last':     $_REQUEST['list'] = 99999; break;
+    case 'go_first':    $_REQUEST['list'] = 1;       break;
+    case 'go_previous': max($_REQUEST['list']-1, 1); break;
+    case 'go_next':     $_REQUEST['list']++;         break;
+    case 'go_last':     $_REQUEST['list'] = 99999;   break;
     case 'search':
     case 'search_reset':
     case 'go_page':
@@ -227,14 +227,14 @@ switch ($action) {
 		// load the tax rates
 		$tax_rates       = inv_calculate_tax_drop_down($type);
 		$sales_rep_array = gen_get_rep_ids($type);
-		$result = $db->Execute("select id, contact_first, contact_last, gl_type_account from " . TABLE_CONTACTS . " where type = 'e'");
+		$result = $db->Execute("select id, contact_first, contact_last, gl_type_account from ".TABLE_CONTACTS." where type='e'");
 		$reps       = array();
 		while(!$result->EOF) {
 			$reps[$result->fields['id']] = $result->fields['contact_first'] . ' ' . $result->fields['contact_last'];
 	  		$result->MoveNext();
 		}
 	    $include_template = 'template_detail.php';
-		define('PAGE_TITLE', ($action == 'new') ? $page_title_new : constant('ACT_'.strtoupper($type).'_PAGE_TITLE_EDIT').' - ('.$cInfo->short_name.') '.$cInfo->address[m][0]->primary_name);
+		define('PAGE_TITLE', ($action == 'new') ? $cInfo->page_title_new : constant('ACT_'.strtoupper($type).'_PAGE_TITLE_EDIT').' - ('.$cInfo->short_name.') '.$cInfo->address[m][0]->primary_name);
 		break;
   default:
 		$heading_array = array('c.short_name' => constant('ACT_' . strtoupper($type) . '_SHORT_NAME'));

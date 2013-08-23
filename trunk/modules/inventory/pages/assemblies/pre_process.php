@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -124,8 +123,6 @@ $cal_assy = array(
 );
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', INV_ASSY_HEADING_TITLE);
 

@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -48,14 +49,10 @@
 	  <td><?php echo html_pull_down_menu('setprintedfield', $kFields, $report->setprintedfield, 'onclick="updateFieldList(this)"'); ?></td>
 	</tr>
 	<tr>
-	  <td><?php echo TEXT_SKIP_NULL_FIELD; ?></td>
-	  <td><?php echo html_pull_down_menu('skipnullfield', $kFields, $report->skipnullfield, 'onclick="updateFieldList(this)"'); ?></td>
-	</tr>
-	<tr>
 	  <td><?php echo TEXT_PAGE_BREAK_FIELD; ?></td>
 	  <td><?php echo html_pull_down_menu('formbreakfield', $kFields, $report->formbreakfield, 'onclick="updateFieldList(this)"'); ?></td>
 	</tr>
-	<?php } ?>
+<?php } ?>
     <tr>
       <td width="50%"><?php echo TEXT_GROUP_MEMBER; ?></td>
 	  <td width="50%"><?php echo $rFields; ?></td>

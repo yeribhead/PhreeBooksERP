@@ -151,7 +151,7 @@ class xml_orders extends parser {
 		$item['total_price'] = $entry->TotalPrice;
 		$this->order['items'][] = $item;
 	  }
-	  if (function_exists('xtra_order_data')) $this->order = xtra_order_data($this->order, $order);
+	  if (function_exists('xtra_order_data')) xtra_order_data($this->order, $order);
 	  $this->buildJournalEntry();
 	}
 	return true;
@@ -288,7 +288,8 @@ class xml_orders extends parser {
 	  $this->response[] = sprintf(SOAP_MISSING_FIELDS, $this->order['reference'], implode(', ', $missing_fields));
 	  return;
 	}
-	if (function_exists('xtra_order_build')) $this->order = xtra_order_build($psOrd, $this->order);
+
+	if (function_exists('xtra_order_before_post')) xtra_order_before_post($psOrd, $this->order);
 	
 	// post the sales order
 //echo 'ready to post =><br />'; echo 'psOrd object = '; print_r($psOrd); echo '<br />';
@@ -302,6 +303,9 @@ class xml_orders extends parser {
 	  $this->response[] = preg_replace('/&nbsp;/', '', $text); // the &nbsp; messes up the response XML
 	  return;
 	}
+
+	if (function_exists('xtra_order_after_post')) xtra_order_after_post($psOrd, $this->order);
+
 	gen_add_audit_log(constant('AUDIT_LOG_SOAP_' . JOURNAL_ID . '_ADDED'), $psOrd->purchase_invoice_id, $psOrd->total_amount);
 	$this->successful[] = $this->order['reference'];
 	return;

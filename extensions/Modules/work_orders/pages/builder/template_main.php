@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/work_orders/pages/builder/template_main.php
 //
-echo html_form('assets', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
+echo html_form('builder', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 echo html_hidden_field('todo', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
@@ -43,8 +43,8 @@ echo $toolbar->build_toolbar($add_search = true);
  </tbody>
 </table>
 </div>
-<div style="float:right"><?php echo $query_split->display_links($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['list']); ?></div>
-<div><?php echo $query_split->display_count($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['list'], TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?></div>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?></div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php  echo $list_header; ?></tr>
@@ -83,6 +83,6 @@ echo $toolbar->build_toolbar($add_search = true);
 ?>
  </tbody>
 </table>
-<div style="float:right"><?php echo $query_split->display_links($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['list']); ?></div>
-<div><?php echo $query_split->display_count($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['list'], TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?></div>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?></div>
 </form>

@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -16,5 +17,5 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/application_bottom.php
 //
-$messageStack->write_debug();
+
 ?>

@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -66,7 +66,6 @@ function loadSkuDetails(iID) {
 //  if (!sku) sku = text_search;
   $.ajax({
     type: "GET",
-    contentType: "application/json; charset=utf-8",
     url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&bID='+bID+'&cID='+cID+'&qty='+qty+'&iID='+iID+'&sku='+sku+'&rID='+rID+'&jID='+jID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {

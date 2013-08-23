@@ -33,10 +33,10 @@ if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true); 
 ?>
 <h1><?php echo BOX_RMA_MAINTAIN; ?></h1>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_RMAS); ?></div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
- <thead class="ui-widget-header">
-  <tr><?php  echo $list_header; ?></tr>
- </thead>
+ <thead class="ui-widget-header"><tr><?php echo $list_header; ?></tr></thead>
  <tbody class="ui-widget-content">
 <?php
     $odd = true;

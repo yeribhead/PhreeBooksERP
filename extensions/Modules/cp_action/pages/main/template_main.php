@@ -33,6 +33,8 @@ if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true);
 ?>
 <h1><?php echo BOX_CAPA_MAINTAIN; ?></h1>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_CAPAS); ?></div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php  echo $list_header; ?></tr>
@@ -65,6 +67,6 @@ echo $toolbar->build_toolbar($add_search = true);
 ?>
  </tbody>
 </table>
-<div style="float:right"><?php echo $query_split->display_links($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['list']); ?></div>
-<div><?php echo $query_split->display_count($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['list'], TEXT_DISPLAY_NUMBER . TEXT_CAPAS); ?></div>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_CAPAS); ?></div>
 </form>

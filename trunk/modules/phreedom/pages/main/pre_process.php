@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -119,48 +118,47 @@ switch ($action) {
 	if (!isset($dirs)) $dirs = scandir(DIR_FS_MODULES);
 	$module_id = '';
 	foreach ($dirs as $dir) {
-	  if (defined('MODULE_' . strtoupper($dir) . '_STATUS') && file_exists(DIR_FS_MODULES . $dir . '/dashboards/')) {
-		$choices = scandir(DIR_FS_MODULES . $dir . '/dashboards/');
+	  if (defined('MODULE_'.strtoupper($dir).'_STATUS') && file_exists(DIR_FS_MODULES . "$dir/dashboards/")) {
+		$choices = scandir(DIR_FS_MODULES . "$dir/dashboards/");
 		foreach ($choices as $name) if ($name == $dashboard_id) { $module_id = $dir; break; }
 	  }
 	  if ($module_name <> '') break;
 	}
-    include_once (DIR_FS_MODULES . $module_id . '/dashboards/' . $dashboard_id . '/' . $dashboard_id . '.php');
+    load_method_language(DIR_FS_MODULES . "$module_id/dashboards/$dashboard_id");
+	require_once (DIR_FS_MODULES . "$module_id/dashboards/$dashboard_id/$dashboard_id.php");
     $new_box 				= new $dashboard_id;
 	$new_box->dashboard_id 	= $dashboard_id;
 	$new_box->menu_id      	= $menu_id;
+	$new_box->params        = array();
 	$new_box->Update();
 	break;
   case 'delete':
 	$dashboard_id = db_prepare_input($_POST['dashboard_id']);
 	$result = $db->Execute("delete from " . TABLE_USERS_PROFILES . " 
-	  where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' and dashboard_id = '" . $dashboard_id . "'");
+	  where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and dashboard_id='$dashboard_id'");
 	break;
   case 'move_up': 
   case 'move_down':
 	$dashboard_id = db_prepare_input($_POST['dashboard_id']);
 	$sql = "select column_id, row_id from " . TABLE_USERS_PROFILES . " 
-		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' and dashboard_id = '" . $dashboard_id . "'";
+		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and dashboard_id='$dashboard_id'";
 	$result         = $db->Execute($sql);
 	$current_row    = $result->fields['row_id'];
 	$current_column = $result->fields['column_id'];
 	$new_row        = ($action == 'move_up') ? ($current_row - 1) : ($current_row + 1);
 	$sql = "select max(row_id) as max_row from " . TABLE_USERS_PROFILES . " 
-		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' and column_id = '" . $current_column . "'";
+		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id='$current_column'";
 	$result         = $db->Execute($sql);
 	$max_row        = $result->fields['max_row'];
 	if (($new_row >= 1 && $action == 'move_up') || ($new_row <= $max_row && $action == 'move_down')) {
-	  $sql = "update  " . TABLE_USERS_PROFILES . " set row_id = 0 
-		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' 
-		and column_id = " . $current_column . " and row_id = '" . $current_row . "'";
+	  $sql = "update " . TABLE_USERS_PROFILES . " set row_id = 0 
+		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id=$current_column and row_id='$current_row'";
 	  $db->Execute($sql);
-	  $sql = "update  " . TABLE_USERS_PROFILES . " set row_id = " . $current_row . "  
-		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' 
-		and column_id = " . $current_column . " and row_id = '" . $new_row . "'";
+	  $sql = "update " . TABLE_USERS_PROFILES . " set row_id=$current_row 
+		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id=$current_column and row_id='$new_row'";
 	  $db->Execute($sql);
-	  $sql = "update  " . TABLE_USERS_PROFILES . " set row_id = " . $new_row . "  
-		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' 
-		and column_id = " . $current_column . " and row_id = 0";
+	  $sql = "update " . TABLE_USERS_PROFILES . " set row_id=$new_row   
+		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id=$current_column and row_id=0";
 	  $db->Execute($sql);
 	}
 	break;
@@ -239,7 +237,7 @@ switch ($action) {
 		if ($value['id'] == $default_language) $language_index = $value['id'];
 	  }
 	}
-	$include_template = $_GET['req']=='pw_lost_req' ? 'template_pw_lost.php' : 'template_login.php';
+	$include_template = $action == 'pw_lost_req' ? 'template_pw_lost.php' : 'template_login.php';
   	$include_header   = false;
 	$include_footer   = false;
 	define('PAGE_TITLE', TITLE);

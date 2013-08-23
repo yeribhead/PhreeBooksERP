@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -55,7 +55,7 @@ function deleteWO(id) {
 function InventoryList(rowCnt) {
   var storeID = document.getElementById('store_id').value;
   var sku     = document.getElementById('sku').value;
-  window.open("index.php?module=inventory&page=popup_inv&type=v&f1=as&rowID="+rowCnt+"&storeID="+storeID+"&cID=0&search_text="+sku,"inventory","width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
+  window.open("index.php?module=inventory&page=popup_inv&type=v&f1=ma&rowID="+rowCnt+"&storeID="+storeID+"&cID=0&search_text="+sku,"inventory","width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
 function loadSkuDetails(iID, rowCnt) {
@@ -68,7 +68,6 @@ function loadSkuDetails(iID, rowCnt) {
   qty = document.getElementById('qty').value;
   $.ajax({
     type: "GET",
-    contentType: "application/xml; charset=utf-8",
 	url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&bID='+bID+'&cID=0&qty='+qty+'&iID='+iID+'&sku='+sku+'&rID='+rowCnt,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -89,7 +88,6 @@ function fillInventory(sXml) {
   // Fetch wo details
   $.ajax({
     type: "GET",
-    contentType: "application/json; charset=utf-8",
     url: 'index.php?module=work_orders&page=ajax&op=load_task_list&iID='+iID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -141,7 +139,6 @@ function fillTaskList(sXml) { // call back function
 function printWOrder(id) { // request funtion
   $.ajax({
     type: "GET",
-    contentType: "application/json; charset=utf-8",
 	url: 'index.php?module=work_orders&page=ajax&op=load_wo_detail&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -171,7 +168,6 @@ function fetchBOMList() { // request funtion
   if (skuID && qty) {
     $.ajax({
       type: "GET",
-      contentType: "application/json; charset=utf-8",
 	  url: 'index.php?module=work_orders&page=ajax&op=load_bom_list&skuID='+skuID+'&qty='+qty,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {

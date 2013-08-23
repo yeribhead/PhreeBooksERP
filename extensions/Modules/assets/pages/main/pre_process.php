@@ -32,6 +32,10 @@ if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed 
 $acquisition_date = ($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
 $maintenance_date = ($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
 $terminal_date    = ($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_WO_ID);
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'DIR_FS_WORKINGcustom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -326,10 +330,10 @@ switch ($action) {
 	}
 	break;
 
-  case 'go_first':    $_GET['list'] = 1;     break;
-  case 'go_previous': $_GET['list']--;       break;
-  case 'go_next':     $_GET['list']++;       break;
-  case 'go_last':     $_GET['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -392,7 +396,7 @@ switch ($action) {
 	  'acquisition_date'  => TEXT_ACQ_DATE,
 	  'terminal_date'     => TEXT_RETIRE_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['list_order']);
+	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
@@ -409,9 +413,9 @@ switch ($action) {
 	// hook to add new fields to the query return results
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 
-    $query_raw    = "select " . implode(', ', $field_list)  . " from " . TABLE_ASSETS . $search . " order by $disp_order, asset_id";
-    $query_split  = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-    $query_result = $db->Execute($query_raw);
+    $query_raw    = "select SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." from ".TABLE_ASSETS." $search order by $disp_order, asset_id";
+    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    $query_split  = new splitPageResults($_REQUEST['list'], '');
 	define('PAGE_TITLE', BOX_ASSET_MODULE);
     $include_template = 'template_main.php';
 	break;

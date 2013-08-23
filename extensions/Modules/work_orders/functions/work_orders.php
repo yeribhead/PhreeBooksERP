@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -38,7 +38,7 @@ function wo_build_users() {
 
 function allocation_adjustment($sku_id, $qty = 0, $old_qty = 0) {
   global $db;
-  $result = $db->Execute("select sku, qty from " . TABLE_INVENTORY_ASSY_LIST . " where ref_id = " . $sku_id);
+  $result = $db->Execute("select sku, qty from ".TABLE_INVENTORY_ASSY_LIST." where ref_id = $sku_id");
   while (!$result->EOF) {
 	$total = ($qty - $old_qty) * $result->fields['qty'];
 	if ($total <> 0) $inv = $db->Execute("update " . TABLE_INVENTORY . " 

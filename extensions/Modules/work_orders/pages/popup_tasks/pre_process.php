@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -25,17 +25,19 @@ $search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_in
 if ($search_text == TEXT_SEARCH) $search_text = '';
 $action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
-
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_tasks/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
 switch ($action) {
-  case 'go_first':    $_GET['list'] = 1;     break;
-  case 'go_previous': $_GET['list']--;       break;
-  case 'go_next':     $_GET['list']++;       break;
-  case 'go_last':     $_GET['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
   case 'search_reset':
   case 'go_page':
@@ -48,7 +50,7 @@ $heading_array = array(
   'task_name'   => TEXT_TASK_NAME,
   'description' => TEXT_DESCRIPTION,
 );
-$result = html_heading_bar($heading_array, $_GET['list_order'], array());
+$result = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
 $list_header = $result['html_code'];
 $disp_order = $result['disp_order'];
 

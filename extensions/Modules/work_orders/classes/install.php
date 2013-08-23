@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -18,7 +18,7 @@
 //  Path: /modules/work_orders/classes/install.php
 //
 class work_orders_admin {
-  function work_orders_admin() {
+  function __construct() {
 	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',
@@ -67,7 +67,7 @@ class work_orders_admin {
 		  close_date date default NULL,
 		  notes text collate utf8_unicode_ci,
 		  PRIMARY KEY  (id)
-		) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
 	  TABLE_WO_JOURNAL_ITEM => "CREATE TABLE " . TABLE_WO_JOURNAL_ITEM  . " (
 		  id int(11) NOT NULL auto_increment,
 		  ref_id int(11) NOT NULL default '0',
@@ -87,7 +87,7 @@ class work_orders_admin {
 		  PRIMARY KEY  (id),
 		  KEY ref_id (ref_id),
 		  KEY step (step)
-		) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
+		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
 	  TABLE_WO_TASK => "CREATE TABLE " . TABLE_WO_TASK  . " (
 		  id int(11) NOT NULL auto_increment,
 		  task_name varchar(32) NOT NULL,

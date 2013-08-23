@@ -63,13 +63,13 @@ if (sizeof($receive_details) > 0) {
 	for ($i=0; $i<count($receive_details); $i++) { ?>
 		<tr>
 		  <td align="center"><?php echo html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick = "if (confirm(image_delete_msg)) $(this).parent().parent().remove();"'); ?></td>
-		  <td align="center"><?php echo html_input_field('rcv_qty[]', $receive_details[$i]['qty'], 'size="7" maxlength="6" style="text-align:right"'); ?></td>
-		  <td nowrap="nowrap" align="center"><?php echo html_input_field('rcv_sku[]', $receive_details[$i]['sku'], 'size="' . (MAX_INVENTORY_SKU_LENGTH + 1) . '" onfocus="activeField(this, \''.TEXT_SEARCH.'\')" onblur="inactiveField(this, \''.TEXT_SEARCH.'\')"'); ?>
-		  <?php echo '&nbsp;' . html_icon('status/folder-open.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="RcvList(' . $i . ')"'); ?>
+		  <td align="center"><?php echo html_input_field("rcv_qty[".($i+1)."]", $receive_details[$i]['qty'], 'size="7" maxlength="6" style="text-align:right"'); ?></td>
+		  <td nowrap="nowrap" align="center"><?php echo html_input_field("rcv_sku[".($i+1)."]", $receive_details[$i]['sku'], 'size="' . (MAX_INVENTORY_SKU_LENGTH + 1) . '" onfocus="activeField(this, \''.TEXT_SEARCH.'\')" onblur="inactiveField(this, \''.TEXT_SEARCH.'\')"'); ?>
+		  <?php echo '&nbsp;' . html_icon('status/folder-open.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="ItemList(\'rcv_\','.($i+1).')"'); ?>
 		  </td>
-		  <td><?php echo html_input_field('rcv_desc[]',  $receive_details[$i]['desc'], 'size="32"'); ?></td>
-		  <td><?php echo html_input_field('rcv_mfg[]',   $receive_details[$i]['mfg'],  'size="32"'); ?></td>
-		  <td><?php echo html_input_field('rcv_wrnty[]', $receive_details[$i]['wrnty'],'size="32"'); ?></td>
+		  <td><?php echo html_input_field("rcv_desc[".($i+1)."]",  $receive_details[$i]['desc'], 'size="32"'); ?></td>
+		  <td><?php echo html_input_field("rcv_mfg[".($i+1)."]",   $receive_details[$i]['mfg'],  'size="32"'); ?></td>
+		  <td><?php echo html_input_field("rcv_wrnty[".($i+1)."]", $receive_details[$i]['wrnty'],'size="32"'); ?></td>
 		</tr>
 <?php
 	}

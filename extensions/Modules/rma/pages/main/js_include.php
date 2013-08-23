@@ -21,6 +21,7 @@
 <script type="text/javascript">
 <!--
 // pass some php variables
+var sender            = 'rcv_';
 var text_search       = '<?php echo TEXT_SEARCH; ?>';
 var image_delete_text = '<?php echo TEXT_DELETE; ?>';
 var image_delete_msg  = '<?php echo RMA_ROW_DELETE_ALERT; ?>';
@@ -56,9 +57,10 @@ function check_form() {
   }
 }
 
-function ItemList(sender, rowCnt) {
+function ItemList(rqster, rowCnt) {
+	sender      = rqster;
 	var storeID = '0';
-	var sku = document.getElementById(sender+'sku_'+rowCnt).value;
+	var sku     = document.getElementById(sender+'sku_'+rowCnt).value;
 	window.open("index.php?module=inventory&page=popup_inv&rowID="+rowCnt+"&storeID="+storeID+"&search_text="+sku,"inventory","width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
@@ -68,13 +70,13 @@ function loadSkuDetails(iID, rID) {
   var sku = '';
   var strict = '';
   if (!rID) return;
-  if ( iID == 0 && document.getElementById('dis_notes_'+rID).value == '' && document.getElementById('dis_sku_'+rID).value != ''){
-	  sku = document.getElementById('dis_sku_'+rID).value;
+  if ( iID == 0 && document.getElementById(sender+'notes_'+rID).value == '' && document.getElementById(sender+'sku_'+rID).value != ''){
+	  sku = document.getElementById(sender+'dis_sku_'+rID).value;
 	  strict = '&strict=1';
   }
   if (iID == 0 && (sku == '' || sku == text_search)){
-	  if ( document.getElementById('rcv_sku_'+rID).value != ''){
-		    sku = document.getElementById('rcv_sku_'+rID).value;
+	  if ( document.getElementById(sender+'sku_'+rID).value != ''){
+		    sku = document.getElementById(sender+'sku_'+rID).value;
 		    strict = '&strict=1';
 	  }
   }
@@ -93,18 +95,18 @@ function processSkuDetails(sXml) { // call back function
   var xml = parseXml(sXml);
   if (!xml) return;
   var rID = $(xml).find("rID").text();
-  if (!rID) return;
+  if (!rID) return;  
   //switch between receiving and disposition
-  if(document.getElementById('dis_notes_'+rID).value == '' && document.getElementById('dis_sku_'+rID).value != ''){
-	document.getElementById('dis_qty_'     +rID).value			 = $(xml).find("qty").text();
-	document.getElementById('dis_sku_'     +rID).value       = $(xml).find("sku").text();
-  	document.getElementById('dis_sku_'     +rID).style.color = '';
-  	document.getElementById('dis_notes_'   +rID).value       = $(xml).find("description_short").text();
-  }else{
-	document.getElementById('rcv_qty_'     +rID).value		 = $(xml).find("qty").text();
-	document.getElementById('rcv_sku_'     +rID).value       = $(xml).find("sku").text();
-	document.getElementById('rcv_sku_'     +rID).style.color = '';
-	document.getElementById('rcv_desc_'    +rID).value       = $(xml).find("description_short").text();
+  if (sender == 'dis_'){
+	document.getElementById(sender+'qty_'   +rID).value			 = $(xml).find("qty").text();
+	document.getElementById(sender+'sku_'   +rID).value       = $(xml).find("sku").text();
+  	document.getElementById(sender+'sku_'   +rID).style.color = '';
+  	document.getElementById(sender+'notes_' +rID).value       = $(xml).find("description_short").text();
+  } else { // sender == 'rcv_'
+	document.getElementById(sender+'qty_'   +rID).value		  = $(xml).find("qty").text();
+	document.getElementById(sender+'sku_'   +rID).value       = $(xml).find("sku").text();
+	document.getElementById(sender+'sku_'   +rID).style.color = '';
+	document.getElementById(sender+'desc_'  +rID).value       = $(xml).find("description_short").text();
 		  
   }
 }

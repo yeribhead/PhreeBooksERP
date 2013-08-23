@@ -80,7 +80,7 @@ class fields {
 	switch ($this->entry_type) {
 	  case 'text':
 	  case 'html':
-		$params['length']  = intval(db_prepare_input($_POST['text_length']));
+		$params['length']  = intval(db_prepare_input($_POST['length']));
 		$params['default'] = db_prepare_input($_POST['text_default']);
 		if ($params['length'] < 1) $params['length'] = DEFAULT_TEXT_LENGTH;
 		if ($params['length'] < 256) {
@@ -234,8 +234,8 @@ class fields {
 	while (!$result->EOF) {
 	  $params  = unserialize($result->fields['params']);
 	  $actions = '';
-	  if ($this->security_id > 1)										$actions .= html_icon('actions/edit-find-replace.png', TEXT_EDIT,   'small', 'onclick="loadPopUp(\'fields_edit\', ' . $result->fields['id'] . ')"') . chr(10);
-	  if ($result->fields['tab_id'] <> '0' && $this->security_id > 3) 	$actions .= html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . ASSETS_FIELD_DELETE_INTRO . '\')) subjectDelete(\'fields\', ' . $result->fields['id'] . ')"') . chr(10);
+	  if ($this->security_id > 1)									  $actions .= html_icon('actions/edit-find-replace.png', TEXT_EDIT,   'small', 'onclick="loadPopUp(\'fields_edit\', ' . $result->fields['id'] . ')"') . chr(10);
+	  if ($result->fields['tab_id'] <> '0' && $this->security_id > 3) $actions .= html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . ASSETS_FIELD_DELETE_INTRO . '\')) subjectDelete(\'fields\', ' . $result->fields['id'] . ')"') . chr(10);
 	  $content['tbody'][$rowCnt] = array(
 	    array('value' => htmlspecialchars($result->fields['description']),
 			  'params'=> 'style="cursor:pointer" onclick="loadPopUp(\'fields_edit\',\''.$result->fields['id'].'\')"'),
@@ -251,7 +251,6 @@ class fields {
 			  'params'=> 'style="cursor:pointer" onclick="loadPopUp(\'fields_edit\',\''.$result->fields['id'].'\')"'),
 		array('value' => $result->fields['group_by'],
 			  'params'=> 'style="cursor:pointer" onclick="loadPopUp(\'fields_edit\',\''.$result->fields['id'].'\')"'),
-	
 		array('value' => $actions,
 			  'params'=> 'align="right"'),
 	  );
@@ -289,7 +288,7 @@ class fields {
 	  	        $this->decimal_display = $this->display;
 	  	        break;
 	       case 'integer':
-	       	    $this->entry_type      = $this->select;
+	       	    $this->integer_range   = $this->select;
 	  	        $this->integer_default = $this->default;
 	  	        break;
 	       case 'check_box':
@@ -365,7 +364,7 @@ class fields {
 	$output .= html_radio_field('entry_type', 'text', ($this->entry_type=='text' ? true : false), '', $disabled) . '&nbsp;' . INV_LABEL_TEXT_FIELD . '<br />';
 	$output .= html_radio_field('entry_type', 'html', ($this->entry_type=='html' ? true : false), '', $disabled) . '&nbsp;' . INV_LABEL_HTML_TEXT_FIELD . '</td>' . chr(10);
 	$output .= '	<td>' . INV_LABEL_MAX_NUM_CHARS;
-	$output .= '<br />' . html_input_field('text_length', ($this->text_length ? $this->text_length : DEFAULT_TEXT_LENGTH), $readonly . 'size="10" maxlength="9"');
+	$output .= '<br />' . html_input_field('length', ($this->length ? $this->length : DEFAULT_TEXT_LENGTH), $readonly . 'size="10" maxlength="9"');
 	$output .= '<br />' . INV_LABEL_DEFAULT_TEXT_VALUE . '<br />' . INV_LABEL_MAX_255;
 	$output .= '<br />' . html_textarea_field('text_default', 35, 6, $this->text_default, $readonly);
 	$output .= '	</td>' . chr(10);

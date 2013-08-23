@@ -41,10 +41,10 @@ $my_class->message = false;
 switch ($action) {
   case 'delete':      if ($rID) $my_class->btn_delete($rID); break;
   case 'update':      $my_class->btn_update($rID); break;
-  case 'go_first':    $_REQUEST['list'] = 1;     break;
-  case 'go_previous': $_REQUEST['list']--;       break;
-  case 'go_next':     $_REQUEST['list']++;       break;
-  case 'go_last':     $_REQUEST['list'] = 99999; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'go_page':                            break;
 }
 

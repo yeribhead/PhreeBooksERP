@@ -51,12 +51,14 @@ if (count($extra_toolbar_buttons_detail) > 0) {
 echo $toolbar->build_toolbar(); 
 $fields->set_fields_to_display($cInfo->inventory_type);
 
-function tab_sort($a, $b) {
-  if ($a['order'] == $b['order']) return 0;
-  return ($a['order'] > $b['order']) ? 1 : -1;
+// pull in additional custom tabs
+if (isset($extra_inventory_tabs) && is_array($extra_inventory_tabs)) foreach ($extra_inventory_tabs as $tab) {
+	$cInfo->tab_list[$tab['id']] = array('file'=>$tab['filename'], 'tag'=>$tab['id'], 'order'=>$tab['order'], 'text'=>$tab['title']);
 }
 
-usort($cInfo->tab_list, 'tab_sort');
+$temp = array();
+foreach ($cInfo->tab_list as $key => $value) $temp[$key] = $value['order'];
+array_multisort($temp, SORT_ASC, $cInfo->tab_list);
 
 ?>
 <h1 id='heading_title'><?php echo MENU_HEADING_INVENTORY . ' - ' . TEXT_SKU . '# ' . $cInfo->sku . ' (' . $cInfo->description_short . ')'; ?></h1>

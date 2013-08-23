@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -17,11 +16,11 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/cp_action/language/en_us/menu.php
 //
-
 // Menu Headings
+define('MENU_HEADING_QUALITY','Quality');
 define('MENU_HEADING_CAPA','Corrective/Preventative Action');
 
 // Menu Titles
-define('BOX_CAPA_MODULE',     'C/P Action');
+define('BOX_CAPA_MODULE','C/P Action');
 
 ?>

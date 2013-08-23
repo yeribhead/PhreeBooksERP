@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -35,7 +35,10 @@ $action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
 $post_date   = ($_POST['post_date'])  ? gen_db_date($_POST['post_date'])  : date('Y-m-d');
 $close_date  = ($_POST['close_date']) ? $_POST['close_date'] : '';
-
+// load the sort fields
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_WO_ID);
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -45,20 +48,16 @@ switch ($action) {
 	break;
   case 'save':
   case 'print':
-	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
-	$id        = db_prepare_input($_POST['id']);
-	$sku       = db_prepare_input($_POST['sku']);
-	$sku_id    = db_prepare_input($_POST['sku_id']);
-	$qty       = db_prepare_input($_POST['qty']);
-	$wo_id     = db_prepare_input($_POST['wo_id']);
-	$priority  = db_prepare_input($_POST['priority']);
-	$wo_title  = db_prepare_input($_POST['wo_title']);
-	$notes     = db_prepare_input($_POST['notes']);
-	$closed    = isset($_POST['closed']) ? '1' : '0';
+	validate_security($security_level, 2);
+  	$id       = db_prepare_input($_POST['id']);
+	$sku      = db_prepare_input($_POST['sku']);
+	$sku_id   = db_prepare_input($_POST['sku_id']);
+	$qty      = db_prepare_input($_POST['qty']);
+	$wo_id    = db_prepare_input($_POST['wo_id']);
+	$priority = db_prepare_input($_POST['priority']);
+	$wo_title = db_prepare_input($_POST['wo_title']);
+	$notes    = db_prepare_input($_POST['notes']);
+	$closed   = isset($_POST['closed']) ? '1' : '0';
 	// error check
 	if (!$sku_id || !$sku || !$qty) {
 	  $messageStack->add(WO_SKU_ID_REQUIRED,'error');
@@ -136,8 +135,8 @@ switch ($action) {
 	}
 	// finish
 	if (!$error) {
-	  gen_add_audit_log(($id  ? sprintf(WO_AUDIT_LOG_MAIN, TEXT_UPDATE) : sprintf(WO_AUDIT_LOG_MAIN, TEXT_ADD)) . $task_name);
-	  $messageStack->add(($id ? WO_MESSAGE_SUCCESS_MAIN_UPDATE : WO_MESSAGE_SUCCESS_MAIN_ADD),'success');
+	  gen_add_audit_log($id  ? sprintf(WO_AUDIT_LOG_MAIN, TEXT_UPDATE) . $wo_id : sprintf(WO_AUDIT_LOG_MAIN, TEXT_ADD) . $wo_id);
+	  $messageStack->add($id ? WO_MESSAGE_SUCCESS_MAIN_UPDATE : WO_MESSAGE_SUCCESS_MAIN_ADD, 'success');
 	  if ($action == 'save') gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	} else {
 	  $messageStack->add(WO_MESSAGE_MAIN_ERROR, 'error');
@@ -154,7 +153,6 @@ switch ($action) {
 	$pw_qa      = db_prepare_input($_POST['pw_qa']);
 	$data_value = db_prepare_input($_POST['data_value']);
 	$notes      = db_prepare_input($_POST['notes']);
-
 	$sql_data_array = array(); // start the update field list
 	// error check
 	if (!$id || !$step) {
@@ -189,32 +187,31 @@ switch ($action) {
         $error = true;
 	    $messageStack->add(WO_DATA_VALUE_BLANK,'error');
       } else {
-	    $sql_data_array['data_value']   = $data_value;
+	    $sql_data_array['data_value'] = $data_value;
 	  }
 	}
 	// set the step to completed in the item db
-	$db->transStart();
 	if (!$error && sizeof($sql_data_array) > 0) {
-	  $success = db_perform(TABLE_WO_JOURNAL_ITEM, $sql_data_array, 'update', "ref_id=$id AND step=$step");
+	  $success = db_perform(TABLE_WO_JOURNAL_ITEM, $sql_data_array, 'update', "ref_id = $id and step = $step");
 	  if (!$success) $error = $messageStack->add(WO_DB_UPDATE_ERROR,'error');
 	}
-	if ($notes) $db->Execute("UPATE ".TABLE_WO_JOURNAL_MAIN " SET notes='$notes' WHERE id=$id");
+	if ($notes) db_perform(TABLE_WO_JOURNAL_MAIN, array('notes'=>$notes), 'update', "id = $id");
 	// check to see if the step is complete
-	$result    = $db->Execute("SELECT * FROM ".TABLE_WO_JOURNAL_ITEM." WHERE ref_id=$id AND step=$step");
+	$result    = $db->Execute("select * from " . TABLE_WO_JOURNAL_ITEM . " where ref_id = $id and step = $step");
 	$task_id   = $result->fields['task_id'];
 	$set_close = true;
 	if ($result->fields['mfg']        && $result->fields['mfg_id']     == '0') $set_close = false;
 	if ($result->fields['qa']         && $result->fields['qa_id']      == '0') $set_close = false;
 	if ($result->fields['data_entry'] && $result->fields['data_value'] ==  '') $set_close = false;
-	if ($set_close) {
+	if (!$error && $set_close) {
 	  // check to see if an erp entry is needed
-	  $result = $db->Execute("SELECT erp_entry FROM ".TABLE_WO_TASK." WHERE id='$task_id'");
+	  $result = $db->Execute("select erp_entry from " . TABLE_WO_TASK . " where id = '$task_id'");
 	  if ($result->fields['erp_entry']) { // process the request, build main record
-		$result = $db->Execute("SELECT wo_num, sku_id, qty FROM ".TABLE_WO_JOURNAL_MAIN." WHERE id=$id");
+		$result = $db->Execute("select wo_num, sku_id, qty from " . TABLE_WO_JOURNAL_MAIN . " where id = " . $id);
 		$wo_num = $result->fields['wo_num'];
 		$qty    = $result->fields['qty'];
 		$sku_id = $result->fields['sku_id'];
-		$result = $db->Execute("SELECT sku, description_short, account_inventory_wage FROM ".TABLE_INVENTORY." WHERE id='$sku_id'");
+		$result = $db->Execute("select sku, description_short, account_inventory_wage from " . TABLE_INVENTORY . " where id = '" . $sku_id . "'");
 		$sku    = $result->fields['sku'];
 		$desc   = $result->fields['description_short'];
 		$acct   = $result->fields['account_inventory_wage'];
@@ -245,9 +242,12 @@ switch ($action) {
 //		  'serialize_number' => $serial,
 		);
 		// *************** START TRANSACTION *************************
+		$db->transStart();
 		if (!$glEntry->Post('insert')) {
+		  $db->transRollback();
 		  $error = true;
 		} else {
+		  $db->transCommit();	// post the chart of account values
 		  gen_add_audit_log(INV_LOG_ASSY . TEXT_SAVE, $sku, $qty);
 		  $messageStack->add(INV_POST_ASSEMBLY_SUCCESS . $sku, 'success');
 		  if (DEBUG) $messageStack->write_debug();
@@ -256,17 +256,17 @@ switch ($action) {
 	  }
 	  if (!$error) {
 	    $db->Execute("update " . TABLE_WO_JOURNAL_ITEM . " set complete = '1', admin_id = " . $_SESSION['admin_id'] . "  
-	      where ref_id = " . $id . " and step = " . $step);
+	      where ref_id = $id and step = $step");
 	    // check to see if the work order is complete
-	    $result = $db->Execute("select max(step) as max_step from " . TABLE_WO_JOURNAL_ITEM . " where ref_id = " . $id);
+	    $result = $db->Execute("select max(step) as max_step from " . TABLE_WO_JOURNAL_ITEM . " where ref_id = $id");
 	    if ($step == $result->fields['max_step']) {
 	      $db->Execute("update " . TABLE_WO_JOURNAL_MAIN . " 
 			set closed = '1', close_date = '" . date('Y-m-d H:i:s') . "' where id = " . $id);
 	      // check to un-allocate inventory
-		  $result   = $db->Execute("select qty, wo_id from " . TABLE_WO_JOURNAL_MAIN . " where id = " . $id);
-		  $temp     = $db->Execute("select allocate from " . TABLE_WO_MAIN . " where id = '" . $result->fields['wo_id'] . "'");
+		  $result   = $db->Execute("select qty, sku_id, wo_id from " . TABLE_WO_JOURNAL_MAIN . " where id = $id");
+		  $temp     = $db->Execute("select allocate from ".TABLE_WO_MAIN." where id = '".$result->fields['wo_id']."'");
 		  $allocate = $temp->fields['allocate'];
-		  if ($allocate) allocation_adjustment($sku_id, 0, $result->fields['qty']);
+		  if ($allocate) allocation_adjustment($result->fields['sku_id'], 0, $result->fields['qty']);
 		  gen_add_audit_log(sprintf(WO_AUDIT_LOG_WO_COMPLETE, $id));
 	      $messageStack->add(sprintf(WO_MESSAGE_SUCCESS_COMPLETE, $id),'success');
 	      gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
@@ -274,12 +274,10 @@ switch ($action) {
 	  }
 	}
 	if (!$error) {
-	  $db->transCommit();	// post the chart of account values
 	  gen_add_audit_log(sprintf(WO_AUDIT_LOG_STEP_COMPLETE, $step));
 	  $messageStack->add(sprintf(WO_MESSAGE_STEP_UPDATE_SUCCESS, $step),'success');
 	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=build&id=' . $id, 'SSL'));
 	} else {
-	  $db->transRollback();
 	  $messageStack->add(WO_MESSAGE_MAIN_ERROR,'error');
 	  $action = 'build';
 	  $_POST['rowSeq'] = $id; // make it look like an edit
@@ -320,11 +318,7 @@ switch ($action) {
 	}
 	break;
   case 'delete':
-	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+	validate_security($security_level, 4);
     $id = db_prepare_input($_GET['id']);
 	if (!$id) $error = true;
 	if (!$error) {
@@ -340,11 +334,11 @@ switch ($action) {
 	}
     $action = '';
 	break;
-  case 'go_first':    $_GET['list'] = 1;     break;
-  case 'go_previous': $_GET['list']--;       break;
-  case 'go_next':     $_GET['list']++;       break;
-  case 'go_last':     $_GET['list'] = 99999; break;
-  case 'search':
+  case 'go_first':    $_REQUEST['list'] = 1;       break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_next':     $_REQUEST['list']++;         break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   break;
+	  case 'search':
   case 'search_reset':
   case 'go_page':
   default:
@@ -353,8 +347,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = true;
 $cal_date = array(
   'name'      => 'dateReference',
   'form'      => 'work_orders',
@@ -389,9 +381,8 @@ switch ($action) {
 	  'm.closed'     => TEXT_CLOSED,
 	  'm.close_date' => TEXT_CLOSE_DATE,
 	);
-	if (!isset($_GET['list_order'])) $_GET['list_order'] = 'm.wo_num-desc';
-	$result      = html_heading_bar($heading_array, $_GET['list_order']);
-	$list_header = $result['html_code'];
+	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+  	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
     if (isset($search_text) && $search_text <> '') {
@@ -405,11 +396,11 @@ switch ($action) {
 	$field_list = array('m.id', 'm.wo_num', 'm.priority', 'm.wo_title', 'i.sku', 'm.qty', 'm.sku_id', 'm.post_date', 'm.closed', 'm.close_date');
 	// hook to add new fields to the query return results
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
-    $query_raw = "select " . implode(', ', $field_list) . " 
+    $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " 
 	  from " . TABLE_WO_JOURNAL_MAIN . " m inner join " . TABLE_INVENTORY . " i on m.sku_id = i.id" . $search . " order by $disp_order, m.closed, m.id DESC";
-    $query_split  = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-    $query_result = $db->Execute($query_raw);
-	define('PAGE_TITLE', BOX_WORK_ORDERS_MODULE);
+    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    define('PAGE_TITLE', BOX_WORK_ORDERS_MODULE);
     $include_template = 'template_main.php';
 	break;
 }

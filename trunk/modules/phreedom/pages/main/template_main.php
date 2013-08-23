@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -52,7 +51,7 @@ while(!$cp_boxes->EOF) {
     $new_box->module_id    = $module_id;
     $new_box->column_id    = $cp_boxes->fields['column_id'];
     $new_box->row_id       = $cp_boxes->fields['row_id'];
-  echo $new_box->Output($params);
+    echo $new_box->Output($params);
   }
   $cp_boxes->MoveNext();
 }

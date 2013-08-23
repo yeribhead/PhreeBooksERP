@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2010 PhreeSoft, LLC                               |
-
+// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -27,8 +26,8 @@ define('FILTER_LIKE'					,'Like: ');
 define('FILTER_NOT_LIKE'				,'Not Like: ');
 define('FILTER_BIGGER_THAN'				,'Bigger than: ');
 define('FILTER_LESS_THAN'				,'Less than: ');
-define('FILTER_CONTAINS'				,'Contains');
-define('FILTER_TABEL_HEAD_FIELD'		,'Field');
-define('FILTER_TABEL_HEAD_COPAIRISON'	,'Compairison');
-define('FILTER_TABEL_HEAD_VALUE'		,'Value');
+define('FILTER_CONTAINS'				,'Contains: ');
+define('FILTER_TABEL_HEAD_FIELD'		,'Field: ');
+define('FILTER_TABEL_HEAD_COPAIRISON'	,'Comparison: ');
+define('FILTER_TABEL_HEAD_VALUE'		,'Value: ');
 ?>

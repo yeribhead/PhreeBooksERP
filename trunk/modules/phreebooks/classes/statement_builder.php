@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -117,10 +118,10 @@ class statement_builder {
 	$this->post_date = date(DATE_FORMAT);
 	// sequence the results
 	$output = array();
-	foreach ($report->fieldlist as $key => $OneField) { // check for a data field and build sql field list
+	foreach ($report->fieldlist as $OneField) { // check for a data field and build sql field list
 	  if ($OneField->type == 'Data') { // then it's data field, include it
 		$field = $OneField->boxfield[0]->fieldname;
-		$output['d' . $key] = $this->$field;
+		$output[] = $this->$field;
 	  }
 	}
 	return $output;

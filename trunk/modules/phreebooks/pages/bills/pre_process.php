@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -34,6 +35,7 @@ switch ($jID) {
 $security_level = validate_user($security_token);
 /**************  include page specific files    *********************/
 gen_pull_language('contacts');
+gen_pull_language('payment');
 require_once(DIR_FS_MODULES . 'payment/defaults.php');
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
 require_once(DIR_FS_WORKING . 'classes/gen_ledger.php');

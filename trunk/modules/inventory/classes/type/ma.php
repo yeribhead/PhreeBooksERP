@@ -9,7 +9,7 @@ class ma extends inventory { //Item Assembly formerly know as 'as' but this resu
 	public $cost_method				= INV_ASSY_DEFAULT_COSTING;
 	public $bom		 				= array();
 	public $allow_edit_bom			= true;  
-	public $posible_transactions	= array('sell');
+//	public $posible_transactions	= array('sell','purchase');
 	
 	function __construct(){
 		parent::__construct();
@@ -17,11 +17,13 @@ class ma extends inventory { //Item Assembly formerly know as 'as' but this resu
 	}
 	
 	function get_item_by_id($id){
+		$this->bom 			= null;
 		parent::get_item_by_id($id);
 		$this->get_bom_list();
 	}
 	
 	function get_item_by_sku($sku){
+		$this->bom 			= null;
 		parent::get_item_by_sku($sku);
 		$this->get_bom_list();
 	}
