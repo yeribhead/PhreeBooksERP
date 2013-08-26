@@ -71,7 +71,7 @@ switch ($action) {
 	  gen_add_audit_log(GEN_LOG_LOGIN . $admin_name);
 	  // check for session timeout to reload to requested page
 	  $get_params = '';
-	  if (isset($_SESSION['pb_cat'])) {
+	  if (isset($_SESSION['pb_cat']) && $_SESSION['pb_cat']) {
 	    $get_params  = 'module='    . $_SESSION['pb_cat'];
 	    $get_params .= '&amp;page=' . $_SESSION['pb_module'];
 	    if (isset($_SESSION['pb_jID']))  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
