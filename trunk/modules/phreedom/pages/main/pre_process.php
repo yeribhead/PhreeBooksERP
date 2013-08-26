@@ -74,8 +74,8 @@ switch ($action) {
 	  if (isset($_SESSION['pb_cat']) && $_SESSION['pb_cat']) {
 	    $get_params  = 'module='    . $_SESSION['pb_cat'];
 	    $get_params .= '&amp;page=' . $_SESSION['pb_module'];
-	    if (isset($_SESSION['pb_jID']))  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
-	    if (isset($_SESSION['pb_type'])) $get_params .= '&amp;type=' . $_SESSION['pb_type'];
+	    if (isset($_SESSION['pb_jID']) && $_SESSION['pb_jID'])  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
+	    if (isset($_SESSION['pb_type']) && $_SESSION['pb_type']) $get_params .= '&amp;type=' . $_SESSION['pb_type'];
 	  }
 	  // check safe mode
 	  if (get_cfg_var('safe_mode')) $messageStack->add_session(SAFE_MODE_ERROR, 'error');
