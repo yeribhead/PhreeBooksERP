@@ -132,10 +132,10 @@ function processEditJournal(sXml) {
   document.getElementById('recur_id').value  = $(xml).find("recur_id").text();
   document.getElementById('store_id').value  = $(xml).find("store_id").text();
   if ($(xml).find("attach_exist").text() == 1) {
-	alert ('Showing attach val = '+$(xml).find("attach_exist").text());
+//	alert ('Showing attach val = '+$(xml).find("attach_exist").text());
 	document.getElementById('show_attach').style.display = ''; // show attachment button and delete checkbox if it exists
   } else {
-	alert ('Not showing attach val = '+$(xml).find("attach_exist").text());
+//	alert ('Not showing attach val = '+$(xml).find("attach_exist").text());
   }
   
   // delete the rows
