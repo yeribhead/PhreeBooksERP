@@ -315,7 +315,7 @@ echo html_input_field('bill_email', $order->bill_email, 'size="35" maxlength="48
 <?php
 		  if ($order->item_rows) {
 			for ($j = 0, $i = 1; $j < count($order->item_rows); $j++, $i++) {
-				echo '<tr class='.  $odd?'odd':'even' .' >' . chr(10);
+				echo '<tr class="'.  ($odd?'odd':'even').'">' . chr(10);
 				// turn off delete icon if required
 				if (($order->item_rows[$j]['so_po_item_ref_id']) || ((JOURNAL_ID == 4 || JOURNAL_ID == 10) && $order->item_rows[$j]['pstd'])) {
 					echo '  <td align="center">&nbsp;</td>' . chr(10);
@@ -347,7 +347,7 @@ echo html_input_field('bill_email', $order->bill_email, 'size="35" maxlength="48
 				  echo '  <td>' . html_combo_box('acct_' . $i, $gl_array_list, $order->item_rows[$j]['acct'], 'size="10"') . '</td>' . chr(10);
 				} else {
 				  echo '  <td colspan="2">' . html_pull_down_menu('proj_' . $i, $proj_list, $order->item_rows[$j]['proj']) . '</td>' . chr(10);
-				  echo '</tr>' . chr(10) .  '<tr class='.  $odd?'odd':'even' .' >' . chr(10);
+				  echo '</tr>' . chr(10) .  '<tr class="'.($odd?'odd':'even').'">' . chr(10);
 				  echo '  <td>' . html_input_field('item_cnt_' . $i, $order->item_rows[$j]['item_cnt'], 'size="3" maxlength="3" readonly="readonly"') . '</td>' . chr(10);
 				  echo '  <td colspan="3">' . html_pull_down_menu('acct_' . $i, $gl_array_list, $order->item_rows[$j]['acct']) . '</td>' . chr(10);
 				  echo '  <td>' . html_input_field('full_' . $i, '', 'readonly="readonly" size="11" maxlength="10" style="text-align:right"') . '</td>' . chr(10);
