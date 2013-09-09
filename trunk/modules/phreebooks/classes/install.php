@@ -343,7 +343,7 @@ class phreebooks_admin {
 		$result = $db->Execute("SELECT id, so_po_ref_id FROM ".TABLE_JOURNAL_MAIN." WHERE journal_id = 16 AND so_po_ref_id > 0");
 		while(!$result->EOF) { // to fix transfers to store 0 from any other store
 			if ($result->fields['so_po_ref_id'] > $result->fields['id']) {
-				$db->Execute("UPDATE ".TABLE_JORNAL_MAIN." SET so_po_ref_id = -1 WHERE id=".$result->fields['id']);
+				$db->Execute("UPDATE ".TABLE_JOURNAL_MAIN." SET so_po_ref_id = -1 WHERE id=".$result->fields['id']);
 			}
 			$result->MoveNext();
 		}
