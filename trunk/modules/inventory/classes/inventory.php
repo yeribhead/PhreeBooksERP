@@ -44,6 +44,7 @@ class inventory {
 	
 	public function __construct(){
 		global $db;
+		if (!isset($_POST['inactive'])) $_POST['inactive'] = '0'; // handle checkboxes
 		foreach ($_POST as $key => $value) $this->$key = $value;
 		$this->creation_date = date('Y-m-d');
 	  	$this->last_update = date('Y-m-d');
