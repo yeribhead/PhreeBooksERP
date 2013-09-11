@@ -25,11 +25,11 @@
 	 <tbody class="ui-widget-content">
 	  <tr>
 	    <td><?php echo INV_DATE_ACCOUNT_CREATION; ?></td>
-	    <td><?php echo html_input_field('creation_date', gen_locale_date($cInfo->creation_date), 'disabled="disabled" size="20"', false); ?></td>
+	    <td><?php echo html_input_field('creation_date', gen_locale_date($cInfo->creation_date), 'readonly="readonly" size="20"', false); ?></td>
 	    <td><?php echo INV_DATE_LAST_UPDATE; ?></td>
-	    <td><?php echo html_input_field('last_update', gen_locale_date($cInfo->last_update), 'disabled="disabled" size="20"', false); ?></td>
+	    <td><?php echo html_input_field('last_update', gen_locale_date($cInfo->last_update), 'readonly="readonly" size="20"', false); ?></td>
 	    <td><?php echo INV_DATE_LAST_JOURNAL_DATE; ?></td>
-	    <td><?php echo html_input_field('last_journal_date', gen_locale_date($cInfo->last_journal_date), 'disabled="disabled" size="20"', false); ?></td>
+	    <td><?php echo html_input_field('last_journal_date', gen_locale_date($cInfo->last_journal_date), 'readonly="readonly" size="20"', false); ?></td>
 	  </tr>
 	  </tbody>
 	</table>

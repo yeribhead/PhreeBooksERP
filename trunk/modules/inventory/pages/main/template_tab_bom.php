@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -47,17 +46,17 @@
 				$readonly = 'readonly="readonly" ';
 			}
 			echo '      </td>' . chr(10);
-			echo '      <td>';
+			echo '      <td nowrap="nowrap">';
 			// Hidden fields
 			echo '      	<input type="hidden" name="id_' . $i . '" id="id_' . $i . '" value="' . $cInfo->bom[$j]['id'] . '" />' . chr(10);
 			// End hidden fields
 			echo '			<input type="text" name="assy_sku[]" id="sku_' . $i . '" value="' . $cInfo->bom[$j]['sku'] . '" ' . $readonly . 'size="' . (MAX_INVENTORY_SKU_LENGTH + 1) . '" maxlength="' . MAX_INVENTORY_SKU_LENGTH . '" onchange="bom_guess(' . $i . ');"  />&nbsp;' . chr(10);
 			if ($cInfo->allow_edit_bom) echo html_icon('actions/system-search.png', TEXT_SKU, 'small', $params = 'align="top" style="cursor:pointer" onclick="InventoryList(' . $i . ')"') . chr(10);
 			echo '      </td>' . chr(10);
-			echo '      <td><input type="text" name="assy_desc[]" 			id="desc_' . $i . '" 		value="' . $cInfo->bom[$j]['description'] . '" ' . $readonly . 'size="64" maxlength="64" /></td>' . chr(10);
-			echo '      <td><input type="text" name="assy_qty[]" 			id="qty_' . $i . '" 		value="' . $currencies->precise($cInfo->bom[$j]['qty']) . '" 		' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
-			echo '      <td><input type="text" name="assy_item_cost[]" 		id="item_cost_' . $i . '" 	value="' . $currencies->precise($cInfo->bom[$j]['item_cost']) . '" 	' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
-			echo '      <td><input type="text" name="assy_sales_price[]" 	id="sales_price_' . $i . '" value="' . $currencies->precise($cInfo->bom[$j]['full_price']) . '" 	' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
+			echo '      <td><input type="text" name="assy_desc[]" 		 id="desc_' . $i . '" 		 value="' . $cInfo->bom[$j]['description'] . '" ' . $readonly . 'size="64" maxlength="64" /></td>' . chr(10);
+			echo '      <td><input type="text" name="assy_qty[]" 		 id="qty_' . $i . '" 		 value="' . $currencies->precise($cInfo->bom[$j]['qty']) . '" 		' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
+			echo '      <td><input type="text" name="assy_item_cost[]" 	 id="item_cost_' . $i . '" 	 value="' . $currencies->precise($cInfo->bom[$j]['item_cost']) . '" 	' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
+			echo '      <td><input type="text" name="assy_sales_price[]" id="sales_price_' . $i . '" value="' . $currencies->precise($cInfo->bom[$j]['full_price']) . '" 	' . $readonly . 'size="6" maxlength="5" /></td>' . chr(10);
 			echo '    </tr>';
 		}
 	} else {

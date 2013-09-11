@@ -46,8 +46,8 @@ class inventory {
 		global $db;
 		if (!isset($_POST['inactive'])) $_POST['inactive'] = '0'; // handle checkboxes
 		foreach ($_POST as $key => $value) $this->$key = $value;
-		$this->creation_date = date('Y-m-d');
-	  	$this->last_update = date('Y-m-d');
+		$this->creation_date = date('Y-m-d H:i:s');
+	  	$this->last_update   = date('Y-m-d H:i:s');
 		$this->tab_list['general'] = array('file'=>'template_tab_gen',	'tag'=>'general', 'order'=>10, 'text'=>TEXT_SYSTEM);
 		$this->tab_list['history'] = array('file'=>'template_tab_hist',	'tag'=>'history', 'order'=>20, 'text'=>TEXT_HISTORY);
 		if($this->auto_field){
@@ -170,7 +170,6 @@ class inventory {
 	  		'sku'						=> $this->sku,
 	  		'inventory_type'			=> $this->inventory_type,
 	  		'cost_method'				=> $this->cost_method,
-	  		'creation_date'				=> $this->creation_date,
 	  		'last_update'				=> $this->last_update,
 	  		'item_taxable'				=> $this->item_taxable,
 	  		'purch_taxable'				=> $this->purch_taxable,
@@ -343,7 +342,7 @@ class inventory {
 	    }     
 		$sql_data_array['last_update'] 			= date('Y-m-d H-i-s');
 		if ($_SESSION['admin_security'][SECURITY_ID_PURCHASE_INVENTORY] > 1){
-			$this->store_purchase_array();	
+			$sql_data_array['item_cost'] = $this->store_purchase_array();	
 		} else{
 			if (isset($sql_data_array['item_cost'])) unset($sql_data_array['item_cost']);
 		}
@@ -406,7 +405,9 @@ class inventory {
 	  		}
 	  		$sql_data_array ['attachments'] = sizeof($this->attachments) > 0 ? serialize($this->attachments) : '';
 		}
+		unset($sql_data_array['last_journal_date]']);
 		if ($this->id != ''){
+			unset($sql_data_array['creation_date]']);
 			db_perform(TABLE_INVENTORY, $sql_data_array, 'update', "id = " . $this->id);
 			gen_add_audit_log(INV_LOG_INVENTORY . TEXT_UPDATE, $this->sku . ' - ' . $sql_data_array['description_short']);
 		}else{
@@ -447,8 +448,9 @@ class inventory {
 
 	function store_purchase_array(){
 		global $db, $currencies, $action;
+		$lowest_cost = 99999999999;
 		$this->backup_purchase_array = array();
-		$result = $db->Execute("select * from " . TABLE_INVENTORY_PURCHASE . " where sku = '" . $this->sku  . "'");
+		$result = $db->Execute("SELECT * FROM ".TABLE_INVENTORY_PURCHASE." WHERE sku='$this->sku'");
 		while(!$result->EOF){
 			$this->backup_purchase_array[$result->fields['id']]= array (
 				'id'						=> $result->fields['id'],
@@ -508,12 +510,14 @@ class inventory {
 						'action'					=> 'insert',
 					);// mark delete by default overwrite later if 
 				}
+				$lowest_cost = min($lowest_cost, $sql_data_array['item_cost']);
 			}
 			$i++;
 		}
 		foreach($this->backup_purchase_array as $key => $value){
 			if($value['action'] == 'delete') $result = $db->Execute("delete from " . TABLE_INVENTORY_PURCHASE . " where id = '" . $value['id'] . "'");
 		}
+		return $lowest_cost; 
 	}
 	
 	function gather_history() {
@@ -641,7 +645,6 @@ class inventory {
 		  	'description_sales'      	=> $desc, 
 			'vendor_id' 				=> $vendor_id,
 	  		'cost_method'				=> $this->cost_method,
-	  		'creation_date'				=> $this->creation_date,
 	  		'last_update'				=> $this->last_update,
 	  		'item_taxable'				=> $this->item_taxable,
 	  		'purch_taxable'				=> $this->purch_taxable,

@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -429,7 +428,7 @@ class orders extends journal {
 			  $auths = explode(':', $rate['auths']);
 		      foreach ($auths as $auth) {
 				$line_total = $line_item['debit_amount'] + $line_item['credit_amount']; // one will always be zero
-			    if (ENABLE_ORDER_DISCOUNT && $tax_discount == '0') {
+			    if (ENABLE_ORDER_DISCOUNT && $tax_discount == '0' && $line_item['gl_type'] <> 'frt') {
 				  $line_total = $line_total * (1 - $this->disc_percent);
 				}
 //				this is wrong this is rounding per orderline not per tax auth. moved this to the next foreach.		
