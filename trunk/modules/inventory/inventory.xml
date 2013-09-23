@@ -21,7 +21,7 @@
 	  <Name>id</Name>
 	  <TagName>RecordID</TagName>
 	  <Type>int (11)</Type>
-	  <Description>Unique inventory database id field</Description>
+	  <Description>Unique inventory database id field, can be omitted to insert with next available table id</Description>
 	  <Properties>NOT NULL auto_increment</Properties>
 	  <CanImport>1</CanImport>
 	  <Required>0</Required>
