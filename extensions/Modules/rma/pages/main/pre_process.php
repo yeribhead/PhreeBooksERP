@@ -77,13 +77,14 @@ switch ($action) {
 		  'mfg'   => $_POST['rcv_mfg'][$key],
 		  'wrnty' => $_POST['rcv_wrnty'][$key],
 		);
-	} 
-	if (is_array($_POST['sku'])) foreach ($_POST['dis_sku'] as $key => $value) {
+	}
+
+	if (is_array($_POST['dis_sku'])) foreach ($_POST['dis_sku'] as $key => $value) {
 		$close_details[] = array(
 		  'qty'    => $_POST['dis_qty'][$key],
 		  'sku'    => $_POST['dis_sku'][$key],
 		  'notes'  => $_POST['dis_notes'][$key],
-		  'action' => $_POST['action'][$key],
+		  'action' => $_POST['dis_action'][$key],
 		);
 	} 
 	// Check attachments
@@ -137,19 +138,6 @@ switch ($action) {
 	    'receive_date'        => $receive_date,
 	    'attachments'         => sizeof($attachments)>0 ? serialize($attachments) : '',
 	  );
-	  // build the item list
-      $sql_item_array = array();
-	  $id_array = array();
-	  if (is_array($cInfo->item_rows)) foreach ($cInfo->item_rows as $value) {
-		$sql_item_array[] = array(
-		  'id'          => $value['id'],
-		  'qty'         => $value['qty'],
-		  'sku'         => $value['sku'],
-		  'item_action' => $value['actn'],
-		  'item_notes'  => $value['desc'],
-		);
-		if ($value['id']) $id_array[] = $value['id'];
-	  }
 	  if ($id) {
 	    $success = db_perform(TABLE_RMA, $sql_data_array, 'update', 'id = ' . $id);
 		if ($success) gen_add_audit_log(RMA_LOG_USER_UPDATE . $rma_num);

@@ -122,11 +122,11 @@ function addItemRow() {
   rowCnt = newRow.rowIndex;
 
   cell[0] = buildIcon(icon_path+'16x16/emblems/emblem-unreadable.png', image_delete_text);
-  cell[1] = '<input type="text" id="dis_qty_'+rowCnt+'" name="qty[]" size="7" style="text-align:right">';
-  cell[2] = '<input type="text" id="dis_sku_'+rowCnt+'" name="sku[]" title="'+text_search+'" size="24" onchange="loadSkuDetails(0,'+rowCnt+') ">&nbsp;';
+  cell[1] = '<input type="text" id="dis_qty_'+rowCnt+'" name="dis_qty[]" size="7" style="text-align:right">';
+  cell[2] = '<input type="text" id="dis_sku_'+rowCnt+'" name="dis_sku[]" title="'+text_search+'" size="24" onchange="loadSkuDetails(0,'+rowCnt+') ">&nbsp;';
   cell[2] += buildIcon(icon_path+'16x16/status/folder-open.png', text_search, 'id="sku_open_'+rowCnt+'" align="top" style="cursor:pointer" onclick="ItemList(\'dis_\','+rowCnt+')"');
-  cell[3] = '<input type="text" id="dis_notes_'+rowCnt+'" name="notes[]" size="48">';
-  cell[4] = '<select id="dis_action_'+rowCnt+'" name="action[]"><\/select>';
+  cell[3] = '<input type="text" id="dis_notes_'+rowCnt+'" name="dis_notes[]" size="48">';
+  cell[4] = '<select id="dis_action_'+rowCnt+'" name="dis_action[]"><\/select>';
 
   for (var i=0; i<cell.length; i++) {
     newCell = newRow.insertCell(-1);
