@@ -20,8 +20,9 @@
 // 3.0 => 2011-01-14 - Converted from stand-alone PhreeBooks release
 // 3.1 => 2011-04-15 - Bug fixes
 // 3.3 => 2011-11-15 - Theme conversion
+// 3.6 => 2013-09-23 - Updates for PhreeBooks R3.6
 // Module software version information
-define('MODULE_ASSETS_VERSION',    '3.3');
+define('MODULE_ASSETS_VERSION',    '3.6');
 // Menu sort positions
 define('MENU_HEADING_ASSETS_ORDER',  77);
 define('BOX_ASSETS_MODULE_ORDER',    90);
