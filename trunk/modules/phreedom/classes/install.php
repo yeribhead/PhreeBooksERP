@@ -192,7 +192,7 @@ class phreedom_admin {
   }
 
   function initialize($loaded_modules) {
-    global $messageStack, $currencies;
+    global $db, $messageStack, $currencies;
     // load the latest currency exchange rates
     if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
 	  gen_pull_language('phreedom', 'admin');
@@ -200,6 +200,8 @@ class phreedom_admin {
 	  $currency = new currency();
 	  $currency->btn_update();
 	}
+	// Fix for change to audit log for upgrade to R3.6 causes perpertual crashing when writing audit log
+	if (!db_field_exists(TABLE_AUDIT_LOG, 'stats')) $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
 	// load installed modules and initialize them
 	if (is_array($loaded_modules)) foreach ($loaded_modules as $module) {
 	  if ($module == 'phreedom') continue; // skip this module
