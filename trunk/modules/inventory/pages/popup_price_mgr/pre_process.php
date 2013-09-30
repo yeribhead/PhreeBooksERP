@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,11 +18,12 @@
 //
 $security_level = validate_user(SECURITY_ID_PRICE_SHEET_MANAGER);
 /**************  include page specific files    *********************/
+require_once(DIR_FS_MODULES . 'inventory/functions/inventory.php');
 require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 /**************   page specific initialization  *************************/
 $id         = (int)$_GET['iID'];
 $full_price = $_GET['price'];
-$item_cost  = $_GET['cost'];
+$item_cost  = isset($_GET['cost'])   ? $_GET['cost']   : false;
 $type       = isset($_GET['type'])   ? $_GET['type']   : 'c';
 $action     = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 // retrieve some item details
@@ -80,10 +80,11 @@ switch ($action) {
 }
 
 /*****************   prepare to display templates  *************************/
-if ($item_cost == ''){
-	$temp =  inv_calculate_sales_price(1, $id, 0, 'v');
+if ($item_cost === false) {
+	$temp = inv_calculate_sales_price(1, $id, 0, 'v');
 	$item_cost = $temp['price'];
 }
+
 // some preliminary information
 $sql = "select id, sheet_name, revision, default_sheet, default_levels from " . TABLE_PRICE_SHEETS . " 
 	where inactive = '0' and type = '" . $type . "' and 
@@ -100,8 +101,6 @@ while (!$result->EOF) {
 }
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', $type == 'v' ? BOX_PURCHASE_PRICE_SHEETS : BOX_SALES_PRICE_SHEETS);
 ?>
