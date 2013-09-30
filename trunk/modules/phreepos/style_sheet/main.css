@@ -154,7 +154,7 @@ html>body fieldset#customer_div ol li label input{
 
 html>body table#item_table{
     position:absolute; 
-    top:140px;
+    top:170px;
     z-index:-1;
 }
 
