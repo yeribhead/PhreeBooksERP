@@ -1380,6 +1380,7 @@ class journal {
 	if ($this->purchase_invoice_id <> '') {	// entered a so/po/invoice value, check for dups
 	  switch ($this->journal_id) { // allow for duplicates in the following journals
 		case 18: 
+		case 19: // for the deposit part of POS 
 		  $messageStack->debug(" specified ID and dups allowed, returning OK.");
 		  return true; // allow for duplicate deposit ticket ID's
 		default: // continue
