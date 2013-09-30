@@ -383,8 +383,8 @@ function fillOrder(xml) {
 
 function accountGuess(force) {
   if (!force) {
-	  AccountList();
-	  return;
+	AccountList();
+	return;
   } 
   var warn = true;
   var firstguess  = document.getElementById('copy_search').value; 
@@ -393,6 +393,7 @@ function accountGuess(force) {
 	  guess = firstguess;
   }
   // test for data already in the form
+  if (guess == '') return alert('Please ender a guess to search for the contact!');
   if (guess != text_search && guess != '') {
     if (document.getElementById('bill_acct_id').value ||
         document.getElementById('bill_primary_name').value != default_array[0]) {
@@ -431,14 +432,15 @@ function AccountList(currObj) {
 	if( firstguess != secondguess && firstguess != text_search && firstguess != ''){
 		  guess = firstguess;
 	}
-  window.open("index.php?module=contacts&page=popup_accts&type="+account_type+"&form=orders&fill=bill&jID=19&search_text="+guess,"accounts","width=850px,height=550px,resizable=1,scrollbars=1,top=150,left=100");
+	window.open("index.php?module=contacts&page=popup_accts&type="+account_type+"&form=orders&fill=bill&jID=19&search_text="+guess,"accounts","width=850px,height=550px,resizable=1,scrollbars=1,top=150,left=100");
 }
 
 function InventoryList(rowCnt) {
-	var storeID = document.getElementById('store_id').value;
-	var sku     = document.getElementById('sku').value;
-	var cID     = document.getElementById('bill_acct_id').value;
-	window.open("index.php?module=inventory&page=popup_inv&type="+account_type+"&rowID="+rowCnt+"&storeID="+storeID+"&cID="+cID+"&search_text="+sku,"inventory","width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
+	var url     = "index.php?module=inventory&page=popup_inv&type="+account_type+"&rowID="+rowCnt;
+	if ($("bill_acct_id").val()) url += "&cID="+$("bill_acct_id").val();
+	if ($("store_id").val())     url += "&storeID="+$("store_id").val();
+	if ($("sku").val())          url += "&search_text="+$("sku").val();
+	window.open(url, "inventory", "width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
 function serialList(rowID) {

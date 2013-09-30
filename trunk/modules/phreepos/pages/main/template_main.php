@@ -41,7 +41,7 @@ $toolbar->icon_list['open']['show']     = false;
 $toolbar->icon_list['delete']['show']   = false;
 $toolbar->icon_list['save']['show']     = false;
 $toolbar->icon_list['print']['show']    = false;
-$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . 'jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
+$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . '&jID='.JOURNAL_ID, 'SSL') . '\'"', 2);
 if ($security_level > 1) {
   $toolbar->add_icon('pos_return', 'onclick="submitToDo(\'pos_return\')"', 50);
   $toolbar->icon_list['pos_return']['icon'] = 'actions/document-save-as.png';
@@ -181,7 +181,7 @@ echo $toolbar->build_toolbar();
 <div id="search_customer" >
 <?php 
   echo ORD_ACCT_ID . ' ' . html_input_field('copy_search', isset($order->short_name) ? $order->short_name : TEXT_SEARCH, 'size="21" maxlength="20" title="' . TEXT_SEARCH . '" onchange="accountGuess(true)"');
-  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="accountGuess(false)"').'<br>'. chr(10);  
+  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="accountGuess(true)"').'<br>'. chr(10);  
   echo html_input_field('copy_bill_primary_name',$order->bill_primary_name, 'size="33" maxlength="32" onfocus="clearField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')" onblur="setField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')"', true).'<br>'. chr(10);
   echo html_button_field('customer_popup_buttom', TEXT_SELECT_CUSTOMER, 'onclick="popupContact()"').'<br>'. chr(10);?> 
 </div>
