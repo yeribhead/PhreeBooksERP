@@ -1091,7 +1091,7 @@ function recalculateCurrencies() {
   } else {
 	numRows = document.getElementById('item_table').rows.length/2;
   }
-  for (var i=1; i<numRows; i++) {
+  for (var i=1; i<(numRows+1); i++) {
 	itemTotal = parseFloat(cleanCurrency(document.getElementById('total_'+i).value, currentCurrency));
 	if (isNaN(itemTotal)) continue;
 	workingTotal = itemTotal / currentValue;
@@ -1143,19 +1143,6 @@ function loadSkuDetails(iID, rowCnt) {
 		sku = document.getElementById('sku_'+rowCnt).value; // read the search field as the real value	  
 	}
 	if (sku == text_search) return;
-	// add new row
-	var element =  document.getElementById('sku_'+rowCnt+1);
-	if (typeof(element) == 'undefined' || element == null) {
-		if (single_line_list == '1') {
-			tempRowCnt = document.getElementById('item_table').rows.length;
-		} else {
-			tempRowCnt = parseInt((document.getElementById('item_table').rows.length/2));
-		}
-		if(document.getElementById('sku_'+tempRowCnt).value != text_search ){
-			var value = addInvRow();
-			document.getElementById('sku_'+value).focus();
-		}
-	}
   var cID = document.getElementById('bill_acct_id').value;
   var bID = document.getElementById('store_id').value;
   switch (journalID) {
@@ -1271,6 +1258,19 @@ function fillInventory(sXml) {
   $(xml).find("stock_note").each(function() {
 	text += $(this).find("text_line").text() + "\n";
   });
+	// add new row
+	var element =  document.getElementById('sku_'+rowCnt+1);
+	if (typeof(element) == 'undefined' || element == null) {
+		if (single_line_list == '1') {
+			tempRowCnt = document.getElementById('item_table').rows.length;
+		} else {
+			tempRowCnt = parseInt((document.getElementById('item_table').rows.length/2));
+		}
+		if(document.getElementById('sku_'+tempRowCnt).value != text_search ){
+			var value = addInvRow();
+			document.getElementById('sku_'+value).focus();
+		}
+	}
   if (text) alert(text);
 }
 
