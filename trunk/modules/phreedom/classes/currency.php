@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -64,11 +63,12 @@ class currency {
 
 	if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
 	  // first check to see if there are any general ledger entries
-	  $result = $db->Execute("select id from " . TABLE_JOURNAL_MAIN . " limit 1");
+	  $result = $db->Execute("SELECT id FROM " . TABLE_JOURNAL_MAIN . " LIMIT 1");
 	  if ($result->RecordCount() > 0) {
 		$messageStack->add_session(SETUP_ERROR_CANNOT_CHANGE_DEFAULT,'error');
 	  } else {
 	    write_configure('DEFAULT_CURRENCY', db_input($code));
+		db_perform($this->db_table, array('value' => 1), 'update', "code='$code'"); // change default exc rate to 1
 	    $db->Execute("alter table " . TABLE_JOURNAL_MAIN . " 
 			change currencies_code currencies_code CHAR(3) NOT NULL DEFAULT '" . db_input($code) . "'");
 		$this->def_currency = db_input($code);
