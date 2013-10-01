@@ -162,21 +162,21 @@ class splitPageResults {
 	    if ($this->total_num_pages > 1) {
 	        $display_links = '';
 	        if ($this->current_page_number > 1) {
-			  	$display_links .= html_icon('actions/media-skip-backward.png', TEXT_GO_FIRST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_first', 'SSL') . '\'" style="cursor:pointer;"');
-			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', TEXT_GO_PREVIOUS, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_previous', 'SSL') . '\'" style="cursor:pointer;"');
+			  	$display_links .= html_icon('actions/media-skip-backward.png', TEXT_GO_FIRST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_first', 'SSL') . '\'" style="cursor:pointer;"');
+			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', TEXT_GO_PREVIOUS, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_previous', 'SSL') . '\'" style="cursor:pointer;"');
 	        } else {
 			  	$display_links .= html_icon('actions/media-skip-backward.png', '', 'small', '');
 			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', '', 'small', '');
 	        }
 	        if (!$this->jump_page_displayed) { // only diplay pull down once (the rest are not read by browser)
-			  	$display_links .= sprintf(TEXT_RESULT_PAGE, html_pull_down_menu($page_name, $pages_array, $this->current_page_number, 'onchange="jumpToPage(\'' . gen_get_all_get_params(array('list', 'action')) . 'action=go_page\')"'), $this->total_num_pages);
+			  	$display_links .= sprintf(TEXT_RESULT_PAGE, html_pull_down_menu($page_name, $pages_array, $this->current_page_number, 'onchange="jumpToPage(\'' . gen_get_all_get_params(array('list', 'action')) . '&action=go_page\')"'), $this->total_num_pages);
 			  	$this->jump_page_displayed = true;
 			} else {
 				$display_links .= sprintf(TEXT_RESULT_PAGE, $this->current_page_number, $this->total_num_pages);
 			}
 	        if (($this->current_page_number < $this->total_num_pages) && ($this->total_num_pages != 1)) {
-				$display_links .= html_icon('actions/media-playback-start.png', TEXT_GO_NEXT, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_next', 'SSL') . '\'" style="cursor:pointer;"');
-				$display_links .= html_icon('actions/media-skip-forward.png', TEXT_GO_LAST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_last', 'SSL') . '\'" style="cursor:pointer;"');
+				$display_links .= html_icon('actions/media-playback-start.png', TEXT_GO_NEXT, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_next', 'SSL') . '\'" style="cursor:pointer;"');
+				$display_links .= html_icon('actions/media-skip-forward.png', TEXT_GO_LAST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_last', 'SSL') . '\'" style="cursor:pointer;"');
 	        } else {
 				$display_links .= html_icon('actions/media-playback-start.png', '', 'small', '');
 				$display_links .= html_icon('actions/media-skip-forward.png', '', 'small', '');
