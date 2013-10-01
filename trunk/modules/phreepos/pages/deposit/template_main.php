@@ -28,7 +28,7 @@ echo html_hidden_field('bill_address_id', $order->bill_address_id) . chr(10);
 echo html_hidden_field('bill_telephone1', $order->bill_telephone1) . chr(10);
 echo html_hidden_field('bill_email',      $order->bill_email) . chr(10);
 echo html_hidden_field('gl_disc_acct_id', '') . chr(10);
-if (JOURNAL_ID == 21) echo html_hidden_field('shipper_code',    '') . chr(10);
+if (JOURNAL_ID == 20) echo html_hidden_field('shipper_code',    '') . chr(10);
 
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
@@ -47,8 +47,8 @@ if (count($extra_toolbar_buttons) > 0) {
 
 // add the help file index and build the toolbar
 switch (JOURNAL_ID) {
-  case 19: $toolbar->add_help('07.05'); break;
-  case 21: $toolbar->add_help('07.05'); break;
+  case 18: $toolbar->add_help('07.05'); break;
+  case 20: $toolbar->add_help('07.05'); break;
 }
 echo $toolbar->build_toolbar(); 
 
@@ -65,7 +65,7 @@ echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'al
 ?>
 	  </td>
 	  <td class="main" align="right">
-	    <?php echo ((JOURNAL_ID == 21 || !isset($_SESSION['admin_encrypt'])) ? '&nbsp;' : BNK_TEXT_SAVE_PAYMENT_INFO . html_checkbox_field('save_payment', '1', ($order->save_payment ? true : false), '', '')); ?>
+	    <?php echo ((JOURNAL_ID == 20 || !isset($_SESSION['admin_encrypt'])) ? '&nbsp;' : BNK_TEXT_SAVE_PAYMENT_INFO . html_checkbox_field('save_payment', '1', ($order->save_payment ? true : false), '', '')); ?>
 	  </td>
 	  <td>
 	    <?php echo html_pull_down_menu('payment_id', gen_null_pull_down(), '', 'style="visibility:hidden" onchange=\'fillPayment()\'') . chr(10); ?>
@@ -74,7 +74,7 @@ echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'al
 	<tr>
 	  <td class="main" valign="top">
 <?php 
-echo (JOURNAL_ID == 21 ? TEXT_REMIT_TO : TEXT_BILL_TO) . chr(10);
+echo (JOURNAL_ID == 20 ? TEXT_REMIT_TO : TEXT_BILL_TO) . chr(10);
 echo            html_pull_down_menu('bill_to_select',    gen_null_pull_down(), '', 'onchange=\'fillAddress("bill")\'') . chr(10);
 echo '<br />' . html_input_field('bill_primary_name',    $order->bill_primary_name, 'size="33" maxlength="32" onfocus="clearField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')" onblur="setField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')"') . chr(10);
 echo '<br />' . html_input_field('bill_contact',         $order->bill_contact, 'size="33" maxlength="32" onfocus="clearField(\'bill_contact\', \'' . GEN_CONTACT . '\')" onblur="setField(\'bill_contact\', \'' . GEN_CONTACT . '\')"') . chr(10);
@@ -89,7 +89,7 @@ echo '<br />' . html_pull_down_menu('bill_country_code', gen_get_countries(), $o
 	  <td valign="top">
 		<table border="0" cellspacing="0" cellpadding="0">
 		  <tr>
-			<td class="main" align="right"><?php echo ((JOURNAL_ID == 19) ? BNK_TEXT_DEPOSIT_ID : BNK_TEXT_PAYMENT_ID) . '&nbsp;'; ?></td>
+			<td class="main" align="right"><?php echo ((JOURNAL_ID == 18) ? BNK_TEXT_DEPOSIT_ID : BNK_TEXT_PAYMENT_ID) . '&nbsp;'; ?></td>
 			<td class="main" align="right"><?php echo html_input_field('purchase_invoice_id', $next_inv_ref, 'style="text-align:right"'); ?></td>
 		  </tr>
 		  <tr>
@@ -117,7 +117,7 @@ echo '<br />' . html_pull_down_menu('bill_country_code', gen_get_countries(), $o
 		  </tr>
 		</table>
 	  </td>
-<?php if (JOURNAL_ID == 19) { ?>
+<?php if (JOURNAL_ID == 18) { ?>
 	  <td valign="top">
 	    <fieldset>
           <legend><?php echo TEXT_PAYMENT_METHOD; ?></legend>
@@ -142,7 +142,7 @@ echo '<br />' . html_pull_down_menu('bill_country_code', gen_get_countries(), $o
 		  </div>
 		</fieldset>
 	  </td>
-<?php } elseif (JOURNAL_ID == 21) { ?>
+<?php } elseif (JOURNAL_ID == 20) { ?>
 	  <td align="right" valign="top">
 		<table border="0" cellspacing="0" cellpadding="0">
 		  <tr>
@@ -155,7 +155,7 @@ echo '<br />' . html_pull_down_menu('bill_country_code', gen_get_countries(), $o
 		  </tr>
 		</table>
 	  </td>
-<?php } // end if (JOURNAL_ID == 21) ?>
+<?php } // end if (JOURNAL_ID == 20) ?>
 	</tr>
   </table>
 </div>

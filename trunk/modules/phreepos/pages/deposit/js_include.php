@@ -63,7 +63,7 @@ function check_form() {
 
   var todo = document.getElementById('todo').value;
 
-  if (journalID == '19' && (todo == 'save' || todo == 'print')) { // only check payment if saving
+  if (journalID == '18' && (todo == 'save' || todo == 'print')) { // only check payment if saving
     var index = document.getElementById('shipper_code').selectedIndex;
     var payment_method = document.getElementById('shipper_code').options[index].value;
 	<?php
