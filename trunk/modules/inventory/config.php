@@ -88,7 +88,7 @@ $menu[] = array(
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=assemblies', 'SSL'),
   'params'      => '',
 );
-if (defined(ENABLE_MULTI_BRANCH) && ENABLE_MULTI_BRANCH == true) $menu[] = array(
+if (defined('ENABLE_MULTI_BRANCH') && ENABLE_MULTI_BRANCH == true) $menu[] = array(
   'text'        => BOX_INV_TRANSFER, 
   'heading'     => MENU_HEADING_INVENTORY, 
   'rank'        => 80, 
