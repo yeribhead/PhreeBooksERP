@@ -174,8 +174,6 @@ $query_split  = new splitPageResults($_REQUEST['list'], '');
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, $page_title));
 

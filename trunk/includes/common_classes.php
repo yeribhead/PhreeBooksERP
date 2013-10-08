@@ -154,6 +154,7 @@ class splitPageResults {
 		$this->total_num_pages		= ceil($this->total_num_rows / $this->max_rows_per_page);
 		if ($this->total_num_pages == 0) $this->total_num_pages = 1;
       	if ($this->total_num_pages < $this->current_page_number) $this->current_page_number = $this->total_num_pages;
+      	$_REQUEST['list'] = $this->current_page_number;
     }
     
     function display_links($page_name = 'list') {

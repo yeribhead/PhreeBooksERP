@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -32,10 +31,6 @@ echo $toolbar->build_toolbar();
 // Build the page
 ?>
 <h1><?php echo HEADING_TITLE_SEARCH_INFORMATION; ?></h1>
-<?php if ($query_numrows > 0) { ?>
-<div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_RESULTS); ?></div>
-<?php } ?>
 <table class="ui-widget" style="border-style:none;margin-left:auto;margin-right:auto">
  <thead class="ui-widget-header">
   <tr>
@@ -48,54 +43,56 @@ echo $toolbar->build_toolbar();
  <tbody class="ui-widget-content">
   <tr>
     <td><?php echo TEXT_TRANSACTION_TYPE; ?></td>
-    <td colspan="3"><?php echo html_pull_down_menu('journal_id', gen_build_pull_down($journal_choices), $_REQUEST['journal_id']); ?></td>
+    <td colspan="3"><?php echo html_pull_down_menu('search_journal_id', gen_build_pull_down($journal_choices), $_SESSION['search_journal_id']); ?></td>
 	<td rowspan="3" align="right"><?php echo html_icon('actions/view-refresh.png', TEXT_RESET, 'large', 'style="cursor:pointer;" onclick="submitToDo(\'reset\')"');
     echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'large', 'style="cursor:pointer;" onclick="submitToDo(\'search\')"'); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_TRANSACTION_DATE; ?></td>
-    <td><?php echo html_pull_down_menu('date_id', gen_build_pull_down($DateChoices), $_REQUEST['date_id'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_date_id', gen_build_pull_down($DateChoices), $_SESSION['search_date_id'], $params = ''); ?></td>
     <td><?php echo html_calendar_field($cal_from); ?></td>
     <td><?php echo html_calendar_field($cal_to); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_REFERENCE_NUMBER; ?></td>
-    <td><?php echo html_pull_down_menu('ref_id', gen_build_pull_down($choices), $_REQUEST['ref_id'], $params = ''); ?></td>
-    <td><?php echo html_input_field('ref_id_from', $_REQUEST['ref_id_from'], $params = ''); ?></td>
-    <td><?php echo html_input_field('ref_id_to', $_REQUEST['ref_id_to'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_ref_id', gen_build_pull_down($choices), $_SESSION['search_ref_id'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_ref_from', $_SESSION['search_ref_from'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_ref_to', $_SESSION['search_ref_to'], $params = ''); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_CUST_VEND_ACCT; ?></td>
-    <td><?php echo html_pull_down_menu('account_id', gen_build_pull_down($choices), $_REQUEST['account_id'], $params = ''); ?></td>
-    <td><?php echo html_input_field('account_id_from', $_REQUEST['account_id_from'], $params = ''); ?></td>
-    <td><?php echo html_input_field('account_id_to', $_REQUEST['account_id_to'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_account_id', gen_build_pull_down($choices), $_SESSION['search_account_id'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_account_from', $_SESSION['search_account_from'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_account_to', $_SESSION['search_account_to'], $params = ''); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_INVENTORY_ITEM; ?></td>
-    <td><?php echo html_pull_down_menu('sku_id', gen_build_pull_down($choices), $_REQUEST['sku_id'], $params = ''); ?></td>
-    <td><?php echo html_input_field('sku_id_from', $_REQUEST['sku_id_from'], $params = ''); ?></td>
-    <td><?php echo html_input_field('sku_id_to', $_REQUEST['sku_id_to'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_sku_id', gen_build_pull_down($choices), $_SESSION['search_sku_id'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_sku_from', $_SESSION['search_sku_from'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_sku_to', $_SESSION['search_sku_to'], $params = ''); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_TRANSACTION_AMOUNT; ?></td>
-    <td><?php echo html_pull_down_menu('amount_id', gen_build_pull_down($choices), $_REQUEST['amount_id'], $params = ''); ?></td>
-    <td><?php echo html_input_field('amount_id_from',($_REQUEST['amount_id_from'])? $currencies->precise($_REQUEST['amount_id_from']):'', $params = ''); ?></td>
-    <td><?php echo html_input_field('amount_id_to', ($_REQUEST['amount_id_to']) ? $currencies->precise($_REQUEST['amount_id_to']):'', $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_amount_id', gen_build_pull_down($choices), $_SESSION['search_amount_id'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_amount_from',($_SESSION['search_amount_from'])? $currencies->precise($_SESSION['search_amount_from']):'', $params = ''); ?></td>
+    <td><?php echo html_input_field('search_amount_to', ($_SESSION['search_amount_to']) ? $currencies->precise($_SESSION['search_amount_to']):'', $params = ''); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_GENERAL_LEDGER_ACCOUNT; ?></td>
-    <td><?php echo html_pull_down_menu('gl_acct_id', gen_build_pull_down($choices), $_REQUEST['gl_acct_id'], $params = ''); ?></td>
-    <td><?php echo html_pull_down_menu('gl_acct_id_from', $gl_array_list, $_REQUEST['gl_acct_id_from']); ?></td>
-    <td><?php echo html_pull_down_menu('gl_acct_id_to', $gl_array_list, $_REQUEST['gl_acct_id_to']); ?></td>
+    <td><?php echo html_pull_down_menu('search_gl_acct_id', gen_build_pull_down($choices), $_SESSION['search_gl_acct_id'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_gl_acct_from', $gl_array_list, $_SESSION['search_gl_acct_from']); ?></td>
+    <td><?php echo html_pull_down_menu('search_gl_acct_to', $gl_array_list, $_SESSION['search_gl_acct_to']); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_JOURNAL_RECORD_ID; ?></td>
-    <td><?php echo html_pull_down_menu('main_id', gen_build_pull_down($choices), $_REQUEST['main_id'], $params = ''); ?></td>
-    <td><?php echo html_input_field('main_id_from', $_REQUEST['main_id_from'], $params = ''); ?></td>
-    <td><?php echo html_input_field('main_id_to', $_REQUEST['main_id_to'], $params = ''); ?></td>
+    <td><?php echo html_pull_down_menu('search_main_id', gen_build_pull_down($choices), $_SESSION['search_main_id'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_main_from', $_SESSION['search_main_from'], $params = ''); ?></td>
+    <td><?php echo html_input_field('search_main_to', $_SESSION['search_main_to'], $params = ''); ?></td>
   </tr>
  </tbody>
 </table>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_RESULTS); ?></div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php echo $list_header; ?></tr>
@@ -104,7 +101,7 @@ echo $toolbar->build_toolbar();
 	<?php
 	$odd = true;
 	while (!$query_result->EOF) {
-	  $jID = (int)$query_result->fields['journal_id'];
+	  $jID = (int)$query_result->fields['search_journal_id'];
 	  switch ($jID) {
 	    case  2: 
 		  $security_level = $_SESSION['admin_security'][SECURITY_ID_JOURNAL_ENTRY]; 
@@ -215,8 +212,6 @@ echo $toolbar->build_toolbar();
 ?>
  </tbody>
 </table>
-<?php if ($query_numrows > 0) { ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
 <div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_RESULTS); ?></div>
-<?php } ?>
 </form>
