@@ -54,7 +54,7 @@ switch ($action) {
 	gen_add_audit_log(PRICE_SHEETS_LOG_BULK . TEXT_UPDATE);
 	break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
