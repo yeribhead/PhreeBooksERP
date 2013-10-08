@@ -101,7 +101,7 @@ echo $toolbar->build_toolbar();
 	<?php
 	$odd = true;
 	while (!$query_result->EOF) {
-	  $jID = (int)$query_result->fields['search_journal_id'];
+	  $jID = (int)$query_result->fields['journal_id'];
 	  switch ($jID) {
 	    case  2: 
 		  $security_level = $_SESSION['admin_security'][SECURITY_ID_JOURNAL_ENTRY]; 

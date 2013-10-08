@@ -39,7 +39,7 @@ for ($i = 1; $i < 30; $i++) {
 	$journal_choices[$i] = sprintf(TEXT_JID_ENTRY, constant('GEN_ADM_TOOLS_J' . $j_constant));
   }
 }
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+if(!isset($_REQUEST['list']) || isset($_POST['search_main_id'])) $_REQUEST['list'] = 1;
 $_SESSION['search_date_id']      = $_REQUEST['search_date_id']     ? $_REQUEST['search_date_id']     : (isset($_SESSION['search_date_id'])     ? $_SESSION['search_date_id']     : 'l'); // default to current period
 $_SESSION['search_date_from']    = $_REQUEST['search_date_from']   ? $_REQUEST['search_date_from']   : (isset($_SESSION['search_date_from'])   ? $_SESSION['search_date_from']   : gen_locale_date(CURRENT_ACCOUNTING_PERIOD_START));
 $_SESSION['search_date_to']      = $_REQUEST['search_date_to']     ? $_REQUEST['search_date_to']     : (isset($_SESSION['search_date_to'])     ? $_SESSION['search_date_to']     : gen_locale_date(CURRENT_ACCOUNTING_PERIOD_END));
@@ -180,7 +180,7 @@ $query_raw = "select SQL_CALC_FOUND_ROWS distinct m.id, m.journal_id, m.post_dat
 	m.purchase_invoice_id, m.bill_primary_name, m.bill_acct_id   
 	from " . TABLE_JOURNAL_MAIN . " m inner join " . TABLE_JOURNAL_ITEM . " i 
 	on m.id = i.ref_id " . $crit . " order by $disp_order";
-
+//echo 'sql = '; print_r($query_raw); echo '<br>';
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');

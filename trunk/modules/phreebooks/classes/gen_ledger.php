@@ -816,7 +816,7 @@ class journal {
 	  if (ENABLE_MULTI_BRANCH) $sql .= " and store_id = " . $this->store_id;
 	  $sql .= " order by post_date";
 	  $result = $db->Execute($sql);
-	  $working_qty = $item['qty'];
+	  $working_qty = $item['qty'] + $defaults['quantity_on_hand'];
 	  while (!$result->EOF) {
 		$working_qty -= $result->fields['qty'];
 		if ($working_qty >= 0) { // repost this journal entry and remove the owed record since we will repost all the negative quantities necessary
