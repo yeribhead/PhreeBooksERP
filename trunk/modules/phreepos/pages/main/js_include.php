@@ -149,7 +149,7 @@ function currencyType(id, text, value, decimal_point, thousands_point, decimal_p
 	  this.decimal_precise = decimal_precise;
 }
 
-function till (id, restrictCurrency, currenciesCode, printer, startingLine, closingLine, openDrawer, defaultTax) {
+function till (id, restrictCurrency, currenciesCode, printer, startingLine, closingLine, openDrawer, defaultTax, storeID) {
 	  this.id   		    = id;
 	  this.restrictCurrency = restrictCurrency;
 	  this.currenciesCode 	= currenciesCode;
@@ -158,7 +158,8 @@ function till (id, restrictCurrency, currenciesCode, printer, startingLine, clos
 	  this.closingLine		= closingLine;	
 	  this.openDrawer		= openDrawer;
 	  this.defaultTax		= defaultTax;
-}
+	  this.storeID	        = storeID;
+	  }
 
 function ot_option (till_id, id, type, use_tax, taxable, description) {
 	this.id   			= id;
@@ -437,9 +438,10 @@ function AccountList(currObj) {
 
 function InventoryList(rowCnt) {
 	var url     = "index.php?module=inventory&page=popup_inv&type="+account_type+"&rowID="+rowCnt;
-	if ($("bill_acct_id").val()) url += "&cID="+$("bill_acct_id").val();
-	if ($("store_id").val())     url += "&storeID="+$("store_id").val();
-	if ($("sku").val())          url += "&search_text="+$("sku").val();
+	if ($("#bill_acct_id").val()) url += "&cID="+$("#bill_acct_id").val();
+	if ($("#sku").val())          url += "&search_text="+$("#sku").val();
+	if ($("#store_id").val())     url += "&storeID="+$("#store_id").val();
+alert('popup inv store_id = '+$("#store_id").val()+' and url = '+url);
 	window.open(url, "inventory", "width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
@@ -1026,6 +1028,8 @@ function changeOfTill(){
 	if (applet.getVersion() != '1.4.9' ) alert('update jzebra');
 	set_ot_options();
 	document.getElementById('ot_till_id').value = tillId ;
+	alert('settings stroe_id = '+tills[tillId].storeID);
+	$("#store_id").val(tills[tillId].storeID);
 }
 
 function monitorPrinting() {

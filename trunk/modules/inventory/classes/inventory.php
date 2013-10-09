@@ -343,6 +343,7 @@ class inventory {
 		$sql_data_array['last_update'] 			= date('Y-m-d H-i-s');
 		if ($_SESSION['admin_security'][SECURITY_ID_PURCHASE_INVENTORY] > 1){
 			$sql_data_array['item_cost'] = $this->store_purchase_array();	
+			$sql_data_array['vendor_id'] = $this->min_vendor_id;
 		} else{
 			if (isset($sql_data_array['item_cost'])) unset($sql_data_array['item_cost']);
 		}
@@ -511,6 +512,7 @@ class inventory {
 					);// mark delete by default overwrite later if 
 				}
 				$lowest_cost = min($lowest_cost, $sql_data_array['item_cost']);
+				if ($lowest_cost == $sql_data_array['item_cost']) $this->min_vendor_id = $sql_data_array['vendor_id'];
 			}
 			$i++;
 		}

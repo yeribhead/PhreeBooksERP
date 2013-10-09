@@ -282,7 +282,7 @@ class tills {
 		$startingline = rtrim($startingline, '","');
 		$closingline  = rtrim($closingline , '","');
 		$opendrawer   = rtrim($opendrawer  , '","');
-		$js_tills .= 'tills["' . $result->fields['till_id'] . '"] = new till("' . $result->fields['till_id'] . '", "' . $result->fields['restrict_currency'] . '", "' . $result->fields['currencies_code'] . '", "' . $result->fields['printer_name'] . '", Array("' . $startingline . '"), Array("' . $closingline . '"), Array("' . $opendrawer . '" ), "' . $result->fields['tax_id'] . '");' . chr(10);
+		$js_tills .= 'tills["' . $result->fields['till_id'] . '"] = new till("' . $result->fields['till_id'] . '", "' . $result->fields['restrict_currency'] . '", "' . $result->fields['currencies_code'] . '", "' . $result->fields['printer_name'] . '", Array("' . $startingline . '"), Array("' . $closingline . '"), Array("' . $opendrawer . '" ), "' . $result->fields['tax_id'] . '", "' . $result->fields['store_id'] . '");' . chr(10);
 		$result->MoveNext();
 	}
 	return $js_tills;

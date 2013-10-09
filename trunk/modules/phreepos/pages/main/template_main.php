@@ -31,7 +31,7 @@ echo html_hidden_field('printed',            $order->printed) . chr(10);
 echo html_hidden_field('purchase_invoice_id',$order->purchase_invoice_id) . chr(10);
 echo html_hidden_field('post_date',          $order->post_date) . chr(10);
 echo html_hidden_field('gl_acct_id',         $order->gl_acct_id) . chr(10);
-echo html_hidden_field('store_id', $order->store_id) . chr(10);
+echo html_hidden_field('store_id',           $order->store_id) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('display_currency', DEFAULT_CURRENCY) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('currencies_value', '1') . chr(10);
 
