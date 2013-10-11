@@ -267,7 +267,7 @@ td.bgpctbar
 <?php // ****************************** BOF - Mods by PhreeSoft ****************************************
 //if ($include_header) { require(DIR_FS_INCLUDES . 'header.php'); }
 
-echo html_form('restore', FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')) . 'action=restore', 'post', 'enctype="multipart/form-data"', true) . chr(10);
+echo html_form('restore', FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')) . '&action=restore', 'post', 'enctype="multipart/form-data"', true) . chr(10);
 
 // include hidden fields
 echo html_hidden_field('todo', '') . chr(10);
