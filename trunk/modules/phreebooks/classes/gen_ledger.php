@@ -681,11 +681,10 @@ class journal {
 		case 19:
 		case 21:
 		  // check to see if any future postings relied on this record, queue to re-post if so.
-		  $sql = "select id from " . TABLE_INVENTORY_HISTORY . " 
-			where ref_id = " . $this->id . " and sku = '" . $this->journal_rows[$i]['sku'] . "'";
+		  $sql = "SELECT id FROM ".TABLE_INVENTORY_HISTORY." WHERE ref_id=$this->id AND sku='".$this->journal_rows[$i]['sku']."'";
 		  $result = $db->Execute($sql);
 		  if ($result->RecordCount() > 0) {
-			$sql = "select journal_main_id from " . TABLE_INVENTORY_COGS_USAGE . " where inventory_history_id = " . $result->fields['id'];
+			$sql = "SELECT journal_main_id FROM ".TABLE_INVENTORY_COGS_USAGE." WHERE inventory_history_id=".$result->fields['id'];
 			$result = $db->Execute($sql);
 			while (!$result->EOF) {
 			  if ($result->fields['journal_main_id'] <> $this->id) {
@@ -857,13 +856,13 @@ class journal {
 	  $history_ids = array(); // the id's used to calculated cogs from the inventory history table
 	  if ($defaults['cost_method'] == 'a') $avg_cost = $this->fetch_avg_cost($item['sku']);
 	  if ($defaults['serialize']) { // there should only be one record with one remaining quantity
-	    $sql = "select id, remaining, unit_cost from " . TABLE_INVENTORY_HISTORY . " 
-		  where sku = '" . $item['sku'] . "' and remaining > 0 and serialize_number = '" . $item['serialize_number'] . "'";
+	    $sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." 
+		  WHERE sku='".$item['sku']."' AND remaining > 0 AND serialize_number='".$item['serialize_number']."'";
 		$result = $db->Execute($sql);
 		if ($result->RecordCount() <> 1) return $this->fail_message(GL_ERROR_SERIALIZE_COGS); 
 	  } else {
-		$sql = "select id, remaining, unit_cost from " . TABLE_INVENTORY_HISTORY . " where sku = '" . $item['sku'] . "' and remaining > 0";
-		if (ENABLE_MULTI_BRANCH) $sql .= " and store_id = '" . $this->store_id . "'";
+		$sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." WHERE sku='".$item['sku']."' AND remaining > 0";
+		if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
 		$sql .= " order by id" . ($defaults['cost_method'] == 'l' ? ' DESC' : '');
 		$result = $db->Execute($sql);
 	  }
@@ -902,7 +901,7 @@ class journal {
 		// save the history record id used along with the quantity for roll-back purposes
 		$history_ids[] = array('id' => $result->fields['id'], 'qty' => $cost_qty); // how many from what id
 		$cogs += $cost * $cost_qty;
-		$sql = "update " . TABLE_INVENTORY_HISTORY . " set remaining = remaining - " . $cost_qty . " where id = " . $result->fields['id'];
+		$sql = "UPDATE ".TABLE_INVENTORY_HISTORY." SET remaining = remaining - $cost_qty WHERE id=".$result->fields['id'];
 		$db->Execute($sql);
 		if ($exit_loop) break;
 		$result->MoveNext();
@@ -999,9 +998,10 @@ class journal {
 
   function fetch_avg_cost($sku) {
 	global $db, $messageStack;
-	$sql = "select sum(unit_cost * remaining) as cost, sum(remaining) as qty from " . TABLE_INVENTORY_HISTORY . " 
-		where sku = '" . $sku . "' and remaining > 0";
-	if (ENABLE_MULTI_BRANCH) $sql .= " and store_id = '" . $this->store_id . "'";
+	$messageStack->debug("\n   Entering fetch_avg_cost for sku: $sku ... ");
+	$sql = "SELECT SUM(unit_cost * remaining) AS cost, SUM(remaining) AS qty FROM ".TABLE_INVENTORY_HISTORY." 
+		WHERE sku='$sku' AND remaining > 0"; // " AND post_date <= '$this->post_date'"; 
+	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
 	$result = $db->Execute($sql);
 	if ($result->RecordCount() > 0 && $result->fields['qty'] <> 0) {
 	  $avg_cost = ($result->fields['cost'] / $result->fields['qty']);
@@ -1009,10 +1009,10 @@ class journal {
 	  return 0; // no records found, cost will be returned as zero
 	}
 	// now update remaining quantity in stock to new average cost value
-	$sql = "update " . TABLE_INVENTORY_HISTORY . " set unit_cost = '" . $avg_cost . "'  
-		where sku = '" . $sku . "' and remaining > 0";
-	if (ENABLE_MULTI_BRANCH) $sql .= " and store_id = '" . $this->store_id . "'";
+	$sql = "UPDATE ".TABLE_INVENTORY_HISTORY." SET unit_cost='$avg_cost' WHERE sku='$sku' AND remaining > 0";
+	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'"; // " AND post_date <= '$this->post_date'"; 
 	$result = $db->Execute($sql);
+	$messageStack->debug("Exiting fetch_avg_cost with cost = $avg_cost");
 	return $avg_cost;
   }
 
