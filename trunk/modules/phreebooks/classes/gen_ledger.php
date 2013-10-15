@@ -58,7 +58,7 @@ class journal {
 		while (true) {
 		  $id = array_shift($old_gl_entry->repost_ids);
 		  $messageStack->debug("\n\n  unPosting re-post Journal main id = " . $id);
-		  if(!$id) break; // no more to unPost, exit loop
+		  if (!$id) break; // no more to unPost, exit loop
 		  if (in_array($id, $this->repost_ids)) continue; // already has been unposted, skip
 		  $this->repost_ids[$id] = $id;
 		  $this->unPost_entry[$id] = new journal($id);
@@ -166,14 +166,33 @@ class journal {
 	$gl_type = NULL;
 	switch ($this->journal_id) {
 	  case  6: // Purchase/Receive Journal
+// @todo TBD - need to repost all records after (earliest) post date for inventory with average costing
+		$skus = array();
+	  	foreach ($this->journal_rows as $row) if ($row['sku'] <> '') $skus[] = $row['sku'];
+	  	if (sizeof($skus) > 0) {
+	  	  $result = $db->Execute("SELECT sku FROM ".TABLE_INVENTORY." WHERE sku IN ('".implode("', '", $skus)."') AND cost_method='a'");
+	  	  $askus = array();
+	  	  while (!$result->EOF) {
+	  		$askus[] = $result->fields['sku'];
+	  		$result->MoveNext();
+	  	  }
+	  	  if (sizeof($askus) > 0) {
+	  	  	$result = $db->Execute("SELECT ref_id FROM ".TABLE_JOURNAL_ITEM." WHERE sku IN ('".implode("', '", $askus)."') AND post_date > '$this->post_date'");
+	  	  	while (!$result->EOF) {
+		  	  $messageStack->debug("\n    check_for_re_post is queing average cost id = ".$result->fields['ref_id']);
+	  	  	  $this->repost_ids[$result->fields['ref_id']] = $result->fields['ref_id'];
+	  	  	  $result->MoveNext();
+	  	  	}
+	  	  }
+	  	}
+	  	// continue with more tests
 	  case  7: // Purchase Credit Memo Journal
 	  case 21: // Inventory Direct Purchase Journal
 	  case 12: // Sales/Invoice Journal
 	  case 13: // Sales Credit Memo Journal
 	  case 19: // POS Journal
 		// Check for payments or receipts made to this record that will need to be re-posted.
-		$sql = "select ref_id from " . TABLE_JOURNAL_ITEM . " 
-		  where so_po_item_ref_id = " . $this->id . " and gl_type in ('chk', 'pmt')";
+		$sql = "SELECT ref_id FROM ".TABLE_JOURNAL_ITEM." WHERE so_po_item_ref_id = $this->id AND gl_type in ('chk', 'pmt')";
 		$result = $db->Execute($sql);
 		while(!$result->EOF) {
 		  $messageStack->debug("\n    check_for_re_post is queing id = " . $result->fields['ref_id']);
@@ -647,7 +666,7 @@ class journal {
 	  case 21:
 		// Delete all owed cogs entries (will be re-added during post)
 		$db->Execute("delete from " . TABLE_INVENTORY_COGS_OWED . " where journal_main_id = " . $this->id);
-		if (!$this->rollback_COGS($this->journal_rows[$i]['serialize_number'])) return false;
+		if (!$this->rollback_COGS()) return false;
 		break;
 	  default:  // continue to unPost inventory
 	}
@@ -798,6 +817,10 @@ class journal {
 	  // if insert, enter SYSTEM ENTRY COGS cost only if inv on hand is negative
 	  // update will never happen because the entries are removed during the unpost operation.
 	  switch ($this->journal_id) {
+	  	case  6: 
+// @todo TBD - Need to calculate average cost if sku dictates to enter as the cost, to be used for all subsequent posts until more product received.
+		  if ($defaults['cost_method'] == 'a') $item['price'] = $this->calculate_avg_cost($item['sku'], $item['price'], $item['qty']);
+	  	  break;
 		case 12: // for negative sales/invoices and customer credit memos the price needs to be the last unit_cost, 
 		case 13: // not the invoice price (customers price)
 		  $item['price'] = $this->calculateCost($item['sku'], 1, $item['serialize_number']);
@@ -996,29 +1019,46 @@ class journal {
 	return $cogs;
   }
 
+  function calculate_avg_cost($sku = '', $price = 0, $qty = 1) {
+  	global $db, $messageStack;
+	$sql = "SELECT unit_cost, remaining FROM ".TABLE_INVENTORY_HISTORY." 
+		WHERE ref_id<>$this->id AND sku='$sku' AND remaining>0 AND post_date<='$this->post_date'";
+  	if ($this->store_id > 0) $sql .= " AND store_id='$this->store_id'";
+	$sql .= " ORDER BY post_date, id";
+  	$result = $db->Execute($sql);
+  	$total_stock = 0;
+  	$last_cost   = 0;
+  	while (!$result->EOF) {
+  		$total_stock += $result->fields['remaining'];
+  		$last_cost    = $result->fields['unit_cost']; // just keep the cost from the last recordas this keeps the avg value of the post date
+  		$result->MoveNext();
+  	}
+  	if ($total_stock == 0 && $qty == 0) return 0;
+  	$avg_cost = (($last_cost * $total_stock) + ($price * $qty)) / ($total_stock + $qty);
+  	return $avg_cost;
+  }
+
   function fetch_avg_cost($sku) {
 	global $db, $messageStack;
 	$messageStack->debug("\n   Entering fetch_avg_cost for sku: $sku ... ");
-	$sql = "SELECT SUM(unit_cost * remaining) AS cost, SUM(remaining) AS qty FROM ".TABLE_INVENTORY_HISTORY." 
-		WHERE sku='$sku' AND remaining > 0"; // " AND post_date <= '$this->post_date'"; 
+// @todo TBD - just pull the last received inventory history record and use that as average cost
+	$sql = "SELECT unit_cost, qty FROM ".TABLE_INVENTORY_HISTORY." WHERE sku='$sku' AND remaining>0 AND post_date<='$this->post_date'";
 	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
+	$sql .= " ORDER BY post_date DESC, id DESC LIMIT 1";
 	$result = $db->Execute($sql);
-	if ($result->RecordCount() > 0 && $result->fields['qty'] <> 0) {
-	  $avg_cost = ($result->fields['cost'] / $result->fields['qty']);
-	} else {
-	  return 0; // no records found, cost will be returned as zero
-	}
+	$avg_cost = $result->fields['unit_cost'] ? $result->fields['unit_cost'] : 0;
+// @todo TBD  - probably don't need this as the average cost is only valid for the last receive record and won't change until more stock is received.
 	// now update remaining quantity in stock to new average cost value
-	$sql = "UPDATE ".TABLE_INVENTORY_HISTORY." SET unit_cost='$avg_cost' WHERE sku='$sku' AND remaining > 0";
-	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'"; // " AND post_date <= '$this->post_date'"; 
-	$result = $db->Execute($sql);
-	$messageStack->debug("Exiting fetch_avg_cost with cost = $avg_cost");
+//	$sql = "UPDATE ".TABLE_INVENTORY_HISTORY." SET unit_cost='$avg_cost' WHERE sku='$sku' AND remaining > 0";
+//	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'"; // " AND post_date <= '$this->post_date'"; 
+//	$result = $db->Execute($sql);
+	$messageStack->debug("Exiting with cost = $avg_cost");
 	return $avg_cost;
   }
 
 	// Rolling back cost of goods sold required to unpost an entry involves only re-setting the inventory history.
 	// The cogs records and costing is reversed in the unPost_chart_balances function.
-  function rollback_COGS($serial_number = '') {
+  function rollback_COGS() {
 	global $db, $messageStack;
 	$messageStack->debug("\n    Rolling back COGS ... ");
 	// only calculate cogs for certain inventory_types
