@@ -441,7 +441,6 @@ function InventoryList(rowCnt) {
 	if ($("#bill_acct_id").val()) url += "&cID="+$("#bill_acct_id").val();
 	if ($("#sku").val())          url += "&search_text="+$("#sku").val();
 	if ($("#store_id").val())     url += "&storeID="+$("#store_id").val();
-alert('popup inv store_id = '+$("#store_id").val()+' and url = '+url);
 	window.open(url, "inventory", "width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
@@ -1028,7 +1027,6 @@ function changeOfTill(){
 	if (applet.getVersion() != '1.4.9' ) alert('update jzebra');
 	set_ot_options();
 	document.getElementById('ot_till_id').value = tillId ;
-	alert('settings stroe_id = '+tills[tillId].storeID);
 	$("#store_id").val(tills[tillId].storeID);
 }
 

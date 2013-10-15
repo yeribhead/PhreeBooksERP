@@ -166,7 +166,6 @@ class journal {
 	$gl_type = NULL;
 	switch ($this->journal_id) {
 	  case  6: // Purchase/Receive Journal
-// @todo TBD - need to repost all records after (earliest) post date for inventory with average costing
 		$skus = array();
 	  	foreach ($this->journal_rows as $row) if ($row['sku'] <> '') $skus[] = $row['sku'];
 	  	if (sizeof($skus) > 0) {
@@ -818,7 +817,6 @@ class journal {
 	  // update will never happen because the entries are removed during the unpost operation.
 	  switch ($this->journal_id) {
 	  	case  6: 
-// @todo TBD - Need to calculate average cost if sku dictates to enter as the cost, to be used for all subsequent posts until more product received.
 		  if ($defaults['cost_method'] == 'a') $item['price'] = $this->calculate_avg_cost($item['sku'], $item['price'], $item['qty']);
 	  	  break;
 		case 12: // for negative sales/invoices and customer credit memos the price needs to be the last unit_cost, 
@@ -1041,17 +1039,11 @@ class journal {
   function fetch_avg_cost($sku) {
 	global $db, $messageStack;
 	$messageStack->debug("\n   Entering fetch_avg_cost for sku: $sku ... ");
-// @todo TBD - just pull the last received inventory history record and use that as average cost
 	$sql = "SELECT unit_cost, qty FROM ".TABLE_INVENTORY_HISTORY." WHERE sku='$sku' AND remaining>0 AND post_date<='$this->post_date'";
 	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
 	$sql .= " ORDER BY post_date DESC, id DESC LIMIT 1";
 	$result = $db->Execute($sql);
 	$avg_cost = $result->fields['unit_cost'] ? $result->fields['unit_cost'] : 0;
-// @todo TBD  - probably don't need this as the average cost is only valid for the last receive record and won't change until more stock is received.
-	// now update remaining quantity in stock to new average cost value
-//	$sql = "UPDATE ".TABLE_INVENTORY_HISTORY." SET unit_cost='$avg_cost' WHERE sku='$sku' AND remaining > 0";
-//	if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'"; // " AND post_date <= '$this->post_date'"; 
-//	$result = $db->Execute($sql);
 	$messageStack->debug("Exiting with cost = $avg_cost");
 	return $avg_cost;
   }
