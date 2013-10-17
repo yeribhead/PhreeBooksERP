@@ -217,9 +217,10 @@ echo $toolbar->build_toolbar();
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
 ?>
-<applet name="jZebra" code="jzebra.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" width="16" height="16">
-    
-</applet>
+  <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
+	<param name="permissions" value="all-permissions" />
+	<param name="printer" value="<?php echo MODULE_SHIPPING_FEDEX_V7_PRINTER_NAME; ?>">
+  </applet>
 <div id="popupPayment">
 <?php 
 $SeccondToolbar      = new toolbar;

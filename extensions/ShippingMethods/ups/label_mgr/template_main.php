@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
+// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
 // | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
@@ -45,8 +45,9 @@ echo $toolbar->build_toolbar();
 <div class="pageHeading"><?php echo MODULE_SHIPPING_UPS_TEXT_TITLE; ?></div>
 
 <?php if ($auto_print) { ?>
-  <applet name="jZebra" code="jzebra.RawPrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" width="16" height="16">
-    <param name="printer" value="<?php echo MODULE_SHIPPING_UPS_PRINTER_NAME; ?>">
+  <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
+	<param name="permissions" value="all-permissions" />
+	<param name="printer" value="<?php echo MODULE_SHIPPING_FEDEX_V7_PRINTER_NAME; ?>">
   </applet>
   <?php 
     echo html_button_field('print_label', TEXT_PRINT, 'onclick="labelPrint()"');

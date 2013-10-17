@@ -111,7 +111,7 @@ switch ($action) {
 	exit();
 
   case 'go_first':    $_REQUEST['list'] = 1;       $action = 'search'; break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); $action = 'search'; break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); $action = 'search'; break;
   case 'go_next':     $_REQUEST['list']++;         $action = 'search'; break;
   case 'go_last':     $_REQUEST['list'] = 99999;   $action = 'search'; break;
   case 'search':

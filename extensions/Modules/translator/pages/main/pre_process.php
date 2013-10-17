@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -225,7 +224,7 @@ switch ($action) {
 	}
 	break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -272,7 +271,7 @@ switch ($action) {
 	  TEXT_DEFAULT_TRANSLATION,
 	  TEXT_CONSTANT,
 	);
-	$result      = html_heading_bar(array(), '', $heading_array);
+	$result      = html_heading_bar(array(), '', '', $heading_array);
 	$list_header = $result['html_code'];
 	if ($mod)  $criteria[] = "module = '"   . $mod  . "'";
 	if ($lang) $criteria[] = "language = '" . $lang . "'";
@@ -303,7 +302,7 @@ switch ($action) {
 	  'language' => TEXT_LANGUAGE_CODE,
 	  'version'  => TEXT_VERSION,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['list_order'], array(TEXT_STATISTICS, TEXT_ACTION));
+	$result      = html_heading_bar($heading_array, $_GET['list_order'], '', array(TEXT_STATISTICS, TEXT_ACTION));
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	if (!isset($_GET['list_order'])) $disp_order = 'language';
@@ -321,7 +320,6 @@ switch ($action) {
 	} else {
 	  $query_raw  = "select distinct module, version, language from " . TABLE_TRANSLATOR . $search . " order by $disp_order";
 	}
-    $query_split  = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
     $query_result = $db->Execute($query_raw);
 	define('PAGE_TITLE', BOX_TRANSLATOR_MODULE);
 	break;

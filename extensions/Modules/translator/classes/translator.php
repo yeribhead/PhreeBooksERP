@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -58,7 +57,7 @@ class translator {
 	return true;
   }
 
-  function import_language($dir_source = DIR_FS_MODULES, $mod = 'all', $lang = 'en_us', $ver = false, $module_dir = false, $chk_method = false, $method_dir = false) {
+  function import_language($dir_source=DIR_FS_MODULES, $mod='all', $lang='en_us', $ver=false, $module_dir=false, $chk_method=false, $method_dir=false) {
 	global $db, $messageStack;
     if (!is_dir($dir_source)) return;
 	$files = scandir($dir_source);

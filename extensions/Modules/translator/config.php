@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -17,7 +16,6 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/translator/extra_menus/translator.php
 //
-
 // Release History
 // 3.0 => 2010-09-01 - Converted from stand-alone PhreeBooks release
 // 3.1 => 2011-01-28 - Added import All and export All features, filters on main

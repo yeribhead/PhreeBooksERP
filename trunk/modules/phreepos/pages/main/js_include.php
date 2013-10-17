@@ -993,7 +993,7 @@ function fillInventory(sXml) {
 
 function changeOfTill(){
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
+	var applet = document.qz;
 	if( tills[tillId].restrictCurrency == '1'){
 		$('#display_currency').attr("disabled", true);
 	}else{
@@ -1031,7 +1031,7 @@ function changeOfTill(){
 }
 
 function monitorPrinting() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
     if (!applet.isDonePrinting()) {
       window.setTimeout('monitorPrinting()', 1000);
@@ -1181,7 +1181,7 @@ function ajaxSave(PrintOrSave){
 function ajaxPrintAndClean(sXml) { // call back function
 	save_allowed = true;
     var xml = parseXml(sXml);
-    var applet = document.jZebra;
+    var applet = document.qz;
     if (!xml) return;
   	var massage 	= $(xml).find("massage").text();
   	if ( massage ) 	  alert( massage );
@@ -1223,7 +1223,7 @@ function jzebraReady(){
 
 //Automatically gets called when applet is done appending a file
 function jzebraDoneAppending(){
-	var applet = document.jZebra;
+	var applet = document.qz;
 	if (applet != null) {
 	   if (!applet.isDoneAppending()) {
 	      window.setTimeout('monitorAppending()', 100);
@@ -1243,7 +1243,7 @@ function jzebraDoneAppending(){
 //Automatically gets called when applet is done finding
 function jzebraDoneFinding() {
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
+	var applet = document.qz;
    	if (applet.getPrinter() == null) {
     	return alert('Error: Can not find Printer ' + tills[tillId].printer); 
    	}
@@ -1251,7 +1251,7 @@ function jzebraDoneFinding() {
 
 // Automatically gets called when the applet is done printing
 function jzebraDonePrinting() {
-	var applet = document.jZebra;
+	var applet = document.qz;
    	if (applet.getException() != null) {
     	return alert('Error:' + applet.getExceptionMessage());
    	}
@@ -1275,12 +1275,12 @@ function GetPrintPreviousReceipt() {
 
 function PrintPreviousReceipt(sXml) { // call back function
 	  var xml = parseXml(sXml);
-	  var applet = document.jZebra;
+	  var applet = document.qz;
 	  if (!xml) return;
 	  var massage = $(xml).find("massage").text();
 	  if ( massage ) alert( massage );
 	  var tillId = document.getElementById('till_id').value;
-	  var applet = document.jZebra;
+	  var applet = document.qz;
 	  if (applet != null && tills[tillId].printer != '') {
 		  //applet.setEncoding(tills[tillId].printerEncoding);
 			for(var i in tills[tillId].startingLine){
@@ -1304,7 +1304,7 @@ function PrintPreviousReceipt(sXml) { // call back function
 
 function OpenDrawer(){
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
+	var applet = document.qz;
 	if ( applet != null && tills[tillId].printer != '') {
 		//applet.setEncoding("UTF-8");
 		for(var i in tills[tillId].openDrawer){

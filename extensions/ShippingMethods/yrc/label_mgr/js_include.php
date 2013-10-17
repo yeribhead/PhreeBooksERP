@@ -113,7 +113,7 @@ function updateWeight() {
 
 // java label printing
 function labelPrint() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
 	applet.append("<?php echo $label_data; ?>");
 	applet.print();
@@ -122,7 +122,7 @@ function labelPrint() {
 }
 
 function monitorPrinting() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
     if (!applet.isDonePrinting()) {
       window.setTimeout('monitorPrinting()', 1000);
