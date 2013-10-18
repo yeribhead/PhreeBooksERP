@@ -18,6 +18,9 @@
 //
 
 class translator {
+	function __construct() {
+		global $db;
+	}
 
   function fetch_stats($mod, $lang, $ver) {
 	global $db, $messageStack;
@@ -71,18 +74,14 @@ class translator {
 		  $ver  = $temp > 0 ? $temp : '0.1';
 		}
 		$pathtofile = str_replace(DIR_FS_ADMIN, '', $dir_source . $file);
-		preg_match_all("|define\('(.*)',[\s]*'(.*)'\);|imU", $langfile, $langtemp);
-		$db->Execute("delete from " . TABLE_TRANSLATOR . " where module = '" . $mod . "' and 
-		  language = '" . $lang . "' and version = '" . $ver . "' and pathtofile = '" . $pathtofile . "'");
-		for ($i = 0; $i < count($langtemp[1]); $i++) {
-		  $sql = "INSERT INTO "   . TABLE_TRANSLATOR . " set 
-			module  = '"          . $mod . "',
-			language = '"         . $lang . "',
-			version = '"          . $ver . "',
-			pathtofile = '"       . $pathtofile . "',
-			defined_constant = '" . db_input($langtemp[1][$i]) . "',
-			translation = '"      . db_input($langtemp[2][$i]) . "',
-			translated = '1'";
+		$langtemp = $this->extractUTF8($langfile);
+//		preg_match_all("|define\('(.*)',[\s]*'(.*)'\);|imU", $langfile, $langtemp); // broken for UTF-8
+		$db->Execute("DELETE FROM ".TABLE_TRANSLATOR." WHERE module='$mod' AND language='$lang' AND version='$ver' AND pathtofile='$pathtofile'");
+		foreach ($langtemp as $const => $value) {
+if ($const == 'GEN_COUNTRY_CODE')echo 'writing const = '.$const.' with value = '.$value.'<br>';
+			$sql = "INSERT INTO ".TABLE_TRANSLATOR." SET 
+			module='$mod', language='$lang', version='$ver', pathtofile='$pathtofile', 
+			defined_constant='".db_input($const)."', translation='".db_input($value)."', translated='1'";
 		  $db->Execute($sql);
 		}
 	  } elseif (is_dir($dir_source . $file)) {
@@ -215,5 +214,29 @@ class translator {
 	return array('translation' => $translation, 'translated' => $translated);
   }
 
+  function extractUTF8($langFile) { // handles both single and double quotes
+  	// replaced preg_match_all which failed for unicode characters
+  	$runaway = 0;
+  	$output = array();
+  	while(true) {
+  		if ($runaway++ > 50000) break;
+  		if (strpos($langFile, 'define') === false) break;
+  		$langFile = trim(substr($langFile, strpos($langFile, 'define')+6)); // find first define
+  		$langFile = trim(substr($langFile, 1)); // remove '('
+  		$quotChar = $langFile[0]; // quote character for constant
+  		$const = substr($langFile, 1, strpos($langFile, $quotChar, 1)-1); // from after first quotechar to just before second
+  		$langFile = trim(substr($langFile, strpos($langFile, $quotChar, 1)+1)); // remove constant and quotes from input string
+  		
+  		$langFile = trim(substr($langFile, 1)); // remove ',' between define statement
+
+  		$quotChar = $langFile[0]; // quote character for value
+  		$value = trim(substr($langFile, 1, strpos($langFile, ');'))); // ASSUME define statment ends with no space between ) and ; 
+  		$value = substr($value, 0, strrpos($value, $quotChar)); // remove closing quote character
+  		$langFile = trim(substr($langFile, strpos($langFile, ');')+2)); // remove ');' at end of define
+  		$output[$const] = $value;
+  	}
+  	return $output;
+  }
+  
 }
 ?>

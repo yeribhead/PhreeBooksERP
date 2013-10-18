@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -35,7 +34,7 @@ class queryFactory {
       if (@mysql_select_db($zf_database, $this->link)) {
         $this->db_connected = true;
 		// set the character set
-		mysql_query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'", $this->link);
+		mysql_query("SET character_set_results='utf8', character_set_client='utf8', character_set_connection='utf8', character_set_database='utf8', character_set_server='utf8'", $this->link);
 //		mysql_query("SET NAMES utf8", $this->link); 
 //		mysql_query("SET CHARACTER SET utf8", $this->link); 
 //		mysql_set_charset('utf8', $this->link); 
