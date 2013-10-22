@@ -139,7 +139,7 @@ switch ($action) {
 	  $levels->MoveNext();
 	}
 	gen_add_audit_log(PRICE_SHEETS_LOG . TEXT_REVISE, $result->fields['sheet_name'] . ' Rev. ' . $old_rev . ' => ' . ($old_rev + 1));
-	$action = '';
+	$action = 'edit';
 	break;
 
   case 'edit':
