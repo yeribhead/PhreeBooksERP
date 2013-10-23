@@ -1,29 +1,17 @@
-<?php 
+<?php
 // +-----------------------------------------------------------------+
-// |                   PhreeBooks Open Source ERP                    |
+// Arquivo Tradução Idioma  Phreedom 
+// Generated: 2013-10-22 05:28:46
+// Module/Method: phreeform
+// ISO Language: pt_br
+// Version: 3.6
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
-// +-----------------------------------------------------------------+
-// | This program is free software: you can redistribute it and/or   |
-// | modify it under the terms of the GNU General Public License as  |
-// | published by the Free Software Foundation, either version 3 of  |
-// | the License, or any later version.                              |
-// |                                                                 |
-// | This program is distributed in the hope that it will be useful, |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of  |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
-// | GNU General Public License for more details.                    |
-// +-----------------------------------------------------------------+
-//  Path: /modules/phreeform/language/en_us/language.php
-// 
+// Path: /modules/phreeform/language/pt_br/language.php
 
-// Page titles
 define('PHREEFORM_DOC_IMPORT','PhreeForm Ferramenta Importação');
 define('PHREEFORM_DOC_DESIGN','Phreeform Designer');
 define('PHREEFORM_REPORT_GEN','Phreeform Gerador Relatórios');
 define('PHREEFORM_GROUP','PhreeForm Grupo: ');
-// General
 define('TEXT_ABSCISSA','Abscissa');
 define('TEXT_ALL_PAGES','Todas Páginas');
 define('TEXT_ATTRIBUTES','Atributos');
@@ -81,7 +69,7 @@ define('TEXT_NEW_REPORT','Novo Relatório');
 define('TEXT_NO_DATA','O relatório/formulário não contém nenhuma informação!');
 define('TEXT_NO_DOCUMENTS','Não forma encontrados relatórios/formulários.');
 define('TEXT_NO_IMAGE','Sem imaem');
-define('TEXT_NO_IMAGE_SELECTED', 'Não foi selecionada Imagem!');
+define('TEXT_NO_IMAGE_SELECTED','Não foi selecionada Imagem!');
 define('TEXT_NO_PROPERTIES','Não há atributos  a especificar para este tipo.');
 define('TEXT_ORDINATE','Coordenar');
 define('TEXT_PAGE_BREAK_FIELD','Campo Quebra Página Formulário');
@@ -107,7 +95,6 @@ define('TEXT_STORED_IMAGES','Armazenar Imagens');
 define('TEXT_UNCAT_FORM','Formulário Não Categorizado');
 define('TEXT_UPLOAD_MAGE','Carregar Nova Imagem');
 define('TEXT_VALIDATE_RELATIONSHIPS','Validar Banco de Dados de Relacionamentos');
-
 define('PHREEFORM_RPTFILTER','Filtros Relatório:');
 define('PHREEFORM_GROUPBY','Agrupar por:');
 define('PHREEFORM_SORTBY','Ordenar por:');
@@ -142,7 +129,6 @@ define('PHREEFORM_DEFIMP','Relatórios / Formulários encontrados nesta pasta');
 define('PHREEFORM_SPECIAL_REPORT','Relatório Especial (somente programadores)');
 define('PB_PF_COMPANY_BLOCK','Empresa Bloco Dados');
 define('PB_PF_COMPANY_DATA','Empresa Linha Dados');
-// Errors and Information
 define('PHREEFORM_CANNOT_EDIT','Este é um relatório padrão, alterações não podem ser salvas no visualizador de relatórios! O relatório deve primeiro ser copiado para um relatório customizado antes que as alterações possam ser salvas ou editadas no Report Designer.');
 define('PHREEFORM_COPY_SUCCESS','O relatório foi copiado com sucesso!');
 define('PHREEFORM_DATEINST','Desmarque todas as opções de relatórios independentes de data; deixe o nome do campo de Data vazio.');
@@ -155,7 +141,6 @@ define('PHREEFORM_DIR_GROUP_DUP_ERROR','TEste código de grupo já foi utilizado
 define('PHREEFORM_DIR_IMPORT_SUCCESS','A pasta de relatórios foi importada com sucesso!');
 define('PHREEFORM_DIR_MOVE_ERROR','A pasta não pode ser movida para ela própria.');
 define('PHREEFORM_DIR_NOT_EMPTY_ERROR','A pasta não pode ser removida porque não está vazia!');
-define('PHREEFORM_EMAIL_BODY',"Anexo está seu %s de %s \n\nPara ver o anexo, você deve ter um programa de leitura de pdf instalado em seu computador.");
 define('PHREEFORM_EMPTYFIELD','Um campo de dados foi deixado vazio na sequência numérica: ');
 define('PHREEFORM_EMPTYTABLE','Uma tabela original de dados não foi encontrada para criar uma duplicata na sequência numérica: ');
 define('PHREEFORM_FIELD_HELP','Atenção: Se múltiplos campos são mostrados na mesma coluna, o campo com a largura maior vai determinar a largura da coluna.');
@@ -186,22 +171,18 @@ define('PHREEFORM_RPTNOENTER','(Deixe em branco para usar o nome padrão do arqu
 define('PHREEFORM_SAVE_SUCCESS','O relatório/formulário foi gravado com sucesso.');
 define('PHREEFORM_SERIAL_FORM','Faça este um formulário sequencial (utilizado primariamente para impressoras de recibo). Proprieades de página serão limitadas já que a saída é baseada na sequência da lista de campos. Se não tiver certeza, deixe esta opção em branco.');
 define('PHREEFORM_WASSAVED',' foi gravado e copiado para o relatório: ');
-define('PHREEFORM_WRITE_ERROR', 'Não foi possível abrir o arquivo (%s) para escrita. Verifique suas permissões.');
+define('PHREEFORM_WRITE_ERROR','Não foi possível abrir o arquivo (%s) para escrita. Verifique suas permissões.');
 define('PHREEFORM_ZIP_ERROR','O arquivo zip nã pode ser criado. Verifique suas permissões para a pasta: ');
 define('PHREEFORM_NO_ACCESS','Não foram selecionados usuários/grupos válidos para ver este relatório!. Por favor, permita acesso a pelo menos um usuário/grupo na aba de Propriedades.');
-// Admin defines
 define('PF_ADMIN_CONFIG_INFO','PhreeForm Parâmetros Padrão');
-// Javascript defines
 define('PHREEFORM_JS_RPT_DELETED','O relatório foi removido com sucesso.');
 define('PHREEFORM_JS_RPT_COPY','Por favor, entre um novo nome de relatório para receber esta cópia:');
 define('PHREEFORM_JS_RPT_RENAME','Por favor, entre um novo nome de relatório para renomear este relatório:');
 define('PHREEFORM_JS_RPT_BLANK','Não foi digitado um nome de relatório. Por favor, tente novamente.');
 define('PHREEFORM_JS_TABLE_CHECK_ERROR','No mínimo duas tabelas e o relacionamento associado deve ser definido para validar o relacionamento da base de dados!');
-// AJAX errors
 define('PHREEFORM_AJAX_BAD_DB_REFERENCE','SQL retornou um erro (%s). Por favor, verifique seus relacionamentos e tente novamente! O SQL testado foi: %s');
 define('PHREEFORM_AJAX_NO_TABLE_DATA','As diretivas de tabela não retornaram linhas. Ou as tabelas estão vazias ou há um erro nas diretivas de conexão!');
 define('PHREEFORM_AJAX_DB_SUCCESS','Os relacionamentos da base de dados retornaram no mínimo uma linha. Parecem estar em ordem.');
-// Page setup 
 define('TEXT_PAPER','Tamanho Papel');
 define('TEXT_ORIEN','Orientação');
 define('TEXT_MM','mm');
@@ -210,7 +191,6 @@ define('TEXT_LANDSCAPE','Paisagem');
 define('TEXT_LEGAL','Legal');
 define('TEXT_LETTER','Carta');
 define('TEXT_TABLOID','Tablóide');
-// Text formatting for text and company blocks
 define('PF_FRM_COMMA','Vírgula (,)');
 define('PF_FRM_COMMASP','Vírgula-Espaço');
 define('PF_FRM_NEWLINE','Quebra Linha');
@@ -218,7 +198,6 @@ define('PF_FRM_SEMISP','Pont-vírgula-Espaço');
 define('PF_FRM_DELNL','Pular Linha Branco');
 define('PF_FRM_SPACE1','Espaço Simples');
 define('PF_FRM_SPACE2','Espaço Duplo');
-// Form element types
 define('PF_FRM_BAR_CODE','Imagem Código Barras');
 define('PF_FRM_DATABLOCK','Bloco Dados');
 define('PF_FRM_DATALINE','Linha Dados');
@@ -233,7 +212,6 @@ define('PF_FRM_IMAGE_LINK','Imagem Link');
 define('PF_FRM_LINE','Linha');
 define('PF_FRM_PAGENUM','Número Página');
 define('PF_FRM_RECTANGLE','Retângulo');
-// Data processing
 define('PF_FRM_NEGATE','Negativo');
 define('PF_FRM_LOWERCASE','Caixa Baixa');
 define('PF_FRM_UPPERCASE','Caixa Alta');
@@ -244,12 +222,10 @@ define('PF_FRM_NULLDLR','Nulo se 0 - Dólares');
 define('PF_FRM_CNVTEURO','Converter Euros');
 define('PF_FRM_NUM_2_WORDS','Números para Palavras');
 define('PF_FRM_BLANK_DATA','Blank Out Data');
-// Standard fonts
 define('PF_FONT_HELVETICA','Helvetica');
 define('PF_FONT_COURIER','Courier');
 define('PF_FONT_TIMES','Times Roman');
 define('PF_FONT_SERIF','Serif');
-// Color definitions
 define('TEXT_RED','Vermelho');
 define('TEXT_GREEN','Verde');
 define('TEXT_BLUE','Azul');
@@ -257,7 +233,6 @@ define('TEXT_BLACK','Preto');
 define('TEXT_ORANGE','Laranja');
 define('TEXT_YELLOW','Amarelo');
 define('TEXT_WHITE','Branco');
-// Numbers
 define('TEXT_ZERO','zero');
 define('TEXT_ONE','um');
 define('TEXT_TWO','dois');

@@ -1,27 +1,15 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                   PhreeBooks Open Source ERP                    |
+// Arquivo Tradução Idioma  Phreedom 
+// Generated: 2013-10-22 05:28:45
+// Module/Method: phreebooks
+// ISO Language: pt_br
+// Version: 3.6
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
-// +-----------------------------------------------------------------+
-// | This program is free software: you can redistribute it and/or   |
-// | modify it under the terms of the GNU General Public License as  |
-// | published by the Free Software Foundation, either version 3 of  |
-// | the License, or any later version.                              |
-// |                                                                 |
-// | This program is distributed in the hope that it will be useful, |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of  |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
-// | GNU General Public License for more details.                    |
-// +-----------------------------------------------------------------+
-//  Path: /modules/reportwriter/language/en_us/classes/subaccount_is.php
-//
+// Path: /modules/phreebooks/language/pt_br/classes/subaccount_is.php
 
-// Fill in the account to roll up the income statement data, typically the 
-// last line of the Liabilities and Capital account number
-//define('RW_SUB_ACT_BAL_SHT_IS_ACCT','0');
-//define('RW_FIN_NET_INCOME','Net Income');
+define('RW_FIN_NET_INCOME','Net Income');
+define('RW_SUB_ACT_BAL_SHT_IS_ACCT','0');
 define('RW_RECORD_ID','Coluna Espaço Reservado');
 
 ?>
