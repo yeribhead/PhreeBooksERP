@@ -882,9 +882,10 @@ class journal {
 		$result = $db->Execute($sql);
 		if ($result->RecordCount() <> 1) return $this->fail_message(GL_ERROR_SERIALIZE_COGS); 
 	  } else {
-		$sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." WHERE sku='".$item['sku']."' AND remaining > 0";
+		$sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." 
+		  WHERE sku='".$item['sku']."' AND remaining > 0 AND post_date <= '$this->post_date 23:59:59'";
 		if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
-		$sql .= " order by id" . ($defaults['cost_method'] == 'l' ? ' DESC' : '');
+		$sql .= " ORDER BY ".($defaults['cost_method']=='l' ? 'post_date DESC, id DESC' : 'post_date, id');
 		$result = $db->Execute($sql);
 	  }
 	  while (!$result->EOF) { // loops until either qty is zero and/or inventory history is exhausted
