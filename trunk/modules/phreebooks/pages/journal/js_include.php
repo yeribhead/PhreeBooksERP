@@ -34,7 +34,7 @@ var securityLevel     = <?php echo $security_level; ?>;
 <?php echo $js_gl_array; ?>
 
 function init() {
-<?php if ($action == 'edit') echo '  EditJournal(' . $oID . ');' . chr(10); ?>
+<?php if ($_REQUEST['action'] == 'edit') echo '  EditJournal(' . $oID . ');' . chr(10); ?>
   document.getElementById("purchase_invoice_id").focus();
 }
 
@@ -56,7 +56,7 @@ function check_form() {
 	}
   }
   // With edit of order and recur, ask if roll through future entries or only this entry
-  var todo = document.getElementById('todo').value;
+  var todo = document.getElementById('action').value;
   if (document.getElementById('id').value != "" && document.getElementById('recur_id').value > 0) {
 	switch (todo) {
 	  case 'delete':
@@ -163,8 +163,8 @@ function processEditJournal(sXml) {
 }
 
 function downloadAttachment() {
-  document.getElementById('todo').value = 'dn_attach';
-  document.getElementById('todo').form.submit();
+  document.getElementById('action').value = 'dn_attach';
+  document.getElementById('action').form.submit();
 }
 
 function glProperties(id, description, asset) {

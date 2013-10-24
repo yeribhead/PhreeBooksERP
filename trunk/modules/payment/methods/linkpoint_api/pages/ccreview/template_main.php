@@ -23,7 +23,7 @@
 echo html_form('cc_view', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);	
+echo html_hidden_field('action', '') . chr(10);	
 
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
@@ -39,7 +39,6 @@ if (count($extra_toolbar_buttons) > 0) {
 
 // add the help file index and build the toolbar	
 $toolbar->search_period = $acct_period;
-if ($search_text) $toolbar->search_text = $search_text;	
 echo $toolbar->build_toolbar($add_search = true, $add_periods = true); 
 
 // Build the page

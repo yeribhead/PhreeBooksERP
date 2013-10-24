@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -23,7 +22,7 @@
 <!--
 // pass any php variables generated during pre-process that are used in the javascript functions.
 // Include translations here as well.
-var action      = '<?php echo $action; ?>';
+var action      = '<?php echo $_REQUEST['action']; ?>';
 var tableInit   = new Array();
 var dFields     = new Array(); // holds the field list which changes with table selection
 var tableCount  = 0;
@@ -47,7 +46,7 @@ function init() {
   });
   if (action == 'preview') {
     var rID = document.getElementById('rID').value;
-    var popupWin = window.open("index.php?module=phreeform&page=popup_gen&rID="+rID+"&todo=open&preview=1","popup_gen","width=900,height=650,resizable=1,scrollbars=1,top=150,left=200");
+    var popupWin = window.open("index.php?module=phreeform&page=popup_gen&rID="+rID+"&action=open&preview=1","popup_gen","width=900,height=650,resizable=1,scrollbars=1,top=150,left=200");
   }
 <?php 
   if ($self_close) {

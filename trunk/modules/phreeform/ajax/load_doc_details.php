@@ -25,16 +25,13 @@ require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
 /**************   page specific initialization  *************************/
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 $fieldset_content = 'NULL';
 $id = (int)$_GET['id'];
 if (!isset($_GET['id'])) die;
 $doc_details = $db->Execute("select * from " . TABLE_PHREEFORM . " where id = '" . $id . "'");
 if ($id == 0 || $doc_details->fields['doc_type'] == '0') { // folder
   $dir_path     = TEXT_PATH . ': /' . build_dir_path($id);
-  $result       = html_heading_bar(array(), $_GET['sf'], $_GET['so'], array(' ', $dir_path, TEXT_ACTION));
+  $result       = html_heading_bar(array(), array(' ', $dir_path, TEXT_ACTION));
   $list_header  = $result['html_code'];
   $field_list   = array('id', 'doc_type', 'doc_title', 'security');
   $query_raw    = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . " from " . TABLE_PHREEFORM . " where parent_id = '" . $id . "'";

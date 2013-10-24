@@ -18,6 +18,6 @@
 //
 
 define('MENU_HEADING_ASSETS', 'Assets');
-define('BOX_ASSET_MODULE',    'Asset Management');
+define('BOX_ASSET_MODULE',    'Asset');
 
 ?>

@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -20,7 +19,7 @@
 echo html_form('assets', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'cID', 'asset_id')), 'post', 'enctype="multipart/form-data"');
 // include hidden fields
 echo html_hidden_field('id', $cInfo->id) . chr(10);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action','page')) . 'page=main', 'SSL') . '\'"';
@@ -34,6 +33,7 @@ if ($security_level > 2) {
 $toolbar->icon_list['print']['show'] = false;
 $toolbar->add_help('');
 echo $toolbar->build_toolbar(); 
+$fields->set_fields_to_display($asset_type);
 ?>
 <h1><?php echo MENU_HEADING_ASSETS . ' - ' . TEXT_ASSET_ID . '# ' . $cInfo->asset_id; ?></h1>
 
@@ -50,10 +50,11 @@ echo $toolbar->build_toolbar();
 <ul>
 <?php 
   echo add_tab_list('tab_general', TEXT_GENERAL);
-  while (!$tab_list->EOF) {
-	echo add_tab_list('tab_' . $tab_list->fields['id'], $tab_list->fields['tab_name']);
-	$tab_list->MoveNext();
-  } 
+  echo $fields->extra_tab_li;
+  // pull in additional custom tabs
+  if (isset($extra_assets_tabs) && is_array($extra_assets_tabs)) {
+    foreach ($extra_assets_tabs as $tabs) echo add_tab_list($tabs['tab_id'], $tabs['tab_title']);
+  }
 ?>
 </ul>
 <!-- start the tabsets -->
@@ -159,28 +160,12 @@ if (sizeof($attachments) > 0) {
 
 <?php
 //********************************* List Custom Fields Here ***********************************
-$tab_list->Move(0);
-$tab_list->MoveNext();
-while (!$tab_list->EOF) {
-	echo '<div id="tab_' . $tab_list->fields['id'] . '">' . chr(10);
-	echo '  <table cellspacing="2" cellpadding="2">' . chr(10);
-	$field_list->Move(0);
-	$field_list->MoveNext();
-	while (!$field_list->EOF) {
-		if ($tab_list->fields['id'] == $field_list->fields['tab_id']) {
-			echo xtra_field_build_entry($field_list->fields, $cInfo) . chr(10);
-		}
-		$field_list->MoveNext();
-	}
-	echo '  </table>';
-	echo '</div>' . chr(10);
-	$tab_list->MoveNext();
-}
+echo $fields->extra_tab_html;
 // *********************** End Custom Fields  *************************************
 
 // pull in additional custom tabs
-if (isset($extra_inventory_tabs) && is_array($extra_inventory_tabs)) {
-  foreach ($extra_inventory_tabs as $tabs) {
+if (isset($extra_assets_tabs) && is_array($extra_assets_tabs)) {
+  foreach ($extra_assets_tabs as $tabs) {
     $file_path = DIR_FS_WORKING . 'custom/pages/main/' . $tabs['tab_filename'] . '.php';
     if (file_exists($file_path)) { require($file_path); }
   }

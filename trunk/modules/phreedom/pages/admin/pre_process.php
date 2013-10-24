@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -31,15 +31,14 @@ require_once(DIR_FS_WORKING . 'classes/install.php');
 require_once(DIR_FS_WORKING . 'classes/currency.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $core_modules = array('phreedom','phreeform','phreebooks','contacts','inventory','phreehelp','payment'); // phreeform first!
 // see if installing or removing a module
-if (substr($action, 0, 8) == 'install_') {
-  $method = substr($action, 8);
-  $action = 'install';
-} elseif (substr($action, 0, 7) == 'remove_') {
-  $method = substr($action, 7);
-  $action = 'remove';
+if (substr($_REQUEST['action'], 0, 8) == 'install_') {
+  $method = substr($_REQUEST['action'], 8);
+  $_REQUEST['action'] = 'install';
+} elseif (substr($_REQUEST['action'], 0, 7) == 'remove_') {
+  $method = substr($_REQUEST['action'], 7);
+  $_REQUEST['action'] = 'remove';
 }
 $install   = new phreedom_admin();
 $currency  = new currency();
@@ -66,7 +65,7 @@ while (!$result->EOF) {
 }
 $status_values = $db->Execute("select * from " . TABLE_CURRENT_STATUS);
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'install':
   case 'update':
   	validate_security($security_level, 4);
@@ -81,7 +80,7 @@ switch ($action) {
 	require_once(DIR_FS_MODULES . $method . '/classes/install.php');
 	$cName = $method . '_admin';
 	$mInstall = new $cName();
-	if ($action == 'install') {
+	if ($_REQUEST['action'] == 'install') {
 	  if (admin_check_versions($method, $mInstall->prerequisites)) { // Check for version levels
 	    $error = true;
 	  } elseif (admin_install_dirs($mInstall->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
@@ -103,7 +102,7 @@ switch ($action) {
 	}
 	if ($error) break; 
 	if (sizeof($mInstall->notes) > 0) foreach ($mInstall->notes as $note) $messageStack->add($note, 'caution');
-	gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $method) . (($action == 'install') ? TEXT_INSTALL : TEXT_UPDATE), constant('MODULE_' . strtoupper($method) . '_VERSION'));
+	gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $method) . (($_REQUEST['action'] == 'install') ? TEXT_INSTALL : TEXT_UPDATE), constant('MODULE_' . strtoupper($method) . '_VERSION'));
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
   case 'remove':

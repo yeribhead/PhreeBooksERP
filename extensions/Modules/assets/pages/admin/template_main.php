@@ -18,7 +18,7 @@
 //
 echo html_form('admin', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',   '') . chr(10);
+echo html_hidden_field('action',   '') . chr(10);
 echo html_hidden_field('subject','') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions

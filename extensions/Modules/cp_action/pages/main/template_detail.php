@@ -23,7 +23,7 @@ echo html_form('capa', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))
 $hidden_fields = NULL;
 
 // include hidden fields
-echo html_hidden_field('todo',   '')         . chr(10);
+echo html_hidden_field('action',   '')         . chr(10);
 echo html_hidden_field('rowSeq', $cInfo->id) . chr(10);
 
 // customize the toolbar actions
@@ -39,7 +39,7 @@ $toolbar->icon_list['print']['show']    = false;
 //$toolbar->add_help('');
 echo $toolbar->build_toolbar(); 
 ?>
-<h1><?php echo ($action == 'new') ? MENU_HEADING_NEW_CAPA : (MENU_HEADING_CAPA . ' - ' . TEXT_CAPA_ID . '# ' . $cInfo->capa_num); ?></h1>
+<h1><?php echo ($_REQUEST['action'] == 'new') ? MENU_HEADING_NEW_CAPA : (MENU_HEADING_CAPA . ' - ' . TEXT_CAPA_ID . '# ' . $cInfo->capa_num); ?></h1>
 
 <fieldset>
   <legend><?php echo TEXT_GENERAL; ?></legend>

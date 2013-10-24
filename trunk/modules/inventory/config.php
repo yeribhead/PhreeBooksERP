@@ -25,9 +25,9 @@
 // 3.5 => 2012-10-01 - bug fixes
 // 3.6 => 2013-06-30 - bug fixes, rewrite to class, added multiple vendors
 // Module software version information
+gen_pull_language('contacts', 'menu');
 define('MODULE_INVENTORY_VERSION',       3.6);
 // Menu Sort Positions
-define('MENU_HEADING_INVENTORY_ORDER',    30);
 // Menu Security id's (refer to master doc to avoid security setting overlap)
 define('SECURITY_ID_PRICE_SHEET_MANAGER', 88);
 define('SECURITY_ID_VEND_PRICE_SHEET_MGR',89);
@@ -46,74 +46,77 @@ define('TABLE_INVENTORY_PURCHASE',       DB_PREFIX . 'inventory_purchase_details
 define('TABLE_INVENTORY_SPECIAL_PRICES', DB_PREFIX . 'inventory_special_prices');
 define('TABLE_PRICE_SHEETS',             DB_PREFIX . 'price_sheets');
 // Set the title menu
-$pb_headings[MENU_HEADING_INVENTORY_ORDER] = array(
-  'text' => MENU_HEADING_INVENTORY, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_inv', 'SSL'),
-);
+
 // Set the menus
-$menu[] = array(
-  'text'        => BOX_INV_NEW, 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 1, 
-  'hide'        => true,
-  'security_id' => SECURITY_ID_MAINTAIN_INVENTORY, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_MAINTAIN_INVENTORY]) && $_SESSION['admin_security'][SECURITY_ID_MAINTAIN_INVENTORY] > 1) ? false : true,
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=main&amp;action=new', 'SSL'),
-  'params'      => '',
-);
-$menu[] = array(
-  'text'        => BOX_INV_MAINTAIN, 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 5, 
+$mainmenu["inventory"]["submenu"]["new_inventory"] = array(
+  'order' 		=> 1,
+  'text' 		=> BOX_INV_NEW,
   'security_id' => SECURITY_ID_MAINTAIN_INVENTORY,
-  'hidden'      => false, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=main&amp;action=new', 'SSL'),
+  'show_in_users_settings' => false,
+  'params'      => '',
+);
+$mainmenu["inventory"]["submenu"]["inventory_mgr"] = array(
+  'order' 		=> 5,
+  'text' 		=> BOX_INV_MAINTAIN,
+  'security_id' => SECURITY_ID_MAINTAIN_INVENTORY,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=main&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["inventory"]["submenu"]["adjustment"] = array(
   'text'        => ORD_TEXT_16_WINDOW_TITLE, 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 15, 
-  'security_id' => SECURITY_ID_ADJUST_INVENTORY,
-  'hidden'      => false, 
+  'order'        => 15, 
+  'security_id' => SECURITY_ID_ADJUST_INVENTORY, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=adjustments', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["inventory"]["submenu"]["assemble"] = array(
   'text'        => ORD_TEXT_14_WINDOW_TITLE, 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 20, 
-  'security_id' => SECURITY_ID_ASSEMBLE_INVENTORY,
-  'hidden'      => false, 
+  'order'        => 20, 
+  'security_id' => SECURITY_ID_ASSEMBLE_INVENTORY, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=assemblies', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-if (defined('ENABLE_MULTI_BRANCH') && ENABLE_MULTI_BRANCH == true) $menu[] = array(
-  'text'        => BOX_INV_TRANSFER, 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 80, 
-  'security_id' => SECURITY_ID_TRANSFER_INVENTORY,
-  'hidden'      => false, 
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=transfer', 'SSL'),
-  'params'      => '',
-);
-$menu[] = array(
+if (defined(ENABLE_MULTI_BRANCH) && ENABLE_MULTI_BRANCH == true){ 
+	$mainmenu["inventory"]["submenu"]["transfer"] = array(
+	  'text'        => BOX_INV_TRANSFER, 
+	  'order'       => 80, 
+	  'security_id' => SECURITY_ID_TRANSFER_INVENTORY, 
+	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=transfer', 'SSL'),
+	  'show_in_users_settings' => true,
+	  'params'      => '',
+	);
+}
+$mainmenu["customers"]["submenu"]["pricesheet"] = array(
   'text'        => BOX_SALES_PRICE_SHEETS,
-  'heading'     => MENU_HEADING_CUSTOMERS,
-  'rank'        => 65, 
+  'order'       => 65, 
   'security_id' => SECURITY_ID_PRICE_SHEET_MANAGER,
-  'hidden'      => false, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=price_sheets&amp;type=c&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["vendors"]["submenu"]["pricesheet"] = array(
   'text'        => BOX_PURCHASE_PRICE_SHEETS,
-  'heading'     => MENU_HEADING_VENDORS,
-  'rank'        => 65, 
+  'order'       => 65, 
   'security_id' => SECURITY_ID_VEND_PRICE_SHEET_MGR,
-  'hidden'      => false, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=price_sheets&amp;type=v&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
+
+if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+  gen_pull_language('inventory', 'admin');
+  $mainmenu["company"]['submenu']["configuration"]['submenu']["inventory"] = array(
+	'order'	      => MODULE_INVENTORY_TITLE,
+	'text'        => MODULE_INVENTORY_TITLE,
+	'security_id' => SECURITY_ID_CONFIGURATION, 
+	'link'        => html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=admin', 'SSL'),
+    'show_in_users_settings' => false,
+	'params'      => '',
+  );
+}
 
 ?>

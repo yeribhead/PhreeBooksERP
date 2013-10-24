@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -31,7 +30,7 @@ var text_search       = '<?php echo TEXT_SEARCH; ?>';
 function init() {
   $(function() { $('#buildertabs').tabs(); });
   $('#inv_image').dialog({ autoOpen:false, width:800 });
-  <?php if ($action <> 'new' && $action <> 'edit') { // set focus for main window
+  <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
 	echo "  document.getElementById('search_text').focus();";
 	echo "  document.getElementById('search_text').select();";
   } ?>

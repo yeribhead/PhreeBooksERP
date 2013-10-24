@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -26,7 +25,7 @@ function init() {
   $(function() { $('#admintabs').tabs(); });
   var dlg = $('#shipping_dialog').dialog({ 
 	  autoOpen: false,
-	  buttons: { "<?php echo TEXT_SUBMIT; ?>": function() { $(this).dialog('close'); document.getElementById('todo').form.submit(); } }
+	  buttons: { "<?php echo TEXT_SUBMIT; ?>": function() { $(this).dialog('close'); document.getElementById('action').form.submit(); } }
   });
   dlg.parent().appendTo($("#admin"));
 }
@@ -62,7 +61,7 @@ function fillDialog(sXml) {
   if (!xml) return;
   if ($(xml).find("message").text()) alert ($(xml).find("message").text());
   if ($(xml).find("width").text()) $("#shipping_dialog").dialog("option", "width", parseInt($(xml).find("width").text()));
-  document.getElementById('todo').value = $(xml).find("action").text();
+  document.getElementById('action').value = $(xml).find("action").text();
   document.getElementById('shipping_dialog').innerHTML = $(xml).find("html").text();
   $('#shipping_dialog').dialog('open');
 }

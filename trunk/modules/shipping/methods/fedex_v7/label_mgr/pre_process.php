@@ -29,9 +29,8 @@ $auto_print = false;
 $label_data = NULL;
 $pdf_list   = array();
 $sInfo      = new shipment();
-$action     = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'label':
 	// overwrite the defaults with data from the form
 	reset($_POST);
@@ -235,8 +234,6 @@ foreach ($shipping_defaults['service_levels'] as $key => $value) {
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', SHIPPING_POPUP_WINDOW_TITLE);
 

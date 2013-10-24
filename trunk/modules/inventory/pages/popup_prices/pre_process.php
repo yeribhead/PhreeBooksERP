@@ -47,20 +47,18 @@ if ($id) { // then the sku was valid, get item information, cost and full price
 }
 
 /***************   Act on the action request  *************************/
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
+
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_prics/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   default:
 }
 /*****************   prepare to display templates  *************************/
 // some preliminary information
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', $type == 'v' ? BOX_PURCHASE_PRICE_SHEETS : BOX_SALES_PRICE_SHEETS);
 ?>

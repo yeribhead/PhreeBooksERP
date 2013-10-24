@@ -21,13 +21,12 @@ $security_level = validate_user(0, true);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
 $id     = (isset($_GET['oID']) ? $_GET['oID'] : $_POST['id']);
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $error  = false;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_convert_po/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	$purchase_invoice_id = $_POST['po_num'];
 	$drop_ship = isset($_POST['drop_ship']) ? '1' : '0';
@@ -155,8 +154,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', ORD_CONVERT_TO_PO);
 

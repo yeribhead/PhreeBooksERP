@@ -30,7 +30,7 @@
 if ($image) {
 	echo '<h2>' . $image . '</h2>';
 } else {
-	echo html_form('download', FILENAME_DEFAULT, gen_get_all_get_params(array('todo')) . 'todo=download') . chr(10);
+	echo html_form('download', FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=download') . chr(10);
 	echo html_submit_field('action', SHIPPING_TEXT_DOWNLOAD, '') . chr(10);
 	echo SHIPPING_THERMAL_INST;
 	echo '</form>';

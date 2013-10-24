@@ -25,9 +25,8 @@ require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 /**************   page specific initialization  *************************/
 $working  = new xml_builder();
 $mod_xml  = new backup();
-$action   = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
   	// read the input variables
@@ -102,8 +101,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', XML_BUILDER_PAGE_TITLE);
 

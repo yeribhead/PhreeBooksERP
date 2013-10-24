@@ -481,6 +481,7 @@
       	if (strlen($_REQUEST[$key]) > 0) $output[] = "$key=".$_REQUEST[$key];
       }
     }
+    if(isset($_REQUEST['search_text']) && $_REQUEST['search_text'] != '' && in_array('search_text', $exclude_array) == false) $output[] = "search_text=".$_REQUEST['search_text'];
     return implode('&amp;', $output);
   }
 
@@ -1216,18 +1217,25 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	return $field;
   }
 
-  // function html_heading_bar will be deprecated in Phreedom Release 3.3
-  function html_heading_bar($heading_array, $sort_field = '', $sort_order = 'asc', $extra_headings = array(TEXT_ACTION)) {
+/**
+ * this function creates a heading for a table that will be able to sort 
+ * @param array $heading_array the fields of the table
+ * @param array $extra_headings extra columns that do not have the abillety to sort
+ * @return 'html_code' this is the table heading
+ * @return 'disp_order' this is the field + display order for the sql statement_builder
+ */
+	
+  function html_heading_bar($heading_array, $extra_headings = array(TEXT_ACTION)) {
 	global $PHP_SELF; 
 	$result = array();
-	$output .= html_hidden_field('sort_field', $sort_field) . chr(10);
-    $output .= html_hidden_field('sort_order', $sort_order) . chr(10);
+	$output .= html_hidden_field('sf', $_REQUEST['sf']) . chr(10);
+    $output .= html_hidden_field('so', ($_REQUEST['so'] == 'desc' ? 'desc' : 'asc') ) . chr(10);
 	foreach ($heading_array as $key => $value) {
 	  if (!isset($result['disp_order'])) $result['disp_order'] = $key; // set the first key to the default
       $image_asc  = 'sort_asc_disabled.png';
       $image_desc = 'sort_desc_disabled.png';
-	  if ($value == $sort_field || ($result['disp_order'] == $key && $sort_field == '') ){
-	       if ($sort_order == 'desc'){
+	  if ($value == $_REQUEST['sf'] || ($result['disp_order'] == $key && $_REQUEST['sf'] == '') ){
+	       if ($_REQUEST['so'] == 'desc'){
 	           $result['disp_order'] = $key . ' DESC';
                $image_desc = 'sort_desc.png';
 	       }else{

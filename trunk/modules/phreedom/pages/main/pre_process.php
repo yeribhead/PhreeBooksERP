@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -24,11 +24,10 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 /**************   page specific initialization  *************************/
 $error        = false; 
-$menu_id      = $_GET['mID'] ? $_GET['mID'] : 'index'; // default to index unless heading is passed
-$action       = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
-if ($_GET['req'] == 'pw_lost_sub') $action = 'pw_lost_sub';
+$menu_id      = isset($_GET['mID']) ? $_GET['mID'] : 'index'; // default to index unless heading is passed
+if (isset($_GET['req']) && $_GET['req'] == 'pw_lost_sub') $_REQUEST['action'] = 'pw_lost_sub';
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'validate':
     $admin_name     = db_prepare_input($_POST['admin_name']);
     $admin_pass     = db_prepare_input($_POST['admin_pass']);
@@ -84,7 +83,7 @@ switch ($action) {
 	  // Note: This is assigned to admin id = 1 since the user is not logged in.
 	  gen_add_audit_log(GEN_LOG_LOGIN_FAILED . $admin_name);
 	}
-	$action = 'login';
+	$_REQUEST['action'] = 'login';
 	break;
   case 'pw_lost_sub':
     $admin_email = db_prepare_input($_POST['admin_email']);
@@ -145,12 +144,12 @@ switch ($action) {
 	$result         = $db->Execute($sql);
 	$current_row    = $result->fields['row_id'];
 	$current_column = $result->fields['column_id'];
-	$new_row        = ($action == 'move_up') ? ($current_row - 1) : ($current_row + 1);
+	$new_row        = ($_REQUEST['action'] == 'move_up') ? ($current_row - 1) : ($current_row + 1);
 	$sql = "select max(row_id) as max_row from " . TABLE_USERS_PROFILES . " 
 		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id='$current_column'";
 	$result         = $db->Execute($sql);
 	$max_row        = $result->fields['max_row'];
-	if (($new_row >= 1 && $action == 'move_up') || ($new_row <= $max_row && $action == 'move_down')) {
+	if (($new_row >= 1 && $_REQUEST['action'] == 'move_up') || ($new_row <= $max_row && $_REQUEST['action'] == 'move_down')) {
 	  $sql = "update " . TABLE_USERS_PROFILES . " set row_id = 0 
 		where user_id=".$_SESSION['admin_id']." and menu_id='$menu_id' and column_id=$current_column and row_id='$current_row'";
 	  $db->Execute($sql);
@@ -170,8 +169,8 @@ switch ($action) {
 	$result         = $db->Execute($sql);
 	$current_row    = $result->fields['row_id'];
 	$current_column = $result->fields['column_id'];
-	$new_col = ($action == 'move_left') ? ($current_column - 1) : ($current_column + 1);
-	if (($new_col >= 1 && $action == 'move_left') || ($new_col <= MAX_CP_COLUMNS && $action == 'move_right')) {
+	$new_col = ($_REQUEST['action'] == 'move_left') ? ($current_column - 1) : ($current_column + 1);
+	if (($new_col >= 1 && $_REQUEST['action'] == 'move_left') || ($new_col <= MAX_CP_COLUMNS && $_REQUEST['action'] == 'move_right')) {
 	  $sql = "select max(row_id) as max_row from " . TABLE_USERS_PROFILES . " 
 		where user_id = " . $_SESSION['admin_id'] . " and menu_id = '" . $menu_id . "' and column_id = '" . $new_col . "'";
 	  $result = $db->Execute($sql);
@@ -211,7 +210,7 @@ switch ($action) {
 $include_header = true;
 $include_footer = true;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'login':
   case 'pw_lost_sub':
   case 'pw_lost_req':
@@ -237,7 +236,7 @@ switch ($action) {
 		if ($value['id'] == $default_language) $language_index = $value['id'];
 	  }
 	}
-	$include_template = $action == 'pw_lost_req' ? 'template_pw_lost.php' : 'template_login.php';
+	$include_template = $_REQUEST['action'] == 'pw_lost_req' ? 'template_pw_lost.php' : 'template_login.php';
   	$include_header   = false;
 	$include_footer   = false;
 	define('PAGE_TITLE', TITLE);

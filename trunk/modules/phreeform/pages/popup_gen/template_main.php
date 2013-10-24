@@ -19,7 +19,7 @@
 //
 echo html_form('popup_gen', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'gID')));
 // include hidden fields
-echo html_hidden_field('todo',  '') . chr(10);
+echo html_hidden_field('action',  '') . chr(10);
 echo html_hidden_field('title', $report->title) . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';

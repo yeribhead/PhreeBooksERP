@@ -30,11 +30,10 @@ $label_data = NULL;
 $pdf_list   = array();
 $sInfo      = new shipment();
 $shipment   = new $shipping_module;
-$action     = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 // override shipping package types
 $shipping_defaults['package_type'] = $shipment->mailPieceShape;
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'label':
 	// overwrite the defaults with data from the form
 	reset($_POST);

@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2009 PhreeSoft, LLC                               |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -26,8 +25,8 @@ require_once(DIR_FS_WORKING . 'classes/banking.php');
 /**************   page specific initialization  *************************/
 // retrieve the current status of this periods reconciliation
 $period = isset($_REQUEST['search_period']) ? $_REQUEST['search_period'] : CURRENT_ACCOUNTING_PERIOD;
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_REFERENCE);
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'asc');
+if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_REFERENCE;
+if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'asc';
 if ($period == 'all') {
 	$messageStack->add(BNK_ERROR_PERIOD_NOT_ALL, 'error');
 	$period = CURRENT_ACCOUNTING_PERIOD;
@@ -36,7 +35,6 @@ $gl_account      = isset($_POST['gl_account']) ? $_POST['gl_account'] : AR_SALES
 $cleared_items   = array();
 $uncleared_items = array();
 $all_items       = array();
-$action          = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 
 // build the array of cash accounts
 $result = $db->Execute("select id, description from ".TABLE_CHART_OF_ACCOUNTS." where account_type = '0' and heading_only = '0' order by id");
@@ -54,7 +52,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/reconciliation/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	$statement_balance = $currencies->clean_value($_POST['start_balance']);
@@ -220,15 +218,15 @@ if (is_array($bank_list)) foreach ($bank_list as $id => $value) {
 }
 
 // sort by user choice for display
-$sort_value = explode('-',$_GET['list_order']);
-switch ($_GET['sf']) {
+$sort_value = explode('-',$_REQUEST['list_order']);
+switch ($_REQUEST['sf']) {
 	case BNK_DEPOSIT_CREDIT: define('RECON_SORT_KEY','dep_amount'); break;
 	case BNK_CHECK_PAYMENT:  define('RECON_SORT_KEY','pmt_amount'); break;
 	case TEXT_DATE:          define('RECON_SORT_KEY','post_date');  break;
 	default:
 	case TEXT_REFERENCE:     define('RECON_SORT_KEY','reference');  break;
 }
-define('RECON_SORT_DESC', $_GET['so']=='desc' ? true : false);
+define('RECON_SORT_DESC', $_REQUEST['so']=='desc' ? true : false);
 function my_sort($a, $b) {
     if ($a[RECON_SORT_KEY] == $b[RECON_SORT_KEY]) return 0;
 	if (RECON_SORT_DESC) {

@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /themes/default/menu.php
 //
+usort($mainmenu, 'sortByOrder');
 echo '<!-- Pull Down Menu -->' . chr(10);
 switch (MY_MENU) {
    case 'left': echo '<div id="smoothmenu" class="ddsmoothmenu-v" style="float:left">'.chr(10); break;
@@ -23,51 +24,8 @@ switch (MY_MENU) {
    default:     echo '<div id="smoothmenu" class="ddsmoothmenu">'.chr(10); break;
 }
 echo '  <ul>' . chr(10);
-if (is_array($pb_headings)) {
-  ksort($pb_headings); // sorts the category headings with included extra modules
-  foreach ($pb_headings as $box) {
-    $sorted_menu = array();
-	if ($box['text'] == TEXT_HOME || $box['text'] == TEXT_LOGOUT) {
-	  echo '  <li><a href="'.$box['link'].'">';
-	  if ($box['text']==TEXT_HOME && ENABLE_ENCRYPTION && strlen($_SESSION['admin_encrypt']) > 0) {
-		echo html_icon('emblems/emblem-readonly.png', TEXT_ENCRYPTION_ENABLED, 'small');
-	  }
-	  echo ($box['icon'] ? $box['icon'].' '.$box['text'] : $box['text']).'</a></li>'.chr(10);
-	} else {
-      $hide_menu   = true;
-      foreach ($menu as $item)  {
-	    if (isset($item['heading']) && !$item['hidden']) {
-	      if ($item['heading'] == $box['text'] && isset($_SESSION['admin_security'][$item['security_id']]) && $_SESSION['admin_security'][$item['security_id']] > 0) {
-		    $sorted_menu['text'][]    = $item['text'];
-		    $sorted_menu['heading'][] = $item['heading'];
-		    $sorted_menu['rank'][]    = $item['rank'];
-		    $sorted_menu['link'][]    = $item['link'];
-		    $sorted_menu['params'][]  = $item['params'];
-		    if ($item['text'] <> TEXT_REPORTS) $hide_menu = false;
-	      }
-	    }
-      }
-	  if (is_array($sorted_menu['rank']) && !$hide_menu) {
-	    $result = array_multisort(
-		  $sorted_menu['rank'], SORT_ASC, SORT_NUMERIC, 
-		  $sorted_menu['text'], SORT_ASC, SORT_STRING, 
-		  $sorted_menu['link'], SORT_ASC, SORT_STRING);
-	    if ($result) {
-	      echo '  <li><a href="'.$box['link'].'">'.$box['text'].'</a>'.chr(10);
-	      echo '    <ul>' . chr(10);
-	      foreach ($sorted_menu['text'] as $key => $item) {
-	        echo '      <li><a href="'.$sorted_menu['link'][$key].'" '.$sorted_menu['params'][$key].'>'.$item.'</a></li>'.chr(10);
-	      }
-	      echo '    </ul>'.chr(10);
-	      echo '  </li>'.chr(10);
-	    } else {
-	      die('Error in multi-sort in header_navigation.php');
-	    }
-      }
-	}
-  }
-}
-echo '  </ul>'.chr(10);
+foreach($mainmenu as $menu_item) create_menu($menu_item);
+echo '  </ul>' . chr(10);
 echo '<br style="clear:left" />'.chr(10);
 echo '</div>'.chr(10);
 switch (MY_MENU) {
@@ -76,4 +34,35 @@ switch (MY_MENU) {
    default:     echo '<div>'.chr(10); break;
 }
 
+function sortByOrder($a, $b) {
+    if(is_integer($a['order']) && is_integer($b['order'])) return $a['order'] - $b['order'];
+    return strcmp($a["order"], $b["order"]);
+}
+
+function create_menu(array $array){
+	if(isset($array['security_id']) && $array['security_id'] != ''){
+		if(array_key_exists($array['security_id'], $_SESSION['admin_security']) == false && $_SESSION['admin_security'][$array['security_id']] == 0) return '';
+	}
+	if(!empty($array['submenu'])){
+		usort($array['submenu'], 'sortByOrder');
+		$valid = false;
+		foreach($array['submenu'] as $menu_item){
+			if($menu_item['security_id'] == SECURITY_ID_PHREEFORM) continue;
+			if($_SESSION['admin_security'][$menu_item['security_id']] != 0) $valid = true;
+			if(is_array($menu_item['submenu'])) $valid = true;
+		}
+		if($valid){
+			echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>'.chr(10);
+			echo '    <ul>' . chr(10);
+			foreach($array['submenu'] as $menu_item) create_menu($menu_item);
+			echo '    </ul>'.chr(10);
+			echo '  </li>'.chr(10);
+		}
+	}else{
+		echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.chr(10);
+		if ($array['text'] == TEXT_HOME && ENABLE_ENCRYPTION && strlen($_SESSION['admin_encrypt']) > 0) echo html_icon('emblems/emblem-readonly.png', TEXT_ENCRYPTION_ENABLED, 'small');
+  		echo ($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>  </li>'.chr(10);
+	}
+	return true;
+}
 ?>

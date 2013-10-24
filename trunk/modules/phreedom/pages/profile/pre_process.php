@@ -22,7 +22,6 @@ $security_level = validate_user(SECURITY_ID_MY_PROFILE);
 gen_pull_language($module, 'admin');
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 /**************   page specific initialization  *************************/
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 $error  = false;
 $result = $db->Execute("select admin_prefs from " . TABLE_USERS . " where admin_id = " . $_SESSION['admin_id']);
 $prefs  = unserialize($result->fields['admin_prefs']);
@@ -30,7 +29,7 @@ $prefs  = unserialize($result->fields['admin_prefs']);
 $custom_path = DIR_FS_WORKING . 'custom/pages/profile/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 4);
 	$prefs['theme']  = db_prepare_input($_POST['theme']);
@@ -51,7 +50,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_HEADING_PROFILE);
 ?>

@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -25,11 +24,10 @@ require_once(DIR_FS_MODULES . 'doc_ctl/functions/doc_ctl.php');
 $xml       = NULL;
 $ajax_text = '';
 $id        = (int)$_GET['id'];
-$action    = $_GET['action'];
 
 if (!isset($_GET['id'])) die;
 $doc_details = $db->Execute("select * from " . TABLE_DC_DOCUMENT . " where id = " . $id);
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'bookmark':
 	$output = array();
 	$bookmarks = explode(":", $doc_details->fields['bookmarks']);

@@ -19,7 +19,7 @@
 //
 echo html_form('popup_convert_po', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('id', $id) . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -29,7 +29,6 @@ $toolbar->icon_list['delete']['show'] = false;
 $toolbar->icon_list['print']['show'] = false;
 if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
 $toolbar->add_help('07.03.02.04');
-if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar(); 
 // Build the page
 ?>

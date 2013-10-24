@@ -21,17 +21,19 @@ class sa extends inventory {//Serialized Assembly
 	function get_item_by_id($id){
 		parent::get_item_by_id($id);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_item_by_sku($sku){
 		parent::get_item_by_sku($sku);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_bom_list(){
 		global $db;
 		$this->assy_cost = 0;
-		$result = $db->Execute("select i.id as inventory_id, l.id, l.sku, l.description, l.qty, i.last_journal_date from " . TABLE_INVENTORY_ASSY_LIST . " l join " . TABLE_INVENTORY . " i on l.sku = i.sku where l.ref_id = " . $this->id . " order by l.id");
+		$result = $db->Execute("select i.id as inventory_id, l.id, l.sku, l.description, l.qty from " . TABLE_INVENTORY_ASSY_LIST . " l join " . TABLE_INVENTORY . " i on l.sku = i.sku where l.ref_id = " . $this->id . " order by l.id");
 		$x =0;
 		while (!$result->EOF) {
 	  		$this->bom[$x] = $result->fields;
@@ -43,7 +45,6 @@ class sa extends inventory {//Serialized Assembly
 	  		$x++;
 	  		$result->MoveNext();
 		}
-		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '')) ? true : false;
 	}
 	
 	function remove(){
@@ -75,8 +76,8 @@ class sa extends inventory {//Serialized Assembly
 		}
 		$this->bom = $bom_list;
 		if (!parent::save()) return false;	
-		$temp = $db->Execute("select last_journal_date, quantity_on_hand  from " . TABLE_INVENTORY . " where id = " . $this->id);
-		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '')) ? true : false;
+		$result = $db->Execute("select last_journal_date, quantity_on_hand  from " . TABLE_INVENTORY . " where id = " . $this->id);
+		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '') && ($result->fields['quantity_on_hand'] == 0|| $result->fields['quantity_on_hand'] == '')) ? true : false;
 		if($error) return false;
 	  	if ($this->allow_edit_bom == true) { // only update if no posting has been performed
 	  		$result = $db->Execute("delete from " . TABLE_INVENTORY_ASSY_LIST . " where ref_id = " . $this->id);

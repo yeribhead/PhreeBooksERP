@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -21,7 +20,7 @@ echo html_form('rma', FILENAME_DEFAULT, gen_get_all_get_params(array('action', '
 $hidden_fields = NULL;
 // include hidden fields
 echo html_hidden_field('id', $cInfo->id) . chr(10);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 echo html_hidden_field('rma_num', $cInfo->rma_num) . chr(10);
 // customize the toolbar actions
@@ -37,7 +36,7 @@ $toolbar->icon_list['print']['show']      = false;
 $toolbar->add_help('');
 echo $toolbar->build_toolbar(); 
 ?>
-<h1><?php echo ($action == 'new') ? MENU_HEADING_NEW_RMA : (BOX_RMA_MODULE . ' - ' . TEXT_RMA_ID . '# ' . $cInfo->rma_num); ?></h1>
+<h1><?php echo ($_REQUEST['action'] == 'new') ? MENU_HEADING_NEW_RMA : (BOX_RMA_MODULE . ' - ' . TEXT_RMA_ID . '# ' . $cInfo->rma_num); ?></h1>
 
 <div id="detailtabs">
 <ul>

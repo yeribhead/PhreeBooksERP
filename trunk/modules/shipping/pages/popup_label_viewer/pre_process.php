@@ -36,7 +36,7 @@ foreach ($labels as $one_label) {
     if (is_file($file_path . $label . '.pdf')) { // PDF format
 	  $content_list[] = $browser_path . $label . '.pdf';
     } elseif (is_file($file_path . $label . '.lpt')) {  // Thermal label
-  	  $content_list[] = html_href_link(FILENAME_DEFAULT, 'module=shipping&amp;page=popup_label_image&amp;todo=notify&amp;date=' . $date . '&amp;method=' . $method . '&amp;label=' . $label, 'SSL');
+  	  $content_list[] = html_href_link(FILENAME_DEFAULT, 'module=shipping&amp;page=popup_label_image&amp;action=notify&amp;date=' . $date . '&amp;method=' . $method . '&amp;label=' . $label, 'SSL');
     } elseif (is_file($file_path . $label . '.gif')) { // GIF image
 	  $content_list[] = $browser_path . $label . '.gif';
     } else {
@@ -53,8 +53,6 @@ $row_string       = substr($row_string, 0, -1);
 $custom_html      = true; // need custom header to support frames
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 
 ?>

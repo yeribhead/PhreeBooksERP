@@ -31,12 +31,11 @@ $glEntry->id         = ($_POST['id'] <> '')      ? $_POST['id'] : ''; // will be
 $glEntry->journal_id = JOURNAL_ID;
 $glEntry->store_id   = isset($_POST['store_id']) ? $_POST['store_id'] : 0;
 $glEntry->post_date  = $_POST['post_date']       ? gen_db_date($_POST['post_date']) : date('Y-m-d');
-$action              = (isset($_GET['action'])   ? $_GET['action'] : $_POST['todo']);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/assemblies/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2); // security check
 	// retrieve and clean input values
@@ -81,7 +80,7 @@ switch ($action) {
 	  $cInfo = new objectInfo($_POST);
 	} else {
 	  $db->transCommit();	// post the chart of account values
-	  gen_add_audit_log(INV_LOG_ASSY . ($action=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
+	  gen_add_audit_log(INV_LOG_ASSY . ($_REQUEST['action']=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
 	  $messageStack->add_session(INV_POST_ASSEMBLY_SUCCESS . $sku, 'success');
 	  if (DEBUG) $messageStack->write_debug();
 	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));

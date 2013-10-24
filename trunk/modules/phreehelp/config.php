@@ -32,4 +32,12 @@ define('MODULE_PHREEHELP_VERSION',  3.6);
 // New database tables
 define('TABLE_PHREEHELP', DB_PREFIX . 'phreehelp');
 // Set the title menu - N/A this is  special module placed into the heading bar
+$mainmenu["company"]['submenu']["help"] = array(
+  'order' 		=> 1,
+  'text'        => TEXT_HELP,
+  'security_id' => SECURITY_ID_HELP,
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreehelp&amp;page=main', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => 'target="_blank"',
+);
 ?>

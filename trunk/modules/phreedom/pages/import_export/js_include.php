@@ -25,12 +25,12 @@
 // Include translations here as well.
 
 function init() {
-<?php if ($action == 'beg_balances') echo 'updateBalance();' . chr(10); ?>
+<?php if ($_REQUEST['action'] == 'beg_balances') echo 'updateBalance();' . chr(10); ?>
 }
 
 function check_form() {
 
-<?php if ($action == 'beg_balances') { ?>
+<?php if ($_REQUEST['action'] == 'beg_balances') { ?>
   // check for balance of credits and debits
   var bal_total = cleanCurrency(document.getElementById('balance_total').value);
   if (bal_total != 0) {
@@ -75,7 +75,7 @@ function updateBalance() {
 
 var isDebit = new Array(<?php echo count($glEntry->beg_bal); ?>);
 <?php
-if ($action == 'beg_balances') {
+if ($_REQUEST['action'] == 'beg_balances') {
   $i = 0;
   foreach ($glEntry->beg_bal as $coa_id => $values) {
 	if ($coa_types[$values['type']]['asset']) { // it is a debit

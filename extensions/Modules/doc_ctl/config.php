@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -24,26 +23,23 @@ define('NAME_TRIM_LENGTH','24'); // TBD - needs to move to admin constant
 // 1.0 => 2011-11-15 - Initial module release, themeroller compatible
 // 3.6 => bug fixes and compatibility issues with PhreeBooks R3.6, sync rev with PhreeBooks 
 // Module software version information
-define('MODULE_DOC_CTL_VERSION',  '3.6');
+define('MODULE_DOC_CTL_VERSION',  3.6);
 // Menu Sort Positions
 define('BOX_DOC_CTL_ORDER',          10);
-define('MENU_HEADING_QUALITY_ORDER', 80);
 // Security id's
 define('SECURITY_ID_DOC_CONTROL',   210);
 // New Database Tables
 define('TABLE_DC_DOCUMENT', DB_PREFIX . 'doc_ctl');
 // Set the title menu
-$pb_headings[MENU_HEADING_QUALITY_ORDER] = array(
-  'text' => MENU_HEADING_QUALITY, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=index&amp;mID=cat_qa', 'SSL'),
-);
+
 // Menu Locations
-$menu[] = array(
-  'text'        => BOX_DOC_CTL_MODULE, 
-  'heading'     => MENU_HEADING_QUALITY, 
-  'rank'        => BOX_DOC_CTL_ORDER, 
-  'security_id' => SECURITY_ID_DOC_CONTROL, 
+$mainmenu["quality"]['submenu']["doc_ctl"] = array(
+  'order' 		=> BOX_DOC_CTL_ORDER,
+  'text'        => BOX_DOC_CTL_MODULE,
+  'security_id' => SECURITY_ID_DOC_CONTROL,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=doc_ctl&amp;page=main', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => '',
 );
 
 ?>

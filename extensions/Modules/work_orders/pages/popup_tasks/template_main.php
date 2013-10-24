@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 echo html_form('search_form', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -29,11 +28,12 @@ $toolbar->icon_list['delete']['show'] = false;
 $toolbar->icon_list['print']['show'] = false;
 if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
 $toolbar->add_help('07.04.WO.02');
-if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true); 
 // Build the page
 ?>
 <h1><?php echo WO_POPUP_TASK_WINDOW_TITLE; ?></h1>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_TASKS); ?></div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php  echo $list_header; ?></tr>
@@ -58,8 +58,8 @@ echo $toolbar->build_toolbar($add_search = true);
 ?>
  </tbody>
 </table>
-<div style="float:right"><?php echo $query_split->display_links($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['list']); ?></div>
-<div><?php echo $query_split->display_count($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['list'], TEXT_DISPLAY_NUMBER . TEXT_TASKS); ?></div>
+<div style="float:right"><?php echo $query_split->display_links(); ?></div>
+<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_TASKS); ?></div>
 </form>
 <script type="text/javascript">
 <?php echo $java_string; ?>

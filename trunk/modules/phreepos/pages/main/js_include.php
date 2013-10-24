@@ -84,7 +84,7 @@ function check_form() {
   var error = 0;
   var i, stock, qty, inactive, message;
   var error_message = "<?php echo JS_ERROR; ?>";
-  var todo    = document.getElementById('todo').value;
+  var todo    = document.getElementById('action').value;
   if (error == 1) {
     alert(error_message);
     return false;
@@ -158,8 +158,8 @@ function till (id, restrictCurrency, currenciesCode, printer, startingLine, clos
 	  this.closingLine		= closingLine;	
 	  this.openDrawer		= openDrawer;
 	  this.defaultTax		= defaultTax;
-	  this.storeID	        = storeID;
-	  }
+	  this.storeID			= storeID;
+}
 
 function ot_option (till_id, id, type, use_tax, taxable, description) {
 	this.id   			= id;
@@ -394,7 +394,7 @@ function accountGuess(force) {
 	  guess = firstguess;
   }
   // test for data already in the form
-  if (guess == '') return alert('Please ender a guess to search for the contact!');
+  if (guess == '') return alert('Please enter a guess to search for the contact!');
   if (guess != text_search && guess != '') {
     if (document.getElementById('bill_acct_id').value ||
         document.getElementById('bill_primary_name').value != default_array[0]) {
@@ -951,7 +951,7 @@ function fillInventory(sXml) {
 	  return;
   }
   var qty    = parseFloat($(xml).find("qty").first().text());
-  var negate = <?php echo $action=='pos_return' ? 'true' : 'false'; ?>;
+  var negate = <?php echo $_REQUEST['action']=='pos_return' ? 'true' : 'false'; ?>;
   if (negate) qty = -qty;
   var rowCnt = $(xml).find("rID").text();
   if (!rowCnt) {
@@ -1024,7 +1024,7 @@ function changeOfTill(){
 		}
 	}
 	applet.findPrinter(tills[tillId].printer);
-	if (applet.getVersion() != '1.4.9' ) alert('update jzebra');
+	//if (applet.getVersion() <= '1.4.9' ) alert('update jzebra');
 	set_ot_options();
 	document.getElementById('ot_till_id').value = tillId ;
 	$("#store_id").val(tills[tillId].storeID);
@@ -1049,24 +1049,7 @@ function monitorPrinting() {
 function InventoryProp(elementID) {
   var sku = document.getElementById('sku_'+elementID).value;
   if (sku != text_search && sku != '') {
-    $.ajax({
-      type: "GET",
-	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuValid&strict=1&sku='+sku,
-      dataType: ($.browser.msie) ? "text" : "xml",
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
-      },
-	  success: processSkuProp
-    });
-  }
-}
-
-function processSkuProp(sXml) {
-  var xml = parseXml(sXml);
-  if (!xml) return;
-  if ($(xml).find("id").first().text() != 0) {
-	var id = $(xml).find("id").first().text();
-	window.open("index.php?module=inventory&page=main&action=properties&cID="+id,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
+	  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
   }
 }
 // -->
@@ -1208,7 +1191,7 @@ function ajaxPrintAndClean(sXml) { // call back function
         applet.setEndOfDocument("\n");
         jzebraDoneAppending();
 	}else if($(xml).find("open_cash_drawer").text() == 1 ){
-  		  	OpenDrawer();
+  		OpenDrawer();
     }else if( print ){
 		var order_id = $(xml).find("order_id").text();
 		var printWin = window.open("index.php?module=phreeform&page=popup_gen&gID=<?php echo POPUP_FORM_TYPE;?>&date=a&xfld=journal_main.id&xcr=EQUAL&xmin=" + order_id ,"popup_gen","width=700px,height=550px,resizable=1,scrollbars=1,top=150px,left=200px");
@@ -1280,7 +1263,6 @@ function PrintPreviousReceipt(sXml) { // call back function
 	  var massage = $(xml).find("massage").text();
 	  if ( massage ) alert( massage );
 	  var tillId = document.getElementById('till_id').value;
-	  var applet = document.qz;
 	  if (applet != null && tills[tillId].printer != '') {
 		  //applet.setEncoding(tills[tillId].printerEncoding);
 			for(var i in tills[tillId].startingLine){
@@ -1306,12 +1288,16 @@ function OpenDrawer(){
 	var tillId = document.getElementById('till_id').value;
 	var applet = document.qz;
 	if ( applet != null && tills[tillId].printer != '') {
-		//applet.setEncoding("UTF-8");
-		for(var i in tills[tillId].openDrawer){
-			applet.append(tills[tillId].openDrawer[i] + "\n");
+		if (!applet.isDonePrinting()) {
+			window.setTimeout('OpenDrawer()', 50);
+		} else {
+			//applet.setEncoding("UTF-8");
+			for(var i in tills[tillId].openDrawer){
+				applet.append(tills[tillId].openDrawer[i] + "\n");
+			}
+			applet.setEndOfDocument("\n");
+			jzebraDoneAppending();
 		}
-		applet.setEndOfDocument("\n");
-		jzebraDoneAppending();
 	}
 	document.getElementById('sku').focus();
 }

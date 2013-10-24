@@ -19,7 +19,7 @@
 echo html_form('orders', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"', true) . chr(10);
 $hidden_fields = NULL;
 // include hidden fields
-echo html_hidden_field('todo',            '') . chr(10);
+echo html_hidden_field('action',            '') . chr(10);
 echo html_hidden_field('id',              $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('recur_id',        $order->recur_id ? $order->recur_id : 0) . chr(10);	// recur entry flag - number of recurs
 echo html_hidden_field('recur_frequency', $order->recur_frequency ? $order->recur_frequency : 0) . chr(10);	// recur entry flag - how often

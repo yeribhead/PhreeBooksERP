@@ -270,7 +270,7 @@ td.bgpctbar
 echo html_form('restore', FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')) . '&action=restore', 'post', 'enctype="multipart/form-data"', true) . chr(10);
 
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')), 'SSL') . '\'"';

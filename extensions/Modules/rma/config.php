@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -40,13 +39,12 @@ if (defined('MODULE_RMA_STATUS')) {
   );
 */
   // Set the menu
-  $menu[] = array(
+  $mainmenu["customers"]['submenu']['rma'] = array(
     'text'        => BOX_RMA_MODULE, 
-    'heading'     => MENU_HEADING_CUSTOMERS, // MENU_HEADING_RMA
-    'rank'        => BOX_RMA_MODULE_ORDER, 
+    'order'       => BOX_RMA_MODULE_ORDER, 
     'security_id' => SECURITY_RMA_MGT,
-    'hidden'      => false, 
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=rma&amp;page=main', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
 }

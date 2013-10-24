@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -48,9 +47,8 @@ $backup              = new backup();
 $backup->source_dir  = DIR_FS_MY_FILES . $_SESSION['company'] . '/temp/fedex_qual/';
 $backup->dest_dir    = DIR_FS_MY_FILES . 'backups/';
 $backup->dest_file   = 'fedex_qual.zip';
-$action              = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
 	case 'go':
 	// retrieve the sample ship to addresses and query FEDEX_V7
 	validate_path($backup->source_dir);

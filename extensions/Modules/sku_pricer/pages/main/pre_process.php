@@ -21,9 +21,8 @@ $security_level = validate_user(SECURITY_ID_SKU_PRICER);
 require_once(DIR_FS_WORKING . 'classes/sku_pricer.php');
 /**************   page specific initialization  *************************/
 $upload_name = 'file_name';
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	if ($security_level < 1) {
 	  $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
@@ -44,8 +43,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', SKU_PRICER_PAGE_TITLE);
 

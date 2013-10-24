@@ -17,7 +17,6 @@
 //  Path: /modules/inventory/language/en_us/menu.php
 //
 // Enter the new menu category heading if necessary
-define('MENU_HEADING_INVENTORY', 'Inventory');
 // Menu Titles
 define('BOX_INV_MAINTAIN', 'Inventory Manager');
 define('BOX_INV_NEW', 'New Inventory');

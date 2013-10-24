@@ -28,7 +28,6 @@ require_once(DIR_FS_MODULES . $topic . '/classes/' . $subject . '.php');
 /**************   page specific initialization  *************************/
 $close_popup    = false;
 $sID            = $_GET['sID'];
-$action         = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $subject_module = new $subject();
 /**************   Check user security   *****************************/
 $security_level = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
@@ -38,7 +37,7 @@ if ($security_level == 0) { // not supposed to be here
 }
 /***************   hook for custom actions  ***************************/
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
     if ($subject_module->btn_save($sID)) $close_popup = true;
 	break;

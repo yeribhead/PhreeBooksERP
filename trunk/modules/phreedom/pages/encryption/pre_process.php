@@ -21,13 +21,12 @@ $security_level = validate_user(SECURITY_ID_ENCRYPTION);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $error = false;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/encryption/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
     $enc_key = db_prepare_input($_POST['enc_key']);
     $enc_key_confirm = db_prepare_input($_POST['enc_key_confirm']);
@@ -65,8 +64,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_HEADING_ENCRYPTION);
 

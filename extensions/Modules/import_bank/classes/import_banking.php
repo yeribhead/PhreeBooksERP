@@ -375,11 +375,11 @@ class impbanking extends journal {
 		$messageStack->debug("\n this wil be posted as a journal ");
 		$sql ="select gl_account from " . TABLE_JOURNAL_ITEM. " where description = '".$this->_description."' and not gl_account='".$this->gl_acct_id."' and not gl_account='".$this->_questionposts."'";
 		$result = $db->Execute($sql);
-		$gl_account =$this->_questionposts;
-		If(!$result->RecordCount()== 0){
+		$gl_account = $this->_questionposts;
+		If(!$result->RecordCount() == 0){
 			$result->EOF;
-			if(!$result->fields['gl_acount']==''){
-				$gl_account =$result->fields['gl_acount'];
+			if(!$result->fields['gl_acount'] == ''){
+				$gl_account = $result->fields['gl_acount'];
 			}
 		}
 		$this->id					= '';
@@ -451,6 +451,8 @@ class impbanking extends journal {
 	
 	private function unknown_contact($other_bank_account_number, $other_bank_account_iban){
 		global $messageStack;
+		if (isset($this->known_trans[$other_bank_account_iban]))   return false;
+		if (isset($this->known_trans[$other_bank_account_number])) return false;
 		//looking if it is a new contact
 		$messageStack->debug("\n start looking for unknown match");
 		foreach ($this->open_inv as $contact_id => $contact) {

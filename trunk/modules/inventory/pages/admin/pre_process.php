@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -30,14 +30,13 @@ require_once(DIR_FS_WORKING . 'classes/inventory_fields.php');
 
 /**************   page specific initialization  *************************/
 $error    = false; 
-$action   = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 $cog_type = explode(',', COG_ITEM_TYPES);
 $install  = new inventory_admin();
 $tabs     = new inventory_tabs();
 $fields   = new inventory_fields();
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3); // security check
 	// save general tab
@@ -75,7 +74,7 @@ switch ($action) {
 	  $on_hand = round($result->fields['quantity_on_hand'], $currencies->currencies[DEFAULT_CURRENCY]['decimal_precise']);
 	  if ($on_hand <> $result->fields['quantity_on_hand']) {
 	    $repair[$result->fields['sku']] = $on_hand;
-		if ($action <> 'inv_hist_fix') {
+		if ($_REQUEST['action'] <> 'inv_hist_fix') {
 		  $messageStack->add(sprintf(INV_TOOLS_STOCK_ROUNDING_ERROR, $result->fields['sku'], $result->fields['quantity_on_hand'], $on_hand), 'error');
 		  $cnt++;
 		}
@@ -88,7 +87,7 @@ switch ($action) {
 		$cog_owed = $owed[$result->fields['sku']] ? $owed[$result->fields['sku']] : 0;
 		if ($on_hand <> ($cog_qty - $cog_owed)) {
 		  $repair[$result->fields['sku']] = $cog_qty - $cog_owed;
-		  if ($action <> 'inv_hist_fix') {
+		  if ($_REQUEST['action'] <> 'inv_hist_fix') {
 		    $messageStack->add(sprintf(INV_TOOLS_OUT_OF_BALANCE, $result->fields['sku'], $on_hand, ($cog_qty - $cog_owed)), 'error');
 		    $cnt++;
 		  }
@@ -96,7 +95,7 @@ switch ($action) {
 	  $result->MoveNext();
 	}
 	// flag the differences
-	if ($action == 'inv_hist_fix') { // start repair
+	if ($_REQUEST['action'] == 'inv_hist_fix') { // start repair
 	  $precision = 1 / pow(10, $currencies->currencies[DEFAULT_CURRENCY]['decimal_precise'] + 1);
 	  $result = $db->Execute("update " . TABLE_INVENTORY_HISTORY . " set remaining = 0 where remaining < " . $precision); // remove rounding errors
 	  if (sizeof($repair) > 0) {

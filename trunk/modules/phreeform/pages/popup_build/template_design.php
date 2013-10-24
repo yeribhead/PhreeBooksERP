@@ -19,7 +19,7 @@
 //
 echo html_form('popup_build', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"') . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',       '') . chr(10);
+echo html_hidden_field('action',       '') . chr(10);
 echo html_hidden_field('rID',        $rID) . chr(10);
 echo html_hidden_field('reporttype', $report->reporttype) . chr(10);
 // customize the toolbar actions

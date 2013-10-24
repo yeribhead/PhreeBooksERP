@@ -39,7 +39,6 @@ define('POPUP_FORM_TYPE','pos:rcpt');
 $error           = false;
 $account_type    = 'c';
 $order           = new journal();
-$action          = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $transaction     = new other_transactions();
 $tills           = new tills();
 /***************   hook for custom actions  ***************************/
@@ -124,7 +123,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 	
 	$error = $order->Post('insert', true);
 	if ( DEBUG )           $messageStack->write_debug();
-						$xml .= "\t" . xmlEntry("action",			$action);
+						$xml .= "\t" . xmlEntry("action",			$_REQUEST['action']);
 if ($error)  			$xml .= "\t" . xmlEntry("error", 			$error);
 //if ($order->errormsg)	$xml .= "\t" . xmlEntry("error", 			$order->errormsg);
 echo createXmlHeader() . $xml . createXmlFooter();

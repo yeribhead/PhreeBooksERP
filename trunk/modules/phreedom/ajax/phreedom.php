@@ -22,8 +22,7 @@ $security_level = validate_ajax_user();
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
 $xml    = NULL;
-$action = $_GET['action'];
-switch ($action) {
+switch ($_REQUEST['action']) {
 	case 'pull_colors':
 		$theme = $_GET['theme'];
 		$contents = scandir(DIR_FS_ADMIN.'themes/'.$theme.'/css/');

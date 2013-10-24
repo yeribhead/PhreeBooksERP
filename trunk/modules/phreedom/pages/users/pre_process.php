@@ -25,16 +25,13 @@ require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error  = false;
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/users/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'fill_all': 
   case 'fill_role':
@@ -43,7 +40,7 @@ switch ($action) {
 	$fill_all  = db_prepare_input($_POST['fill_all']);
 	$fill_role = db_prepare_input($_POST['fill_role']);
 	if ($security_level < 3 && $admin_id) $error = $messageStack->add(GEN_ADMIN_CANNOT_CHANGE_ROLES, 'error'); 
-	if ($action == 'fill_role' ) {
+	if ($_REQUEST['action'] == 'fill_role' ) {
 	  $result = $db->Execute("select admin_prefs, admin_security from " . TABLE_USERS . " where admin_id = " . $fill_role);
 	  $admin_security = $result->fields['admin_security'];
 	  $temp = unserialize($result->fields['admin_prefs']);  // fake the input to look like role
@@ -106,7 +103,7 @@ switch ($action) {
 	  }
 	  if ($admin_id == $_SESSION['admin_id']) $_SESSION['admin_security'] = gen_parse_permissions($admin_security); // update if user is current user
 	} elseif ($error) {
-	  $action = 'edit';
+	  $_REQUEST['action'] = 'edit';
 	}
 	$uInfo = new objectInfo($_POST);
 	$uInfo->admin_security = $admin_security;
@@ -147,7 +144,7 @@ switch ($action) {
 	// now continue with newly copied item by editing it
 	gen_add_audit_log(sprintf(GEN_LOG_USER, TEXT_COPY), $old_name . ' => ' . $new_name);
 	$_POST['rowSeq'] = $new_id;	// set item pointer to new record
-	$action = 'edit'; // fall through to edit case
+	$_REQUEST['action'] = 'edit'; // fall through to edit case
 
   case 'edit':
 	if (isset($_POST['rowSeq'])) $admin_id = db_prepare_input($_POST['rowSeq']);
@@ -181,10 +178,8 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
   case 'edit':
   case 'fill_all':
@@ -215,16 +210,15 @@ switch ($action) {
 	  'display_name' => GEN_DISPLAY_NAME,
 	  'admin_email'  => GEN_EMAIL,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
-	$search_text = ($_GET['search_text'] == TEXT_SEARCH) ? '' : db_input($_GET['search_text']);
-	if (isset($search_text) && $search_text <> '') {
+	if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	  $search_fields = array('admin_name', 'admin_email', 'display_name');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' and (' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+	  $search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 	} else {
 	  $search = '';
 	}

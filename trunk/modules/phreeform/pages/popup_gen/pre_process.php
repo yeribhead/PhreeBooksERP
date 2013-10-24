@@ -26,8 +26,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 /**************   page specific initialization  *************************/
 $error  = false;
 $r_list = false;
-$action = isset($_POST['todo']) ? $_POST['todo'] : $_GET['action'];
-$rID    = isset($_POST['rID'])  ? $_POST['rID']  : $_GET['rID'];
+$rID    = $_REQUEST['rID'];
 $gID    = isset($_GET ['gID'])  ? $_GET ['gID']  : false;
 
 $IncludePage = 'template_main.php'; // default unless overwritten
@@ -103,7 +102,7 @@ $message_subject = $_POST['message_subject'] ? $_POST['message_subject'] : $mess
 $message_body    = $report->emailmessage     ? TextReplace($report->emailmessage) : sprintf(PHREEFORM_EMAIL_BODY, $title, COMPANY_NAME);
 $email_text      = $_POST['message_body']    ? $_POST['message_body']    : $message_body;
 
-if (!$error) switch ($action) {
+if (!$error) switch ($_REQUEST['action']) {
   case 'save':
   case 'save_as':
   case 'exp_csv':
@@ -198,7 +197,7 @@ if (!$error) switch ($action) {
 	  if (isset($_POST['tovalue'   . $key])) $value->max_val = $_POST['tovalue'   . $key];
 	  $report->filterlist[$key] = $value;
 	}
-	if ($action == 'save' && $report->standard_report <> 's') { // Update the main report record
+	if ($_REQUEST['action'] == 'save' && $report->standard_report <> 's') { // Update the main report record
 	  $output = object_to_xml($report);
 	  $filename = PF_DIR_MY_REPORTS . 'pf_' . $rID;
 	  if (!$handle = @fopen($filename, 'w')) {
@@ -210,10 +209,10 @@ if (!$error) switch ($action) {
 	  fclose($handle);
 	  $messageStack->add(TEXT_REPORT . $report->description . PHREEFORM_WASSAVED . $report->title, 'success');
 	  break; // we're done
-	} elseif ($action == 'save') {
+	} elseif ($_REQUEST['action'] == 'save') {
 	  $messageStack->add(PHREEFORM_CANNOT_EDIT,'caution');
 	  break; // we're done
-	} elseif ($action == 'save_as') {
+	} elseif ($_REQUEST['action'] == 'save_as') {
 	  $result = $db->Execute("select * from " . TABLE_PHREEFORM . " where id = " . $rID);
 	  $sql_array = array(
 		'parent_id'   => $result->fields['parent_id'],
@@ -262,10 +261,10 @@ if (!$error) switch ($action) {
 		    $messageStack->add(PHREEFORM_NODATA . ' The failing sql= ' . $sql, 'caution');
 		    $error = true;
 		  } else {
-		    if ($action == 'exp_csv')  $output = GenerateCSVFile ($ReportData, $report, $delivery_method);
-		    if ($action == 'exp_xml')  $output = GenerateXMLFile ($ReportData, $report, $delivery_method);
-		    if ($action == 'exp_html') $output = GenerateHTMLFile($ReportData, $report, $delivery_method);
-		    if ($action == 'exp_pdf')  $output = GeneratePDFFile ($ReportData, $report, $delivery_method);
+		    if ($_REQUEST['action'] == 'exp_csv')  $output = GenerateCSVFile ($ReportData, $report, $delivery_method);
+		    if ($_REQUEST['action'] == 'exp_xml')  $output = GenerateXMLFile ($ReportData, $report, $delivery_method);
+		    if ($_REQUEST['action'] == 'exp_html') $output = GenerateHTMLFile($ReportData, $report, $delivery_method);
+		    if ($_REQUEST['action'] == 'exp_pdf')  $output = GeneratePDFFile ($ReportData, $report, $delivery_method);
 		  }
 	    } else { // Houston, we have a problem
 		  $messageStack->add($success['message'], $success['level']);
@@ -359,8 +358,6 @@ $cal_to = array(
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = true;
-$include_calendar = true;
 $include_template = $IncludePage;
 define('PAGE_TITLE', PHREEFORM_REPORT_GEN);
 

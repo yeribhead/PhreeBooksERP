@@ -32,7 +32,6 @@ $cleared_items   = array();
 $current_cleard_items = unserialize($_POST['current_cleard_items']);
 $all_items       = array();
 $gl_types 		 = array('pmt','ttl','tpm');
-$action          = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $post_date 		 = ($_POST['post_date']) ? gen_db_date($_POST['post_date']) : '';
 $payment_modules = load_all_methods('payment');
 $tills           = new tills();
@@ -46,7 +45,7 @@ if(isset($_GET['till_id'])){
   	$tills->get_default_till_info();
 }else {
 	$post_date = '';
-	$action    = '';
+	$_REQUEST['action']    = '';
 }
 if($post_date) $period = gen_calculate_period($post_date);
 foreach ($payment_modules as $pmt_class) {
@@ -60,7 +59,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/closing/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
 	$glEntry->journal_id          = JOURNAL_ID;
@@ -324,7 +323,6 @@ $cal_gl = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_POS_CLOSING);
 

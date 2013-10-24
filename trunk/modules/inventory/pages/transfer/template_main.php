@@ -19,7 +19,7 @@
 $hidden_fields = NULL;
 echo html_form('inv_xfer', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',   '') . chr(10);
+echo html_hidden_field('action',   '') . chr(10);
 echo html_hidden_field('id',     $cInfo->id) . chr(10);
 echo html_hidden_field('ref_id', $cInfo->ref_id) . chr(10);
 // customize the toolbar actions

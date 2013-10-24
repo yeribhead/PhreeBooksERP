@@ -63,15 +63,12 @@ $_SESSION['search_main_id']      = $_REQUEST['search_main_id']     ? $_REQUEST['
 $_SESSION['search_main_from']    = $_REQUEST['search_main_from']   ? $_REQUEST['search_main_from']   : (isset($_SESSION['search_main_from'])   ? $_SESSION['search_main_from']   : '');
 $_SESSION['search_main_to']      = $_REQUEST['search_main_to']     ? $_REQUEST['search_main_to']     : (isset($_SESSION['search_main_to'])     ? $_SESSION['search_main_to']     : '');
 
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/search/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'go_first':    $_REQUEST['list'] = 1;       break;
   case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
@@ -137,7 +134,7 @@ $heading_array = array(
   'm.purchase_invoice_id' => TEXT_REFERENCE,
   'm.total_amount'        => TEXT_TOTAL,
 );
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+$result      = html_heading_bar($heading_array);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 

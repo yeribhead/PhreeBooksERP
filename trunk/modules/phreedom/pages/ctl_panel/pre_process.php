@@ -21,9 +21,7 @@ $security_level = validate_user(0, true);
 /**************  include page specific files    *********************/
 
 /**************   page specific initialization  *************************/
-$action  = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $menu_id = $_GET['mID'];
-
 // retrieve all modules from directory, and available dashboards
 if (!isset($dirs)) $dirs = scandir(DIR_FS_MODULES);
 $dashboards = array();
@@ -51,7 +49,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/ctl_panel/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   	foreach ($dashboards as $dashboard) {
 	  // build add and delete list
@@ -81,8 +79,6 @@ switch ($action) {
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', CP_ADD_REMOVE_BOXES);
 

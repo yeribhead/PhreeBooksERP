@@ -29,7 +29,7 @@ class chart_of_accounts {
     public $error         = false;
     
     public function __construct(){
-        foreach ($_POST as $key => $value) $this->$key = $value;
+        foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
         if(!isset($this->id))$this->id = isset($_GET['sID'])?$_GET['sID']:$_POST['rowSeq'];
         $this->security_id   = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
     }

@@ -24,8 +24,6 @@ $index = $_GET['index'];
 $custom_html      = true;
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php'; // include display template (required)
 
 ?>

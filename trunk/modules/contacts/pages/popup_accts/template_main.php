@@ -19,7 +19,7 @@
 //
 echo html_form('popup_accts', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -34,7 +34,6 @@ switch ($account_type) {
   case 'c': $toolbar->add_help('07.02.02'); break;
   case 'v': $toolbar->add_help('07.03.02'); break;
 }
-if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true); 
 // Build the page
 ?>

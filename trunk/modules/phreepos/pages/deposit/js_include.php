@@ -46,11 +46,11 @@ function init() {
 	}
 	document.getElementById('search').focus();
 <?php 
-  if ($action == 'pmt') echo '  loadNewPayment();' . chr(10);
+  if ($_REQUEST['action'] == 'pmt') echo '  loadNewPayment();' . chr(10);
   echo '  updateDepositPrice();' . chr(10);
 ?>
 
-<?php if ($post_success && $action == 'print') { ?>
+<?php if ($post_success && $_REQUEST['action'] == 'print') { ?>
   ClearForm();
   var printWin = window.open("index.php?module=phreeform&page=popup_gen&gID=<?php echo POPUP_FORM_TYPE; ?>&date=a&xfld=journal_main.id&xcr=EQUAL&xmin=<?php echo $oID; ?>","popup_gen","width=700px,height=550px,resizable=1,scrollbars=1,top=150px,left=200px");
   printWin.focus();
@@ -61,9 +61,9 @@ function check_form() {
   var error = 0;
   var error_message = "<?php echo JS_ERROR; ?>";
 
-  var todo = document.getElementById('todo').value;
+  var todo = document.getElementById('action').value;
 
-  if (journalID == '18' && (todo == 'save' || todo == 'print')) { // only check payment if saving
+  if (journalID == '19' && (todo == 'save' || todo == 'print')) { // only check payment if saving
     var index = document.getElementById('shipper_code').selectedIndex;
     var payment_method = document.getElementById('shipper_code').options[index].value;
 	<?php

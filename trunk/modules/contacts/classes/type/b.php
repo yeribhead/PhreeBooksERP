@@ -21,12 +21,12 @@ require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
 
 class b extends contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_BRANCH;
-	public $page_title_new = BOX_CONTACTS_NEW_BRANCH;
 	public $help		       = '07.08.04';
 	public $address_types  = array('bm', 'bs', 'bb', 'im');
 	public $type            = 'b';
 	
 	public function __construct(){
+		$this->page_title_new = sprintf(BOX_TEXT_NEW_TITLE, TEXT_BRANCH);
 		$this->tab_list[] = array('file'=>'template_notes',		'tag'=>'notes',    'order'=>40, 'text'=>TEXT_NOTES);
 		$this->tab_list[] = array('file'=>'template_b_general',	'tag'=>'general',  'order'=> 1, 'text'=>TEXT_GENERAL);
 		parent::__construct();

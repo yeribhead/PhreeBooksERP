@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -17,8 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/doc_ctl/language/en_us/menu.php
 //
-// Menu Headings
-define('MENU_HEADING_QUALITY','Quality');
+
 // Title to use in the pull down menu
 define('BOX_DOC_CTL_MODULE','Document Control');
 

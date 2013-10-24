@@ -17,7 +17,7 @@
 //  Path: /modules/translator/pages/main/template_edit.php
 //
 echo html_form('translator', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('mod',  $mod) . chr(10);
 echo html_hidden_field('lang', $lang). chr(10);
 echo html_hidden_field('ver',  $ver) . chr(10);
@@ -44,7 +44,6 @@ echo $toolbar->build_toolbar();
  </tbody>
 </table>
 </div>
-
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php echo $list_header; ?></tr>

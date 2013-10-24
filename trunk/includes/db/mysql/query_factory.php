@@ -162,6 +162,9 @@ class queryFactory {
       $zp_db_resource = @mysql_query($zf_sql, $this->link);
       if (!$zp_db_resource) {
       	if ($_POST['page'] == 'ajax' || $_GET['page'] == 'ajax'){
+      		$messageStack->debug("\n\nThe failing sql was: " . $zf_sql);
+		  	$messageStack->debug("\n\nmySQL returned: " . @mysql_errno($this->link) . ' ' . @mysql_error($this->link));
+		  	if (defined('FILENAME_DEFAULT')) $messageStack->write_debug();
       		echo createXmlHeader() . xmlEntry('error', 'There was a SQL Error: '.@mysql_error($this->link)) . createXmlFooter();
       		die();	
       	}

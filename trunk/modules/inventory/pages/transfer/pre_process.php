@@ -30,12 +30,11 @@ $error     = false;
 $post_date = ($_POST['post_date']) ? gen_db_date($_POST['post_date']) : date('Y-m-d');
 $period    = gen_calculate_period($post_date);
 if (!$period) $error = true;
-$action    = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/transfer/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2); // security check
 	// retrieve and clean input values

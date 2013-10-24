@@ -29,17 +29,16 @@ $translator  = new translator();
 $backup      = new backup();
 $replace     = array();
 $criteria    = array();
-$search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 // load the filters
-$f0 = isset($_POST['todo']) ? $_POST['f0'] : $_GET['f0'];
-$f1 = isset($_POST['todo']) ? $_POST['f1'] : $_GET['f1'];
-$f2 = isset($_POST['todo']) ? $_POST['f2'] : $_GET['f2'];
-$f3 = isset($_POST['todo']) ? $_POST['f3'] : $_GET['f3'];
+$f0 = isset($_POST['action']) ? $_POST['f0'] : $_GET['f0'];
+$f1 = isset($_POST['action']) ? $_POST['f1'] : $_GET['f1'];
+$f2 = isset($_POST['action']) ? $_POST['f2'] : $_GET['f2'];
+$f3 = isset($_POST['action']) ? $_POST['f3'] : $_GET['f3'];
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'import_go': // imports existing language file constants from current install
     $mod  = db_prepare_input($_POST['mod']);
 	$lang = db_prepare_input($_POST['lang']);
@@ -80,7 +79,7 @@ switch ($action) {
 	    $dir = DIR_FS_ADMIN . "$install_dir/language/$lang/";
 		$ver = constant('MODULE_PHREEDOM_VERSION');
 		$translator->import_language($dir, $mod, $lang, $ver);
-		if ($action == 'install') break; // else fall through and do the soap directory
+		if ($_REQUEST['action'] == 'install') break; // else fall through and do the soap directory
 	  case 'soap':
 	    $dir = DIR_FS_ADMIN . "soap/language/$lang/";
 		$ver = constant('MODULE_PHREEDOM_VERSION');
@@ -109,14 +108,14 @@ switch ($action) {
 	$f0 = $mod  = '';
 	$f1 = $lang = '';
 	$f2 = $ver  = '';
-	$action = '';
+	$_REQUEST['action'] = '';
 	break;
   case 'upload_go':
 	$dir  = DIR_FS_MY_FILES . 'translator/upload/';
     $mod  = db_prepare_input($_POST['mod']);
 	$lang = db_prepare_input($_POST['lang']);
 	$translator->upload_language($dir, $mod, $lang);
-	$action = '';
+	$_REQUEST['action'] = '';
 	break;
   case 'create_new':
     $mod     = db_prepare_input($_POST['mod']);
@@ -144,7 +143,7 @@ switch ($action) {
 	} else {
 	  $translator->convert_language($mod, $lang, $source, $history, $subs);
 	}
-	if ($mod <> 'all') $action = 'edit';
+	if ($mod <> 'all') $_REQUEST['action'] = 'edit';
 	break;
   case 'edit':
 	$pieces    = explode(':', $_POST['rowSeq']);
@@ -169,13 +168,13 @@ switch ($action) {
 		set translation = '" . db_input($trans) . "', translated = '" . $status . "' where id = '" . $id . "'");
 	}
 	$messageStack->add(TEXT_TRANSLATIONS_SAVED,'success');
-	$action = 'edit';
+	$_REQUEST['action'] = 'edit';
 	break;
   case 'delete':
 	$pieces = explode(':', $_POST['rowSeq']);
 	$db->Execute("delete from " . TABLE_TRANSLATOR . " 
 	  where module = '" . $pieces[0] . "' and language = '" . $pieces[1] . "' and version = '" . $pieces[2] . "'");
-	$action = '';
+	$_REQUEST['action'] = '';
 	break;
   case 'export':
 	$dir    = DIR_FS_MY_FILES . 'translator/';
@@ -247,11 +246,9 @@ $sel_translated   = build_trans_list();
 
 $include_header   = true;
 $include_footer   = false;
-$include_calendar = false;
-$include_tabs     = false;
 $include_template = 'template_main.php';
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
 	$include_template = 'template_new.php';
 	define('PAGE_TITLE', TEXT_NEW_TRANSLATION);
@@ -271,7 +268,7 @@ switch ($action) {
 	  TEXT_DEFAULT_TRANSLATION,
 	  TEXT_CONSTANT,
 	);
-	$result      = html_heading_bar(array(), '', '', $heading_array);
+	$result      = html_heading_bar(array(), $heading_array);
 	$list_header = $result['html_code'];
 	if ($mod)  $criteria[] = "module = '"   . $mod  . "'";
 	if ($lang) $criteria[] = "language = '" . $lang . "'";
@@ -302,7 +299,7 @@ switch ($action) {
 	  'language' => TEXT_LANGUAGE_CODE,
 	  'version'  => TEXT_VERSION,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['list_order'], '', array(TEXT_STATISTICS, TEXT_ACTION));
+	$result      = html_heading_bar($heading_array, array(TEXT_STATISTICS, TEXT_ACTION));
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	if (!isset($_GET['list_order'])) $disp_order = 'language';
@@ -310,17 +307,18 @@ switch ($action) {
 	if ($lang) $criteria[] = "language = '" . $lang . "'";
 	if ($ver && $ver <> 'L') $criteria[] = "version = '"  . $ver  . "'";
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('module', 'language', 'version');
-	  $criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+	  $criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
     }
 	$search = (sizeof($criteria) == 0) ? '' : ' where ' . implode(' and ', $criteria);
     if ($ver=='L') {
-	  $query_raw  = "select module, max(version) as version, language from " . TABLE_TRANSLATOR . $search . " group by module order by $disp_order";	
+	  $query_raw  = "select SQL_CALC_FOUND_ROWS module, max(version) as version, language from " . TABLE_TRANSLATOR . $search . " group by module order by $disp_order";	
 	} else {
-	  $query_raw  = "select distinct module, version, language from " . TABLE_TRANSLATOR . $search . " order by $disp_order";
+	  $query_raw  = "select SQL_CALC_FOUND_ROWS distinct module, version, language from " . TABLE_TRANSLATOR . $search . " order by $disp_order";
 	}
-    $query_result = $db->Execute($query_raw);
+    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    $query_split  = new splitPageResults($_REQUEST['list'], '');
 	define('PAGE_TITLE', BOX_TRANSLATOR_MODULE);
 	break;
 }

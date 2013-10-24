@@ -65,7 +65,7 @@ if (!$error ) {
 		}
 	}
 }
-				 $xml .= "\t" . xmlEntry("action",$action);
+				 $xml .= "\t" . xmlEntry("action",$_REQUEST['action']);
 				 $xml .= "\t" . xmlEntry("open_cash_drawer", false);
 				 $xml .= "\t" . xmlEntry("order_id", $journal_id);
 if ($error)  	 $xml .= "\t" . xmlEntry("error", $error);

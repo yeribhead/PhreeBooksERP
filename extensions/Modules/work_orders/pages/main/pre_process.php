@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -29,21 +28,19 @@ $hide_save   = false;
 $image       = false;
 $step_list   = array();
 $store_id    = 0;
-$search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $post_date   = ($_POST['post_date'])  ? gen_db_date($_POST['post_date'])  : date('Y-m-d');
 $close_date  = ($_POST['close_date']) ? $_POST['close_date'] : '';
 // load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_WO_ID);
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_WO_ID;
+if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
 	break;
   case 'save':
@@ -137,10 +134,10 @@ switch ($action) {
 	if (!$error) {
 	  gen_add_audit_log($id  ? sprintf(WO_AUDIT_LOG_MAIN, TEXT_UPDATE) . $wo_id : sprintf(WO_AUDIT_LOG_MAIN, TEXT_ADD) . $wo_id);
 	  $messageStack->add($id ? WO_MESSAGE_SUCCESS_MAIN_UPDATE : WO_MESSAGE_SUCCESS_MAIN_ADD, 'success');
-	  if ($action == 'save') gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
+	  if ($_REQUEST['action'] == 'save') gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	} else {
 	  $messageStack->add(WO_MESSAGE_MAIN_ERROR, 'error');
-	  $action = 'edit';
+	  $_REQUEST['action'] = 'edit';
 	}
 	break;
 
@@ -156,7 +153,7 @@ switch ($action) {
 	$sql_data_array = array(); // start the update field list
 	// error check
 	if (!$id || !$step) {
-	  $action = '';
+	  $_REQUEST['action'] = '';
 	  $error = true;
 	  break;
 	}
@@ -279,7 +276,7 @@ switch ($action) {
 	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=build&id=' . $id, 'SSL'));
 	} else {
 	  $messageStack->add(WO_MESSAGE_MAIN_ERROR,'error');
-	  $action = 'build';
+	  $_REQUEST['action'] = 'build';
 	  $_POST['rowSeq'] = $id; // make it look like an edit
 	}	
     // fall through like build to reload
@@ -287,7 +284,7 @@ switch ($action) {
   case 'build':
     $id = isset($_POST['rowSeq']) ? $_POST['rowSeq'] : $_GET['id'];
 	if (!$id) {
-	  $action = '';
+	  $_REQUEST['action'] = '';
 	  $error = true;
 	  break;
 	}
@@ -332,7 +329,7 @@ switch ($action) {
 	  gen_add_audit_log(sprintf(WO_AUDIT_LOG_MAIN, TEXT_DELETE) . $result->fields['wo_title']);
 	  $messageStack->add(WO_MESSAGE_SUCCESS_MAIN_DELETE,'success');
 	}
-    $action = '';
+    $_REQUEST['action'] = '';
 	break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
   case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
@@ -355,13 +352,13 @@ $cal_date = array(
   'default'   => gen_locale_date($post_date),
   'params'    => array('align' => 'left'),
 );
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
   case 'edit':
     // build priority drop-down
 	$priority_list = array();
 	for ($i = 1; $i < 10; $i++) $priority_list[] = array('id' => $i, 'text' => $i);
-	define('PAGE_TITLE', ($action == 'edit') ? HEADING_WORK_ORDER_MODULE_EDIT : HEADING_WORK_ORDER_MODULE_NEW);
+	define('PAGE_TITLE', ($_REQUEST['action'] == 'edit') ? HEADING_WORK_ORDER_MODULE_EDIT : HEADING_WORK_ORDER_MODULE_NEW);
     $include_template = 'template_new.php';
     break;
   case 'build':
@@ -381,15 +378,15 @@ switch ($action) {
 	  'm.closed'     => TEXT_CLOSED,
 	  'm.close_date' => TEXT_CLOSE_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
   	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('m.id', 'i.sku', 'm.wo_title');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
     } else {
 	  $search = '';
 	}

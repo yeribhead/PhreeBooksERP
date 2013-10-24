@@ -43,7 +43,6 @@ define('DEF_GL_ACCT',		AR_DEFAULT_GL_ACCT);
 define('DEF_GL_ACCT_TITLE',	ORD_AR_ACCOUNT);
 define('POPUP_FORM_TYPE',	'pos:rcpt');
 $account_type = 'c';
-$action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 $order        = new journal_19();
 $tills        = new tills();
 $trans	 	  = new other_transactions();
@@ -100,10 +99,8 @@ $req_date = date(DATE_FORMAT);
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'pos_return': 
     $include_template = 'template_return.php';
 	define('PAGE_TITLE', BOX_PHREEPOS_RETURN);

@@ -47,5 +47,11 @@ define('BOX_GL_BUDGET', 'Budgeting');
 define('BOX_GL_UTILITIES', 'General Journal Utilities');
 define('BOX_PHREEBOOKS_MODULE_ADM','PhreeBooks Admin');
 define('BOX_STATUS_MGR','%s Manager');
-
+define('ORD_TEXT_RECEIPTS_TITLE','Receipts');
+define('ORD_TEXT_PAYMENTS_TITLE','Payments');
+define('ORD_TEXT_QUOTES_TITLE','Quotes');
+define('BOX_TEXT_NEW_TITLE','New %s');
+define('ORD_TEXT_ORDERS_TITLE','Orders');
+define('ORD_TEXT_INVOICE_TITLE','Invoices');
+define('ORD_TEXT_CREDIT_TITLE','Credit');
 ?>
