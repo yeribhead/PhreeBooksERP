@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -93,7 +92,7 @@ function processSkuStock(sXml) {
   document.getElementById('sku_'+rCnt).style.color= '';
   document.getElementById('stock_'+rCnt).value    = stock;
   document.getElementById('serial_'+rCnt).value   = '';
-  document.getElementById('acct_'+rCnt).value     = $(xml).find("account_inventory_wage").text();
+//  document.getElementById('acct_'+rCnt).value     = $(xml).find("account_inventory_wage").text();
   document.getElementById('desc_'+rCnt).value     = $(xml).find("description_short").text();
   if ($(xml).find("inventory_type").text() == 'sr') document.getElementById('imgSerial_'+rCnt).style.display = '';
   updateBalance();
@@ -128,7 +127,7 @@ function addInvRow() {
   cell[4] += buildIcon(icon_path+'16x16/actions/tab-new.png', '<?php echo TEXT_SERIAL_NUMBER; ?>', 'id="imgSerial_'+rowCnt+'" style="cursor:pointer; display:none;" onclick="serialList('+rowCnt+')"');
 // Hidden fields
   cell[4] += '<input type="hidden" name="serial_'+rowCnt+'" id="serial_'+rowCnt+'" value="" />';
-  cell[4] += '<input type="hidden" name="acct_'+rowCnt+'" id="acct_'+rowCnt+'" value="" />';
+//  cell[4] += '<input type="hidden" name="acct_'+rowCnt+'" id="acct_'+rowCnt+'" value="" />';
 // End hidden fields
   cell[5]  = '    <input type="text" name="desc_'+rowCnt+'" id="desc_'+rowCnt+'" size="64" maxlength="63">';
   wrap[4]     = 'nowrap';

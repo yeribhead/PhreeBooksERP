@@ -82,27 +82,31 @@ switch ($action) {
 	  $glEntry->currencies_code     = DEFAULT_CURRENCY;
 	  $glEntry->currencies_value    = 1;
 	  $adj_reason                   = db_prepare_input($_POST['adj_reason']);
-	  $adj_account                  = db_prepare_input($_POST['gl_acct']);
+//	  $adj_account                  = db_prepare_input($_POST['gl_acct']);
 	  // process the request
 	  $glEntry->journal_main_array  = $glEntry->build_journal_main_array();
 	  $rowCnt    = 1;
 	  $adj_total = 0;
 	  $adj_lines = 0;
+	  $tot_amount= 0;
 	  while (true) {
 	    if (!isset($_POST['sku_'.$rowCnt]) || $_POST['sku_'.$rowCnt] == TEXT_SEARCH) break;
 	    $sku              = db_prepare_input($_POST['sku_'.$rowCnt]);
 	    $qty              = db_prepare_input($_POST['qty_'.$rowCnt]);
 	    $serialize_number = db_prepare_input($_POST['serial_'.$rowCnt]);
 	    $desc             = db_prepare_input($_POST['desc_'.$rowCnt]);
-	    $acct             = db_prepare_input($_POST['acct_'.$rowCnt]);
-	  	$_POST['total_'.$rowCnt] = $glEntry->calculateCost($sku, $qty, $serialize_number);
-	    if ($sku && $sku <> TEXT_SEARCH) {
+//	    $acct             = db_prepare_input($_POST['acct_'.$rowCnt]);
+	    $result = $db->Execute("select account_inventory_wage, account_cost_of_sales FROM ".TABLE_INVENTORY." WHERE sku='$sku'");
+	    $_POST['acct_'     .$rowCnt] = $result->fields['account_inventory_wage'];
+	    $_POST['cogs_acct_'.$rowCnt] = $result->fields['account_cost_of_sales'];
+	  	$_POST['total_'    .$rowCnt] = $glEntry->calculateCost($sku, $qty, $serialize_number);
+	  	if ($sku && $sku <> TEXT_SEARCH) {
 	      $glEntry->journal_rows[] = array(
 		    'sku'              => $sku,
 		    'qty'              => -$qty,
 		    'gl_type'          => 'adj',
 		    'serialize_number' => $serialize_number,
-		    'gl_account'       => $acct,
+		    'gl_account'       => $result->fields['account_inventory_wage'],
 		    'description'      => $desc,
 		    'credit_amount'    => 0,
 		    'debit_amount'     => 0,
@@ -110,23 +114,24 @@ switch ($action) {
 	      );
 		  $adj_lines++;
 	    }
+	    $tot_amount += $cost;
 	    $rowCnt++;
 	  }
 	  if ($adj_lines > 0) {
-	    $glEntry->journal_main_array['total_amount'] = 0;
+	    $glEntry->journal_main_array['total_amount'] = $tot_amount;
 	    $glEntry->journal_rows[] = array(
 	      'sku'           => '',
 	      'qty'           => '',
 	      'gl_type'       => 'ttl',
-	      'gl_account'    => $adj_account,
-	      'description'   => $adj_reason,
+	      'gl_account'    => $result->fields['account_inventory_wage'],
+	      'description'   => BOX_INV_TRANSFER .' - '. $adj_reason,
 	      'debit_amount'  => 0,
 	      'credit_amount' => 0,
 		  'post_date'     => $post_date,
         );
 	    // *************** START TRANSACTION *************************
 	    $db->transStart();
-	    $glEntry->override_cogs_acct = $adj_account; // force cogs account to be users specified account versus default inventory account
+//	    $glEntry->override_cogs_acct = $adj_account; // force cogs account to be users specified account versus default inventory account
 	    if ($glEntry->Post($glEntry->id ? 'edit' : 'insert')) {
 		  $first_id = $glEntry->id;
 	      $glEntry                      = new journal();
@@ -152,7 +157,7 @@ switch ($action) {
 			$qty              = db_prepare_input($_POST['qty_'.$rowCnt]);
 			$serialize_number = db_prepare_input($_POST['serial_'.$rowCnt]);
 			$desc             = db_prepare_input($_POST['desc_'.$rowCnt]);
-			$acct             = db_prepare_input($_POST['acct_'.$rowCnt]);
+//			$acct             = db_prepare_input($_POST['acct_'.$rowCnt]);
 			$cost             = db_prepare_input($_POST['total_'.$rowCnt]);
 			if ($sku && $sku <> TEXT_SEARCH) {
 			  $glEntry->journal_rows[] = array(
@@ -160,27 +165,27 @@ switch ($action) {
 				'qty'              => $qty,
 				'gl_type'          => 'adj',
 				'serialize_number' => $serialize_number,
-				'gl_account'       => $acct,
+				'gl_account'       => $_POST['acct_'.$rowCnt],
 				'description'      => $desc,
-				'credit_amount'    => 0,
 				'debit_amount'     => $cost,
+			  	'credit_amount'    => 0,
 				'post_date'        => $post_date,
 			  );
+		      $glEntry->journal_rows[] = array(
+		        'sku'           => '',
+		        'qty'           => '',
+		        'gl_type'       => 'ttl',
+		        'gl_account'    => $_POST['cogs_acct_'.$rowCnt],
+		        'description'   => BOX_INV_TRANSFER .' - '. $adj_reason,
+		        'debit_amount'  => 0,
+		        'credit_amount' => $cost,
+			    'post_date'     => $post_date,
+	          );
 			  $tot_amount += $cost;
 			}
 			$rowCnt++;
 		  }
 	      $glEntry->journal_main_array['total_amount'] = $tot_amount;
-	      $glEntry->journal_rows[] = array(
-	        'sku'           => '',
-	        'qty'           => '',
-	        'gl_type'       => 'ttl',
-	        'gl_account'    => $adj_account,
-	        'description'   => $adj_reason,
-	        'debit_amount'  => 0,
-	        'credit_amount' => $tot_amount,
-		    'post_date'     => $post_date,
-          );
 	      if (!$glEntry->Post($glEntry->id ? 'edit' : 'insert')) $error = true;
 		  // link first record to second record
 //		  $db->Execute("UPDATE ".TABLE_JOURNAL_MAIN." SET so_po_ref_id=$glEntry->id WHERE id=$first_id");
@@ -237,7 +242,6 @@ switch ($action) {
 	$cInfo = new objectInfo();
 }
 /*****************   prepare to display templates  *************************/
-$gl_array_list = gen_coa_pull_down();
 $cal_xfr = array(
   'name'      => 'dateReference',
   'form'      => 'inv_xfer',
@@ -247,7 +251,6 @@ $cal_xfr = array(
 );
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_INV_TRANSFER);
 
