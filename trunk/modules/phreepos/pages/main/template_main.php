@@ -22,7 +22,6 @@ echo html_form('pos', FILENAME_DEFAULT, gen_get_all_get_params(array('action')))
 $hidden_fields = NULL;
 
 // include hidden fields
-echo html_hidden_field('action',               '') . chr(10);
 echo html_hidden_field('id',                 $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('bill_acct_id',       $order->bill_acct_id) . chr(10);	// id of the account in the bill to/remit to
 echo html_hidden_field('bill_address_id',    $order->bill_address_id) . chr(10);

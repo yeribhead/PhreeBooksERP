@@ -99,7 +99,7 @@ $mainmenu["company"] = array(
   'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_company', 'SSL'),
   'params'      => '',
 );
-$mainmenu["quality"] = array(
+if (defined('MODULE_CP_ACTION_STATUS') || defined('MODULE_DOC_CTL_STATUS')) $mainmenu["quality"] = array(
   'order' 		=> MENU_HEADING_QUALITY_ORDER,
   'text'  		=> MENU_HEADING_QUALITY,
   'security_id' => '',

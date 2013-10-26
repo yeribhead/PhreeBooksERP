@@ -41,17 +41,11 @@ function sortByOrder($a, $b) {
 
 function create_menu(array $array){
 	if(isset($array['security_id']) && $array['security_id'] != ''){
-		if(array_key_exists($array['security_id'], $_SESSION['admin_security']) == false && $_SESSION['admin_security'][$array['security_id']] == 0) return '';
+		if(array_key_exists($array['security_id'], $_SESSION['admin_security']) == false || $_SESSION['admin_security'][$array['security_id']] < 1) return '';
 	}
 	if(!empty($array['submenu'])){
 		usort($array['submenu'], 'sortByOrder');
-		$valid = false;
-		foreach($array['submenu'] as $menu_item){
-			if($menu_item['security_id'] == SECURITY_ID_PHREEFORM) continue;
-			if($_SESSION['admin_security'][$menu_item['security_id']] != 0) $valid = true;
-			if(is_array($menu_item['submenu'])) $valid = true;
-		}
-		if($valid){
+		if(check_permission($array['submenu'])){
 			echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>'.chr(10);
 			echo '    <ul>' . chr(10);
 			foreach($array['submenu'] as $menu_item) create_menu($menu_item);
@@ -64,5 +58,20 @@ function create_menu(array $array){
   		echo ($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>  </li>'.chr(10);
 	}
 	return true;
+}
+
+function check_permission(array $array){
+	$valid = false;
+	foreach($array as $menu_item){ 
+		if(is_array($menu_item['submenu'])) {
+			if(check_permission($menu_item['submenu'])) $valid = true;
+		}else{
+			if($menu_item['show_in_users_settings'] == false && $menu_item['security_id'] == SECURITY_ID_PHREEFORM) continue;
+			if(isset($menu_item['security_id']) && $menu_item['security_id'] != ''){
+				if(array_key_exists($menu_item['security_id'], $_SESSION['admin_security']) == true && $_SESSION['admin_security'][$menu_item['security_id']] > 0) $valid = true;
+			}
+		}
+	}
+	return $valid;
 }
 ?>

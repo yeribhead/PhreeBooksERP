@@ -1052,9 +1052,7 @@ function InventoryProp(elementID) {
 	  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
   }
 }
-// -->
-</script>
-<script type="text/javascript">
+
 // this part is for the payment div and the ajax saving.
 // pass any php variables generated during pre-process that are used in the javascript functions.
 // Include translations here as well.
@@ -1142,7 +1140,7 @@ function SavePayment(PrintOrSave) { // request function
 }
 
 function ajaxSave(PrintOrSave){
-	refreshOrderClock(); 
+	refreshOrderClock();
 	if (!save_allowed) return;
 	save_allowed = false;
 	showLoading();
@@ -1209,7 +1207,7 @@ function jzebraDoneAppending(){
 	var applet = document.qz;
 	if (applet != null) {
 	   if (!applet.isDoneAppending()) {
-	      window.setTimeout('monitorAppending()', 100);
+	      window.setTimeout('jzebraDoneAppending()', 50);
 	   } else {
 	      applet.print(); 
 	      // Don't print until all of the data has been appended

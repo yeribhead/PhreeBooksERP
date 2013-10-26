@@ -82,8 +82,13 @@ foreach ($payment_modules as $key => $pmts) {
   	$js_pmt_types .= 'pmt_types[\'' . $pmts['id'] . '\'] = "' . $pmts['text'] . '";' . chr(10);
   }
 }
+//check if setting are right for usage of phreepos 
 if(count($payment_modules) < 1 ){
 	$messageStack->add_session(ERROR_NO_PAYMENT_METHODES, 'error');
+	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
+}
+if(AR_TAX_BEFORE_DISCOUNT == false && PHREEPOS_DISCOUNT_OF == true ){ // tax after discount
+	$messageStack->add_session('your setting tax before discount and discount over total don\'t work together, <br/>This has circulair logic one can\'t preceed the other', 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 $js_currency  = 'var currency  = new Array();' . chr(10);
