@@ -17,7 +17,7 @@
 //  Path: /modules/phreebooks/classes/gen_ledger.php
 //
 
-class journal {
+class journal { 
   function journal($id = 0) {
 	global $db, $messageStack;
 	$this->affected_accounts = array();
