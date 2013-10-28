@@ -68,6 +68,7 @@ define('RMA_STATUS_6','Waiting for Credit');
 define('RMA_STATUS_7','Closed - Replaced');
 define('RMA_STATUS_8','Closed - No Warranty');
 define('RMA_STATUS_9','Damage Claim');
+define('RMA_STATUS_10','Closed - Returned');
 define('RMA_STATUS_90','Closed - Not Received');
 define('RMA_STATUS_99','Closed');
 

@@ -31,6 +31,7 @@ $status_codes = array(
   '7'  => RMA_STATUS_7,
   '8'  => RMA_STATUS_8,
   '9'  => RMA_STATUS_9,
+  '10' => RMA_STATUS_10,
   '90' => RMA_STATUS_90,
   '99' => RMA_STATUS_99,
 );
