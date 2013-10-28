@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -39,7 +38,7 @@ var delete_icon_HTML  = '<?php echo substr(html_icon("emblems/emblem-unreadable.
 // required function called with every page load
 function init() {
 	$(function() { $('#detailtabs').tabs(); });
-  <?php if ($action <> 'new' && $action <> 'edit') { // set focus for main window
+  <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
 	echo "  document.getElementById('search_text').focus();";
 	echo "  document.getElementById('search_text').select();";
   } ?>
@@ -95,7 +94,7 @@ function processSkuDetails(sXml) { // call back function
   var xml = parseXml(sXml);
   if (!xml) return;
   var rID = $(xml).find("rID").text();
-  if (!rID) return;  
+  if (!rID) return;
   //switch between receiving and disposition
   if (sender == 'dis_'){
 	document.getElementById(sender+'qty_'   +rID).value			 = $(xml).find("qty").text();

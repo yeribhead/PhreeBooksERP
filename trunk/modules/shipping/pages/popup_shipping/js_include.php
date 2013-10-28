@@ -22,7 +22,7 @@
 <!--
 // pass any php variables generated during pre-process that are used in the javascript functions.
 // Include translations here as well.
-var action   = '<?php echo $action; ?>'; 
+var action   = '<?php echo $_REQUEST['action']; ?>'; 
 var formName = '<?php echo $_GET['form']; ?>'; 
 <?php echo js_calendar_init($cal_ship); ?>
 

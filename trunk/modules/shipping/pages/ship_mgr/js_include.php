@@ -29,7 +29,7 @@ function init() {
   $(function() { $('#shippingtabs').tabs(); });
   var dlg = $('#shipping_dialog').dialog({ 
 	autoOpen: false,
-	buttons: { "<?php echo TEXT_SUBMIT; ?>": function() { $(this).dialog('close'); document.getElementById('todo').form.submit(); } }
+	buttons: { "<?php echo TEXT_SUBMIT; ?>": function() { $(this).dialog('close'); document.getElementById('action').form.submit(); } }
   });
   dlg.parent().appendTo($("#ship_mgr"));
   document.getElementById('search_date').onchange = calendarPage;
@@ -78,7 +78,7 @@ function fillDialog(sXml) {
   if ($(xml).find("width").text()) {
 	  $("#shipping_dialog").dialog("option", "width", parseInt($(xml).find("width").text()));
   }
-  document.getElementById('todo').value = $(xml).find("action").text();
+  document.getElementById('action').value = $(xml).find("action").text();
   document.getElementById('module_id').value = $(xml).find("method").text();
   document.getElementById('shipping_dialog').innerHTML = $(xml).find("html").text();
   $('#shipping_dialog').dialog('open');

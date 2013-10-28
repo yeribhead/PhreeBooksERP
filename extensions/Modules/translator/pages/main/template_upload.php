@@ -17,7 +17,7 @@
 //  Path: /modules/translator/pages/main/template_import.php
 //
 echo html_form('translator', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"') . chr(10);
-echo html_hidden_field('todo',   '') . chr(10);
+echo html_hidden_field('action',   '') . chr(10);
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']     = false;
 $toolbar->icon_list['delete']['show']   = false;

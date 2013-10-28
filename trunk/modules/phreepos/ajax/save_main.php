@@ -48,7 +48,6 @@ $total_fixed     = 0;
 $account_type    = 'c';
 $post_success    = false;
 $order           = new journal_19();
-$action          = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $payment_modules = load_all_methods('payment');
 $tills           = new tills();
 /***************   hook for custom actions  ***************************/
@@ -216,7 +215,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 	  $error .= 'The total payment was not equal to the order total!'. chr(10);
 	  $error .= $tot_paid .' + '. $order->rounding_amt.' + '. $order->total_amount;
 	}
-	if(substr($action,0,5) == 'print') {
+	if(substr($_REQUEST['action'],0,5) == 'print') {
 		$order->printed = true;
 	}else{
 		$order->printed = FALSE;
@@ -225,7 +224,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 	if (!$error) { // Post the order
 		if (!$order->item_rows) {
 			$error .= GL_ERROR_NO_ITEMS;
-		}else if ($post_success = $order->post_ordr($action)) {	// Post the order class to the db
+		}else if ($post_success = $order->post_ordr($_REQUEST['action'])) {	// Post the order class to the db
 			gen_add_audit_log(MENU_HEADING_PHREEPOS . ' - ' . ($_POST['id'] ? TEXT_EDIT : TEXT_ADD), $order->purchase_invoice_id, $order->total_amount);
 	  	} else { // reset the id because the post failed (ID could have been set inside of Post)
 			$error .= 'Posting failt!';
@@ -264,7 +263,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 		  	}
 		}
 	}
-						$xml .= "\t" . xmlEntry("action",			$action);
+						$xml .= "\t" . xmlEntry("action",			$_REQUEST['action']);
 						$xml .= "\t" . xmlEntry("open_cash_drawer", $order->opendrawer);
 if (!$error)			$xml .= "\t" . xmlEntry("order_id",		 	$order->id);
 if ($error)  			$xml .= "\t" . xmlEntry("error", 			$error);

@@ -45,7 +45,7 @@ $oID               = isset($_GET['oID']) ? (int)$_GET['oID'] : false;
 $post_date         = ($_POST['post_date']) ? gen_db_date($_POST['post_date']) : date('Y-m-d', time());
 $period            = gen_calculate_period($post_date);
 if (!$period) { // bad post_date was submitted
-  $action    = '';
+  $_REQUEST['action']    = '';
   $post_date = date('Y-m-d');
   $period    = 0;
 }
@@ -80,14 +80,12 @@ switch (JOURNAL_ID) {
 }
 
 $order  = new banking();
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/bills/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'print':
 	validate_security($security_level, 2);
@@ -165,8 +163,8 @@ switch ($action) {
 	if ($order->total_amount < 0) $error = $messageStack->add(TEXT_TOTAL_LESS_THAN_ZERO,'error');
 */
 	// post the receipt/payment
-	if (!$error && $post_success = $order->post_ordr($action)) {	// Post the order class to the db
-	  if ($action == 'save') {
+	if (!$error && $post_success = $order->post_ordr($_REQUEST['action'])) {	// Post the order class to the db
+	  if ($_REQUEST['action'] == 'save') {
 		gen_add_audit_log(AUDIT_LOG_DESC, $order->purchase_invoice_id, $order->total_amount);
 		if (DEBUG) $messageStack->write_debug();
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
@@ -274,8 +272,6 @@ $default_sales_rep = $result->fields['account_id'] ? $result->fields['account_id
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', constant('ORD_TEXT_' . JOURNAL_ID . '_' . strtoupper($type) . '_WINDOW_TITLE'));
 

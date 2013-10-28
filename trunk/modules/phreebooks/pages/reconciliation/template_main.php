@@ -17,12 +17,9 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/pages/reconciliation/template_main.php
 //
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 echo html_form('reconciliation', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params']   = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']       = false;
@@ -52,7 +49,7 @@ echo $toolbar->build_toolbar($add_search = false, $add_period = false);
 	  'dep_amount' => BNK_DEPOSIT_CREDIT,
 	  'pmt_amount' => BNK_CHECK_PAYMENT,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], array(TEXT_SOURCE, TEXT_CLEAR, '&nbsp;'));
+	$result      = html_heading_bar($heading_array, array(TEXT_SOURCE, TEXT_CLEAR, '&nbsp;'));
 	echo $result['html_code'];
 ?>
   </tr>

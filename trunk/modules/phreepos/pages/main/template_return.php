@@ -22,7 +22,7 @@ echo html_form('pos', FILENAME_DEFAULT, gen_get_all_get_params(array('action')))
 $hidden_fields = NULL;
 
 // include hidden fields
-echo html_hidden_field('todo',               '') . chr(10);
+echo html_hidden_field('action',               '') . chr(10);
 echo html_hidden_field('id',                 $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('bill_acct_id',       $order->bill_acct_id) . chr(10);	// id of the account in the bill to/remit to
 echo html_hidden_field('bill_address_id',    $order->bill_address_id) . chr(10);
@@ -205,9 +205,15 @@ echo $toolbar->build_toolbar();
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
 ?>
+<!--
+<object type="application/x-java-applet" width="16" height="16" id="jZebra" name="jZebra">
+  	<param name="archive"   value="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" />
+  	<param name="code"      value="jzebra.PrintApplet.class" />
+  	<param name="mayscript" value="true" />
+</object>
+-->
   <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
 	<param name="permissions" value="all-permissions" />
-	<param name="printer" value="<?php echo MODULE_SHIPPING_FEDEX_V7_PRINTER_NAME; ?>">
   </applet>
 <div id="popupPayment">
 <?php 

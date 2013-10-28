@@ -135,7 +135,7 @@ buildmenu: function($, setting){
 	var $mainparent = $("#"+setting.mainmenuid).removeClass("ddsmoothmenu ddsmoothmenu-v").addClass(setting.classname || "ddsmoothmenu");
 	//setting.$mainparent = $mainparent;
 	var $mainmenu = $mainparent.find('>ul'); //reference main menu UL
-	var method = smoothmenu.detecttouch? 'toggle' : setting.method === 'toggle'? 'toggle' : 'hover';
+	var method = smoothmenu.detecttouch && screen.width<=768 ? 'toggle' : setting.method === 'toggle'? 'toggle' : 'hover';
 	var $topheaders = $mainmenu.find('>li>ul').parent();//has('ul');
 	//$mainparent.data('$headers', $topheaders);
 	var orient = setting.orientation!='v'? 'down' : 'right', $parentshadow = $(document.body);

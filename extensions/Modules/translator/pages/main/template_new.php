@@ -17,7 +17,7 @@
 //  Path: /modules/translator/pages/main/template_new.php
 //
 echo html_form('translator', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']     = false;
 $toolbar->icon_list['delete']['show']   = false;
@@ -35,7 +35,7 @@ echo $toolbar->build_toolbar();
 	<tr>
 	  <td colspan="2">
 	    <?php echo TRANSLATOR_ISO_CREATE; ?>
-	    <?php echo html_input_field('lang', ''); ?>
+	    <?php echo html_input_field('lang', DEFAULT_LANGUAGE); ?>
 	  </td>
 	</tr>
 	<tr>
@@ -43,7 +43,7 @@ echo $toolbar->build_toolbar();
 	    <?php echo TRANSLATOR_NEW_SOURCE . html_pull_down_menu('mod', $sel_modules);  ?>
 	  </td>
 	  <td>
-	    <?php echo TEXT_SOURCE_LANGUAGE . ' ' . html_input_field('source_lang', DEFAULT_LANGUAGE); ?>
+	    <?php echo TEXT_SOURCE_LANGUAGE . ' ' . html_input_field('source_lang', 'en_us'); ?>
 	  </td>
 	</tr>
 	<tr><th colspan="2"><?php echo TEXT_OPTIONS; ?></th></tr>
@@ -52,7 +52,7 @@ echo $toolbar->build_toolbar();
 	  	<?php echo html_checkbox_field('replace', '1', false); ?>
 		<?php echo TRANSLATOR_NEW_OVERRIDE . '&nbsp;'; ?>
 	  </td>
-	  <td><?php echo html_input_field('history_lang', ''); ?></td>
+	  <td><?php echo html_input_field('history_lang', DEFAULT_LANGUAGE); ?></td>
 	</tr>
 	<tr>
 	  <td colspan="2" align="right"><?php echo html_button_field('new', TEXT_CREATE_NEW_TRANSLATION, 'onclick="submitToDo(\'create_new\')"'); ?></td>

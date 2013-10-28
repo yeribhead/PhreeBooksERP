@@ -24,10 +24,8 @@ require(DIR_FS_WORKING . 'classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',2);	// General Journal
 $error      = false;
-$action     = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $start_date = ($_POST['start_date'])  ? gen_db_date($_POST['start_date']) : CURRENT_ACCOUNTING_PERIOD_START;
 $end_date   = ($_POST['end_date'])    ? gen_db_date($_POST['end_date'])   : CURRENT_ACCOUNTING_PERIOD_END;
-$action     = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 // see what fiscal year we are looking at (assume this FY is entered for the first time)
 if ($_POST['fy']) {
   $fy = $_POST['fy'];
@@ -47,7 +45,7 @@ $period     = CURRENT_ACCOUNTING_PERIOD;
 $custom_path = DIR_FS_WORKING . 'custom/pages/admin_tools/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'update':
 	validate_security($security_level, 3);
   	// propagate into remaining fiscal years if the last date was changed.
@@ -205,7 +203,7 @@ switch ($action) {
 		$next_beg_bal = $history[$acct][$period]['beg_bal'] + $posted->fields['debit'] - $posted->fields['credit'];
 		if (in_array($acct, $acct_list) && in_array($period, $max_periods)) $next_beg_bal = 0;
 		if (abs($diff_debit) > $tolerance || abs($diff_credit) > $tolerance) {
-		  if ($action == 'coa_hist_test') {
+		  if ($_REQUEST['action'] == 'coa_hist_test') {
 		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_ERROR_MSG, 'gl '.$period, $acct, $posted_bal, $currencies->format($next_beg_bal)), 'caution');
 		  }
 		  $bad_accounts[$acct][$period]['debit_amount']  = $posted->fields['debit'];
@@ -215,7 +213,7 @@ switch ($action) {
 		  $first_error_period = min($first_error_period, $period);
 		}
 		if ($currencies->format(abs($next_beg_bal - $history[$acct][$period+1]['beg_bal'])) > $tolerance) {
-		  if ($action == 'coa_hist_test') {
+		  if ($_REQUEST['action'] == 'coa_hist_test') {
 		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_ERROR_MSG, 'bb '.$period, $acct, $posted_bal, $currencies->format($next_beg_bal)), 'caution');
 		  }
 		  $bad_accounts[$acct][$period+1]['beginning_balance'] = $next_beg_bal;
@@ -228,7 +226,7 @@ switch ($action) {
 		// read and check history db values
 	  }
 	}
-	if ($action == 'coa_hist_fix' && sizeof($bad_accounts) > 0) {
+	if ($_REQUEST['action'] == 'coa_hist_fix' && sizeof($bad_accounts) > 0) {
 		// *************** START TRANSACTION *************************
 		$db->transStart();
 	    $glEntry = new journal();

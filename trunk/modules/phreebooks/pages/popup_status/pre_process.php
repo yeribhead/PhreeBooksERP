@@ -48,8 +48,6 @@ if ($customer->fields['inactive']) {
 /*****************   prepare to display templates  *************************/
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', constant($type . '_CONTACT_STATUS'));
 ?>

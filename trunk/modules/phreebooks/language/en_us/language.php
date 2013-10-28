@@ -253,6 +253,13 @@ define('ORD_JS_INACTIVE_A','Caution! SKU: ');
 define('ORD_JS_INACTIVE_B',' is an inactive item.\n\nPress OK to continue or Cancel to return to the order form');
 define('ORD_JS_CANNOT_CONVERT_QUOTE','An un-Posted Sales Quote cannot be converted to Sales Order or a Sales/Invoice!');
 define('ORD_JS_CANNOT_CONVERT_SO','An un-Posted Sales Order cannot be converted to a Purchase Order!');
+define('ITEM_IS_ALREADY_ON_ORDER', 'item is already on order');
+define('ITEM_IS_ON_HAND', 'item is on hand');
+define('ITEM_IS_INACTIVE', 'item is inactive');
+define('ITEM_IS_OUT_OF_STOCK_AND_INACTIVE', 'item is out of stock and inactive');
+define('THERE_IS_SALES_ORDER_FOR_THIS_ITEM', 'there is a sales order for this item');
+define('ITEM_IS_ON_ORDER', 'item is on order');
+define('ITEM_MUST_BE_ORDERD', 'item must be orderd');
 // Low Stock messages
 define('LOW_STOCK_BUTTON','Fill order with items with low stock');
 define('LOW_STOCK_PROCESSED','Procesed');

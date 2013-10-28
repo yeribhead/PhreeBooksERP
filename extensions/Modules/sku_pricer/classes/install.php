@@ -18,21 +18,17 @@
 //
 
 class sku_pricer_admin {
-  function sku_pricer_admin() {
-	$this->notes = array(); // placeholder for any operational notes
+	public $notes 			= array();// placeholder for any operational notes
+	public $prerequisites 	= array();// modules required and rev level for this module to work properly
+	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
+	public $dirlist			= array();// add new directories to store images and data
+	public $tables			= array();// Load tables
+	
+  function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => '3.0',
-	  'phreebooks' => '3.0',
+	  'phreedom'   => 3.0,
+	  'phreebooks' => 3.0,
 	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array(
-	);
-	// add new directories to store images and data
-	$this->dirlist = array(
-	);
-	// Load tables
-	$this->tables = array(
-    );
   }
 
   function install($module) {

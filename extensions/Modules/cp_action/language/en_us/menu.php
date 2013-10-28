@@ -17,7 +17,6 @@
 //  Path: /modules/cp_action/language/en_us/menu.php
 //
 // Menu Headings
-define('MENU_HEADING_QUALITY','Quality');
 define('MENU_HEADING_CAPA','Corrective/Preventative Action');
 
 // Menu Titles

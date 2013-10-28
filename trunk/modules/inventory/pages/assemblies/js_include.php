@@ -26,7 +26,7 @@ var securityLevel = <?php echo $security_level; ?>;
 
 function init() {
   document.getElementById('sku_1').focus();
-<?php if ($action == 'edit') echo '  EditAssembly(' . $oID . ')'; ?>
+<?php if ($_REQUEST['action'] == 'edit') echo '  EditAssembly(' . $oID . ')'; ?>
 
 }
 

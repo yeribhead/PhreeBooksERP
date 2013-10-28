@@ -20,14 +20,13 @@
 $security_level = validate_user(0, true);
 /**************  include page specific files  *********************/
 /**************   page specific initialization  *************************/
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_cvv/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   default:
 }
 
@@ -35,9 +34,6 @@ switch ($action) {
 
 $include_header = false; // include header flag
 $include_footer = false; // include footer flag
-$include_tabs = false;
-$include_calendar = false;
-
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', HEADING_CVV);
 

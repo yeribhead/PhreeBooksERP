@@ -48,52 +48,64 @@ if (defined('MODULE_PHREEPOS_STATUS')) {
   );
 */
   // Set the menus
-  $menu[] = array(
-    'text'        => BOX_PHREEPOS,
-    'heading'     => MENU_HEADING_CUSTOMERS, // MENU_HEADING_PHREEPOS
-    'rank'        => 51,
+  $mainmenu["customers"]['submenu']["phreepos"] = array(
+  	'order' 	  => 51,
+  	'text'        => BOX_PHREEPOS, 
     'security_id' => SECURITY_ID_PHREEPOS,
-    'hidden'      => false,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=main', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
-  $menu[] = array(
-    'text'        => BOX_POS_MGR, 
-    'heading'     => MENU_HEADING_BANKING, 
-    'rank'        => 53, 
-    'security_id' => SECURITY_ID_POS_MGR,
-    'hidden'      => false, 
+  $mainmenu["banking"]['submenu']['phreepos'] = array(
+  	'order' 	  => 51,
+  	'text'        => BOX_PHREEPOS, 
+    'security_id' => '',
+    'show_in_users_settings' => false,
+    'params'      => '',
+  );
+  $mainmenu["banking"]['submenu']['phreepos']['submenu']["phreepos_mgr"] = array(
+  	'order' 	  => 53,
+  	'text'        => BOX_POS_MGR, 
+    'security_id' => SECURITY_ID_POS_MGR, 
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=pos_mgr&amp;list=1', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
-  $menu[] = array(
-    'text'        => BOX_POS_CLOSING, 
-    'heading'     => MENU_HEADING_BANKING, 
-    'rank'        => 54, 
-    'security_id' => SECURITY_ID_POS_CLOSING,
-    'hidden'      => false, 
+  $mainmenu["banking"]['submenu']['phreepos']['submenu']["phreepos_closing"] = array(
+  	'order' 	  => 54,
+  	'text'        => BOX_POS_CLOSING, 
+    'security_id' => SECURITY_ID_POS_CLOSING, 
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=closing', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
-  $menu[] = array(
+  $mainmenu["banking"]['submenu']['customer_deposit'] = array(
     'text'        => BOX_CUSTOMER_DEPOSITS,
-    'heading'     => MENU_HEADING_BANKING,
-    'rank'        => 10,
+    'order'       => 10,
     'security_id' => SECURITY_ID_CUSTOMER_DEPOSITS,
-    'hidden'      => false,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=deposit&amp;type=c', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
-  $menu[] = array(
+  $mainmenu["banking"]['submenu']['vendor_deposit'] = array(
     'text'        => BOX_VENDOR_DEPOSITS,
-    'heading'     => MENU_HEADING_BANKING,
-    'rank'        => 50,
+    'order'       => 50,
     'security_id' => SECURITY_ID_VENDOR_DEPOSITS,
-    'hidden'      => false,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=deposit&amp;type=v', 'SSL'),
+    'show_in_users_settings' => true,
     'params'      => '',
   );
-  
+	if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+	  gen_pull_language('phreepos', 'admin');
+	  $mainmenu["company"]['submenu']["configuration"]['submenu']["phreepos"] = array(
+		'order'	      => MODULE_PHREEPOS_TITLE,
+		'text'        => MODULE_PHREEPOS_TITLE,
+		'security_id' => SECURITY_ID_CONFIGURATION, 
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=admin', 'SSL'),
+	    'show_in_users_settings' => false,
+		'params'      => '',
+	  );
+	}  
 }
 
 ?>

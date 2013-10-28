@@ -27,6 +27,7 @@
 // 3.7 => 2012-10-01 - bug fixes, redesign of the classes/methods
 // 3.7.1 => 2013-06-30 - Bug fixes 
 // Module software version information
+gen_pull_language('phreedom', 'menu');
 define('MODULE_CONTACTS_VERSION',     3.71);
 // Menu Sort Positions
 define('MENU_HEADING_CUSTOMERS_ORDER',   10);
@@ -49,115 +50,172 @@ define('TABLE_DEPARTMENTS',     DB_PREFIX . 'departments');
 define('TABLE_DEPT_TYPES',      DB_PREFIX . 'departments_types');
 define('TABLE_PROJECTS_COSTS',  DB_PREFIX . 'projects_costs');
 define('TABLE_PROJECTS_PHASES', DB_PREFIX . 'projects_phases');
+// defaults for filters
+define('DEFAULT_F0_SETTING','1'); // inactive filter set to show inactive contacts, override in phreedom custom language overrides by type, i.e. CONTACTS_F0_C for customers
 // Set the title menu
-$pb_headings[MENU_HEADING_CUSTOMERS_ORDER] = array(
-  'text' => MENU_HEADING_CUSTOMERS, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_ar', 'SSL'),
+$mainmenu["customers"] = array(
+  'order' 		=> MENU_HEADING_CUSTOMERS_ORDER,
+  'text' 		=> MENU_HEADING_CUSTOMERS,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_ar', 'SSL'),
+  'params'      => '',
 );
-$pb_headings[MENU_HEADING_VENDORS_ORDER] = array(
-  'text' => MENU_HEADING_VENDORS, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_ap', 'SSL'),
+$mainmenu["vendors"] = array(
+  'order' 		=> MENU_HEADING_VENDORS_ORDER,
+  'text' 		=> MENU_HEADING_VENDORS,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_ap', 'SSL'),
+  'params'      => '',
 );
-$pb_headings[MENU_HEADING_EMPLOYEES_ORDER] = array(
-  'text' => MENU_HEADING_EMPLOYEES, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_hr', 'SSL'),
+$mainmenu["employees"] = array(
+  'order' 		=> MENU_HEADING_EMPLOYEES_ORDER,
+  'text' 		=> MENU_HEADING_EMPLOYEES,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_hr', 'SSL'),
+  'params'      => '',
 );
+
 // Set the menus
-$menu[] = array(
-  'text'        => BOX_CONTACTS_NEW_CUSTOMER, 
-  'heading'     => MENU_HEADING_CUSTOMERS, 
-  'rank'        => 5, 
-  'hide'        => true,
+$mainmenu["customers"]['submenu']["contact"] = array(
+	'order'		  => 10,
+	'text'        => MENU_HEADING_CUSTOMERS,
+	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=c&amp;list=1', 'SSL'),
+	'security_id' => SECURITY_ID_MAINTAIN_CUSTOMERS,
+	'show_in_users_settings' => false,
+    'params'      => '',
+);
+$mainmenu["customers"]['submenu']["contact"]['submenu']["new_customer"] = array(
+  'text'        => sprintf(BOX_TEXT_NEW_TITLE, TEXT_CUSTOMER), 
+  'order'       => 5, 
   'security_id' => SECURITY_ID_MAINTAIN_CUSTOMERS, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_MAINTAIN_CUSTOMERS]) && $_SESSION['admin_security'][SECURITY_ID_MAINTAIN_CUSTOMERS] > 1) ? false : true,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=c', 'SSL'),
+  'show_in_users_settings' => false,
   'params'	    => '',
 );
-$menu[] = array(
-  'text'        => BOX_CONTACTS_MAINTAIN_CUSTOMERS, 
-  'heading'     => MENU_HEADING_CUSTOMERS, 
-  'rank'        => 10, 
-  'security_id' => SECURITY_ID_MAINTAIN_CUSTOMERS,
-  'hidden'      => false, 
+$mainmenu["customers"]['submenu']["contact"]['submenu']["customer_mgr"] = array(
+  'text'        => sprintf(BOX_STATUS_MGR, TEXT_CUSTOMER), 
+  'order'       => 10, 
+  'security_id' => SECURITY_ID_MAINTAIN_CUSTOMERS, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=c&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'	    => '',
 );
-$menu[] = array(
-  'text'        => BOX_PHREECRM_MODULE, 
-  'heading'     => MENU_HEADING_CUSTOMERS, 
-  'rank'        => 15, 
-  'security_id' => SECURITY_ID_PHREECRM,
-  'hidden'      => false, 
+$mainmenu["customers"]['submenu']["crm"] = array(
+  'text'        => BOX_PHREECRM_MODULE,  
+  'order'       => 15, 
+  'security_id' => SECURITY_ID_PHREECRM, 
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=i&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'	    => '',
 );
-$menu[] = array(
-  'text'        => BOX_CONTACTS_NEW_VENDOR, 
-  'heading'     => MENU_HEADING_VENDORS, 
-  'rank'        => 5, 
-  'hide'        => true,
-  'security_id' => SECURITY_ID_MAINTAIN_VENDORS, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_MAINTAIN_VENDORS]) && $_SESSION['admin_security'][SECURITY_ID_MAINTAIN_VENDORS] > 1) ? false : true,
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=v', 'SSL'),
-  'params'      => '',
-);
-$menu[] = array(
-  'text'        => BOX_CONTACTS_MAINTAIN_VENDORS, 
-  'heading'     => MENU_HEADING_VENDORS, 
-  'rank'        => 10, 
-  'security_id' => SECURITY_ID_MAINTAIN_VENDORS,
-  'hidden'      => false, 
+$mainmenu["vendors"]['submenu']["contact"] = array(
+  'order'		  => 10,
+  'text'        => MENU_HEADING_VENDORS,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=v&amp;list=1', 'SSL'),
+  'security_id' => SECURITY_ID_MAINTAIN_VENDORS,
+  'show_in_users_settings' => false,
   'params'      => '',
 );
-$menu[] = array(
-  'text'        => BOX_CONTACTS_NEW_EMPLOYEE,
-  'heading'     => MENU_HEADING_EMPLOYEES, 
-  'rank'        => 5, 
-  'hide'        => true,
-  'security_id' => SECURITY_ID_MAINTAIN_EMPLOYEES, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_MAINTAIN_EMPLOYEES]) && $_SESSION['admin_security'][SECURITY_ID_MAINTAIN_EMPLOYEES] > 1) ? false : true,
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=e', 'SSL'),
+$mainmenu["vendors"]['submenu']["contact"]['submenu']["new_vendor"] = array(
+  'text'        => sprintf(BOX_TEXT_NEW_TITLE, TEXT_VENDOR), 
+  'order'       => 5, 
+  'security_id' => SECURITY_ID_MAINTAIN_VENDORS, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=v', 'SSL'),
+  'show_in_users_settings' => false,
   'params'      => '',
 );
-$menu[] = array(
-  'text'        => BOX_CONTACTS_MAINTAIN_EMPLOYEES, 
-  'heading'     => MENU_HEADING_EMPLOYEES, 
-  'rank'        => 10, 
-  'security_id' => SECURITY_ID_MAINTAIN_EMPLOYEES,
-  'hidden'      => false, 
+$mainmenu["vendors"]['submenu']["contact"]['submenu']["vendor_mgr"] = array(
+  'text'        => sprintf(BOX_STATUS_MGR, TEXT_VENDOR), 
+  'order'       => 10, 
+  'security_id' => SECURITY_ID_MAINTAIN_VENDORS, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=v&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => '',
+);
+$mainmenu["employees"]['submenu']["contact"] = array(
+  'order'		  => 10,
+  'text'        => MENU_HEADING_EMPLOYEES,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=e&amp;list=1', 'SSL'),
+  'security_id' => SECURITY_ID_MAINTAIN_EMPLOYEES,
+  'show_in_users_settings' => false,
   'params'      => '',
 );
-if (ENABLE_MULTI_BRANCH) { // don't show menu if multi-branch is disabled
-  $menu[] = array(
-	'text'        => BOX_CONTACTS_NEW_BRANCH, 
-	'heading'     => MENU_HEADING_COMPANY, 
-	'rank'        => 55, 
-	'hide'        => true,
-	'security_id' => SECURITY_ID_MAINTAIN_BRANCH, 
-    'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_MAINTAIN_BRANCH]) && $_SESSION['admin_security'][SECURITY_ID_MAINTAIN_BRANCH] > 1) ? false : true,
-	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=b', 'SSL'),
-    'params'      => '',
-  );
-  $menu[] = array(
-	'text'        => BOX_CONTACTS_MAINTAIN_BRANCHES, 
-	'heading'     => MENU_HEADING_COMPANY, 
-	'rank'        => 56, 
-	'security_id' => SECURITY_ID_MAINTAIN_BRANCH,
-    'hidden'      => false, 
-	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=b&amp;list=1', 'SSL'),
-    'params'      => '',
-  );
+$mainmenu["employees"]['submenu']["contact"]['submenu']["new_employee"] = array(
+  'text'        => sprintf(BOX_TEXT_NEW_TITLE, TEXT_EMPLOYEE), 
+  'order'       => 5, 
+  'security_id' => SECURITY_ID_MAINTAIN_EMPLOYEES, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=e', 'SSL'),
+  'show_in_users_settings' => false,
+  'params'      => '',
+);
+$mainmenu["employees"]['submenu']["contact"]['submenu']["employee_mgr"] = array(
+  'text'        => sprintf(BOX_STATUS_MGR, TEXT_EMPLOYEE), 
+  'order'       => 10, 
+  'security_id' => SECURITY_ID_MAINTAIN_EMPLOYEES,
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=e&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => '',
+);
+if (defined('ENABLE_MULTI_BRANCH') && ENABLE_MULTI_BRANCH == true) { // don't show menu if multi-branch is disabled
+	$mainmenu["company"]['submenu']["branches"] = array(
+		'order'		  => 55,
+		'text'        => TEXT_BRANCHES,
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=b&amp;list=1', 'SSL'),
+		'security_id' => SECURITY_ID_MAINTAIN_BRANCH,
+	    'show_in_users_settings' => false,
+    	'params'      => '',
+	);
+	$mainmenu["company"]['submenu']["branches"]['submenu']["new_branch"] = array(
+		'text'        => sprintf(BOX_TEXT_NEW_TITLE, TEXT_BRANCH),  
+		'order'        => 55, 
+		'security_id' => SECURITY_ID_MAINTAIN_BRANCH, 
+    	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=b', 'SSL'),
+	    'show_in_users_settings' => false,
+    	'params'      => '',
+  	);
+  	$mainmenu["company"]['submenu']["branches"]['submenu']["branch_mgr"] = array(
+		'text'        => sprintf(BOX_STATUS_MGR, TEXT_BRANCH), 
+		'order'       => 56, 
+		'security_id' => SECURITY_ID_MAINTAIN_BRANCH, 
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=b&amp;list=1', 'SSL'),
+  	    'show_in_users_settings' => true,
+    	'params'      => '',
+  	);
 } // end disable if not looking at branches
-$menu[] = array(
-  'text'        => BOX_CONTACTS_MAINTAIN_PROJECTS, 
-  'heading'     => MENU_HEADING_CUSTOMERS, 
-  'rank'        => 60, 
+$mainmenu["customers"]['submenu']['projects'] = array(
+	'order'		  => 60,
+	'text'        => TEXT_PROJECTS,
+	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=j&amp;list=1', 'SSL'),
+	'security_id' => SECURITY_ID_MAINTAIN_PROJECTS,
+    'show_in_users_settings' => false,
+    'params'      => '',
+);
+$mainmenu["customers"]['submenu']['projects']['submenu']["new_project"] = array(
+  'text'        => sprintf(BOX_TEXT_NEW_TITLE, TEXT_PROJECT), 
+  'order'       => 5, 
+  'security_id' => SECURITY_ID_MAINTAIN_PROJECTS, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;action=new&amp;type=j', 'SSL'),
+  'show_in_users_settings' => false,
+  'params'      => '',
+);
+$mainmenu["customers"]['submenu']['projects']['submenu']["project_mgr"] = array(
+  'text'        => sprintf(BOX_STATUS_MGR, TEXT_PROJECT), 
+  'order'       => 10, 
   'security_id' => SECURITY_ID_MAINTAIN_PROJECTS,
-  'hidden'      => false, 
+  'show_in_users_settings' => true,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=main&amp;type=j&amp;list=1', 'SSL'),
   'params'      => '',
 );
 
+if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+  gen_pull_language('contacts', 'admin');
+  $mainmenu["company"]['submenu']["configuration"]['submenu']["contacts"] = array(
+	'order'	      => MODULE_CONTACTS_TITLE,
+	'text'        => MODULE_CONTACTS_TITLE,
+	'security_id' => SECURITY_ID_CONFIGURATION, 
+	'link'        => html_href_link(FILENAME_DEFAULT, 'module=contacts&amp;page=admin', 'SSL'),
+    'show_in_users_settings' => false,
+	'params'      => '',
+  );
+}
 ?>

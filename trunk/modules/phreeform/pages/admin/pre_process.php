@@ -27,10 +27,9 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_WORKING . 'classes/install.php');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$action  = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install = new phreeform_admin();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save': 
 	validate_security($security_level, 3);
   	// save general tab
@@ -151,8 +150,6 @@ $pdf_choices = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_PHREEFORM_MODULE_ADM);
 

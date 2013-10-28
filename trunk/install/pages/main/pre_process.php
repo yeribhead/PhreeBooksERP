@@ -51,10 +51,9 @@ require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error   = false;
 $caution = false;
-$action  = $_GET['action'];
 $messageStack = new messageStack();
 /***************   act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
 	default:
 	case 'welcome':
 		if (isset($_POST['license_consent']) && $_POST['license_consent'] == 'disagree') {

@@ -25,7 +25,9 @@ define('MENU_HEADING_TOOLS','Tools');
 define('BOX_HEADING_PROFILE','My Profile');
 define('HEADING_TITLE_USERS','Users');
 define('BOX_HEADING_ROLES','Roles');
+define('MENU_HEADING_INVENTORY', 'Inventory');
 define('MENU_HEADING_MODULES','Modules');
+define('MENU_HEADING_QUALITY','Quality');
 // Menu Titles
 define('BOX_HEADING_USERS','Users');
 define('BOX_HEADING_BACKUP','Company Backup');
@@ -36,4 +38,5 @@ define('BOX_HEADING_ADMIN_TOOLS', 'Administrative Tools');
 define('BOX_HEADING_CONFIGURATION','Module Administration');
 define('BOX_GENERAL_ADMIN','General Settings');
 define('BOX_HEADING_DEBUG_DL','Download Debug File');
+
 ?>

@@ -24,8 +24,7 @@ require(DIR_FS_WORKING . 'classes/gen_ledger.php');
 
 /**************   page specific initialization  *************************/
 // determine what button was pressed, if any
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 
 // see what fiscal year we are looking at (assume this FY is entered for the first time)
 if ($_POST['fy']) {
@@ -41,7 +40,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/budget/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	$i = 0;
@@ -141,8 +140,6 @@ while(!$result->EOF) {
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', GL_BUDGET_HEADING_TITLE);
 

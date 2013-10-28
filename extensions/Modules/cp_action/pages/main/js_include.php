@@ -37,7 +37,7 @@ echo js_calendar_init($cal_date9);
 
 // required function called with every page load
 function init() {
-  <?php if ($action <> 'new' && $action <> 'edit') { // set focus for main window
+  <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
 	echo "  document.getElementById('search_text').focus();" . chr(10);
 	echo "  document.getElementById('search_text').select();" . chr(10);
   } ?>

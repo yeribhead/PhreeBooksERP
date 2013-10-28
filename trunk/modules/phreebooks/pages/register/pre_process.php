@@ -26,14 +26,13 @@ require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
 $period = $_GET['search_period'] ? $_GET['search_period'] : CURRENT_ACCOUNTING_PERIOD;
 if ($period == 'all') $period = CURRENT_ACCOUNTING_PERIOD; // don't allow the all option
 $gl_account = isset($_POST['gl_account']) ? $_POST['gl_account'] : AR_SALES_RECEIPTS_ACCOUNT;
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/register/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   default:
 }
 
@@ -86,8 +85,6 @@ while (!$result->EOF) {
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_BANKING_BANK_ACCOUNT_REGISTER);
 

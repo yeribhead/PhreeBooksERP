@@ -26,7 +26,7 @@ var text_search   = '<?php echo TEXT_SEARCH; ?>';
 <?php echo js_calendar_init($cal_xfr); ?>
 
 function init() {
-<?php if ($action == 'edit') echo '  EditTransfer(' . $oID . ')'; ?>
+<?php if ($_REQUEST['action'] == 'edit') echo '  EditTransfer(' . $oID . ')'; ?>
 }
 
 function check_form() {

@@ -29,17 +29,16 @@ $security_level = validate_user(SECURITY_ID_AUDIT);
 require_once(DIR_FS_WORKING . 'functions/audit.php');
 /**************   page specific initialization  *************************/
 $error     = false;
-$date_from = gen_db_date($_POST['date_from']);//         ? db_prepare_input($_POST['date_from'])       : $_GET['date_from'];
-$date_to   = gen_db_date($_POST['date_to']);//           ? db_prepare_input($_POST['date_to'])         : $_GET['date_to'];
-$select    = $_POST['select'];//           ? db_prepare_input($_POST['date_to'])         : $_GET['date_to'];
-$action    = (isset($_GET['action'])    ? $_GET['action']    : $_POST['todo']);
+$date_from = gen_db_date($_REQUEST['date_from']);//         ? db_prepare_input($_POST['date_from'])       : $_GET['date_from'];
+$date_to   = gen_db_date($_REQUEST['date_to']);//           ? db_prepare_input($_POST['date_to'])         : $_GET['date_to'];
+$select    = $_REQUEST['select'];//           ? db_prepare_input($_POST['date_to'])         : $_GET['date_to'];
 
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_MODULES . 'audit/custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
 	case 'export_audit': //search for contacts, gl_accounts and journals
 	
 	  	$output = build_audit_xml($date_from, $date_to, $select);
@@ -86,9 +85,6 @@ $cal_to = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
-
 $include_template = 'template_main.php';
 define('PAGE_TITLE', HEADING_MODULE_AUDIT);
 

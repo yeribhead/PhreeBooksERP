@@ -24,32 +24,18 @@
 define('MODULE_CP_ACTION_VERSION','3.3');
 // Menu Sort Positions
 define('BOX_CAPA_MODULE_ORDER',      80);
-define('MENU_HEADING_QUALITY_ORDER', 75);
 // Menu Security id's
 define('SECURITY_CAPA_MGT',         185);
 /// New Database Tables
 define('TABLE_CAPA', DB_PREFIX . 'capa_module');
-// Set the title menu
-$pb_headings[MENU_HEADING_QUALITY_ORDER] = array(
-  'text' => MENU_HEADING_QUALITY, 
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_qa', 'SSL'),
-);
-// Set the menus
-$menu[] = array(
-  'text'        => BOX_CAPA_MODULE, 
-  'heading'     => MENU_HEADING_QUALITY,
-  'rank'        => BOX_CAPA_MODULE_ORDER, 
-  'security_id' => SECURITY_CAPA_MGT, 
+
+$mainmenu["quality"]['submenu']["quality"] = array(
+  'order' 		=> BOX_CAPA_MODULE_ORDER,
+  'text'        => BOX_CAPA_MODULE,
+  'security_id' => SECURITY_CAPA_MGT,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=cp_action&amp;page=main', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => '',
 );
-if (defined('MODULE_PHREEFORM_STATUS')) {
-  $menu[] = array(
-	'text'        => TEXT_REPORTS, 
-	'heading'     => MENU_HEADING_QUALITY, 
-	'rank'        => 99, 
-	'security_id' => SECURITY_CAPA_MGT, 
-	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main', 'SSL'),
-  );
-}
 
 ?>

@@ -19,7 +19,7 @@
 //
 
 echo html_form('step1', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -199,7 +199,7 @@ echo html_pull_down_menu('ship_to_country_code', $country_list, $pkg->ship_to_co
 <?php 
 foreach ($page_list as $value) {
 	echo '  <tr><td colspan="2">';
-	echo html_checkbox_field('ship_method_' . $value['id'], '1', ($action == 'back') ? '' : $value['checked']) . ' ' . $value['text'];
+	echo html_checkbox_field('ship_method_' . $value['id'], '1', ($_REQUEST['action'] == 'back') ? '' : $value['checked']) . ' ' . $value['text'];
 	echo '</td></tr>' . chr(10);
 }
 ?>

@@ -33,14 +33,12 @@ switch (JOURNAL_ID) {
 		die('No valid journal id found (filename: modules/phreebooks/pages/popup_recur.php), Journal ID needs to be passed to this script to identify the correct procedure.');
 }
 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
-
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_recur/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	break;
   default:
@@ -50,9 +48,6 @@ switch ($action) {
 
 $include_header = false; // include header flag
 $include_footer = false; // include footer flag
-$include_tabs = false;
-$include_calendar = true;
-
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', ORD_RECUR_WINDOW_TITLE);
 

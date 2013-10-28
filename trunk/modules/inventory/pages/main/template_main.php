@@ -17,7 +17,7 @@
 //  Path: /modules/inventory/pages/main/template_main.php
 //
 echo html_form('inventory', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
@@ -28,7 +28,6 @@ $toolbar->icon_list['print']['show']    = false;
 if ($security_level > 1) $toolbar->add_icon('new', 'onclick="submitToDo(\'new\')"', $order = 10);
 if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
 $toolbar->add_help('07.04.01');
-//if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true); 
 ?>
 <h1><?php echo MENU_HEADING_INVENTORY; ?></h1>
@@ -98,9 +97,9 @@ echo $toolbar->build_toolbar($add_search = true);
 	  if ($security_level > 1) echo html_icon('actions/edit-find-replace.png', TEXT_EDIT, 'small', 
 	  'onclick="window.open(\'' . html_href_link(FILENAME_DEFAULT, 'module=inventory&amp;page=main&amp;cID=' . $query_result->fields['id'] . '&amp;action=edit', 'SSL')."','_blank')\""). chr(10); 
 	  
-	  if ($security_level > 3 && $query_result->fields['inventory_type'] <> 'mi') echo html_icon('apps/accessories-text-editor.png', TEXT_RENAME, 'small', 'onclick="renameItem(' . $query_result->fields['id'] . ')"') . chr(10);
-	  if ($security_level > 3 && $query_result->fields['inventory_type'] <> 'mi') echo html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . INV_MSG_DELETE_INV_ITEM . '\')) deleteItem(' . $query_result->fields['id'] . ')"') . chr(10);
-	  if ($security_level > 1 && $query_result->fields['inventory_type'] <> 'mi') echo html_icon('actions/edit-copy.png', TEXT_COPY_TO, 'small', 'onclick="copyItem(' . $query_result->fields['id'] . ')"') . chr(10);
+	  if ($security_level > 3 && $query_result->fields['inventory_type'] <> 'mi' && $query_result->fields['inventory_type'] <> 'ia') echo html_icon('apps/accessories-text-editor.png', TEXT_RENAME, 'small', 'onclick="renameItem(' . $query_result->fields['id'] . ')"') . chr(10);
+	  if ($security_level > 3 && $query_result->fields['inventory_type'] <> 'mi' && $query_result->fields['inventory_type'] <> 'ia' && ($query_result->fields['last_journal_date'] != '0000-00-00 00:00:00' || $query_result->fields['last_journal_date'] != '')) echo html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . INV_MSG_DELETE_INV_ITEM . '\')) deleteItem(' . $query_result->fields['id'] . ')"') . chr(10);
+	  if ($security_level > 1 && $query_result->fields['inventory_type'] <> 'mi' && $query_result->fields['inventory_type'] <> 'ia') echo html_icon('actions/edit-copy.png', TEXT_COPY_TO, 'small', 'onclick="copyItem(' . $query_result->fields['id'] . ')"') . chr(10);
 	  if ($security_level > 2) echo html_icon('mimetypes/x-office-spreadsheet.png', TEXT_SALES_PRICE_SHEETS, 'small', 'onclick="priceMgr(' . $query_result->fields['id'] . ', \'\', ' . $query_result->fields['full_price'] . ', \'c\')"') . chr(10);
 	  ?>
 	</td>

@@ -20,19 +20,14 @@
 $security_level = validate_user(SECURITY_ID_PRICE_SHEET_MANAGER);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
-$search_text = db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/bulk_prices/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	$j = 1;
 	while (true) {
@@ -65,8 +60,6 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $heading_array = array(
   'sku'               => TEXT_SKU,
   'inactive'          => TEXT_INACTIVE,
@@ -74,16 +67,16 @@ $heading_array = array(
   'lead_time'         => INV_HEADING_LEAD_TIME,
   'item_cost'         => INV_ENTRY_INV_ITEM_COST . (ENABLE_MULTI_CURRENCY ? ' (' . DEFAULT_CURRENCY . ')' : ''),
   'full_price'        => INV_ENTRY_FULL_PRICE . (ENABLE_MULTI_CURRENCY ? ' (' . DEFAULT_CURRENCY . ')' : ''));
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+$result      = html_heading_bar($heading_array);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 // build the list for the page selected
 $search = '';
-if (isset($search_text) && $search_text <> '') {
+if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
   $search_fields = array('sku', 'description_short', 'description_sales', 'description_purchase');
   // hook for inserting new search fields to the query criteria.
   if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
 }
 $field_list = array('id', 'sku', 'inactive', 'description_short', 'lead_time', 'item_cost', 'full_price');
 // hook to add new fields to the query return results

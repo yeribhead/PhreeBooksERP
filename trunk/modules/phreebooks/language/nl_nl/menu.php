@@ -11,15 +11,15 @@
 define('MENU_HEADING_GL','Boekhouden');
 define('MENU_HEADING_BANKING','Bankieren');
 define('ORD_TEXT_0_WINDOW_TITLE','Begin Balans');
-define('ORD_TEXT_2_WINDOW_TITLE','Algemeen Journaal');
-define('ORD_TEXT_3_WINDOW_TITLE','Verzoek om Offerte');
+define('ORD_TEXT_2_WINDOW_TITLE','Journaal');
+define('ORD_TEXT_3_WINDOW_TITLE','Offerte');
 define('ORD_TEXT_4_WINDOW_TITLE','Inkoop Order');
-define('ORD_TEXT_6_WINDOW_TITLE','Inkoop / Ontvang Voorraad');
-define('ORD_TEXT_7_WINDOW_TITLE','Leverancier Credit Nota');
-define('ORD_TEXT_9_WINDOW_TITLE','Klant Offerte');
-define('ORD_TEXT_10_WINDOW_TITLE','Verkoop Order');
-define('ORD_TEXT_12_WINDOW_TITLE','Verkoop/Factuur');
-define('ORD_TEXT_13_WINDOW_TITLE','Klant Credit Nota');
+define('ORD_TEXT_6_WINDOW_TITLE','Factuur');
+define('ORD_TEXT_7_WINDOW_TITLE','Credit Nota');
+define('ORD_TEXT_9_WINDOW_TITLE','Offerte');
+define('ORD_TEXT_10_WINDOW_TITLE','Order');
+define('ORD_TEXT_12_WINDOW_TITLE','Factuur');
+define('ORD_TEXT_13_WINDOW_TITLE','Credit Nota');
 define('ORD_TEXT_18_WINDOW_TITLE','Kas ontvangsten');
 define('ORD_TEXT_20_WINDOW_TITLE','Kas Distributie');
 define('ORD_TEXT_18_C_WINDOW_TITLE','Klant Betalingen');
@@ -35,5 +35,11 @@ define('BOX_GL_BUDGET','Budgeteren');
 define('BOX_GL_UTILITIES','Algemene Journaal Opties');
 define('BOX_PHREEBOOKS_MODULE_ADM','PhreeBooks Admin');
 define('BOX_STATUS_MGR','%s Manager');
-
+define('ORD_TEXT_RECEIPTS_TITLE','Ontvangsten');
+define('ORD_TEXT_PAYMENTS_TITLE','Betalingen');
+define('ORD_TEXT_QUOTES_TITLE','Offertes');
+define('BOX_TEXT_NEW_TITLE','Nieuwe %s');
+define('ORD_TEXT_ORDERS_TITLE','Orders');
+define('ORD_TEXT_INVOICE_TITLE','Facturen');
+define('ORD_TEXT_CREDIT_TITLE','Credit');
 ?>

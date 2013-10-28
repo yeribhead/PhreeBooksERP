@@ -24,7 +24,7 @@
 // required function called with every page load
 function init() {
 <?php
-  if ($action == 'login') echo "  document.getElementById('admin_name').focus();";
+  if ($_REQUEST['action'] == 'login') echo "  document.getElementById('admin_name').focus();";
 ?>
 }
 

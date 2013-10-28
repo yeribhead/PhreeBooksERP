@@ -21,10 +21,10 @@ $security_level = validate_user(SECURITY_ID_SHIPPING_MANAGER);
 require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $date        = $_GET['search_date']       ? gen_db_date($_GET['search_date']) : date('Y-m-d');
-$search_text = $_GET['search_text'] == TEXT_SEARCH ? ''         : db_input($_GET['search_text']);
-$action      = isset($_GET['action'])     ? $_GET['action']     : $_POST['todo'];
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 $module_id   = isset($_POST['module_id']) ? $_POST['module_id'] : '';
 $row_seq     = isset($_POST['rowSeq'])    ? $_POST['rowSeq']    : '';
+$action		 = $_REQUEST['action'];
 // load methods
 $installed_modules = load_all_methods('shipping');
 /***************   hook for custom actions  ***************************/
@@ -34,7 +34,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 if ($module_id) {
   require_once (DIR_FS_WORKING.'methods/'.$module_id.'/'.$module_id.'.php');
   $shipping = new $module_id;
-  switch ($action) {
+  switch ($_REQUEST['action']) {
     default:
       if (method_exists($shipping, $action)) $shipping->$action();
       break;

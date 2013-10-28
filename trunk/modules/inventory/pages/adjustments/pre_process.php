@@ -25,7 +25,6 @@ require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',16);	// Adjustment Journal
 define('GL_TYPE', '');
-$action              = isset($_GET['action'])    ? $_GET['action']    : $_POST['todo'];
 $post_date           = isset($_POST['post_date'])? gen_db_date($_POST['post_date']) : date('Y-m-d');
 $error               = false;
 $glEntry             = new journal();
@@ -36,7 +35,7 @@ $glEntry->store_id   = isset($_POST['store_id']) ? $_POST['store_id'] : 0;
 $custom_path = DIR_FS_WORKING . 'custom/pages/adjustments/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
 	// retrieve and clean input values
@@ -98,7 +97,7 @@ switch ($action) {
 	  $glEntry->override_cogs_acct = $adj_account; // force cogs account to be users specified account versus default inventory account
 	  if ($glEntry->Post($glEntry->id ? 'edit' : 'insert')) {
 	    $db->transCommit();	// post the chart of account values
-	    gen_add_audit_log(INV_LOG_ADJ . ($action=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
+	    gen_add_audit_log(INV_LOG_ADJ . ($_REQUEST['action']=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
 	    $messageStack->add_session(INV_POST_SUCCESS . $glEntry->purchase_invoice_id, 'success');
 	    if (DEBUG) $messageStack->write_debug();
 	    gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
@@ -150,7 +149,6 @@ $cal_adj = array(
 );
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', INV_POPUP_ADJ_WINDOW_TITLE);
 

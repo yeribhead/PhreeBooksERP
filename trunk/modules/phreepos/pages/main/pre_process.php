@@ -43,7 +43,6 @@ define('DEF_GL_ACCT',		AR_DEFAULT_GL_ACCT);
 define('DEF_GL_ACCT_TITLE',	ORD_AR_ACCOUNT);
 define('POPUP_FORM_TYPE',	'pos:rcpt');
 $account_type = 'c';
-$action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 $order        = new journal_19();
 $tills        = new tills();
 $trans	 	  = new other_transactions();
@@ -83,8 +82,13 @@ foreach ($payment_modules as $key => $pmts) {
   	$js_pmt_types .= 'pmt_types[\'' . $pmts['id'] . '\'] = "' . $pmts['text'] . '";' . chr(10);
   }
 }
+//check if setting are right for usage of phreepos 
 if(count($payment_modules) < 1 ){
 	$messageStack->add_session(ERROR_NO_PAYMENT_METHODES, 'error');
+	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
+}
+if(AR_TAX_BEFORE_DISCOUNT == false && PHREEPOS_DISCOUNT_OF == true ){ // tax after discount
+	$messageStack->add_session('your setting tax before discount and discount over total don\'t work together, <br/>This has circulair logic one can\'t preceed the other', 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 $js_currency  = 'var currency  = new Array();' . chr(10);
@@ -100,10 +104,8 @@ $req_date = date(DATE_FORMAT);
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'pos_return': 
     $include_template = 'template_return.php';
 	define('PAGE_TITLE', BOX_PHREEPOS_RETURN);

@@ -164,12 +164,11 @@ switch (JOURNAL_ID) {
 $error        = false;
 $post_success = false;
 $order        = new orders();
-$action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/orders/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'email':
   case 'print':
@@ -321,14 +320,14 @@ switch ($action) {
 	if (!$order->item_rows) $error = $messageStack->add(GL_ERROR_NO_ITEMS, 'error');
 	// End of error checking, check for attachments and process the order
 	if (!$error) { // Post the order
-	  if ($post_success = $order->post_ordr($action)) {	// Post the order class to the db
+	  if ($post_success = $order->post_ordr($_REQUEST['action'])) {	// Post the order class to the db
 		if ($order->rm_attach) @unlink(PHREEBOOKS_DIR_MY_ORDERS . 'order_'.$order->id.'.zip');
 		if (is_uploaded_file($_FILES['file_name']['tmp_name'])) saveUploadZip('file_name', PHREEBOOKS_DIR_MY_ORDERS, 'order_'.$order->id.'.zip');
 		gen_add_audit_log(constant('ORD_TEXT_' . JOURNAL_ID . '_WINDOW_TITLE') . ' - ' . ($_POST['id'] ? TEXT_EDIT : TEXT_ADD), $order->purchase_invoice_id, $order->total_amount);
 		if (DEBUG) $messageStack->write_debug();
-		if ($action == 'save') {
+		if ($_REQUEST['action'] == 'save') {
 		  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		} elseif ($action == 'payment') {
+		} elseif ($_REQUEST['action'] == 'payment') {
 		  switch (JOURNAL_ID) {
 			case  6: $jID = 20; break; // payments
 			case 12: $jID = 18; break; // cash receipts
@@ -344,25 +343,25 @@ switch ($action) {
 	} else { // there was a post error, reset id and re-display form
 	  $messageStack->add(GL_ERROR_NO_POST, 'error');
 	}
-	if ($action == 'post_previous') {
+	if ($_REQUEST['action'] == 'post_previous') {
 	  $result = $db->Execute("select id from " . TABLE_JOURNAL_MAIN . " 
 	    where journal_id = '12' and purchase_invoice_id < '" . $order->purchase_invoice_id . "' 
 	    order by purchase_invoice_id DESC limit 1");
 	  if ($result->RecordCount() > 0) {
 	    $oID    = $result->fields['id'];
-	    $action = 'edit'; // force page to reload with the new order to edit
+	    $_REQUEST['action'] = 'edit'; // force page to reload with the new order to edit
 		$order  = new orders();
       } else { // at the beginning
 	  	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  }
 	}
-	if ($action == 'post_next') {
+	if ($_REQUEST['action'] == 'post_next') {
 	  $result = $db->Execute("select id from " . TABLE_JOURNAL_MAIN . " 
 	    where journal_id = '12' and purchase_invoice_id > '" . $order->purchase_invoice_id . "' 
 	    order by purchase_invoice_id limit 1");
 	  if ($result->RecordCount() > 0) {
 	    $oID    = $result->fields['id'];
-	    $action = 'edit'; // force page to reload with the new order to edit
+	    $_REQUEST['action'] = 'edit'; // force page to reload with the new order to edit
 		$order  = new orders();
       } else { // at the end
 	  	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
@@ -400,7 +399,7 @@ switch ($action) {
 	$oID = db_prepare_input($_GET['oID']);
 	if (!$oID) {
 	  $messageStack->add('Bad order ID passed to edit order.','error'); // this should never happen
-	  $action = '';
+	  $_REQUEST['action'] = '';
 	}
 	break;
   case 'dn_attach':
@@ -514,8 +513,6 @@ default:
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', constant('ORD_TEXT_' . JOURNAL_ID . '_WINDOW_TITLE'));
 

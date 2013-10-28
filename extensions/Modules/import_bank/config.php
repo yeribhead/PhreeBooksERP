@@ -26,8 +26,10 @@
 // 1.1 27-1-2013  added the transaction templates (aka known transactions). plus support for payment of multiple invoices.
 // 2   28-1-2013  	complete rewrite reduced the number of sql calles.
 //					added function to find invoicenumber in description for transactions that are not connected to a bank or iban account
+// 2.1 27-09-2013 fixed bug that it would try to find a contact for known_transactions.
+gen_pull_language('phreedom', 'menu');
 // Module software version information
-define('MODULE_IMPORT_BANK_VERSION',  '2');
+define('MODULE_IMPORT_BANK_VERSION',  2.1);
 // Menu Sort Positions
 
 // Menu Security id's
@@ -35,14 +37,28 @@ define('SECURITY_ID_IMPORT_BANK',      980);
 // New Database Tables
 define('TABLE_IMPORT_BANK',    			DB_PREFIX . 'import_bank');
 // Set the menus
+gen_pull_language('phreebooks');
 if (defined('MODULE_IMPORT_BANK_STATUS')) {
-  $menu[] = array(
-    'text'        => BOX_IMPORT_BANK_MODULE,
-    'heading'     => MENU_HEADING_BANKING,
-    'rank'        => 55,
-    'security_id' => SECURITY_ID_IMPORT_BANK,
-    'link'        => html_href_link(FILENAME_DEFAULT, 'module=import_bank&amp;page=main', 'SSL'),
-  );
+	$mainmenu["banking"]['submenu']['import_banking'] = array(
+    	'text'        => BOX_IMPORT_BANK_MODULE,
+    	'order'       => 55,
+    	'security_id' => SECURITY_ID_IMPORT_BANK,
+    	'link'        => html_href_link(FILENAME_DEFAULT, 'module=import_bank&amp;page=main', 'SSL'),
+		'show_in_users_settings' => true,
+    	'params'      => '',
+  	);
+  
+	if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+  		gen_pull_language('import_bank', 'admin');
+  		$mainmenu["company"]['submenu']["configuration"]['submenu']["import_bank"] = array(
+			'order'	      => MODULE_IMPORT_BANK_TITLE,
+			'text'        => MODULE_IMPORT_BANK_TITLE,
+			'security_id' => SECURITY_ID_CONFIGURATION, 
+			'link'        => html_href_link(FILENAME_DEFAULT, 'module=import_bank&amp;page=admin', 'SSL'),
+    		'show_in_users_settings' => false,
+			'params'      => '',
+  		);
+	}
 }
 
 ?>

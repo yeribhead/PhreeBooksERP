@@ -29,23 +29,19 @@ $processed   = false;
 $criteria    = array();
 $fields		 = new inventory_fields();
 $type        = isset($_GET['inventory_type']) ? $_GET['inventory_type'] : 'si'; // default to stock item
-$search_text = db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = ''; 
-$action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $first_entry = isset($_GET['add']) ? true : false;
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 // load the filters
-$f0 = $_GET['f0'] = isset($_POST['todo']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
+$f0 = $_GET['f0'] = isset($_POST['action']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
 $f1 = $_GET['f1'] = isset($_POST['f1']) ? $_POST['f1'] : $_GET['f1']; // inventory_type dropdown
 $id = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['cID']);
 $type = db_prepare_input($_POST['inventory_type']);
 if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 // getting the right inventory type.
 if (is_null($type)){
-	$result = $db->Execute("SELECT inventory_type FROM ".TABLE_INVENTORY." WHERE id='$id'");
+	if(isset($_REQUEST['sku'])) $result = $db->Execute("SELECT inventory_type FROM ".TABLE_INVENTORY." WHERE sku='".$_REQUEST['sku']."'");
+	else $result = $db->Execute("SELECT inventory_type FROM ".TABLE_INVENTORY." WHERE id='$id'");
 	if ($result->RecordCount()>0) $type = $result->fields['inventory_type'];
 	else $type ='si';
 } 
@@ -60,16 +56,16 @@ $cInfo = new $type();
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'create':
 	validate_security($security_level, 2); // security check
-	if($cInfo->check_create_new())	$action = 'edit';
+	if($cInfo->check_create_new())	$_REQUEST['action'] = 'edit';
 	break;
 	
   case 'save':
 	validate_security($security_level, 2); // security check
 	$error = $cInfo->save() == false;
-	if($error) $action = 'edit';
+	if($error) $_REQUEST['action'] = 'edit';
 	break;
 
   case 'delete':
@@ -82,12 +78,16 @@ switch ($action) {
 	validate_security($security_level, 2); // security check
 	$id  = db_prepare_input($_GET['cID']);
 	$sku = db_prepare_input($_GET['sku']);
-	if($cInfo->copy($id, $sku)) $action = 'edit';
+	if($cInfo->copy($id, $sku)) $_REQUEST['action'] = 'edit';
 	break;
 	
   case 'edit':
   case 'properties':
-	if(!$error) $cInfo->get_item_by_id($id);
+	if(!$error && $id != ''){
+		$cInfo->get_item_by_id($id);
+	}else if(!$error && isset($_REQUEST['sku'])){
+		$cInfo->get_item_by_sku($_REQUEST['sku']);
+	}
 	break;
 
   case 'rename':
@@ -165,7 +165,7 @@ $gl_array_list    = gen_coa_pull_down();
 $include_header   = true;
 $include_footer   = true;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
     define('PAGE_TITLE', BOX_INV_NEW);
     $include_template = 'template_id.php';
@@ -187,12 +187,13 @@ switch ($action) {
 	$x = 0;
 	while (isset($_POST['filter_field'][$x])) {
 		if(      $filter_criteria[$_POST['filter_criteria'][$x]] == " LIKE " || $_POST['filter_criteria'][$x] == FILTER_CONTAINS){
-			$criteria[] = $_POST['filter_field'][$x] . ' Like "%'    . $_POST['filter_value'][$x] . '%" ';
+			if ( $_POST['filter_value'][$x] <> '' ) $criteria[] = $_POST['filter_field'][$x] . ' Like "%'    . $_POST['filter_value'][$x] . '%" ';
 			
 		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " NOT LIKE "){
-			$criteria[] = $_POST['filter_field'][$x] . ' Not Like "%' . $_POST['filter_value'][$x] . '%" ';
+			if ( $_POST['filter_value'][$x] <> '' ) $criteria[] = $_POST['filter_field'][$x] . ' Not Like "%' . $_POST['filter_value'][$x] . '%" ';
 			
 		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " = "  && $_POST['filter_value'][$x] == ''){
+			if ( $_POST['filter_field'][$x] == 'a.sku' && $_POST['filter_value'][$x] == '' ) { $x++; continue; }
 			$criteria[] = '(' . $_POST['filter_field'][$x] . $filter_criteria[$_POST['filter_criteria'][$x]] . ' "' . $_POST['filter_value'][$x] . '" or ' . $_POST['filter_field'][$x] . ' IS NULL ) ';
 			
 		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " != " && $_POST['filter_value'][$x] == ''){
@@ -214,22 +215,22 @@ switch ($action) {
 	  'a.quantity_on_allocation'  => INV_HEADING_QTY_ON_ALLOC,
 	  'a.quantity_on_order'       => INV_HEADING_QTY_ON_ORDER,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 //	if ($disp_order == 'a.sku ASC') $disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) ASC';
 //	if ($disp_order == 'a.sku DESC')$disp_order ='LPAD(a.sku,'.MAX_INVENTORY_SKU_LENGTH.',0) DESC';
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('a.sku', 'a.description_short', 'a.description_sales', 'p.description_purchase');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  	  $criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+  	  $criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 	}
 	// build search filter string
 	$search = (sizeof($criteria) > 0) ? (' where ' . implode(' and ', $criteria)) : '';
 	$field_list = array('a.id as id', 'a.sku as sku', 'inactive', 'inventory_type', 'description_short', 'full_price', 
-			'quantity_on_hand', 'quantity_on_order', 'quantity_on_sales_order', 'quantity_on_allocation');
+			'quantity_on_hand', 'quantity_on_order', 'quantity_on_sales_order', 'quantity_on_allocation', 'last_journal_date');
 	// hook to add new fields to the query return results
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
     $query_raw    = "SELECT SQL_CALC_FOUND_ROWS DISTINCT " . implode(', ', $field_list)  . " from " . TABLE_INVENTORY ." a LEFT JOIN " . TABLE_INVENTORY_PURCHASE . " p on a.sku = p.sku ". $search . " order by $disp_order ";

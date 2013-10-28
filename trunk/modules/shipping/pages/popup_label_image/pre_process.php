@@ -20,7 +20,7 @@
 $security_level = validate_user(0, true);
 /**************   page specific initialization  *************************/
 require_once(DIR_FS_WORKING . 'defaults.php');
-$todo   = $_GET['todo'];
+$todo   = $_REQUEST['action'];
 $method = $_GET['method'];
 $date   = explode('-',$_GET['date']);
 $label  = $_GET['label'];
@@ -54,7 +54,5 @@ switch ($todo) {
 $custom_html      = true;
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 ?>

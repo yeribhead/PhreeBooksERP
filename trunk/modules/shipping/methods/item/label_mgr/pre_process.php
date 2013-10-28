@@ -29,11 +29,8 @@ require(DIR_FS_WORKING . 'methods/' . $shipping_module . '/' . $shipping_module 
 /**************   page specific initialization  *************************/
 $error = false;
 $sInfo = new shipment();	// load defaults
-
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	$sInfo->purchase_invoice_id = db_prepare_input($_POST['purchase_invoice_id']);
 	$sInfo->ship_method = db_prepare_input($_POST['ship_method']);
@@ -99,9 +96,6 @@ foreach ($shipping_defaults['service_levels'] as $key => $value) {
 
 $include_header = false; // include header flag
 $include_footer = false; // include footer flag
-$include_tabs = false;
-$include_calendar = true;
-
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', SHIPPING_POPUP_WINDOW_TITLE);
 

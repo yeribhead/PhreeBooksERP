@@ -25,7 +25,6 @@ $id         = (int)$_GET['iID'];
 $full_price = $_GET['price'];
 $item_cost  = isset($_GET['cost'])   ? $_GET['cost']   : false;
 $type       = isset($_GET['type'])   ? $_GET['type']   : 'c';
-$action     = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 // retrieve some item details
 $inventory_details = $db->Execute("select sku, description_short, quantity_on_hand, quantity_on_order,
 	quantity_on_allocation, quantity_on_sales_order from " . TABLE_INVENTORY . " where id = " . $id);
@@ -33,7 +32,7 @@ $inventory_details = $db->Execute("select sku, description_short, quantity_on_ha
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_price_mgr/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
   	$tab_id = 1;

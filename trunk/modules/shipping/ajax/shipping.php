@@ -26,10 +26,9 @@ require_once(DIR_FS_MODULES . 'shipping/functions/shipping.php');
 $mod_dir = DIR_FS_MODULES . 'shipping/methods/';
 $xml     = NULL;
 $method  = $_GET['method'];
-$action  = $_GET['action'];
 $message = '';
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'form':
 	$template= $_GET['template'];
 	if (file_exists($mod_dir . $method.'/'.$template.'.php')) {
@@ -68,7 +67,7 @@ switch ($action) {
 	break;
 }
 
-//$debug = 'method = '.$method.' and action = '.$action.' and tID = '.$tID;
+//$debug = 'method = '.$method.' and action = '.$_REQUEST['action'].' and tID = '.$tID;
 if ($message) $xml .= xmlEntry('message', $message);
 if ($debug)   $xml .= xmlEntry('debug',   $debug);
 echo createXmlHeader() . $xml . createXmlFooter();

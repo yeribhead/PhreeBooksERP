@@ -22,19 +22,14 @@ $security_level = validate_user(SECURITY_ID_PRICE_SHEET_MANAGER);
 require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $type        = isset($_GET['type'])  ? $_GET['type']   : 'c';
-$search_text = db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action      = isset($_GET['action'])? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_MODULES . 'inventory/pages/price_sheets/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'update':
 	validate_security($security_level, 2);
@@ -61,12 +56,12 @@ switch ($action) {
 	}
 	$default_levels = implode(';', $encoded_prices);
 	// Check for duplicate price sheet names
-	if ($action == 'save') {
+	if ($_REQUEST['action'] == 'save') {
 	  $result = $db->Execute("select id from " . TABLE_PRICE_SHEETS . " where sheet_name = '" . $sheet_name . "'");
 	  if ($result->RecordCount() > 0) {
 		$messageStack->add(SRVCS_DUPLICATE_SHEET_NAME,'error');
 		$effective_date = gen_locale_date($effective_date);
-		$action = 'new';
+		$_REQUEST['action'] = 'new';
 		break;
 	  }
 	}
@@ -75,7 +70,7 @@ switch ($action) {
 	  $db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '0' 
 	    where sheet_name <> '" . $sheet_name . "' and type = '" . $type . "'");
 	}
-	$sql = ($action == 'save') ? 'insert into ' : 'update ';
+	$sql = ($_REQUEST['action'] == 'save') ? 'insert into ' : 'update ';
 	$sql .= TABLE_PRICE_SHEETS . " set 
 	  sheet_name = '" . $sheet_name . "', 
 	  type = '" . $type . "', 
@@ -83,7 +78,7 @@ switch ($action) {
 	  effective_date = '" . $effective_date . "', 
 	  default_sheet = '" . $default_sheet . "', 
 	  default_levels = '" . $default_levels . "'";
-	$sql .= ($action == 'save') ? '' : ' where id = ' . $id;
+	$sql .= ($_REQUEST['action'] == 'save') ? '' : ' where id = ' . $id;
 	$result = $db->Execute($sql);
 	// Set all price sheets with this name to default
 	if ($default_sheet) {
@@ -96,7 +91,7 @@ switch ($action) {
 		set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
 		where sheet_name = '" . $sheet_name . "' and type = '" . $type . "' and revision = " . ($revision - 1));
 	}
-	gen_add_audit_log(PRICE_SHEETS_LOG . ($action == 'save') ? TEXT_SAVE : TEXT_UPDATE, $sheet_name);
+	gen_add_audit_log(PRICE_SHEETS_LOG . ($_REQUEST['action'] == 'save') ? TEXT_SAVE : TEXT_UPDATE, $sheet_name);
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('psID', 'action')), 'SSL'));
 	break;
 
@@ -139,7 +134,7 @@ switch ($action) {
 	  $levels->MoveNext();
 	}
 	gen_add_audit_log(PRICE_SHEETS_LOG . TEXT_REVISE, $result->fields['sheet_name'] . ' Rev. ' . $old_rev . ' => ' . ($old_rev + 1));
-	$action = 'edit';
+	$_REQUEST['action'] = 'edit';
 	break;
 
   case 'edit':
@@ -172,15 +167,13 @@ $cal_ps = array(
   'default'   => $effective_date,
 );
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
   case 'edit':
 	$include_header   = true;
 	$include_footer   = true;
-	$include_tabs     = true;
-	$include_calendar = true;
     $include_template = 'template_detail.php';
-    define('PAGE_TITLE', ($action == 'new') ? PRICE_SHEET_NEW_TITLE : PRICE_SHEET_EDIT_TITLE);
+    define('PAGE_TITLE', ($_REQUEST['action'] == 'new') ? PRICE_SHEET_NEW_TITLE : PRICE_SHEET_EDIT_TITLE);
 	break;
 
   default:
@@ -192,7 +185,7 @@ switch ($action) {
 	  'effective_date'  => TEXT_EFFECTIVE_DATE,
 	  'expiration_date' => TEXT_EXPIRATION_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], array(TEXT_SPECIAL_PRICING, TEXT_ACTION));
+	$result      = html_heading_bar($heading_array, array(TEXT_SPECIAL_PRICING, TEXT_ACTION));
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// find the highest rev level by sheet name
@@ -204,11 +197,11 @@ switch ($action) {
 	  $result->MoveNext();
 	}
 	// build the list for the page selected
-	if (isset($search_text) && $search_text <> '') {
+	if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	  $search_fields = array('sheet_name', 'revision');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' and (' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+	  $search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 	} else {
 	  $search = '';
 	}
@@ -222,8 +215,6 @@ switch ($action) {
     $query_split  = new splitPageResults($_REQUEST['list'], '');
 	$include_header   = true;
 	$include_footer   = true;
-	$include_tabs     = false;
-	$include_calendar = false;
     $include_template = 'template_main.php';
     define('PAGE_TITLE', $type == 'v' ? BOX_PURCHASE_PRICE_SHEETS : BOX_SALES_PRICE_SHEETS);
 }

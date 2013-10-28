@@ -23,7 +23,6 @@ require_once(DIR_FS_WORKING . 'classes/gen_ledger.php');
 
 /**************   page specific initialization  *************************/
 $id     = (isset($_GET['oID'])    ? $_GET['oID']    : $_POST['id']);
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $error  = false;
 
 /***************   hook for custom actions  ***************************/
@@ -31,7 +30,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/popup_convert/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
     $selection = $_POST['conv_type'];
 	$so_num    = $_POST['so_num'];
@@ -110,8 +109,6 @@ $account_type = ($jID == 3 ? 'v' : 'c');
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', $jID == 3 ? ORD_CONVERT_TO_RFQ_PO : ORD_CONVERT_TO_SO_INV);
 

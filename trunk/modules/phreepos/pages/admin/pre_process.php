@@ -25,12 +25,11 @@ require_once(DIR_FS_WORKING . 'classes/tills.php');
 require_once(DIR_FS_WORKING . 'classes/other_transactions.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install = new phreepos_admin();
 $tills   = new tills();
 $trans	 = new other_transactions();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save': 
 	if ($security_level < 3) {
 	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
@@ -70,8 +69,6 @@ $sel_rounding = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_PHREEPOS_ADMIN);
 

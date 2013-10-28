@@ -460,8 +460,8 @@ function openBarCode() {
 }
 
 function downloadAttachment() {
-  document.getElementById('todo').value = 'dn_attach';
-  document.getElementById('todo').form.submit();
+  document.getElementById('action').value = 'dn_attach';
+  document.getElementById('action').form.submit();
 }
 
 function DropShipView(currObj) {
@@ -1143,6 +1143,19 @@ function loadSkuDetails(iID, rowCnt) {
 		sku = document.getElementById('sku_'+rowCnt).value; // read the search field as the real value	  
 	}
 	if (sku == text_search) return;
+	// add new row
+	var element =  document.getElementById('sku_'+rowCnt+1);
+	if (typeof(element) == 'undefined' || element == null) {
+		if (single_line_list == '1') {
+			tempRowCnt = document.getElementById('item_table').rows.length;
+		} else {
+			tempRowCnt = parseInt((document.getElementById('item_table').rows.length/2));
+		}
+		if(document.getElementById('sku_'+tempRowCnt).value != text_search ){
+			var value = addInvRow();
+			document.getElementById('sku_'+value).focus();
+		}
+	}
   var cID = document.getElementById('bill_acct_id').value;
   var bID = document.getElementById('store_id').value;
   switch (journalID) {
@@ -1183,6 +1196,8 @@ function fillInventory(sXml) {
   if (!sku) return;
   document.getElementById('sku_'     +rowCnt).value       = sku;
   document.getElementById('sku_'     +rowCnt).style.color = '';
+  document.getElementById('sku_'     +rowCnt).style.backgroundColor = '';
+  document.getElementById('sku_'     +rowCnt).removeAttribute("title");
   var imgSerial = document.getElementById('imgSerial_'+rowCnt);
   if (imgSerial != null && $(xml).find("inventory_type").text() == 'sr'){
     document.getElementById('imgSerial_'+rowCnt).style.display = '';
@@ -1207,6 +1222,18 @@ function fillInventory(sXml) {
 	  } else {
 	    document.getElementById('desc_'  +rowCnt).value   = $(xml).find("description_short").text();
 	  }
+	  if(journalID == 4){
+		  if ($(xml).find("quantity_on_order").text() != 0) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'MediumOrchid';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsAlreadyOnOrder;
+		  }else if($(xml).find("branch_qty_in_stock").text() != 0){
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'Orange';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsOnHand;
+		  }else if($(xml).find("inactive").text() == 1) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'pink';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsInactive;
+		  }
+	  }
 	  break;
 	case  '6':
 	case  '7':
@@ -1222,6 +1249,15 @@ function fillInventory(sXml) {
 	  } else {
 	    document.getElementById('desc_'  +rowCnt).value   = $(xml).find("description_short").text();
 	  }
+	  if(journalID == 6){
+		  if($(xml).find("quantity_on_sales_order").text() != 0){
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'Aquamarine';
+			  document.getElementById('sku_'+rowCnt).title = SalesOrderForItem;
+		  }else if($(xml).find("inactive").text() == 1) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'pink';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsInactive;
+		  }
+	  }
 	  break;
 	case  '9':
 	case '10':
@@ -1235,6 +1271,23 @@ function fillInventory(sXml) {
 	    document.getElementById('desc_'  +rowCnt).value   = $(xml).find("description_sales").text();
 	  } else {
 	    document.getElementById('desc_'  +rowCnt).value   = $(xml).find("description_short").text();
+	  }
+	  if(journalID == 10){
+		  if($(xml).find("inactive").text() == 1 && $(xml).find("branch_qty_in_stock").text() == 0) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'pink';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsOutOfStockAndInactive;
+		  }else if($(xml).find("branch_qty_in_stock").text() == 0 && $(xml).find("quantity_on_order").text() != 0) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'MediumOrchid';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsOnOrder;
+		  }else if($(xml).find("branch_qty_in_stock").text() == 0) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'MediumPurple ';
+			  document.getElementById('sku_'+rowCnt).title = ItemMustBeOrderd;
+		  }
+	  }else{
+		  if($(xml).find("inactive").text() == 1 && $(xml).find("branch_qty_in_stock").text() == 0) {
+			  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'pink';
+			  document.getElementById('sku_'+rowCnt).title = ItemIsOutOfStockAndInactive;
+		  }
 	  }
 	  break;
 	case '12':
@@ -1251,6 +1304,10 @@ function fillInventory(sXml) {
 	  } else {
 	    document.getElementById('desc_'  +rowCnt).value   = $(xml).find("description_short").text();
 	  }
+	  if(journalID == 12 && $(xml).find("inactive").text() == 1 && $(xml).find("branch_qty_in_stock").text() == 0) {
+		  document.getElementById('sku_'+rowCnt).style.backgroundColor = 'pink';
+		  document.getElementById('sku_'+rowCnt).title = ItemIsOutOfStockAndInactive;
+	  }
 	  break;
 	default:
   }
@@ -1258,43 +1315,13 @@ function fillInventory(sXml) {
   $(xml).find("stock_note").each(function() {
 	text += $(this).find("text_line").text() + "\n";
   });
-	// add new row
-	var element =  document.getElementById('sku_'+rowCnt+1);
-	if (typeof(element) == 'undefined' || element == null) {
-		if (single_line_list == '1') {
-			tempRowCnt = document.getElementById('item_table').rows.length;
-		} else {
-			tempRowCnt = parseInt((document.getElementById('item_table').rows.length/2));
-		}
-		if(document.getElementById('sku_'+tempRowCnt).value != text_search ){
-			var value = addInvRow();
-			document.getElementById('sku_'+value).focus();
-		}
-	}
   if (text) alert(text);
 }
 
 function InventoryProp(elementID) {
   var sku = document.getElementById('sku_'+elementID).value;
   if (sku != text_search && sku != '') {
-    $.ajax({
-      type: "GET",
-	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuValid&strict=1&sku='+sku,
-      dataType: ($.browser.msie) ? "text" : "xml",
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
-      },
-	  success: processSkuProp
-    });
-  }
-}
-
-function processSkuProp(sXml) {
-  var xml = parseXml(sXml);
-  if (!xml) return;
-  if ($(xml).find("id").first().text() != 0) {
-	var id = $(xml).find("id").first().text();
-	window.open("index.php?module=inventory&page=main&action=properties&cID="+id,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
+	  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
   }
 }
 

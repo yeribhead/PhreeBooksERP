@@ -25,19 +25,17 @@ $criteria    = array();
 $tab_list    = array();
 if ($_POST['crm_date']) $_POST['crm_date'] = gen_db_date($_POST['crm_date']);
 if ($_POST['due_date']) $_POST['due_date'] = gen_db_date($_POST['due_date']);
-$search_text = db_input($_REQUEST['search_text']); 
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $type        = isset($_GET['type']) ? $_GET['type'] : 'c'; // default to customer
 // load the filters
-$f0 = isset($_POST['todo']) ? (isset($_POST['f0']) ? $_POST['f0'] : '0') : (isset($_GET['f0']) ? $_GET['f0'] : '1'); // show inactive checkbox
-$_GET['f0'] = $f0;
+$default_f0 = defined('CONTACTS_F0_'.strtoupper($type)) ? constant('CONTACTS_F0_'.strtoupper($type)) : DEFAULT_F0_SETTING;
+if(!isset($_REQUEST['f0'])) $_REQUEST['f0'] = '0'; // show inactive checkbox
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 if (file_exists(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php')) { 
 	require_once(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php'); 
 }else{
-    require_once(DIR_FS_WORKING . 'classes/type/'.$type.'.php'); // is needed here for the defining of the class and retriving the security_token
+    require_once(DIR_FS_WORKING . 'classes/type/'.$type.'.php'); // is needed here for the defining of the class and retrieving the security_token
 }
 if ($type <>'i' && file_exists(DIR_FS_WORKING . 'custom/classes/type/i.php')) {
 	require_once(DIR_FS_WORKING . 'custom/classes/type/i.php');
@@ -45,9 +43,6 @@ if ($type <>'i' && file_exists(DIR_FS_WORKING . 'custom/classes/type/i.php')) {
 	require_once(DIR_FS_WORKING . 'classes/type/i.php');
 }
 $cInfo = new $type();
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /**************   Check user security   *****************************/
 
 /***************   hook for custom security  ***************************/
@@ -67,7 +62,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
  
-switch ($action) {
+switch ($_REQUEST['action']) {
     case 'new':
         validate_security($security_level, 2);
 	    break;
@@ -148,7 +143,7 @@ switch ($action) {
 		  }
 		  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		}
-		$action = 'edit';
+		$_REQUEST['action'] = 'edit';
 		break;
 
     case 'edit':
@@ -207,7 +202,7 @@ switch ($action) {
 $include_header = true;
 $include_footer = true;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'properties':
 		$include_header   = false;
 		$include_footer   = false;
@@ -234,7 +229,7 @@ switch ($action) {
 	  		$result->MoveNext();
 		}
 	    $include_template = 'template_detail.php';
-		define('PAGE_TITLE', ($action == 'new') ? $cInfo->page_title_new : constant('ACT_'.strtoupper($type).'_PAGE_TITLE_EDIT').' - ('.$cInfo->short_name.') '.$cInfo->address[m][0]->primary_name);
+		define('PAGE_TITLE', ($_REQUEST['action'] == 'new') ? $cInfo->page_title_new : constant('ACT_'.strtoupper($type).'_PAGE_TITLE_EDIT').' - ('.$cInfo->short_name.') '.$cInfo->address[m][0]->primary_name);
 		break;
   default:
 		$heading_array = array('c.short_name' => constant('ACT_' . strtoupper($type) . '_SHORT_NAME'));
@@ -248,19 +243,19 @@ switch ($action) {
 		$heading_array['state_province'] = GEN_STATE_PROVINCE;
 		$heading_array['postal_code']    = GEN_POSTAL_CODE;
 		$heading_array['telephone1']     = GEN_TELEPHONE1;
-		$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+		$result      = html_heading_bar($heading_array);
 		$list_header = $result['html_code'];
 		$disp_order  = $result['disp_order'];
 		// build the list for the page selected
 	    $criteria[] = "a.type = '" . $type . "m'";
-		if ($search_text) {
+	    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	      $search_fields = array('a.primary_name', 'a.contact', 'a.telephone1', 'a.telephone2', 'a.address1', 
 		  	'a.address2', 'a.city_town', 'a.postal_code', 'c.short_name');
 		  // hook for inserting new search fields to the query criteria.
 		  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-		  $criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+		  $criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 		}
-		if (!$f0) $criteria[] = "(c.inactive = '0' or c.inactive = '')"; // inactive flag
+		if (!$_REQUEST['f0']) $criteria[] = "(c.inactive = '0' or c.inactive = '')"; // inactive flag
 	
 		$search = (sizeof($criteria) > 0) ? (' where ' . implode(' and ', $criteria)) : '';
 		$field_list = array('c.id', 'c.inactive', 'c.short_name', 'c.contact_first', 'c.contact_last', 

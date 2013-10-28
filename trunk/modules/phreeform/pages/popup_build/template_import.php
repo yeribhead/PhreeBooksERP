@@ -19,7 +19,7 @@
 //
 echo html_form('popup_build', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"') . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',        '') . chr(10);
+echo html_hidden_field('action',        '') . chr(10);
 echo html_hidden_field('id',          $id) . chr(10);
 echo html_hidden_field('parent_id',   $parent_id) . chr(10);
 echo html_hidden_field('doc_title',   '') . chr(10); // placeholder

@@ -21,12 +21,12 @@ echo html_form('pricesheet', FILENAME_DEFAULT, gen_get_all_get_params(array('act
 $hidden_fields = NULL;
 // include hidden fields
 echo html_hidden_field('id', $id);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']     = false;
 if ($security_level > 1) {
-  $toolbar->icon_list['save']['params'] = 'onclick="submitToDo(\'' . (($action == 'new') ? 'save' : 'update') . '\')"';
+  $toolbar->icon_list['save']['params'] = 'onclick="submitToDo(\'' . (($_REQUEST['action'] == 'new') ? 'save' : 'update') . '\')"';
 } else {
   $toolbar->icon_list['save']['show']   = false;
 }

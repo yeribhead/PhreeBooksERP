@@ -31,17 +31,16 @@ $glEntry->id = ($_POST['id'] <> '') ? $_POST['id'] : ''; // will be null unless 
 // All general journal entries are in the default currency.
 $glEntry->currencies_code  = DEFAULT_CURRENCY;
 $glEntry->currencies_value = 1;
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/journal/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'copy':
 	validate_security($security_level, 2);
     // for copy operation, erase the id to force post a new journal entry with same values
-	if ($action == 'copy') $glEntry->id = '';
+	if ($_REQUEST['action'] == 'copy') $glEntry->id = '';
 	$glEntry->journal_id          = JOURNAL_ID;
 	$glEntry->post_date           = $post_date;
 	$glEntry->period              = $period;
@@ -65,7 +64,7 @@ switch ($action) {
 		$debit_amount  = ($_POST['debit_' . $x]) ? $currencies->clean_value($_POST['debit_' . $x]) : 0;
 		$credit_amount = ($_POST['credit_'. $x]) ? $currencies->clean_value($_POST['credit_'. $x]) : 0;
 		$glEntry->journal_rows[] = array(
-			'id'            => ($action == 'copy') ? '' : db_prepare_input($_POST['id_' . $x]),
+			'id'            => ($_REQUEST['action'] == 'copy') ? '' : db_prepare_input($_POST['id_' . $x]),
 			'qty'           => '1',
 			'gl_account'    => db_prepare_input($_POST['acct_' . $x]),
 			'description'   => db_prepare_input($_POST['desc_' . $x]),
@@ -282,8 +281,6 @@ $cal_gl = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', GL_ENTRY_TITLE);
 

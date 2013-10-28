@@ -18,6 +18,6 @@
 //
 
 define('MENU_HEADING_ASSETS', 'Activa');
-define('BOX_ASSET_MODULE',    'Activa Management');
+define('BOX_ASSET_MODULE',    'Activa');
 
 ?>

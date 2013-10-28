@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -31,8 +30,6 @@ require_once(DIR_FS_WORKING . 'classes/tax_rates_vend.php');
 
 /**************   page specific initialization  *************************/
 $error  = false; 
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-
 $install           = new phreebooks_admin();
 $chart_of_accounts = new chart_of_accounts();
 $tax_auths         = new tax_auths();
@@ -41,7 +38,7 @@ $tax_rates         = new tax_rates();
 $tax_rates_vend    = new tax_rates_vend();
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'import':
 	validate_security($security_level, 3);
   	$delete_chart = ($_POST['delete_chart']) ? true : false;
@@ -153,8 +150,6 @@ $inv_chart  = gen_coa_pull_down(2, false, true, false, $restrict_types = array(4
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_PHREEBOOKS_MODULE_ADM);
 

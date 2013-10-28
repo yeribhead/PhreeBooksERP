@@ -22,12 +22,11 @@ $security_level = validate_user(0, true);
 /**************   page specific initialization  *************************/
 $oID = (int)$_GET['oID'];
 define('JOURNAL_ID',(int)$_GET['jID']);
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_delivery/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	$i = 1;
 	while(true) {
@@ -53,8 +52,6 @@ $num_items  = $ordr_items->RecordCount();
 
 $include_header   = false;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', ORD_EXPECTED_DATES);
 

@@ -24,11 +24,11 @@
 // pass any php variables generated during pre-process that are used in the javascript functions.
 // Include translations here as well.
 var num_price_levels = <?php echo MAX_NUM_PRICE_LEVELS; ?>;
-<?php if ($include_calendar) echo js_calendar_init($cal_ps); ?>
+<?php echo js_calendar_init($cal_ps); ?>
 
 function init() {
   <?php 
-  if ($action <> 'new' && $action <> 'edit') {
+  if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') {
     echo '  document.getElementById(\'search_text\').focus();';
     echo '  document.getElementById(\'search_text\').select();';
   } ?>
@@ -38,7 +38,7 @@ function check_form() {
   var error = 0;
   var error_message = "<?php echo JS_ERROR; ?>";
 
-<?php if ($action == 'new') { ?>
+<?php if ($_REQUEST['action'] == 'new') { ?>
   var sheetName = document.getElementById('sheet_name').value;
   if (!sheetName) {
   	error = 1;

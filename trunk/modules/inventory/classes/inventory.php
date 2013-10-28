@@ -42,9 +42,12 @@ class inventory {
 	public $purchases_history		= array();
 	public $sales_history			= array();
 	
+	/**
+	 * 
+	 * this is the class construct
+	 */
 	public function __construct(){
 		global $db;
-		if (!isset($_POST['inactive'])) $_POST['inactive'] = '0'; // handle checkboxes
 		foreach ($_POST as $key => $value) $this->$key = $value;
 		$this->creation_date = date('Y-m-d H:i:s');
 	  	$this->last_update   = date('Y-m-d H:i:s');
@@ -56,7 +59,11 @@ class inventory {
 		}
 	}
 	
-	function get_item_by_id($id) {
+	/**
+	 * this function gets inventory details from the database by id
+	 * @param integer $id
+	 */
+	function get_item_by_id(integer $id) {
 		global $db;
 		$this->purchases_history = null;
 		$this->sales_history	 = null;
@@ -75,7 +82,12 @@ class inventory {
 		$this->gather_history();
 	}
 	
-	function get_item_by_sku($sku){
+	/** 
+	 * this function gets inventory details from the database by sku
+	 * @param char $sku
+	 */
+	
+	function get_item_by_sku(char $sku){
 		global $db;
 		$this->purchases_history = null;
 		$this->sales_history	 = null;
@@ -94,6 +106,10 @@ class inventory {
 		$this->create_purchase_array();
 		$this->gather_history();
 	}
+	
+	/** 
+	 * this function removes keys from this inventory type that we do not need.
+	 */
 	
 	function remove_unwanted_keys(){
 		global $fields;
@@ -170,6 +186,7 @@ class inventory {
 	  		'sku'						=> $this->sku,
 	  		'inventory_type'			=> $this->inventory_type,
 	  		'cost_method'				=> $this->cost_method,
+	  		'creation_date'				=> $this->creation_date,
 	  		'last_update'				=> $this->last_update,
 	  		'item_taxable'				=> $this->item_taxable,
 	  		'purch_taxable'				=> $this->purch_taxable,
@@ -220,7 +237,7 @@ class inventory {
 		$this->history 						= array();
 		$this->qty_per_store				= array();
 		$this->attachments					= array();
-		$result = $db->Execute("select price_sheet_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where inventory_id = " . $id);
+		$result = $db->Execute("select price_sheet_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where inventory_id = $id");
 		while(!$result->EOF) {
 	  		$output_array = array(
 				'inventory_id'   => $this->id,
@@ -287,6 +304,7 @@ class inventory {
 	  		$result = $db->Execute("update " . TABLE_INVENTORY_PURCHASE .  " set sku = '" . $new_sku . "' where sku = '" . $sku_list[$i] . "'");
 		}
 		$db->transCommit();
+		return true;
 	}
 	
 	//this is to check if you are allowed to remove
@@ -448,7 +466,7 @@ class inventory {
 	}
 
 	function store_purchase_array(){
-		global $db, $currencies, $action;
+		global $db, $currencies;
 		$lowest_cost = 99999999999;
 		$this->backup_purchase_array = array();
 		$result = $db->Execute("SELECT * FROM ".TABLE_INVENTORY_PURCHASE." WHERE sku='$this->sku'");
@@ -468,7 +486,8 @@ class inventory {
 		$i = 0;
 		if($_POST['vendor_id_array']) foreach ($_POST['vendor_id_array'] as $key => $value) {
 			$sql_data_array = array ();
-			$sql_data_array['sku'] 		= $this->sku;
+			if($_POST['vendor_id_array'][$key] == '' && $_POST['description_purchase_array'][$key] == '' && $currencies->clean_value($_POST['item_cost_array'][$key]) == 0) break;
+			$sql_data_array['sku'] = $this->sku;
 			$this->purchase_array[$i]['id']	= isset($_POST['row_id_array'][$key]) ? $_POST['row_id_array'][$key] : '';
 			if(isset($_POST['vendor_id_array'][$key])) {
 				$sql_data_array['vendor_id'] 					= $_POST['vendor_id_array'][$key];
@@ -647,6 +666,7 @@ class inventory {
 		  	'description_sales'      	=> $desc, 
 			'vendor_id' 				=> $vendor_id,
 	  		'cost_method'				=> $this->cost_method,
+	  		'creation_date'				=> $this->creation_date,
 	  		'last_update'				=> $this->last_update,
 	  		'item_taxable'				=> $this->item_taxable,
 	  		'purch_taxable'				=> $this->purch_taxable,

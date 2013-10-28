@@ -26,7 +26,7 @@
 
 function init() {
   <?php
-  if ($action == 'save' && !$error) {
+  if ($_REQUEST['action'] == 'save' && !$error) {
     echo '  window.opener.force_clear = true;' . "\n";
     echo '  window.opener.ClearForm();' . "\n";
   	echo '  self.close();' . "\n";

@@ -19,7 +19,7 @@
 //
 echo html_form('roles', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',   '')        . chr(10);
+echo html_hidden_field('action',   '')        . chr(10);
 echo html_hidden_field('rowSeq', $admin_id) . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"';
@@ -70,7 +70,7 @@ echo $toolbar->build_toolbar();
 	<div id="accesstabs">
 	<ul>
 <?php 
-foreach ($pb_headings as $key => $value) {
+foreach ($mainmenu as $key => $value) {
   if ($value['text'] == TEXT_HOME || $value['text'] == TEXT_LOGOUT) continue;
   echo add_tab_list('tab_' . $key, $value['text']) . chr(10);
 }
@@ -80,7 +80,7 @@ foreach ($pb_headings as $key => $value) {
 $settings     = gen_parse_permissions($uInfo->admin_security);
 $column_break = true;
 // array pb_headings is defined in /includes/header_navigation.php
-foreach ($pb_headings as $key => $menu_heading) {
+foreach ($mainmenu as $key => $menu_heading) {
   if ($menu_heading['text'] == TEXT_HOME || $menu_heading['text'] == TEXT_LOGOUT) continue;
 	echo '<div id="tab_' . $key . '">' . chr(10);
 	echo '<table class="ui-widget" style="border-collapse:collapse;margin-left:auto;margin-right:auto;">' . chr(10);
@@ -95,36 +95,42 @@ foreach ($pb_headings as $key => $menu_heading) {
 	echo '</tr>' . chr(10);
 	echo '</thead><tbody class="ui-widget-content">' . chr(10);
 	$odd = true;
-	foreach ($menu as $item)  {
-	  if (isset($item['heading'])) {
-		if ($item['heading'] == $menu_heading['text']) {
-		  if ($item['text'] == TEXT_REPORTS && $item['heading'] <> MENU_HEADING_TOOLS) continue;  // special case for reports listings not in Tools menu
-		  $checked = array();
-		  if ($item['hide'] === true) {
-			continue; // skip if menu only item
-		  } elseif (isset($settings[$item['security_id']])) {
-			$checked[0] = false;
-			$checked[$settings[$item['security_id']]] = true;
-		  } elseif ($error) {
-			$checked[0] = false;
-			$checked[$_POST['sID_' . $item['security_id']]] = true;
-		  } else {
-			$checked[0] = true;	// default to no access
-		  }
-		  echo '<tr valign="top" class="' . ($odd?'odd':'even') . '" style="cursor:pointer">';
-		  echo '  <td>' . $item['text'] . '</td>' . chr(10);
-		  echo '  <td align="center">' . html_radio_field('sID_' . $item['security_id'], '4', $checked[4]) . '</td>' . chr(10);
-		  echo '  <td align="center">' . html_radio_field('sID_' . $item['security_id'], '3', $checked[3]) . '</td>' . chr(10);
-		  echo '  <td align="center">' . html_radio_field('sID_' . $item['security_id'], '2', $checked[2]) . '</td>' . chr(10);
-		  echo '  <td align="center">' . html_radio_field('sID_' . $item['security_id'], '1', $checked[1]) . '</td>' . chr(10);
-		  echo '  <td align="center">' . html_radio_field('sID_' . $item['security_id'], '0', $checked[0]) . '</td>' . chr(10);
-		  echo '</tr>' . chr(10);
-		  $odd = !$odd;
-		}
-	  }
+	foreach($menu_heading['submenu'] as $menu_item){ 
+		create_row($menu_item);
 	}
 	echo '</tbody></table></div>' . chr(10);
 } ?>
     </div>
   </fieldset>
 </form>
+
+<?php function create_row($array){
+	global $odd, $settings;
+	if(!empty($array['submenu'])) foreach($array['submenu'] as $menu_item){ 
+		create_row($menu_item);
+	}else{
+		if ($array['text'] == TEXT_REPORTS || $array['security_id'] == '') return;// && $item['heading'] <> MENU_HEADING_TOOLS) continue;  // special case for reports listings not in Tools menu
+		$checked = array();
+		if ($array['show_in_users_settings'] === false) {
+			return; // skip if menu only item
+		} elseif (isset($settings[$array['security_id']])) {
+			$checked[0] = false;
+			$checked[$settings[$array['security_id']]] = true;
+		} elseif ($error) {
+			$checked[0] = false;
+			$checked[$_POST['sID_' . $array['security_id']]] = true;
+		} else {
+			$checked[0] = true;	// default to no access
+		}
+		echo '<tr valign="top" class="' . ($odd?'odd':'even') . '">';
+		echo '<td>' . $array['text'] . '</td>' . chr(10);
+		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '4', $checked[4]) . '</td>' . chr(10);
+		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '3', $checked[3]) . '</td>' . chr(10);
+		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '2', $checked[2]) . '</td>' . chr(10);
+		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '1', $checked[1]) . '</td>' . chr(10);
+		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '0', $checked[0]) . '</td></tr>' . chr(10);
+		$odd =!$odd;
+	}
+} 
+
+?>

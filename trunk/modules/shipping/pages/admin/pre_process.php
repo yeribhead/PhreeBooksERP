@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -29,18 +28,17 @@ require_once(DIR_FS_WORKING . 'classes/install.php');
 /**************   page specific initialization  *************************/
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
-$action     = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
 $install    = new shipping_admin();
 // see if installing or removing a method
-if (substr($action, 0, 8) == 'install_') {
-  $method = substr($action, 8);
-  $action = 'install';
-} elseif (substr($action, 0, 7) == 'remove_') {
-  $method = substr($action, 7);
-  $action = 'remove';
-} elseif (substr($action, 0, 7) == 'signup_') {
-  $method = substr($action, 7);
-  $action = 'signup';
+if (substr($_REQUEST['action'], 0, 8) == 'install_') {
+  $method = substr($_REQUEST['action'], 8);
+  $_REQUEST['action'] = 'install';
+} elseif (substr($_REQUEST['action'], 0, 7) == 'remove_') {
+  $method = substr($_REQUEST['action'], 7);
+  $_REQUEST['action'] = 'remove';
+} elseif (substr($_REQUEST['action'], 0, 7) == 'signup_') {
+  $method = substr($_REQUEST['action'], 7);
+  $_REQUEST['action'] = 'signup';
 }
 // load the available methods
 $methods = array();
@@ -52,7 +50,7 @@ foreach ($contents as $choice) {
   }
 }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'install':
   	validate_security($security_level, 4);
 	require_once($method_dir . $method . '/' . $method . '.php');

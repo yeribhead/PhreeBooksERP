@@ -23,13 +23,12 @@ gen_pull_language($module, 'admin');
 require_once(DIR_FS_WORKING . 'classes/backup.php');
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 /**************   page specific initialization  *************************/
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $error  = false;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/backup/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   	$conv_type  = $_POST['conv_type'];
 	$dl_type    = $_POST['dl_type'];
@@ -105,10 +104,7 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
-
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'restore':
     $custom_html      = true;
     $include_template = 'template_restore.php';
