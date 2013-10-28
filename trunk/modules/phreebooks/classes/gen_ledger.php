@@ -47,44 +47,46 @@ class journal {
 	global $messageStack;
 	$this->first_period = $this->period;
 	$this->repost_ids = array();
-	if ($action == 'edit') { // unPost the original entry and remove from db
-	  $messageStack->debug("\n\n  unPosting as part of edit journal main id = " . $this->id);
-	  $old_gl_entry = new journal($this->id); // read in the original journal entry
-	  $this->first_period = min($old_gl_entry->period, $this->first_period);
-	  if (!$old_gl_entry->unPost('edit', true)) return false;	// unpost it
-	  $this->affected_accounts = gen_array_key_merge($this->affected_accounts, $old_gl_entry->affected_accounts);
-	  if (sizeof($old_gl_entry->repost_ids) > 0) { // rePost any journal entries unPosted to rollback COGS calculation (if edit)
-		$messageStack->debug("\n  First level unPost returned re-post_ids to be unPosted next = " . arr2string($old_gl_entry->repost_ids));
-		while (true) {
-		  $id = array_shift($old_gl_entry->repost_ids);
-		  $messageStack->debug("\n\n  unPosting re-post Journal main id = " . $id);
-		  if (!$id) break; // no more to unPost, exit loop
-		  if (in_array($id, $this->repost_ids)) continue; // already has been unposted, skip
-		  $this->repost_ids[$id] = $id;
-		  $this->unPost_entry[$id] = new journal($id);
-		  if (!$this->unPost_entry[$id]->unPost('edit', true)) return false;
-		  // add the new repost_ids to the arrays, one for now, one for re-post loop later
-		  $old_gl_entry->repost_ids += $this->unPost_entry[$id]->repost_ids;
-		  $messageStack->debug("\n\n  unPosting array now looks like = " . arr2string($old_gl_entry->repost_ids));
-		  $messageStack->debug("\n  re-Posting array will re-post = " . arr2string($this->repost_ids));
-		  $this->unPost_entry[$id]->repost_ids = array(); // clear nested unPost to zero, so it doesn't re-post
-		}
+	if ($action == 'edit') {
+		$messageStack->debug("\n\n  unPosting as part of edit journal main id = " . $this->id);
+		$old_gl_entry = new journal($this->id); // read in the original journal entry
+		$this->first_period = min($old_gl_entry->period, $this->first_period);
+		if (!$old_gl_entry->unPost('edit', true)) return false;	// unpost it
+		$this->affected_accounts = gen_array_key_merge($this->affected_accounts, $old_gl_entry->affected_accounts);	
+	} else {
+		$this->check_for_re_post();
+		$old_gl_entry->repost_ids = $this->repost_ids; // check for dependent records that will need to be re-posted
+	}
+	if (sizeof($old_gl_entry->repost_ids) > 0) { // rePost any journal entries unPosted to rollback COGS calculation (if edit)
+	  $messageStack->debug("\n  First level unPost returned re-post_ids to be unPosted next = " . arr2string($old_gl_entry->repost_ids));
+	  while (true) {
+		if (!$id = array_shift($old_gl_entry->repost_ids)) break; // no more to unPost, exit loop
+		$messageStack->debug("\n  unPosting re-post Journal main id = $id");
+		if (in_array($id, $this->repost_ids)) continue; // already has been unposted, skip
+		$this->repost_ids[$id] = $id;
+		$this->unPost_entry[$id] = new journal($id);
+		if (!$this->unPost_entry[$id]->unPost('edit', true)) return false;
+		// add the new repost_ids to the arrays, one for now, one for re-post loop later
+		$old_gl_entry->repost_ids += $this->unPost_entry[$id]->repost_ids;
+		$messageStack->debug("\n  unPosting array now looks like = " . arr2string($old_gl_entry->repost_ids));
+		$messageStack->debug("\n  re-Posting array is queing for repost id array = " . arr2string($this->repost_ids));
+		$this->unPost_entry[$id]->repost_ids = array(); // clear nested unPost to zero, so it doesn't re-post
 	  }
 	}
 	// post journal main record
-	$messageStack->debug("\n\nPosting Journal main ... id = " . $this->id . " and action = " . $action . " and journal_id = " . $this->journal_id);
+	$messageStack->debug("\n  Posting Journal main ... id = " . $this->id . " and action = " . $action . " and journal_id = " . $this->journal_id);
 	$messageStack->debug("\n  main_array = " . arr2string($this->journal_main_array));
 	db_perform(TABLE_JOURNAL_MAIN, $this->journal_main_array, 'insert');
 	$this->id = db_insert_id();
 	// post journal rows
-	$messageStack->debug("\n\nPosting Journal rows ...");
+	$messageStack->debug("\n  Posting Journal rows ...");
 	for ($i = 0; $i < count($this->journal_rows); $i++) {
 	  $messageStack->debug("\n  journal_rows = " . arr2string($this->journal_rows[$i]));
 	  $this->journal_rows[$i]['ref_id'] = $this->id;	// link the rows to the journal main id
 	  db_perform(TABLE_JOURNAL_ITEM, $this->journal_rows[$i], 'insert');
 	  $this->journal_rows[$i]['id'] = db_insert_id();
 	}
-	$messageStack->debug("\n\nStarting auxilliary post functions ...");
+	$messageStack->debug("\nStarting auxilliary post functions ...");
   	// Inventory needs to be posted first because function may add additional journal rows for COGS
 	if (!$this->Post_inventory()) return false; 
 	if (!$this->Post_chart_balances()) return false;	// post the chart of account values
@@ -93,7 +95,7 @@ class journal {
 	  $messageStack->debug("\nStarting to Post re-post_ids to be Posted = " . arr2string($this->repost_ids));
 	  $cnt = 0;
 	  while ($id = array_shift($this->repost_ids)) {
-		$messageStack->debug("\n\nRe-posting as part of Post - Journal main id = " . $id);
+		$messageStack->debug("\n    Re-posting as part of Post - Journal main id = " . $id);
 		$gl_entry = $this->unPost_entry[$id];
 		if (!is_object($gl_entry)) { // for this case, the affected journal objects have not been created
 		  $gl_entry = new journal($id);
@@ -112,13 +114,13 @@ class journal {
 	  if (!$this->update_chart_history_periods($this->first_period)) return false;
 	}
 	if (!$this->check_for_closed_po_so('Post')) return false;
-	$messageStack->debug("\n*************** end Posting Journal ******************* id = " . $this->id . "\n");
+	$messageStack->debug("\n*************** end Posting Journal ******************* id = $this->id\n");
 	return true;
   }
 
   function unPost($action = 'delete', $skip_balance = false) {
 	global $db, $messageStack;
-	$messageStack->debug("\n\nunPosting Journal... id = " . $this->id . " and action = " . $action . " and journal_id = " . $this->journal_id);
+	$messageStack->debug("\n\nunPosting Journal... id = $this->id and action = $action and journal_id = ".$this->journal_id);
 	if (!$this->check_for_re_post()) return false; // check for dependent records that will need to be re-posted
 	if (!$this->unPost_account_sales_purchases()) return false;	// unPost the customer/vendor history
 	// unPost_chart_balances needs to be unPosted before inventory because inventory may remove journal rows (COGS)
@@ -176,9 +178,10 @@ class journal {
 	  		$result->MoveNext();
 	  	  }
 	  	  if (sizeof($askus) > 0) {
+		    $messageStack->debug("\n    Finding re-post ids for average sku list = ".print_r($askus, true));
 	  	  	$result = $db->Execute("SELECT ref_id FROM ".TABLE_JOURNAL_ITEM." WHERE sku IN ('".implode("', '", $askus)."') AND post_date > '$this->post_date'");
 	  	  	while (!$result->EOF) {
-		  	  $messageStack->debug("\n    check_for_re_post is queing average cost id = ".$result->fields['ref_id']);
+		  	  $messageStack->debug("\n    check_for_re_post is queing record id = ".$result->fields['ref_id']);
 	  	  	  $this->repost_ids[$result->fields['ref_id']] = $result->fields['ref_id'];
 	  	  	  $result->MoveNext();
 	  	  	}
@@ -191,12 +194,14 @@ class journal {
 	  case 13: // Sales Credit Memo Journal
 	  case 19: // POS Journal
 		// Check for payments or receipts made to this record that will need to be re-posted.
-		$sql = "SELECT ref_id FROM ".TABLE_JOURNAL_ITEM." WHERE so_po_item_ref_id = $this->id AND gl_type in ('chk', 'pmt')";
-		$result = $db->Execute($sql);
-		while(!$result->EOF) {
-		  $messageStack->debug("\n    check_for_re_post is queing id = " . $result->fields['ref_id']);
-		  $this->repost_ids[$result->fields['ref_id']] = $result->fields['ref_id'];
-		  $result->MoveNext();
+		if ($this->id) {
+		  	$sql = "SELECT ref_id FROM ".TABLE_JOURNAL_ITEM." WHERE so_po_item_ref_id = $this->id AND gl_type in ('chk', 'pmt')";
+			$result = $db->Execute($sql);
+			while(!$result->EOF) {
+			  $messageStack->debug("\n    check_for_re_post is queing id = " . $result->fields['ref_id']);
+			  $this->repost_ids[$result->fields['ref_id']] = $result->fields['ref_id'];
+			  $result->MoveNext();
+			}
 		}
 		$messageStack->debug(" end Checking for Re-post.");
 		break;
@@ -965,7 +970,7 @@ class journal {
 
 	$this->sku_cogs = $cogs;
 	if ($return_cogs) return $cogs; // just calculate cogs and adjust inv history
-	$messageStack->debug("\n    Adding COGS to array (if not zero), sku = " . $item['sku'] . " with calculated value = " . $cogs);
+	$messageStack->debug("\n    Adding COGS to array (if not zero), sku = ".$item['sku']." with calculated value = $cogs");
 	if ($cogs) {
 	  // credit inventory cost of inventory
 	  $cogs_acct = $defaults['account_inventory_wage'];

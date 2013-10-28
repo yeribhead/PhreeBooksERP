@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -456,10 +455,8 @@ function load_cash_acct_balance($post_date, $gl_acct_id, $period) {
   function repost_journals($journals, $start_date, $end_date) {
 	global $db, $messageStack;
 	if (sizeof($journals) > 0) {
-	  $sql = "select id from " . TABLE_JOURNAL_MAIN . " 
-		where journal_id in (" . implode(',', $journals) . ") 
-		and post_date >= '" . $start_date . "' and post_date < '" . gen_specific_date($end_date, 1) . "' 
-		order by id";
+	  $sql = "SELECT id FROM ".TABLE_JOURNAL_MAIN." WHERE journal_id IN (".implode(',', $journals).") 
+		AND post_date>= '$start_date' AND post_date<'".gen_specific_date($end_date, 1)."' ORDER BY post_date, id";
 	  $result = $db->Execute($sql);
 	  $cnt = 0;
 	  $db->transStart();
@@ -468,7 +465,7 @@ function load_cash_acct_balance($post_date, $gl_acct_id, $period) {
 	    $gl_entry->remove_cogs_rows(); // they will be regenerated during the re-post
 	    if (!$gl_entry->Post('edit', true)) {
 		  $db->transRollback();
-		  $messageStack->add('<br /><br />Failed Re-posting the journals, try a smaller range. The record that failed was # ' . $gl_entry->id,'error');
+		  $messageStack->add('<br /><br />Failed Re-posting the journals, try a smaller range. The record that failed was # '.$gl_entry->id,'error');
 		  return false;
 	    }
 		$cnt++;
