@@ -50,7 +50,7 @@ $toolbar->icon_list['open']['params']   = 'onclick="OpenOrdrList(this)"';
 $toolbar->icon_list['delete']['params'] = 'onclick="if (confirm(\'' . ORD_DELETE_ALERT . '\')) submitToDo(\'delete\')"';
 $toolbar->icon_list['save']['params']   = 'onclick="submitToDo(\'save\')"';
 $toolbar->icon_list['print']['params']  = 'onclick="submitToDo(\'print\')"';
-$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . 'jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
+$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . '&jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
 if ($security_level > 1 && ENABLE_BAR_CODE_READERS) {
   $toolbar->add_icon('bar_code', 'onclick="openBarCode()"', 9);
   $toolbar->icon_list['bar_code']['icon'] = 'devices/network-wired.png';
