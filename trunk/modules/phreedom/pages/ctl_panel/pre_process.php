@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -29,7 +28,7 @@ foreach ($dirs as $dir) {
   if (defined('MODULE_' . strtoupper($dir) . '_STATUS') && file_exists(DIR_FS_MODULES . $dir . '/dashboards/')) {
     $choices = scandir(DIR_FS_MODULES . "$dir/dashboards/");
 	foreach ($choices as $dashboard) {
-	  if ($dashboard == '.' || $dashboard == '..' || !is_dir(DIR_FS_MODULES."$dir/dashboards/".$dashboard)) continue;
+	  if ($dashboard == '.' || $dashboard == '..' || !file_exists(DIR_FS_MODULES."$dir/dashboards/$dashboard/$dashboard.php")) continue;
 	  $dashboards[] = array('module_id' => $dir, 'dashboard_id' => $dashboard);
 	}
   }
