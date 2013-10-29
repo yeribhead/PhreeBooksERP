@@ -265,7 +265,7 @@ class inventory_admin {
 	}
 	// set the fields to view in the inventory field filters 
 	$haystack = array('attachments', 'account_sales_income', 'item_taxable', 'purch_taxable', 'image_with_path', 'account_inventory_wage', 'account_cost_of_sales', 'cost_method', 'lead_time');
-	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type` = 'check_box' where field_name = 'inactive'");
+	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type='check_box' where field_name='inactive'");
 	$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'");
 	while (!$result->EOF) {
 		$use_in_inventory_filter = '1';
