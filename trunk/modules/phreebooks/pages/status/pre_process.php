@@ -152,7 +152,7 @@ $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 
 // build the list for the page selected
-$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
+$period_filter = ($acct_period == 'all') ? '' : (" and period = $acct_period ");
 if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
   // hook for inserting new search fields to the query criteria.
   if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
@@ -160,7 +160,6 @@ if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 } else {
   $search = '';
 }
-
 // hook to add new fields to the query return results
 if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 

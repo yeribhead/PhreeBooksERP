@@ -475,7 +475,7 @@
     reset($_GET);
     $output = array();
     while (list($key, $value) = each($_GET)) {
-      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array))) {
+      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array)) && $key != 'search_text') {
       	if (strlen($_REQUEST[$key]) > 0) $output[] = "$key=".$_REQUEST[$key];
       }
     }
