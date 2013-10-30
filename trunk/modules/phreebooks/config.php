@@ -99,16 +99,16 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
 	  	'show_in_users_settings' => true,
 	  	'params'      => '',
 	);
-  	$mainmenu["banking"]['submenu']["payments"] = array(
+  	$mainmenu["banking"]['submenu']["vendor_payments"] = array(
   		'order'		  => 25,
-	    'text'        => ORD_TEXT_PAYMENTS_TITLE,
+	    'text'        => ORD_TEXT_20_V_WINDOW_TITLE,//ORD_TEXT_PAYMENTS_TITLE,
 	    'security_id' => SECURITY_ID_PAYMENTS_STATUS,
 	    'link'        => '',//html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=20&amp;list=1', 'SSL'),
   	    'show_in_users_settings' => false,
 	    'params'      => '',
 	);
-	if(!isset($_SESSION['admin_security'][SECURITY_ID_PAYMENTS_STATUS]) || $_SESSION['admin_security'][SECURITY_ID_PAYMENTS_STATUS] > 0) $mainmenu["banking"]['submenu']["payments"]['link'] = html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=20&amp;list=1', 'SSL');
-	$mainmenu["banking"]['submenu']["payments"]['submenu']["select_for_payment"] = array(
+	if(!isset($_SESSION['admin_security'][SECURITY_ID_PAYMENTS_STATUS]) || $_SESSION['admin_security'][SECURITY_ID_PAYMENTS_STATUS] > 0) $mainmenu["banking"]['submenu']["vendor_payments"]['link'] = html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=20&amp;list=1', 'SSL');
+	$mainmenu["banking"]['submenu']["vendor_payments"]['submenu']["select_for_payment"] = array(
 	  	'order'		  => 15,
 	    'text'        => BOX_BANKING_SELECT_FOR_PAYMENT,
 	    'security_id' => SECURITY_ID_SELECT_PAYMENT,
@@ -116,17 +116,17 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
 	    'show_in_users_settings' => true,
 	    'params'      => '',
 	);
-	$mainmenu["banking"]['submenu']["payments"]['submenu']["pay_bills"] = array(
+	$mainmenu["banking"]['submenu']["vendor_payments"]['submenu']["pay_bills"] = array(
 	  	'order'		  => 20,
-	    'text'        => sprintf(BOX_TEXT_NEW_TITLE, ORD_TEXT_20_V_WINDOW_TITLE),
+	    'text'        => sprintf(BOX_TEXT_NEW_TITLE, ORD_TEXT_PAYMENTS_TITLE),
 	    'security_id' => SECURITY_ID_PAY_BILLS,
 	    'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=bills&amp;jID=20&amp;type=v', 'SSL'),
 	    'show_in_users_settings' => true,
 	    'params'      => '',
 	);
-	$mainmenu["banking"]['submenu']["payments"]['submenu']["pay_bills_mgr"] = array(
+	$mainmenu["banking"]['submenu']["vendor_payments"]['submenu']["pay_bills_mgr"] = array(
 	    'order'		  => 25,
-	    'text'        => sprintf(BOX_STATUS_MGR, ORD_TEXT_20_V_WINDOW_TITLE),
+	    'text'        => sprintf(BOX_STATUS_MGR, ORD_TEXT_PAYMENTS_TITLE),
 	    'security_id' => SECURITY_ID_PAYMENTS_STATUS,
 	    'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=20&amp;list=1', 'SSL'),
 	    'show_in_users_settings' => true,
@@ -166,7 +166,7 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
 	    'show_in_users_settings' => true,
 	    'params'      => '',
 	);
-	$mainmenu["banking"]['submenu']["receipts"] = array(
+	$mainmenu["banking"]['submenu']["vendor_payments"]['submenu']["receipts"] = array(
 	  	'order'		  => 45,
 	    'text'        => ORD_TEXT_18_V_WINDOW_TITLE,
 	    'security_id' => SECURITY_ID_VENDOR_RECEIPTS,

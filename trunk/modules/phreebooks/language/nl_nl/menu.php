@@ -23,7 +23,7 @@ define('ORD_TEXT_13_WINDOW_TITLE','Credit Nota');
 define('ORD_TEXT_18_WINDOW_TITLE','Kas ontvangsten');
 define('ORD_TEXT_20_WINDOW_TITLE','Kas Distributie');
 define('ORD_TEXT_18_C_WINDOW_TITLE','Klant Betalingen');
-define('ORD_TEXT_18_V_WINDOW_TITLE','Leverancier Restituties');
+define('ORD_TEXT_18_V_WINDOW_TITLE','Restituties');
 define('ORD_TEXT_19_WINDOW_TITLE','Kassa Verkopen');
 define('ORD_TEXT_20_C_WINDOW_TITLE','Klant Restituties');
 define('ORD_TEXT_20_V_WINDOW_TITLE','Leverancier Betalingen');

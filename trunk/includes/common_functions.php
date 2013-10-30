@@ -1944,7 +1944,7 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
         case E_NOTICE: //8
         	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     		$text .= " RUN-TIME NOTICE:  '$errstr' line $errline in file $errfile";
-    		if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_CORE_ERROR: //16
         	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
@@ -2035,6 +2035,6 @@ function PhreebooksExceptionHandler($exception) {
     $messageStack->add($exception->getMessage(), 'error');
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     $text .= " EXCEPTION: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
-    if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
 }
 ?>
