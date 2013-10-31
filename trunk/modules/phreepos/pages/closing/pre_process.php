@@ -310,7 +310,7 @@ if ($post_date){
 	
 	// load the end balance
 	$till_balance = $currencies->format($tills->balance);
-	if (empty($combined_list) && $tills->till_id <> '' ) $messageStack->add_session('No Items were found for till and period.!','warning');
+	if (empty($combined_list) && $tills->till_id <> '' ) $messageStack->add('No Items were found for till and period.!','warning');
 }
 
 $cal_gl = array(

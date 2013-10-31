@@ -126,9 +126,9 @@ switch ($_REQUEST['action']) {
 		if (defined('MODULE_SHIPPING_STATUS')) $db->Execute("TRUNCATE TABLE " . TABLE_SHIPPING_LOG);
 		$db->Execute("update " . TABLE_CHART_OF_ACCOUNTS_HISTORY . " set beginning_balance = 0, debit_amount = 0, credit_amount = 0");
 		$db->Execute("update " . TABLE_INVENTORY . " set quantity_on_hand = 0, quantity_on_order = 0, quantity_on_sales_order = 0");
-		$messageStack->add_session(GL_UTIL_PURGE_CONFIRM, 'success');
+		$messageStack->add(GL_UTIL_PURGE_CONFIRM, 'success');
 	} else {
-		$messageStack->add_session(GL_UTIL_PURGE_FAIL, 'caution');
+		$messageStack->add(GL_UTIL_PURGE_FAIL, 'caution');
 	}
 	gen_add_audit_log(GL_LOG_PURGE_DB);
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
@@ -239,7 +239,7 @@ switch ($_REQUEST['action']) {
 		$min_period = max($first_error_period, 2); // avoid a crash if min_period is the first period
 		if ($glEntry->update_chart_history_periods($min_period - 1)) { // from prior period than the error account
 			$db->transCommit();
-			$messageStack->add_session(GEN_ADM_TOOLS_REPAIR_COMPLETE,'success');
+			$messageStack->add(GEN_ADM_TOOLS_REPAIR_COMPLETE,'success');
 			gen_add_audit_log(GEN_ADM_TOOLS_REPAIR_LOG_ENTRY);
 		}
 	}

@@ -191,7 +191,7 @@ switch ($_REQUEST['action']) {
 	      $db->transCommit();	// post the chart of account values
 	      // *************** END TRANSACTION *************************
 		  gen_add_audit_log(sprintf(INV_LOG_TRANSFER, $source_store_id, $dest_store_id), $sku, $qty);
-	      $messageStack->add_session(INV_POST_SUCCESS . $glEntry->purchase_invoice_id, 'success');
+	      $messageStack->add(INV_POST_SUCCESS . $glEntry->purchase_invoice_id, 'success');
 	      if (DEBUG) $messageStack->write_debug();
 	      gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	    } else {

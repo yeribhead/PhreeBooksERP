@@ -36,7 +36,7 @@ class project_phases {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
     $description_short = db_prepare_input($_POST['description_short']);
@@ -60,7 +60,7 @@ class project_phases {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
 /*

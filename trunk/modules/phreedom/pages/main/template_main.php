@@ -17,7 +17,7 @@
 //  Path: /modules/phreedom/pages/main/template_main.php
 //
 // display alerts/error messages, if any since the toolbar is not shown
-if ($messageStack->size > 0) echo $messageStack->output();
+echo $messageStack->output();
 $column = 1;
 ?>
 <div><a href="<?php echo html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=ctl_panel&amp;mID=' . $menu_id, 'SSL'); ?>"><?php echo CP_CHANGE_PROFILE; ?></a></div>

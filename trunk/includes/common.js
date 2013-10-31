@@ -433,12 +433,12 @@ function submitSortOrder(sField, sOrder) {
 
 function searchPage(get_params) {
   var searchText = document.getElementById('search_text').value;
-  location.href = 'index.php?'+get_params+'search_text='+searchText;
+  location.href = 'index.php?'+get_params+'&search_text='+searchText;
 }
 
 function periodPage(get_params) {
   var searchPeriod = document.getElementById('search_period').value;
-  location.href = 'index.php?'+get_params+'search_period='+searchPeriod;
+  location.href = 'index.php?'+get_params+'&search_period='+searchPeriod;
 }
 
 function jumpToPage(get_params) {

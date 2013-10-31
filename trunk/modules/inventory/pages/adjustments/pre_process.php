@@ -98,7 +98,7 @@ switch ($_REQUEST['action']) {
 	  if ($glEntry->Post($glEntry->id ? 'edit' : 'insert')) {
 	    $db->transCommit();	// post the chart of account values
 	    gen_add_audit_log(INV_LOG_ADJ . ($_REQUEST['action']=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
-	    $messageStack->add_session(INV_POST_SUCCESS . $glEntry->purchase_invoice_id, 'success');
+	    $messageStack->add(INV_POST_SUCCESS . $glEntry->purchase_invoice_id, 'success');
 	    if (DEBUG) $messageStack->write_debug();
 	    gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  }

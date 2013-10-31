@@ -34,7 +34,7 @@ class tax_auths {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	$sql_data_array = array(
@@ -58,7 +58,7 @@ class tax_auths {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	// Check for this authority being used in a tax rate calculation, if so do not delete

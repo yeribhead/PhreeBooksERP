@@ -165,6 +165,7 @@ if(isset($_SESSION['admin_security'][SECURITY_ID_BACKUP]) && $_SESSION['admin_se
 	  'params'      => '',
 	);
 }
+
 $mainmenu["company"]['submenu']["users"] = array(
   'order' 		=> 90,
   'text'        => BOX_HEADING_USERS,
@@ -173,7 +174,7 @@ $mainmenu["company"]['submenu']["users"] = array(
   'show_in_users_settings' => true,
   'params'      => '',
 );
-if($_SESSION['admin_id'] == 1) $mainmenu["company"]['submenu']["users"]['security_id'] = ''; // assume first user is a admin user always allow him acces to users
+
 $mainmenu["company"]['submenu']["roles"] = array(
   'order' 		=> 85,
   'text'        => BOX_HEADING_ROLES,

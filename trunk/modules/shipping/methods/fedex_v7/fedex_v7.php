@@ -607,7 +607,7 @@ class fedex_v7 {
 					}
 					fclose($handle);
 					$cnt++;
-//					$messageStack->add_session('Successfully retrieved the FedEx shipping label. Tracking # ' . $fedex_results[$key]['tracking'],'success');
+//					$messageStack->add('Successfully retrieved the FedEx shipping label. Tracking # ' . $fedex_results[$key]['tracking'],'success');
 				  }
 				} else {
 					$messageStack->add('Error - No label found in return string.','error');
@@ -949,7 +949,7 @@ class fedex_v7 {
 //echo 'Request <pre>' . htmlspecialchars($client->__getLastRequest()) . '</pre>';  
 //echo 'Response <pre>' . htmlspecialchars($client->__getLastResponse()) . '</pre>';
 		if ($response->HighestSeverity != 'FAILURE' && $response->HighestSeverity != 'ERROR') {
-		  $messageStack->add_session(SHIPPING_FEDEX_V7_DEL_SUCCESS. $tracking_number, 'success');
+		  $messageStack->add(SHIPPING_FEDEX_V7_DEL_SUCCESS. $tracking_number, 'success');
 		} else {
 		  foreach ($response->Notifications as $notification) {
 			if (is_object($notification)) {

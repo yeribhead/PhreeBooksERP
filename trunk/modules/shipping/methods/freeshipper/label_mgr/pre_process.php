@@ -72,7 +72,6 @@ switch ($_REQUEST['action']) {
 
 	$db->Execute("delete from " . TABLE_SHIPPING_LOG . " where shipment_id = " . $shipment_id);
 	gen_add_audit_log(SHIPPING_LABEL_DELETED, $tracking_id);
-	$messageStack->convert_add_to_session(); // save any messages for reload
 	break;
 
   default:

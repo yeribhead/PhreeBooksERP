@@ -46,7 +46,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'create':
 	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+		$messageStack->add(ERROR_NO_PERMISSION, 'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -84,7 +84,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'delete':
 	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -104,7 +104,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'save':
 	if ($security_level < 3) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -208,7 +208,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'copy':
 	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -258,7 +258,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'rename':
 	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}

@@ -308,7 +308,7 @@ switch ($_REQUEST['action']) {
     break;
   case 'import_one':
     if ($success = ImportReport($_POST['reportname'], $_POST['RptFileName'], $import_path)) {
-	  $messageStack->add_session(PHREEFORM_IMPORT_SUCCESS, 'success');
+	  $messageStack->add(PHREEFORM_IMPORT_SUCCESS, 'success');
 	  $self_close = true;
 	}
 	break;
@@ -319,13 +319,13 @@ switch ($_REQUEST['action']) {
         if ($file <> "." && $file <> "..") $output[] = $file;
       }
 	} else {
-	  $messageStack->add_session('error opening the directory for reading!','error');
+	  $messageStack->add('error opening the directory for reading!','error');
 	  break;
 	}
     closedir($handle);
 	foreach ($output as $file) if (!$success = ImportReport(NULL, $file, $import_path)) $error = true;
     if (!$error) {
-	  $messageStack->add_session(PHREEFORM_DIR_IMPORT_SUCCESS, 'success');
+	  $messageStack->add(PHREEFORM_DIR_IMPORT_SUCCESS, 'success');
 	  $self_close = true;
 	}
 	break;

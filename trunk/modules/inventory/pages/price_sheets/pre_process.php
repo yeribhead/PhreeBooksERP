@@ -57,7 +57,7 @@ switch ($_REQUEST['action']) {
 	$default_levels = implode(';', $encoded_prices);
 	// Check for duplicate price sheet names
 	if ($_REQUEST['action'] == 'save') {
-	  $result = $db->Execute("select id from " . TABLE_PRICE_SHEETS . " where sheet_name = '" . $sheet_name . "'");
+	  $result = $db->Execute("select id from " . TABLE_PRICE_SHEETS . " where sheet_name = '$sheet_name'");
 	  if ($result->RecordCount() > 0) {
 		$messageStack->add(SRVCS_DUPLICATE_SHEET_NAME,'error');
 		$effective_date = gen_locale_date($effective_date);
@@ -65,32 +65,27 @@ switch ($_REQUEST['action']) {
 		break;
 	  }
 	}
-	// Reset all other price sheet default flags if set to this price sheet
-	if ($default_sheet) {
-	  $db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '0' 
-	    where sheet_name <> '" . $sheet_name . "' and type = '" . $type . "'");
+	$sql_data_array = array(
+	  'sheet_name' 		=> $sheet_name, 
+	  'type' 			=> $type, 
+	  'revision' 		=> $revision, 
+	  'effective_date' 	=> $effective_date, 
+	  'default_sheet' 	=> $default_sheet, 
+	  'default_levels' 	=> $default_levels);
+	if ($_REQUEST['action'] == 'save'){
+		db_perform(TABLE_PRICE_SHEETS, $sql_data_array, 'insert');
+	}else{
+		db_perform(TABLE_PRICE_SHEETS, $sql_data_array, 'update', " id = $id");
 	}
-	$sql = ($_REQUEST['action'] == 'save') ? 'insert into ' : 'update ';
-	$sql .= TABLE_PRICE_SHEETS . " set 
-	  sheet_name = '" . $sheet_name . "', 
-	  type = '" . $type . "', 
-	  revision = '" . $revision . "', 
-	  effective_date = '" . $effective_date . "', 
-	  default_sheet = '" . $default_sheet . "', 
-	  default_levels = '" . $default_levels . "'";
-	$sql .= ($_REQUEST['action'] == 'save') ? '' : ' where id = ' . $id;
-	$result = $db->Execute($sql);
-	// Set all price sheets with this name to default
 	if ($default_sheet) {
-	  $db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '1' 
-	    where sheet_name = '" . $sheet_name . "' and type = '" . $type . "'");
+		// Reset all other price sheet default flags if set to this price sheet
+		$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '0' where sheet_name <> '$sheet_name' and type = '$type'");
+		// Set all price sheets with this name to default
+	  	$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '1' where sheet_name = '$sheet_name' and type = '$type'");
 	}
 	// set expiration date of previous rev if there is a older rev of this price sheet
-	if ($effective_date <> '') {
-	  $db->Execute("update " . TABLE_PRICE_SHEETS . " 
-		set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
-		where sheet_name = '" . $sheet_name . "' and type = '" . $type . "' and revision = " . ($revision - 1));
-	}
+	$db->Execute("update " . TABLE_PRICE_SHEETS . " set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
+	  where sheet_name = '$sheet_name' and type = '$type' and ( expiration_date IS NULL or expiration_date = '0000-00-00' or expiration_date >= '$effective_date' ) and id < $id");
 	gen_add_audit_log(PRICE_SHEETS_LOG . ($_REQUEST['action'] == 'save') ? TEXT_SAVE : TEXT_UPDATE, $sheet_name);
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('psID', 'action')), 'SSL'));
 	break;
@@ -110,36 +105,31 @@ switch ($_REQUEST['action']) {
 
   case 'revise':
 	validate_security($security_level, 2);
-  	$id = db_prepare_input($_GET['psID']);
-	$result = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = " . $id);
-	$old_rev = (int)$result->fields['revision'];
+  	$old_id  = db_prepare_input($_GET['psID']);
+	$result  = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = $old_id");
+	$old_rev = $result->fields['revision'];
 	$output_array = array(
 	  'sheet_name'     => $result->fields['sheet_name'],
 	  'type'           => $type,
 	  'revision'       => $result->fields['revision'] + 1,
-	  'effective_date' => $result->fields['expiration_date'],
+	  'effective_date' => gen_specific_date($result->fields['effective_date'], 1), // default today
 	  'default_sheet'  => $result->fields['default_sheet'],
 	  'default_levels' => $result->fields['default_levels'],
 	);
 	db_perform(TABLE_PRICE_SHEETS, $output_array, 'insert');
-	$sheet_id = db_insert_id();
+	$id = db_insert_id();
 	// Copy special pricing information to new sheet
-	$levels = $db->Execute("select inventory_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " 
-	  where price_sheet_id = " . $id);
+	$levels = $db->Execute("select inventory_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where price_sheet_id = $old_id");
 	while (!$levels->EOF){
-	  $db->Execute("insert into " . TABLE_INVENTORY_SPECIAL_PRICES . " set 
-		inventory_id = "   . $levels->fields['inventory_id'] . ", 
-		price_sheet_id = " . $sheet_id . ", 
-		price_levels = '"  . $levels->fields['price_levels'] . "'");
+	  $db->Execute("insert into " . TABLE_INVENTORY_SPECIAL_PRICES . " set inventory_id = $levels->fields['inventory_id'], 
+	  price_sheet_id = $id, price_levels = '$levels->fields['price_levels']'");
 	  $levels->MoveNext();
 	}
 	gen_add_audit_log(PRICE_SHEETS_LOG . TEXT_REVISE, $result->fields['sheet_name'] . ' Rev. ' . $old_rev . ' => ' . ($old_rev + 1));
 	$_REQUEST['action'] = 'edit';
-	break;
-
   case 'edit':
-	$id             = db_prepare_input($_POST['rowSeq']);
-	$result         = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = " . $id);
+	if(!isset($id)) $id = db_prepare_input($_POST['rowSeq']);
+	$result         = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = $id");
 	$sheet_name     = $result->fields['sheet_name'];
 	$revision       = $result->fields['revision'];
 	$effective_date = gen_locale_date($result->fields['effective_date']);

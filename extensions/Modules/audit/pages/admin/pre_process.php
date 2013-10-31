@@ -30,7 +30,7 @@ require_once(DIR_FS_WORKING . 'classes/install.php');
 
 /**************   page specific initialization  *************************/
 $error   = false; 
-require_once(DIR_FS_WORKING . 'classes/install.php');
+$install= new audit_admin();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
