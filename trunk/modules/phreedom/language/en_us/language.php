@@ -18,7 +18,7 @@
 //
 // Locale specification
 define('LANGUAGE','English (US)');
-define('TITLE', 'Phreedom ERP');
+define('TITLE', 'PhreeBooks ERP');
 define('TEXT_PHREEDOM_INFO','PhreeSoft Small Business Solutions');
 define('HTML_PARAMS','lang="en-US" xml:lang="en-US"');
 define('CHARSET', 'UTF-8');
