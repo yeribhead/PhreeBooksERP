@@ -25,7 +25,7 @@ $upload_name = 'file_name';
 switch ($_REQUEST['action']) {
   case 'save':
 	if ($security_level < 1) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+	  $messageStack->add(ERROR_NO_PERMISSION, 'error');
 	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	}
 	// first verify the file was uploaded ok

@@ -34,8 +34,6 @@
 // Redirect to another page or site
   function gen_redirect($url) {
     global $messageStack;
-	// put any messages form the messageStack into a session variable to recover after redirect
-	$messageStack->convert_add_to_session();
 	// clean up URL before executing it
     while (strstr($url, '&&'))    $url = str_replace('&&', '&', $url);
     // header locates should not have the &amp; in the address it breaks things
@@ -477,7 +475,7 @@
     reset($_GET);
     $output = array();
     while (list($key, $value) = each($_GET)) {
-      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array))) {
+      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array)) && $key != 'search_text') {
       	if (strlen($_REQUEST[$key]) > 0) $output[] = "$key=".$_REQUEST[$key];
       }
     }
@@ -1486,7 +1484,7 @@ function validate_user($token = 0, $user_active = false) {
   global $messageStack;
   $security_level = $_SESSION['admin_security'][$token];
   if (!in_array($security_level, array(1,2,3,4)) && !$user_active) { // not suppose to be here, bail
-    $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+    $messageStack->add(ERROR_NO_PERMISSION, 'error');
     gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
   }
   return $user_active ? 1 : $security_level;
@@ -1495,7 +1493,7 @@ function validate_user($token = 0, $user_active = false) {
 function validate_security($security_level = 0, $required_level = 1) {
   global $messageStack;
   if ($security_level < $required_level) {
-	$messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+	$messageStack->add(ERROR_NO_PERMISSION, 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
   }
   return true;
@@ -1916,10 +1914,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
         // This error code is not included in error_reporting
         return;
     }
-
+    $temp = '';
+	if(isset($_SESSION['admin_id'])) $temp = " User: " . $_SESSION['admin_id'];
+	if(isset($_SESSION['company'])) $temp .= " Company: " . $_SESSION['company'];
     switch ($errno) {
     	case E_ERROR: //1
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL RUN-TIME ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1932,22 +1932,22 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 1 FATAL RUN-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
     	case E_WARNING: //2
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RUN-TIME WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_PARSE: //4
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " COMPILE-TIME PARSE ERROR: '$errstr' error on line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_NOTICE: //8
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RUN-TIME NOTICE:  '$errstr' line $errline in file $errfile";
-    		if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		if(!defined('DEBUG') || DEBUG == true) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_CORE_ERROR: //16
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1955,12 +1955,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 16 FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
         case E_CORE_WARNING: //32
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " WARNING THAT OCCURED DURING PHP's INITIAL STARTUP: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_COMPILE_ERROR://64
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL COMPILE-TIME ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1973,12 +1973,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 64 FATAL COMPILE-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
         case E_COMPILE_WARNING: //128
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " COMPILE-TIME WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_USER_ERROR: //256
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
     		//error_log($text, 1, "operator@example.com");
@@ -1992,32 +1992,32 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		//die("<h1>Sorry! 256 User Error</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
     	case E_USER_WARNING: //512
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_USER_NOTICE: //1024
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER NOTICE:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_RECOVERABLE_ERROR : //4096
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RECOVERABLE ERROR:  '$errstr' error on line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_DEPRECATED : //4096
-    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . $temp;
     		$text .= " DEPRECATED FUNCTION:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_USER_DEPRECATED : //16384 	
-    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . $temp;
     		$text .= " USER DEPRECATED FUNCTION:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break; 	
         default:
-	    	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+	    	$text  = date('Y-m-d H:i:s') . $temp;
 	    	$text .=  " Unknown error type: [$errno] '$errstr' error on line $errline in file $errfile";
 	    	error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
@@ -2036,5 +2036,26 @@ function PhreebooksExceptionHandler($exception) {
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     $text .= " EXCEPTION: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
     if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+}
+
+function Phreebooks_autoloader($class){
+	if(class_exists($class)) print("class is geladen $class");
+	$class = str_replace("\\", "/", $class);
+	$path = explode("/", $class, 2);
+	if($path[0] == 'core'){
+		print(DIR_FS_ADMIN."includes/classes/$path[1].php<br/>");
+		if (file_exists(DIR_FS_ADMIN."includes/classes/$path[1].php"))
+		require_once DIR_FS_ADMIN."includes/classes/$path[1].php";	
+	}else{
+		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){
+			print((DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php<br/>"));
+			require_once DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php";
+		}else{
+			print("$class<br/>");
+			print((DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php<br/>"));
+			require_once DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php";
+		}
+	}
+	
 }
 ?>

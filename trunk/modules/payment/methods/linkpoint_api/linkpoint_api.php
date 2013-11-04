@@ -36,7 +36,7 @@ class linkpoint_api extends payment {
   public function __construct(){
   	global $order, $messageStack;
   	parent::__construct();
-	if ($this->enabled && !function_exists('curl_init')) $messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_ERROR_CURL_NOT_FOUND, 'error');
+	if ($this->enabled && !function_exists('curl_init')) $messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_ERROR_CURL_NOT_FOUND, 'error');
 	$this->code_debug  = (MODULE_PAYMENT_LINKPOINT_API_CODE_DEBUG == 'debug') ? true : false;
 	// set error messages if misconfigured
 	if (MODULE_PAYMENT_LINKPOINT_API_STATUS) {
@@ -501,19 +501,19 @@ class linkpoint_api extends payment {
 		//  Begin check of specific error conditions
 		if ($result["r_approved"] != "APPROVED") {
 			if (substr($result['r_error'], 0, 10) == 'SGS-020005') {
-				//$messageStack->add_session($result['r_error'], 'error'); // Error (Merchant config file is missing, empty or cannot be read)
+				//$messageStack->add($result['r_error'], 'error'); // Error (Merchant config file is missing, empty or cannot be read)
 				$messageStack->add($result['r_error'], 'error'); 
 			}
 			if (substr($result['r_error'], 0, 10) == 'SGS-005000') {
-				//$messageStack->add_session( MODULE_PAYMENT_LINKPOINT_API_TEXT_GENERAL_ERROR . '<br />' . $result['r_error'], 'error'); // The server encountered a database error
+				//$messageStack->add( MODULE_PAYMENT_LINKPOINT_API_TEXT_GENERAL_ERROR . '<br />' . $result['r_error'], 'error'); // The server encountered a database error
 				$messageStack->add( MODULE_PAYMENT_LINKPOINT_API_TEXT_GENERAL_ERROR . '<br />' . $result['r_error'], 'error'); // The server encountered a database error
 			}
 			if (substr($result['r_error'], 0, 10) == 'SGS-000001' || strstr($result['r_error'], 'D:Declined') || strstr($result['r_error'], 'R:Referral')) {
-				//$messageStack->add_session( MODULE_PAYMENT_CC_TEXT_DECLINED_MESSAGE . '<br />' . $result['r_error'], 'error');
+				//$messageStack->add( MODULE_PAYMENT_CC_TEXT_DECLINED_MESSAGE . '<br />' . $result['r_error'], 'error');
 				$messageStack->add( MODULE_PAYMENT_CC_TEXT_DECLINED_MESSAGE . '<br />' . $result['r_error'], 'error');
 			}
 			if (substr($result['r_error'], 0, 10) == 'SGS-005005' || strstr($result['r_error'], 'Duplicate transaction')) {
-				//$messageStack->add_session( MODULE_PAYMENT_LINKPOINT_API_TEXT_DUPLICATE_MESSAGE . '<br />' . $result['r_error'], 'error');
+				//$messageStack->add( MODULE_PAYMENT_LINKPOINT_API_TEXT_DUPLICATE_MESSAGE . '<br />' . $result['r_error'], 'error');
 				$messageStack->add( MODULE_PAYMENT_LINKPOINT_API_TEXT_DUPLICATE_MESSAGE . '<br />' . $result['r_error'], 'error');
 			}
 			$has_error = true;
@@ -720,29 +720,29 @@ class linkpoint_api extends payment {
 		$proceedToRefund = true;
 		$refundNote = strip_tags(addslashes($_POST['refnote']));
 		if (isset ($_POST['refconfirm']) && $_POST['refconfirm'] != 'on') {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_REFUND_CONFIRM_ERROR, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_REFUND_CONFIRM_ERROR, 'error');
 			$proceedToRefund = false;
 		}
 		if (isset ($_POST['buttonrefund']) && $_POST['buttonrefund'] == MODULE_PAYMENT_LINKPOINT_API_ENTRY_REFUND_BUTTON_TEXT) {
 			$refundAmt = (float) $_POST['refamt'];
 			$new_order_status = (int) MODULE_PAYMENT_LINKPOINT_API_REFUNDED_ORDER_STATUS_ID;
 			if ($refundAmt == 0) {
-				$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_INVALID_REFUND_AMOUNT, 'error');
+				$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_INVALID_REFUND_AMOUNT, 'error');
 				$proceedToRefund = false;
 			}
 		}
 		if (isset ($_POST['cc_number']) && (int) trim($_POST['cc_number']) == 0) {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_CC_NUM_REQUIRED_ERROR, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_CC_NUM_REQUIRED_ERROR, 'error');
 		}
 		if (isset ($_POST['trans_id']) && (int) trim($_POST['trans_id']) == 0) {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_TRANS_ID_REQUIRED_ERROR, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_TRANS_ID_REQUIRED_ERROR, 'error');
 			$proceedToRefund = false;
 		}
 
 		$sql = "select lp_trans_num, transaction_time from " . TABLE_LINKPOINT_API . " where order_id = " . (int) $oID . " and transaction_result = 'APPROVED' order by transaction_time DESC";
 		$query = $db->Execute($sql);
 		if ($query->RecordCount() < 1) {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
 			$proceedToRefund = false;
 		}
 		/**
@@ -762,11 +762,11 @@ class linkpoint_api extends payment {
 			$this->reportable_submit_data['Note'] = $refundNote;
 			$failure = ($result["r_approved"] != "APPROVED");
 			if ($failure) {
-				$messageStack->add_session($response_alert, 'error');
+				$messageStack->add($response_alert, 'error');
 			} else {
 				// Success, so save the results
 				$this->_updateOrderStatus($oID, $new_order_status, 'REFUND INITIATED. Order ID:' . $result['r_ordernum'] . ' - ' . 'Trans ID: ' . $result['r_tdate'] . "\n" . 'Amount: ' . $myorder["chargetotal"] . "\n" . $refundNote);
-				$messageStack->add_session(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_REFUND_INITIATED, $result['r_tdate'], $result['r_ordernum']), 'success');
+				$messageStack->add(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_REFUND_INITIATED, $result['r_tdate'], $result['r_ordernum']), 'success');
 				return true;
 			}
 		}
@@ -788,7 +788,7 @@ class linkpoint_api extends payment {
 		$captureNote = strip_tags(addslashes($_POST['captnote']));
 		if (isset ($_POST['captconfirm']) && $_POST['captconfirm'] == 'on') {
 		} else {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_CAPTURE_CONFIRM_ERROR, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_CAPTURE_CONFIRM_ERROR, 'error');
 			$proceedToCapture = false;
 		}
 
@@ -799,13 +799,13 @@ class linkpoint_api extends payment {
 		$sql = $db->bindVars($sql, ':trans_num:', $lp_trans_num, 'string');
 		$query = $db->Execute($sql);
 		if ($query->RecordCount() < 1) {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
 			$proceedToCapture = false;
 		}
 		$captureAmt = (isset ($_POST['captamt']) && $_POST['captamt'] != '') ? (float) strip_tags(addslashes($_POST['captamt'])) : $query->fields['chargetotal'];
 		if (isset ($_POST['btndocapture']) && $_POST['btndocapture'] == MODULE_PAYMENT_LINKPOINT_API_ENTRY_CAPTURE_BUTTON_TEXT) {
 			if ($captureAmt == 0) {
-				$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_INVALID_CAPTURE_AMOUNT, 'error');
+				$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_INVALID_CAPTURE_AMOUNT, 'error');
 				$proceedToCapture = false;
 			}
 		}
@@ -823,11 +823,11 @@ class linkpoint_api extends payment {
 			$response_alert = $result['r_approved'] . ' ' . $result['r_error'] . ($this->commError == '' ? '' : ' Communications Error - Please notify webmaster.');
 			$failure = ($result["r_approved"] != "APPROVED");
 			if ($failure) {
-				$messageStack->add_session($response_alert, 'error');
+				$messageStack->add($response_alert, 'error');
 			} else {
 				// Success, so save the results
 				$this->_updateOrderStatus($oID, $new_order_status, 'FUNDS COLLECTED. Auth Code: ' . substr($result['r_code'], 0, 6) . ' - ' . 'Trans ID: ' . $result['r_tdate'] . "\n" . ' Amount: ' . number_format($captureAmt, 2) . "\n" . $captureNote);
-				$messageStack->add_session(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_CAPT_INITIATED, $captureAmt, $result['r_tdate'], substr($result['r_code'], 0, 6)), 'success');
+				$messageStack->add(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_CAPT_INITIATED, $captureAmt, $result['r_tdate'], substr($result['r_code'], 0, 6)), 'success');
 				return true;
 			}
 		}
@@ -847,18 +847,18 @@ class linkpoint_api extends payment {
 		$proceedToVoid = true;
 		if (isset ($_POST['ordervoid']) && $_POST['ordervoid'] == MODULE_PAYMENT_LINKPOINT_API_ENTRY_VOID_BUTTON_TEXT) {
 			if (isset ($_POST['voidconfirm']) && $_POST['voidconfirm'] != 'on') {
-				$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_VOID_CONFIRM_ERROR, 'error');
+				$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_VOID_CONFIRM_ERROR, 'error');
 				$proceedToVoid = false;
 			}
 		}
 		if ($voidAuthID == '') {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_TRANS_ID_REQUIRED_ERROR, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_TRANS_ID_REQUIRED_ERROR, 'error');
 			$proceedToVoid = false;
 		}
 		$sql = "select lp_trans_num, transaction_time from " . TABLE_LINKPOINT_API . " where order_id = " . (int) $oID . " and transaction_result = 'APPROVED' order by date_added";
 		$query = $db->Execute($sql);
 		if ($query->RecordCount() < 1) {
-			$messageStack->add_session(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
+			$messageStack->add(MODULE_PAYMENT_LINKPOINT_API_TEXT_NO_MATCHING_ORDER_FOUND, 'error');
 			$proceedToVoid = false;
 		}
 		/**
@@ -876,11 +876,11 @@ class linkpoint_api extends payment {
 			$response_alert = $result['r_approved'] . ' ' . $result['r_error'] . ($this->commError == '' ? '' : ' Communications Error - Please notify webmaster.');
 			$failure = ($result["r_approved"] != "APPROVED");
 			if ($failure) {
-				$messageStack->add_session($response_alert, 'error');
+				$messageStack->add($response_alert, 'error');
 			} else {
 				// Success, so save the results
 				//$this->_updateOrderStatus($oID, $new_order_status, 'VOIDED. OrderNo: ' . $result['r_ordernum'] . ' - Trans ID: ' . $result['r_tdate'] . "\n" . $voidNote);
-				$messageStack->add_session(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_VOID_INITIATED, $result['r_tdate'], $result['r_ordernum']), 'success');
+				$messageStack->add(sprintf(MODULE_PAYMENT_LINKPOINT_API_TEXT_VOID_INITIATED, $result['r_tdate'], $result['r_ordernum']), 'success');
 				return true;
 			}
 		}

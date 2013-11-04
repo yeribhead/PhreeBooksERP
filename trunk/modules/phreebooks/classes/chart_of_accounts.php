@@ -37,7 +37,7 @@ class chart_of_accounts {
   function btn_save($id = '') {
   	global $db, $messageStack, $coa_types_list;
 	if ($this->security_id < 2) {
-	    $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	    $messageStack->add(ERROR_NO_PERMISSION,'error');
 	    return false;
 	}   
 	$this->heading_only     = $this->heading_only == 1 ? '1' : '0';
@@ -87,7 +87,7 @@ class chart_of_accounts {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
 	// Don't allow delete if there is account activity for this account

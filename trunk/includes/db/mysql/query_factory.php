@@ -173,7 +173,7 @@ class queryFactory {
 		  $messageStack->debug("\n\nmySQL returned: " . @mysql_errno($this->link) . ' ' . @mysql_error($this->link));
 		  if (defined('FILENAME_DEFAULT')) {
 		    $messageStack->write_debug();
-		    $messageStack->add_session('The last transaction had a SQL database error.', 'error');
+		    $messageStack->add('The last transaction had a SQL database error.', 'error');
 		    gen_redirect(html_href_link(FILENAME_DEFAULT, 'cat=phreedom&page=main&amp;action=crash', 'SSL'));
 		  } else{
 		  	echo str_replace("\n", '<br />', $messageStack->debug_info); 

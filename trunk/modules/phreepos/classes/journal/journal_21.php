@@ -72,7 +72,7 @@ class journal_21 extends journal {
 		$messageStack->debug("\n  committed order post purchase_invoice_id = " . $this->purchase_invoice_id . " and id = " . $this->id . "\n\n");
 		$db->transCommit();
 		// ***************************** END TRANSACTION *******************************
-		$messageStack->add_session('Successfully posted ' . MENU_HEADING_PHREEPOS . ' Ref # ' . $this->purchase_invoice_id, 'success');
+		$messageStack->add('Successfully posted ' . MENU_HEADING_PHREEPOS . ' Ref # ' . $this->purchase_invoice_id, 'success');
 		return true;
 	}
 

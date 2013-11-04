@@ -32,7 +32,7 @@ $subject_module = new $subject();
 /**************   Check user security   *****************************/
 $security_level = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
 if ($security_level == 0) { // not supposed to be here
-  $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+  $messageStack->add(ERROR_NO_PERMISSION, 'error');
   $close_popup = true;
 }
 /***************   hook for custom actions  ***************************/

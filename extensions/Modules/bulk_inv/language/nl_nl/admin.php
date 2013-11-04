@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -14,17 +15,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/zencart/pages/admin/template_tab_stats.php
+//  Path: /modules/bulk_inv/language/nl_nl/admin.php
 //
+// Module information
+define('MODULE_BULK_INV_TITLE','Bulk Voorraad Tool');
+define('MODULE_BULK_INV_DESCRIPTION','deze tool helpt om sneller informatie in de database te zetten dan de voorraad manager.');
+
 ?>
-<div id="tab_stats" class="tabset_content">
-  <h2 class="tabset_label"><?php echo TEXT_STATISTICS; ?></h2>
-  <fieldset class="formAreaTitle">
-    <legend><?php echo TEXT_MODULE_STATS; ?></legend>
-    <table border="0" width="100%" cellspacing="1" cellpadding="1">
-	  <tr>
-	    <td><?php echo 'Coming Soon'; ?></td>
-	  </tr>
-	</table>
-  </fieldset>
-</div>

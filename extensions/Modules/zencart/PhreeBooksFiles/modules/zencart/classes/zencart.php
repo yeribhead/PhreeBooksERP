@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                    Phreedom Open Source ERP                     |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -142,9 +141,9 @@ class zencart {
 // TBD need to map ProductType
 	$this->strXML .= xmlEntry('ProductType', 'Product - General');
 	$this->strXML .= xmlEntry('ProductName', $result->fields['description_short']);
-	$this->strXML .= xmlEntry('ProductModel', $result->fields['description_short']);
 	$this->strXML .= xmlEntry('ProductDescription', $result->fields['description_sales']);
-	$this->strXML .= xmlEntry('ProductURL', $result->fields['spec_file']);
+	if(isset($result->fields['ProductURL']))  $this->strXML .= xmlEntry('ProductURL', $result->fields['ProductURL']);
+	if(isset($result->fields['ProductModel']))$this->strXML .= xmlEntry('ProductModel', $result->fields['ProductModel']);
 	if (isset($image_data)) {
 	  $this->strXML .= xmlEntry('ProductImageDirectory', $image_path);
 	  $this->strXML .= xmlEntry('ProductImageFileName', $image_filename);
@@ -177,7 +176,11 @@ class zencart {
 	$this->strXML .= '  </ProductPrice>' . chr(10);
 	$this->strXML .= xmlEntry('ProductWeight', $result->fields['item_weight']);
 	$this->strXML .= xmlEntry('DateAdded', $result->fields['creation_date']);
-	$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_update']);
+	if($result->fields['last_update'] < $result->fields['last_journal_date']){
+		$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_journal_date']);
+	}else{
+		$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_update']);
+	}
 	$this->strXML .= xmlEntry('StockLevel', $result->fields['quantity_on_hand']);
 	$this->strXML .= xmlEntry('Manufacturer', $result->fields['manufacturer']);
 // Hook for including customiation of product attributes

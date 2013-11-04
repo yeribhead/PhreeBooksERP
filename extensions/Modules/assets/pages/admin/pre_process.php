@@ -35,7 +35,7 @@ switch ($_REQUEST['action']) {
   case 'save':        $subject_module->btn_save();   break;
   case 'delete':
 	if ($security_level < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  break;
 	}
     $subject = $_POST['subject'];

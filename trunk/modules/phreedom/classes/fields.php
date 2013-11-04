@@ -41,7 +41,7 @@ class fields {
   function btn_save($id = '') {
   	global $db, $messageStack, $currencies;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
     // clean out all non-allowed values and then check if we have a empty string 
@@ -205,13 +205,13 @@ class fields {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
 	$result = $db->Execute("SELECT * FROM ".TABLE_EXTRA_FIELDS." WHERE id=$id");
 	foreach ($result->fields as $key => $value) $this->$key = $value;
 	if ($this->tab_id == '0') { // don't allow deletion of system fields
-	  $messageStack->add_session(INV_CANNOT_DELETE_SYSTEM,'error');
+	  $messageStack->add(INV_CANNOT_DELETE_SYSTEM,'error');
 	  return false;
 	}
 	$db->Execute("DELETE FROM ".TABLE_EXTRA_FIELDS." WHERE id=$this->id");
@@ -301,7 +301,6 @@ class fields {
 	array_shift($tab_list);
 	if ($action == 'new' && sizeof($tab_list) < 1) {
 	  $messageStack->add(EXTRA_FIELDS_ERROR_NO_TABS, 'error');
-	  echo $messageStack->output();
 	}
     $choices  =  explode(':',$params[$this->type_params]);
 	$disabled = ($this->tab_id !== '0') ? '' : 'disabled="disabled" ';

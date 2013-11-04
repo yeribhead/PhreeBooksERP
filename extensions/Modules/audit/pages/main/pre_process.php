@@ -43,7 +43,7 @@ switch ($_REQUEST['action']) {
 	
 	  	$output = build_audit_xml($date_from, $date_to, $select);
 	  	if($output == false){
-	  		$messageStack->add_session(GL_ERROR_BALANCE, 'error');
+	  		$messageStack->add(GL_ERROR_BALANCE, 'error');
 	  		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  		break;
 	  	}

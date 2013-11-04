@@ -34,7 +34,7 @@ class tax_rates {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	$this->combine_rates();
@@ -58,7 +58,7 @@ class tax_rates {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
 	// Check for this rate as part of a journal entry, if so do not delete

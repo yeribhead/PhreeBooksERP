@@ -33,7 +33,7 @@ class tabs {
     public function btn_save($id = '') {
 	  	global $db, $messageStack;
 		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 2) {
-		  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		  $messageStack->add(ERROR_NO_PERMISSION,'error');
 		  return false;
 		}
 		$sql_data_array = array(
@@ -62,7 +62,7 @@ class tabs {
     public function btn_delete($id = 0) {
 	  	global $db, $messageStack;
 		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 4) {
-		  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		  $messageStack->add(ERROR_NO_PERMISSION,'error');
 		  return false;
 		}
 		$result = $db->Execute("SELECT field_name FROM ".TABLE_EXTRA_FIELDS." WHERE tab_id='$id'");

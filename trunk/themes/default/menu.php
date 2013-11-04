@@ -40,10 +40,12 @@ function sortByOrder($a, $b) {
 }
 
 function create_menu(array $array){
-	if(isset($array['security_id']) && $array['security_id'] != ''){
-		if(array_key_exists($array['security_id'], $_SESSION['admin_security']) == false || $_SESSION['admin_security'][$array['security_id']] < 1) return '';
+	if($array['security_id'] != 1 && $_SESSION['admin_id'] != 1){
+		if(isset($array['security_id']) && $array['security_id'] != ''){
+			if(array_key_exists($array['security_id'], $_SESSION['admin_security']) == false || $_SESSION['admin_security'][$array['security_id']] < 1 ) return '';
+		}
 	}
-	if(!empty($array['submenu'])){
+	if(isset($array['submenu'])){
 		usort($array['submenu'], 'sortByOrder');
 		if(check_permission($array['submenu'])){
 			echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>'.chr(10);

@@ -87,7 +87,7 @@ if (defined('MODULE_PHREEPOS_STATUS')) {
     'show_in_users_settings' => true,
     'params'      => '',
   );
-  $mainmenu["banking"]['submenu']['vendor_deposit'] = array(
+  $mainmenu["banking"]['submenu']["vendor_payments"]['submenu']['vendor_deposit'] = array(
     'text'        => BOX_VENDOR_DEPOSITS,
     'order'       => 50,
     'security_id' => SECURITY_ID_VENDOR_DEPOSITS,

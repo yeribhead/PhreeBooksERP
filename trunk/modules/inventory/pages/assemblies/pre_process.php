@@ -81,7 +81,7 @@ switch ($_REQUEST['action']) {
 	} else {
 	  $db->transCommit();	// post the chart of account values
 	  gen_add_audit_log(INV_LOG_ASSY . ($_REQUEST['action']=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
-	  $messageStack->add_session(INV_POST_ASSEMBLY_SUCCESS . $sku, 'success');
+	  $messageStack->add(INV_POST_ASSEMBLY_SUCCESS . $sku, 'success');
 	  if (DEBUG) $messageStack->write_debug();
 	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  // *************** END TRANSACTION *************************
