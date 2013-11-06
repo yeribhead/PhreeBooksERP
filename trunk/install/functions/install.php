@@ -55,8 +55,8 @@ function install_lang($module, $lang = 'en_us', $file = 'menu') {
 }
 
 function load_full_access_security() {
-	global $menu;
-	foreach ($menu as $value) $security .= $value['security_id'] . ':4,';
+	global $mainmenu;
+	foreach ($mainmenu as $value) $security .= $value['security_id'] . ':4,';
 	if (!$security) $security = '1:4,'; // if loading security tokens fails this will allow access to the user menu
 	$security = substr($security, 0, -1);
 	return $security;
