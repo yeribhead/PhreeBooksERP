@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 // Path: /install/index.php
 //
-
+ini_set('display_errors', '0');
 error_reporting(E_ALL & ~E_NOTICE);
 require_once('pages/main/pre_process.php');
 ?>

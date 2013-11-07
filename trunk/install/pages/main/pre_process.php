@@ -17,6 +17,7 @@
 //  Path: /install/pages/main/pre_process.php
 //
 define('DEBUG',true);
+session_start();
 /**************  include page specific files    *********************/
 // calculate server path info
 $virtual_path   = substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/install/')+1);
@@ -38,8 +39,10 @@ $default_chart = DIR_FS_MODULES . 'phreebooks/language/en_us/charts/USA_Retail.x
 
 require_once('functions/install.php');
 $lang = $_GET['lang'] ? $_GET['lang'] : DEFAULT_LANGUAGE;
+$_SESSION['language'] = $lang;
 install_pull_language($lang);
-install_lang('phreedom', $lang, 'language'); // install general language file
+install_lang('phreedom',  $lang, 'language'); // install general language file
+install_lang('phreeform', $lang, 'language'); // install general language file
 require_once('defaults.php');
 require_once(DIR_FS_MODULES . 'phreedom/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
@@ -70,63 +73,63 @@ switch ($_REQUEST['action']) {
 		// start the checks for minimum requirements
 		//PHP Version Check
 		if (version_compare(PHP_VERSION, '5.2.0', '<')) {
-	  $error = $messageStack->add(INSTALL_ERROR_PHP_VERSION, 'error');
+	  		$error = $messageStack->add(INSTALL_ERROR_PHP_VERSION, 'error');
 		}
 		// Check Register Globals
 		$register_globals = ini_get("register_globals");
 		if ($register_globals <> '' && $register_globals <> '0' && strtoupper($register_globals) <> 'OFF') {
-	  $error = $messageStack->add(INSTALL_ERROR_REGISER_GLOBALS, 'error');
+	  		$error = $messageStack->add(INSTALL_ERROR_REGISER_GLOBALS, 'error');
 		}
 		// SAFE MODE check
 		if (ini_get("safe_mode")) {
-	  $error = $messageStack->add(INSTALL_ERROR_SAFE_MODE, 'error');
+			$error = $messageStack->add(INSTALL_ERROR_SAFE_MODE, 'error');
 		}
 		// Support for Sessions check
 		if (@!extension_loaded('session')) {
-	  $error = $messageStack->add(INSTALL_ERROR_SESSION_SUPPORT, 'error');
+			$error = $messageStack->add(INSTALL_ERROR_SESSION_SUPPORT, 'error');
 		}
 		//Check for OpenSSL support (only relevant for Apache
 		if (@!extension_loaded('openssl')) {
-	  $caution = $messageStack->add(INSTALL_ERROR_OPENSSL, 'caution');
+			$caution = $messageStack->add(INSTALL_ERROR_OPENSSL, 'caution');
 		}
 		//Check for cURL support (ie: for payment/shipping gateways)
 		if (@!extension_loaded('curl')) {
-	  $error = $messageStack->add(INSTALL_ERROR_CURL, 'error');
+			$error = $messageStack->add(INSTALL_ERROR_CURL, 'error');
 		}
 		//Check for upload support built in to PHP
 		if (@!ini_get('file_uploads')) {
-	  $caution = $messageStack->add(INSTALL_ERROR_UPLOADS, 'caution');
+			$caution = $messageStack->add(INSTALL_ERROR_UPLOADS, 'caution');
 		}
 		//Upload TMP dir setting
 		if (!ini_get("upload_tmp_dir")) {
-	  $caution = $messageStack->add(INSTALL_ERROR_UPLOAD_DIR, 'caution');
+			$caution = $messageStack->add(INSTALL_ERROR_UPLOAD_DIR, 'caution');
 		}
 		//Check for XML Support
 		if (!function_exists('xml_parser_create')) {
-	  $caution = $messageStack->add(INSTALL_ERROR_XML, 'caution');
+			$caution = $messageStack->add(INSTALL_ERROR_XML, 'caution');
 		}
 		//Check for FTP support built in to PHP (for manual sending of configure.php files to server if applicable)
 		if (@!extension_loaded('ftp')) {
-	  $caution = $messageStack->add(INSTALL_ERROR_FTP, 'caution');
+			$caution = $messageStack->add(INSTALL_ERROR_FTP, 'caution');
 		}
 		// check for /includes writeable
 		if (!is_writable('../includes')) {
-	  $error = $messageStack->add(INSTALL_ERROR_INCLUDES_DIR, 'error');
+			$error = $messageStack->add(INSTALL_ERROR_INCLUDES_DIR, 'error');
 		}
 		// check for configure.php already exists
 		if (file_exists('../includes/configure.php')) {
-	  $error = $messageStack->add(MSG_ERROR_CONFIGURE_EXISTS, 'error');
+			$error = $messageStack->add(MSG_ERROR_CONFIGURE_EXISTS, 'error');
 		}
 		// check for /my_files writeable
 		if (!is_writable('../' . PATH_TO_MY_FILES)) {
-	  $error = $messageStack->add(INSTALL_ERROR_MY_FILES_DIR, 'error');
+			$error = $messageStack->add(INSTALL_ERROR_MY_FILES_DIR, 'error');
 		}
 		if ((!$error && !$caution) || (!$error && isset($_POST['btn_install']))) {
 			$include_template = 'template_install.php';
-	  define('PAGE_TITLE', TITLE_INSTALL);
+			define('PAGE_TITLE', TITLE_INSTALL);
 		} else {
 			$include_template = 'template_inspect.php';
-	  define('PAGE_TITLE', TITLE_INSPECT);
+			define('PAGE_TITLE', TITLE_INSPECT);
 		}
 		break;
 	case 'install':
@@ -162,7 +165,6 @@ switch ($_REQUEST['action']) {
 
 		// define some things so the install can use existing functions
 		define('DB_PREFIX', $db_prefix);
-		session_start();
 		$_SESSION['company']  = $db_name;
 		$_SESSION['language'] = $lang;
 		// create the company directory
@@ -192,159 +194,159 @@ switch ($_REQUEST['action']) {
 		  }
 		}
 		if (!$error) {
-	  $params   = array();
-	  $contents = scandir(DIR_FS_MODULES);
-	  // fake the install status of all modules found to 1, so all gets installed
-	  foreach ($contents as $entry) define('MODULE_' . strtoupper($entry) . '_STATUS','1');
-	  foreach ($contents as $entry) {
-	  	// load the configuration files to load version info
-	  	if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
-	  		if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
-	  			install_lang($entry, $lang, 'menu');
-	  			install_lang($entry, $lang, 'admin');
-	  			require_once (DIR_FS_MODULES . $entry . '/config.php');
+	  		$params   = array();
+	  		$contents = scandir(DIR_FS_MODULES);
+			// fake the install status of all modules found to 1, so all gets installed
+	  		foreach ($contents as $entry) define('MODULE_' . strtoupper($entry) . '_STATUS','1');
+	  		foreach ($contents as $entry) {
+	  			// load the configuration files to load version info
+	  			if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
+	  				if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
+	  					install_lang($entry, $lang, 'menu');
+	  					install_lang($entry, $lang, 'admin');
+	  					require_once (DIR_FS_MODULES . $entry . '/config.php');
+	  				}
+	  			}
 	  		}
 	  	}
-	  }
-	  // install core modules first
-	  $core_modules = array('phreedom','phreeform');
-	  foreach ($core_modules as $entry) {
-	  	if (DEBUG) $messageStack->debug("\n  installing core module = " . $entry);
-	  	if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
-	  		if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
-	  			$error = false;
-	  			require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
-	  			$classname   = $entry . '_admin';
-	  			$install_mod = new $classname;
-			    if (admin_check_versions($entry, $install_mod->prerequisites)) {
-			    	// Check for version levels
-			    	$error = true;
-			    } elseif (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
-			    	$error = true;
-			    } elseif (admin_install_tables($install_mod->tables)) {
-			    	// Create the tables
-			    	$error = true;
-			    } else {
-			    	// Load the installed module version into db
-			    	write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
-			    	// Load the remaining configuration constants
-			    	foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			    	if ($company_demo) $error = $install_mod->load_demo(); // load demo data
-			    	if ($entry <> 'phreedom') $install_mod->load_reports($entry);
-			    }
-			    if ($install_mod->install($entry)) $error = true; // install any special stuff
-			    if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
-			    if (sizeof($install_mod->notes) > 0) $params = array_merge($params, $install_mod->notes);
-	  		}
-	  	}
-	  }
-	  // load phreedom reports now since table exists
-	  if (DEBUG) $messageStack->debug("\n  installing phreedom.");
-	  $install_mod = new phreedom_admin;
-	  $install_mod->load_reports('phreedom');
-	  if ($error) {
-	  	$messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $module), 'error');
-	  } else { // load all other modules and execute install script
-	  	foreach ($contents as $entry) {
-	  		// install each module
-	  		if (in_array($entry, $core_modules)) continue; // core module, already installed
+		// install core modules first
+	  	$core_modules = array('phreedom','phreeform');
+	  	foreach ($core_modules as $entry) {
+	  		if (DEBUG) $messageStack->debug("\n  installing core module = " . $entry);
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
-	  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
-			    	$error = false;
-			    	require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
-			    	$classname   = $entry . '_admin';
-			    	$install_mod = new $classname;
+	  				$error = false;
+	  				require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
+	  				$classname   = $entry . '_admin';
+	  				$install_mod = new $classname;
 			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
 			    		// Check for version levels
 			    		$error = true;
 			    	} elseif (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
-			    		// Create any new directories
 			    		$error = true;
 			    	} elseif (admin_install_tables($install_mod->tables)) {
-			    		// Create the tables
-			    		$error = true;
-			    	} else {
-			    		// Load the installed module version into db
+				    	// Create the tables
+				    	$error = true;
+				    } else {
+				    	// Load the installed module version into db
 			    		write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			    		// Load the remaining configuration constants
 			    		foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
 			    		if ($company_demo) $error = $install_mod->load_demo(); // load demo data
-			    		$install_mod->load_reports($entry);
+			    		if ($entry <> 'phreedom') $install_mod->load_reports($entry);
 			    	}
 			    	if ($install_mod->install($entry)) $error = true; // install any special stuff
 			    	if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
 			    	if (sizeof($install_mod->notes) > 0) $params = array_merge($params, $install_mod->notes);
-			    }
+	  			}
 	  		}
 	  	}
-	  }
-		}
+		// load phreedom reports now since table exists
+	  	if (DEBUG) $messageStack->debug("\n  installing phreedom.");
+	  	$install_mod = new phreedom_admin;
+	  	$install_mod->load_reports('phreedom');
+	  	if ($error) {
+	  		$messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $module), 'error');
+	  	} else { // load all other modules and execute install script
+	  		foreach ($contents as $entry) {
+		  		// install each module
+		  		if (in_array($entry, $core_modules)) continue; // core module, already installed
+	  			if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
+		  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
+		  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
+				    	$error = false;
+				    	require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
+			    		$classname   = $entry . '_admin';
+			    		$install_mod = new $classname;
+			    		if (admin_check_versions($entry, $install_mod->prerequisites)) {
+			    			// Check for version levels
+			    			$error = true;
+			    		} elseif (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
+			    			// Create any new directories
+			    			$error = true;
+			    		} elseif (admin_install_tables($install_mod->tables)) {
+			    			// Create the tables
+			    			$error = true;
+			    		} else {
+			    			// Load the installed module version into db
+			    			write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
+			    			// 	Load the remaining configuration constants
+			    			foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
+			    			if ($company_demo) $error = $install_mod->load_demo(); // load demo data
+			    			$install_mod->load_reports($entry);
+			    		}
+			    		if ($install_mod->install($entry)) $error = true; // install any special stuff
+			    		if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
+			    		if (sizeof($install_mod->notes) > 0) $params = array_merge($params, $install_mod->notes);
+	  				}
+			  	}
+	  	  	}
+	  	}
 		if (!$error) {
-		  if (DEBUG) $messageStack->debug("\n  installing reports");
-		  foreach ($contents as $entry) {
-		  	// install reports now that categories are set up
-		  	if ($entry <> '.' && $entry <> '..' ) admin_add_reports($entry, DIR_FS_MY_FILES . $_SESSION['company'] . '/phreeform/');
-		  }
+			if (DEBUG) $messageStack->debug("\n  installing reports");
+		  	foreach ($contents as $entry) {
+		  		// install reports now that categories are set up
+		  		if ($entry <> '.' && $entry <> '..' ) admin_add_reports($entry, DIR_FS_MY_FILES . $_SESSION['company'] . '/phreeform/');
+		  	}
 		}
 		if (!$error) { // input admin username record, clear the tables first
-		  if (DEBUG) $messageStack->debug("\n  installing users");
-		  $db->Execute("TRUNCATE TABLE " . TABLE_USERS);
-		  $db->Execute("TRUNCATE TABLE " . TABLE_USERS_PROFILES);
-		  $security = load_full_access_security();
-		  $db->Execute($sql = "insert into " . TABLE_USERS . " set
-		    admin_name  = '" . $user_username . "', 
-			admin_email = '" . $user_email . "', 
-		  	admin_pass  = '" . pw_encrypt_password($user_password) . "',
-			admin_security = '" . $security . "'");
-		  $user_id = $db->insert_ID();
-		  if (sizeof($params) > 0) {
-		  	// create My Notes dashboard entries
-		  	$db->Execute("insert into " . TABLE_USERS_PROFILES . " set user_id = " . $user_id . ",
-			  menu_id = 'index', module_id = 'phreedom', dashboard_id = 'to_do', column_id = 1, row_id = 1, 
-			  params = '" . serialize($params) . "'");
-		  }
+			if (DEBUG) $messageStack->debug("\n  installing users");
+		  	$db->Execute("TRUNCATE TABLE " . TABLE_USERS);
+		  	$db->Execute("TRUNCATE TABLE " . TABLE_USERS_PROFILES);
+		  	$security = load_full_access_security();
+		  	$db->Execute($sql = "insert into " . TABLE_USERS . " set
+		      admin_name  = '" . $user_username . "', 
+			  admin_email = '" . $user_email . "', 
+		  	  admin_pass  = '" . pw_encrypt_password($user_password) . "',
+			  admin_security = '" . $security . "'");
+		  	$user_id = $db->insert_ID();
+		  	if (sizeof($params) > 0) {
+		  		// create My Notes dashboard entries
+		  		$db->Execute("insert into " . TABLE_USERS_PROFILES . " set user_id = " . $user_id . ",
+				  menu_id = 'index', module_id = 'phreedom', dashboard_id = 'to_do', column_id = 1, row_id = 1, 
+			  	  params = '" . serialize($params) . "'");
+		  	}
 		}
 		if (!$error) { // install fiscal year, default chart of accounts
-		  if (DEBUG) $messageStack->debug("\n  installing fiscal year.");
-		  require_once('../modules/phreebooks/functions/phreebooks.php');
-		  $db->Execute("TRUNCATE TABLE " . TABLE_ACCOUNTING_PERIODS);
-		  $current_year = date('Y');
-		  $start_year   = $fy_year;
-		  $start_period = 1;
-		  $runaway = 0;
-		  while ($start_year <= $current_year) {
-		  	validate_fiscal_year($start_year, $start_period, $start_year.'-'.$fy_month.'-01');
-		  	$start_year++;
-		  	$start_period = $start_period + 12;
-		  	$runaway++;
-		  	if ($runaway > 10) break;
-		  }
-		  if (DEBUG) $messageStack->debug("\n  loading chart of accounts");
-		  // load the retail chart as default if the chart of accounts table is empty
-		  $result = $db->Execute("select id from " . TABLE_JOURNAL_MAIN . " limit 1");
-		  $entries_exist = $result->RecordCount() > 0 ? true : false;
-		  $result = $db->Execute("select id from " . TABLE_CHART_OF_ACCOUNTS . " limit 1");
-		  $chart_exists = $result->RecordCount() > 0 ? true : false;
-		  if (!$entries_exist && !$chart_exists) {
-		  	$accounts = xml_to_object(file_get_contents($default_chart));
-		  	if (is_object($accounts->ChartofAccounts)) $accounts = $accounts->ChartofAccounts; // just pull the first one
-		  	if (is_object($accounts->account)) $accounts->account = array($accounts->account); // in case of only one chart entry
-		  	if (is_array($accounts->account)) foreach ($accounts->account as $account) {
-		  		$sql_data_array = array(
-			    'id'              => $account->id,
-			    'description'     => $account->description,
-			    'heading_only'    => $account->heading,
-			    'primary_acct_id' => $account->primary,
-			    'account_type'    => $account->type,
-		  		);
-		  		db_perform(TABLE_CHART_OF_ACCOUNTS, $sql_data_array, 'insert');
+			if (DEBUG) $messageStack->debug("\n  installing fiscal year.");
+		  	require_once('../modules/phreebooks/functions/phreebooks.php');
+		  	$db->Execute("TRUNCATE TABLE " . TABLE_ACCOUNTING_PERIODS);
+		  	$current_year = date('Y');
+		  	$start_year   = $fy_year;
+		  	$start_period = 1;
+		  	$runaway = 0;
+		  	while ($start_year <= $current_year) {
+		  		validate_fiscal_year($start_year, $start_period, $start_year.'-'.$fy_month.'-01');
+		  		$start_year++;
+		  		$start_period = $start_period + 12;
+		  		$runaway++;
+		  		if ($runaway > 10) break;
 		  	}
-		  }
-		  if (DEBUG) $messageStack->debug("\n  building and checking chart history");
-		  build_and_check_account_history_records();
-		  if (DEBUG) $messageStack->debug("\n  updating current period");
-		  gen_auto_update_period(false);
+		  	if (DEBUG) $messageStack->debug("\n  loading chart of accounts");
+			// load the retail chart as default if the chart of accounts table is empty
+		  	$result = $db->Execute("select id from " . TABLE_JOURNAL_MAIN . " limit 1");
+		  	$entries_exist = $result->RecordCount() > 0 ? true : false;
+		  	$result = $db->Execute("select id from " . TABLE_CHART_OF_ACCOUNTS . " limit 1");
+		  	$chart_exists = $result->RecordCount() > 0 ? true : false;
+		  	if (!$entries_exist && !$chart_exists) {
+		  		$accounts = xml_to_object(file_get_contents($default_chart));
+		  		if (is_object($accounts->ChartofAccounts)) $accounts = $accounts->ChartofAccounts; // just pull the first one
+		  		if (is_object($accounts->account)) $accounts->account = array($accounts->account); // in case of only one chart entry
+		  		if (is_array($accounts->account)) foreach ($accounts->account as $account) {
+		  			$sql_data_array = array(
+			    		'id'              => $account->id,
+			    		'description'     => $account->description,
+			    		'heading_only'    => $account->heading,
+			    		'primary_acct_id' => $account->primary,
+			    		'account_type'    => $account->type,
+		  			);
+		  			db_perform(TABLE_CHART_OF_ACCOUNTS, $sql_data_array, 'insert');
+		  		}
+		  	}
+		  	if (DEBUG) $messageStack->debug("\n  building and checking chart history");
+		  	build_and_check_account_history_records();
+		  	if (DEBUG) $messageStack->debug("\n  updating current period");
+		  	gen_auto_update_period(false);
 		}
 		if (!$error) { // write the includes/configure.php file
 		  if (DEBUG) $messageStack->debug("\n  writing configure.php file");
