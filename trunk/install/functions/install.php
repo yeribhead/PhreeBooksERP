@@ -55,21 +55,22 @@ function install_lang($module, $lang = 'en_us', $file = 'menu') {
 }
 
 function load_full_access_security() {
-	global $menu_heading;
-	$security = null;
-	foreach($menu_heading['submenu'] as $menu_item){ 
-		create_id($menu_item);
+	global $mainmenu;
+	$securitys = null;
+	foreach($mainmenu as $menu_item){ 
+		$securitys .= create_id($menu_item);
 	}
-	if ($security == null) return '1:4,';
-	else return $security;
+	if ($securitys == null) return '1:4,';
+	else return $securitys;
 }
 
-function create_id($menu_item){
-	global $security;
-	if(!empty($array['submenu'])) foreach($array['submenu'] as $menu_item){ 
-		create_id($menu_item);
+function create_id($array){
+	$securitys = '';
+	if(isset($array['submenu'])) foreach($array['submenu'] as $menu_item){ 
+		$securitys .= create_id($menu_item);
 	}else{
-		$security .=$array['security_id'] . ':4,';
+		if(isset($array['security_id'])) $securitys = $array['security_id'] . ':4,';
 	}
+	return $securitys;
 }
 ?>
