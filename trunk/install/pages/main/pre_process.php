@@ -198,9 +198,10 @@ switch ($_REQUEST['action']) {
 	  		$contents = scandir(DIR_FS_MODULES);
 			// fake the install status of all modules found to 1, so all gets installed
 	  		foreach ($contents as $entry) define('MODULE_' . strtoupper($entry) . '_STATUS','1');
+	  		require_once (DIR_FS_MODULES . 'phreedom/config.php'); // needed here to avoid breaking menu array
 	  		foreach ($contents as $entry) {
 	  			// load the configuration files to load version info
-	  			if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
+	  			if ($entry <> 'phreedom' && $entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  				if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  					install_lang($entry, $lang, 'menu');
 	  					install_lang($entry, $lang, 'admin');
@@ -216,7 +217,7 @@ switch ($_REQUEST['action']) {
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  				$error = false;
-	  				require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
+	  				require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
 	  				$classname   = $entry . '_admin';
 	  				$install_mod = new $classname;
 			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
@@ -226,13 +227,13 @@ switch ($_REQUEST['action']) {
 			    		$error = true;
 			    	} elseif (admin_install_tables($install_mod->tables)) {
 				    	// Create the tables
-				    	$error = true;
+			    		$error = true;
 				    } else {
 				    	// Load the installed module version into db
 			    		write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			    		// Load the remaining configuration constants
 			    		foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			    		if ($company_demo) $error = $install_mod->load_demo(); // load demo data
+			    		if ($company_demo) if ($install_mod->load_demo()) $error = true; // load demo data
 			    		if ($entry <> 'phreedom') $install_mod->load_reports($entry);
 			    	}
 			    	if ($install_mod->install($entry)) $error = true; // install any special stuff
@@ -255,7 +256,7 @@ switch ($_REQUEST['action']) {
 		  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
 		  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 				    	$error = false;
-				    	require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
+				    	require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
 			    		$classname   = $entry . '_admin';
 			    		$install_mod = new $classname;
 			    		if (admin_check_versions($entry, $install_mod->prerequisites)) {
@@ -272,7 +273,7 @@ switch ($_REQUEST['action']) {
 			    			write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			    			// 	Load the remaining configuration constants
 			    			foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			    			if ($company_demo) $error = $install_mod->load_demo(); // load demo data
+			    			if ($company_demo) if ($install_mod->load_demo()) $error = true; // load demo data
 			    			$install_mod->load_reports($entry);
 			    		}
 			    		if ($install_mod->install($entry)) $error = true; // install any special stuff

@@ -504,7 +504,9 @@ class inventory_admin {
 	// copy the demo images
 	require(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 	$backups = new backup;
-	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
+	if (!is_dir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) {
+		if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
+	}
 	$dir_source = DIR_FS_MODULES  . 'inventory/images/demo/';
 	$dir_dest   = DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo/';
 	$backups->copy_dir($dir_source, $dir_dest);

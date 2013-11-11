@@ -53,10 +53,8 @@ function init() {
   		echo "  addVendorRow();";
   	}
   	?>
-  	if ($('#search_text')) {
-  	 	document.getElementById("search_text").focus();
-  	  	document.getElementById("search_text").select();
-  	}
+  	$('#search_text').focus();
+  	$('#search_text').select();
 }
 
 function check_form() {

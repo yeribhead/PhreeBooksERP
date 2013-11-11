@@ -64,6 +64,8 @@ $mainmenu["home"] = array(
   'link'  => html_href_link(FILENAME_DEFAULT),
   'icon'  => html_icon('actions/go-home.png', TEXT_HOME, 'small'),
 );
+
+// @todo BEWARE OF THIS SETTING! this config must be loaded before any other menu as the heading settings will erase prior set submenus for these headings. Especially modules alphabetically before phreedom.
 $mainmenu["inventory"] = array(
   'order' 		=> MENU_HEADING_INVENTORY_ORDER,
   'text' 		=> MENU_HEADING_INVENTORY,
@@ -155,17 +157,14 @@ $mainmenu["tools"]['submenu']["import_export"] = array(
   'show_in_users_settings' => true,
   'params'      => '',
 );
-if(isset($_SESSION['admin_security'][SECURITY_ID_BACKUP]) && $_SESSION['admin_security'][SECURITY_ID_BACKUP] > 3){
-	$mainmenu["tools"]['submenu']["backup"] = array(
-	  'order' 		=> 95,
-	  'text'        => BOX_HEADING_BACKUP,
-	  'security_id' => SECURITY_ID_BACKUP, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=backup', 'SSL'),
-	  'show_in_users_settings' => true,
-	  'params'      => '',
-	);
-}
-
+$mainmenu["tools"]['submenu']["backup"] = array(
+  'order' 		=> 95,
+  'text'        => BOX_HEADING_BACKUP,
+  'security_id' => SECURITY_ID_BACKUP, 
+  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=backup', 'SSL'),
+  'show_in_users_settings' => true,
+  'params'      => '',
+);
 $mainmenu["company"]['submenu']["users"] = array(
   'order' 		=> 90,
   'text'        => BOX_HEADING_USERS,
@@ -174,7 +173,6 @@ $mainmenu["company"]['submenu']["users"] = array(
   'show_in_users_settings' => true,
   'params'      => '',
 );
-
 $mainmenu["company"]['submenu']["roles"] = array(
   'order' 		=> 85,
   'text'        => BOX_HEADING_ROLES,
