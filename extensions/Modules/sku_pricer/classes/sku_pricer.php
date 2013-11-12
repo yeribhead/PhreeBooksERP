@@ -27,6 +27,7 @@ class sku_pricer {
 	if (!$this->cyberParse($lines_array)) return false;  // parse the submitted string, check for errors
 	$count = 0;
 	foreach ($this->records as $row) {
+		$where = '';
 		if (isset($row['sku'])) {
 			$where = " sku = '" . $row['sku'] . "'";
 	  	}elseif(isset($row['upc_code'])){ 
@@ -40,10 +41,12 @@ class sku_pricer {
 		if($row['purch_package_quantity']) 	$data_array['purch_package_quantity'] 	= $row['purch_package_quantity'] ;
 		$data_array['last_update'] = date('Y-m-d');
 	
-	  	$result = db_perform(TABLE_INVENTORY, $data_array, 'update', $where);
-	  	if ($result->AffectedRows() > 0) $count++;
+	  	if ($where) {
+	  		$result = db_perform(TABLE_INVENTORY, $data_array, 'update', $where);
+	  		if ($result->AffectedRows() > 0) $count++;
+	  	}
 	}
-	$messageStack->add("successfully imported " . $count . " SKU prices.", "success");
+	$messageStack->add("successfully imported $count SKU prices.", "success");
 	return;
   }
 

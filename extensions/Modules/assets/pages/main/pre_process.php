@@ -80,7 +80,7 @@ switch ($_REQUEST['action']) {
 	db_perform(TABLE_ASSETS, $sql_data_array, 'insert');
 	$id = db_insert_id();
 	gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_ADD, 'Type: ' . $asset_type . ' - ' . $asset_id);
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')) . 'cID=' . $id . '&action=edit', 'SSL'));
+	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')) . '&cID=' . $id . '&action=edit', 'SSL'));
 	break;
   case 'delete':
 	if ($security_level < 4) {

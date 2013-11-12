@@ -19,7 +19,7 @@
 // Release History
 // 3.0 - Converted from PhreeBooks module
 // 3.3 => 2011-11-15 - Bug fixes, themeroller changes
-// 3.6 => bug fixes, inventory not filling properly, changes for R3.6 table paging
+// 3.6 => More bug fixes, inventory not filling properly, changes for R3.6 table paging
 // Module software version information
 define('MODULE_RMA_VERSION', 3.6);
 // Menu Sort Positions

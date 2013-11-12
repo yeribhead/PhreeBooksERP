@@ -2,7 +2,8 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
+// | http://www.PhreeSoft.com                                        |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -17,18 +18,15 @@
 //  Path: /modules/rma/classes/install.php
 //
 class rma_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
   function __construct() {
+	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.6,
 	  'inventory'  => 3.6,
 	  'phreebooks' => 3.6,
 	);
+	// Load configuration constants for this module, must match entries in general tab
+    $this->keys = array();
 	// add new directories to store images and data
 	$this->dirlist = array(
 	  'rma',

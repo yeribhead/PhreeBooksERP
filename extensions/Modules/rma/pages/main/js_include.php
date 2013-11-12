@@ -39,8 +39,8 @@ var delete_icon_HTML  = '<?php echo substr(html_icon("emblems/emblem-unreadable.
 function init() {
 	$(function() { $('#detailtabs').tabs(); });
   <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
-	echo "  document.getElementById('search_text').focus();";
-	echo "  document.getElementById('search_text').select();";
+	echo "  $('#search_text').focus();";
+	echo "  $('#search_text').select();";
   } ?>
 }
 
@@ -94,7 +94,7 @@ function processSkuDetails(sXml) { // call back function
   var xml = parseXml(sXml);
   if (!xml) return;
   var rID = $(xml).find("rID").text();
-  if (!rID) return;
+  if (!rID) return;  
   //switch between receiving and disposition
   if (sender == 'dis_'){
 	document.getElementById(sender+'qty_'   +rID).value			 = $(xml).find("qty").text();

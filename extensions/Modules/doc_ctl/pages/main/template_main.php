@@ -55,6 +55,7 @@ echo $toolbar->build_toolbar();
 		  <!-- the tree container -->
 		  <div id="demo" class="demo"></div>
 		</div>
+		<div style="clear:all">NOTE: To add a document or folder, select a folder to insert into and press the icon.</div>
 	  </fieldset>
 	</td>
 	<td width="70%" valign="top">

@@ -273,7 +273,7 @@ switch ($_REQUEST['action']) {
 	if (!$error) {
 	  gen_add_audit_log(sprintf(WO_AUDIT_LOG_STEP_COMPLETE, $step));
 	  $messageStack->add(sprintf(WO_MESSAGE_STEP_UPDATE_SUCCESS, $step),'success');
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=build&id=' . $id, 'SSL'));
+	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=build&id=' . $id, 'SSL'));
 	} else {
 	  $messageStack->add(WO_MESSAGE_MAIN_ERROR,'error');
 	  $_REQUEST['action'] = 'build';

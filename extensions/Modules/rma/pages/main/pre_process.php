@@ -29,11 +29,12 @@ $creation_date = isset($_POST['creation_date']) ? gen_db_date($_POST['creation_d
 $receive_date  = isset($_POST['receive_date'])  ? gen_db_date($_POST['receive_date'])  : '';
 $closed_date   = isset($_POST['closed_date'])   ? gen_db_date($_POST['closed_date'])   : '';
 $invoice_date  = isset($_POST['invoice_date'])  ? gen_db_date($_POST['invoice_date'])  : '';
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+$search_text 	= db_input($_REQUEST['search_text']);
+if ($search_text == TEXT_SEARCH) $search_text = '';
 if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 // load the sort fields
-if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_RMA_ID;
-if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
+$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_RMA_ID);
+$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
@@ -211,7 +212,7 @@ switch ($_REQUEST['action']) {
     break;
 	
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -297,11 +298,11 @@ switch ($_REQUEST['action']) {
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
-    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
+    if (isset($search_text) && $search_text <> '') {
       $search_fields = array('rma_num', 'purchase_invoice_id', 'caller_name', 'caller_telephone1');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
     } else {
 	  $search = '';
 	}

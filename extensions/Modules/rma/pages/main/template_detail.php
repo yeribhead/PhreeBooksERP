@@ -36,7 +36,7 @@ $toolbar->icon_list['print']['show']      = false;
 $toolbar->add_help('');
 echo $toolbar->build_toolbar(); 
 ?>
-<h1><?php echo ($_REQUEST['action'] == 'new') ? MENU_HEADING_NEW_RMA : (BOX_RMA_MODULE . ' - ' . TEXT_RMA_ID . '# ' . $cInfo->rma_num); ?></h1>
+<h1><?php echo ($action == 'new') ? MENU_HEADING_NEW_RMA : (BOX_RMA_MODULE . ' - ' . TEXT_RMA_ID . '# ' . $cInfo->rma_num); ?></h1>
 
 <div id="detailtabs">
 <ul>

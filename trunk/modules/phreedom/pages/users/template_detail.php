@@ -16,6 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/pages/users/template_detail.php
 //
+
+
 echo html_form('users', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action',   '')        . chr(10);
@@ -97,10 +99,9 @@ echo $toolbar->build_toolbar();
 <?php
 $settings     = gen_parse_permissions($uInfo->admin_security);
 $column_break = true;
-// array pb_headings is defined in /includes/header_navigation.php
 foreach ($mainmenu as $key => $menu_heading) {
   	if ($menu_heading['text'] == TEXT_HOME || $menu_heading['text'] == TEXT_LOGOUT) continue;
-	echo '<div id="tab_' . $key . '">' . chr(10);
+  	echo '<div id="tab_' . $key . '">' . chr(10);
 	echo '<table class="ui-widget" style="border-collapse:collapse;margin-left:auto;margin-right:auto;">' . chr(10);
 	echo '<thead class="ui-widget-header">' . chr(10);
 	echo '<tr>' . chr(10);
@@ -122,12 +123,13 @@ foreach ($mainmenu as $key => $menu_heading) {
   </fieldset>
 </form>
 
-<?php function create_row($array){
+<?php 
+function create_row($array){
 	global $odd, $settings;
-	if(!empty($array['submenu'])) foreach($array['submenu'] as $menu_item){ 
+	if(!empty($array['submenu']) && $array['text'] <> BOX_HEADING_CONFIGURATION) foreach($array['submenu'] as $menu_item){ 
 		create_row($menu_item);
 	}else{
-		if ($array['text'] == TEXT_REPORTS || $array['security_id'] == '') return;// && $item['heading'] <> MENU_HEADING_TOOLS) continue;  // special case for reports listings not in Tools menu
+		if ($array['security_id'] == '') return;// && $item['heading'] <> MENU_HEADING_TOOLS) continue;  // special case for reports listings not in Tools menu
 		$checked = array();
 		if ($array['show_in_users_settings'] === false) {
 			return; // skip if menu only item
@@ -149,6 +151,5 @@ foreach ($mainmenu as $key => $menu_heading) {
 		echo '<td align="center">' . html_radio_field('sID_' . $array['security_id'], '0', $checked[0]) . '</td></tr>' . chr(10);
 		$odd =!$odd;
 	}
-} 
-
+}
 ?>

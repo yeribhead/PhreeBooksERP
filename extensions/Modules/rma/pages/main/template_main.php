@@ -28,6 +28,7 @@ $toolbar->icon_list['print']['show'] = false;
 if ($security_level > 1) $toolbar->add_icon('new', 'onclick="submitToDo(\'new\')"', $order = 10);
 if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
 $toolbar->add_help('');
+if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar($add_search = true); 
 ?>
 <h1><?php echo BOX_RMA_MAINTAIN; ?></h1>

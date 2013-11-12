@@ -27,8 +27,7 @@ define('SECURITY_ID_SKU_PRICER', 999);
 // New Database Tables
 // Menu Locations
 if (defined('MODULE_SKU_PRICER_STATUS')) {
-	
-  $mainmenu["tools"]['submenu']['sku_pricer'] = array(
+  $mainmenu["inventory"]['submenu']['sku_pricer'] = array(
     'text'        => BOX_SKU_PRICER_TITLE, 
     'order'       => 159, 
     'security_id' => SECURITY_ID_SKU_PRICER, 
@@ -36,14 +35,5 @@ if (defined('MODULE_SKU_PRICER_STATUS')) {
     'show_in_users_settings' => true,
     'params'      => '',
   );
-  $mainmenu["inventory"]['submenu']['sku_pricer'] = array(
-    'text'        => BOX_SKU_PRICER_TITLE, 
-    'order'       => 159, 
-    'security_id' => SECURITY_ID_SKU_PRICER, 
-    'link'        => html_href_link(FILENAME_DEFAULT, 'module=sku_pricer&amp;page=main', 'SSL'),
-    'show_in_users_settings' => false,
-    'params'      => '',
-  );
-  
 }
 ?>
