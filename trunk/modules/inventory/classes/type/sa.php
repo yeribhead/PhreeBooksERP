@@ -7,10 +7,9 @@ class sa extends inventory {//Serialized Assembly
     public $account_sales_income	= INV_SERIALIZE_DEFAULT_SALES;
 	public $account_inventory_wage	= INV_SERIALIZE_DEFAULT_INVENTORY;
 	public $account_cost_of_sales	= INV_SERIALIZE_DEFAULT_COS; 
-	public $cost_method				= INV_SERIALIZE_DEFAULT_COSTING;
+	public $cost_method				= 'f';
 	public $bom		 				= array();
 	public $allow_edit_bom			= true;
-	public $cost_method				= 'f';
 	public $posible_cost_methodes   = array('f');	
 	
 	function __construct(){
