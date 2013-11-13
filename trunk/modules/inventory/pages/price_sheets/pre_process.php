@@ -84,7 +84,7 @@ switch ($_REQUEST['action']) {
 	  	$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '1' where sheet_name = '$sheet_name' and type = '$type'");
 	}
 	// set expiration date of previous rev if there is a older rev of this price sheet
-	$db->Execute("update " . TABLE_PRICE_SHEETS . " set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
+	if ($id != '') $db->Execute("update " . TABLE_PRICE_SHEETS . " set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
 	  where sheet_name = '$sheet_name' and type = '$type' and ( expiration_date IS NULL or expiration_date = '0000-00-00' or expiration_date >= '$effective_date' ) and id < $id");
 	gen_add_audit_log(PRICE_SHEETS_LOG . ($_REQUEST['action'] == 'save') ? TEXT_SAVE : TEXT_UPDATE, $sheet_name);
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('psID', 'action')), 'SSL'));
