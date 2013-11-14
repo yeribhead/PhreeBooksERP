@@ -80,7 +80,7 @@ $mainmenu["inventory"]["submenu"]["assemble"] = array(
   'show_in_users_settings' => true,
   'params'      => '',
 );
-if (defined(ENABLE_MULTI_BRANCH) && ENABLE_MULTI_BRANCH == true){ 
+if (defined('ENABLE_MULTI_BRANCH') && ENABLE_MULTI_BRANCH){ 
 	$mainmenu["inventory"]["submenu"]["transfer"] = array(
 	  'text'        => BOX_INV_TRANSFER, 
 	  'order'       => 80, 
