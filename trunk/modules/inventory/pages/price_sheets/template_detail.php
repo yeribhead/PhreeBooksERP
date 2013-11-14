@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -43,8 +42,8 @@ echo $toolbar->build_toolbar();
   <tr>
     <td><?php echo PRICE_SHEET_NAME; ?></td>
     <td><?php echo html_input_field('sheet_name', $sheet_name, '', false); ?></td>
-    <td align="right"><?php echo TEXT_REVISION; ?></td>
-    <td><?php echo html_input_field('revision', $revision, 'readonly="readonly" size="5"', false); ?></td>
+    <td align="right"><?php echo TEXT_INACTIVE . html_checkbox_field('inactive', '1', ($inactive) ? ' checked' : ''); ?></td>
+    <td align="right"><?php echo TEXT_REVISION . html_input_field('revision', $revision, 'readonly="readonly" size="5"', false); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_EFFECTIVE_DATE; ?></td>

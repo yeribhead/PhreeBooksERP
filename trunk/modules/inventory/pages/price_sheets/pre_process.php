@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -38,6 +37,7 @@ switch ($_REQUEST['action']) {
 	$revision       = db_prepare_input($_POST['revision']);
 	$effective_date = gen_db_date($_POST['effective_date']);
 	$default_sheet  = isset($_POST['default_sheet']) ? 1 : 0;
+	$inactive       = isset($_POST['inactive']) ? 1 : 0;
 	$encoded_prices = array();
 	for ($i=0, $j=1; $i < MAX_NUM_PRICE_LEVELS; $i++, $j++) {
 	  $price   = $currencies->clean_value(db_prepare_input($_POST['price_'   . $j]));
@@ -68,6 +68,7 @@ switch ($_REQUEST['action']) {
 	$sql_data_array = array(
 	  'sheet_name' 		=> $sheet_name, 
 	  'type' 			=> $type, 
+	  'inactive' 		=> $inactive, 
 	  'revision' 		=> $revision, 
 	  'effective_date' 	=> $effective_date, 
 	  'default_sheet' 	=> $default_sheet, 
@@ -117,6 +118,8 @@ switch ($_REQUEST['action']) {
 	  'default_levels' => $result->fields['default_levels'],
 	);
 	db_perform(TABLE_PRICE_SHEETS, $output_array, 'insert');
+	// expire the old sheet
+	$db->Execute("UPDATE ".TABLE_PRICE_SHEETS." SET expiration_date='".gen_specific_date($result->fields['effective_date'], 1)."' WHERE id=$old_id");
 	$id = db_insert_id();
 	// Copy special pricing information to new sheet
 	$levels = $db->Execute("select inventory_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where price_sheet_id = $old_id");
@@ -126,7 +129,8 @@ switch ($_REQUEST['action']) {
 	  $levels->MoveNext();
 	}
 	gen_add_audit_log(PRICE_SHEETS_LOG . TEXT_REVISE, $result->fields['sheet_name'] . ' Rev. ' . $old_rev . ' => ' . ($old_rev + 1));
-	$_REQUEST['action'] = 'edit';
+//	$_REQUEST['action'] = 'edit';
+	break; // return to price sheet list, user can edit from there
   case 'edit':
 	if(!isset($id)) $id = db_prepare_input($_POST['rowSeq']);
 	$result         = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = $id");
@@ -157,15 +161,15 @@ $cal_ps = array(
   'default'   => $effective_date,
 );
 
+$include_header = true;
+$include_footer = true;
+
 switch ($_REQUEST['action']) {
   case 'new':
   case 'edit':
-	$include_header   = true;
-	$include_footer   = true;
     $include_template = 'template_detail.php';
     define('PAGE_TITLE', ($_REQUEST['action'] == 'new') ? PRICE_SHEET_NEW_TITLE : PRICE_SHEET_EDIT_TITLE);
 	break;
-
   default:
 	$heading_array = array(
 	  'sheet_name'      => TEXT_SHEET_NAME,
@@ -180,31 +184,27 @@ switch ($_REQUEST['action']) {
 	$disp_order  = $result['disp_order'];
 	// find the highest rev level by sheet name
 	$result = $db->Execute("select distinct sheet_name, max(revision) as rev from " . TABLE_PRICE_SHEETS . " 
-	  where type = '" . $type . "' group by sheet_name");
+	  where type = '$type' group by sheet_name");
 	$rev_levels = array();
 	while(!$result->EOF) {
 	  $rev_levels[$result->fields['sheet_name']] = $result->fields['rev'];
 	  $result->MoveNext();
 	}
 	// build the list for the page selected
+	$search = '';
 	if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	  $search_fields = array('sheet_name', 'revision');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
-	} else {
-	  $search = '';
+	  $search = ' AND (' . implode(' LIKE \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 	}
 	$field_list = array('id', 'inactive', 'sheet_name', 'revision', 'effective_date', 'expiration_date', 'default_sheet');
 	// hook to add new fields to the query return results
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
-	$query_raw    = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . " from " . TABLE_PRICE_SHEETS . " 
-	  where type = '" . $type . "'" . $search . " order by $disp_order";
-	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_raw    = "SELECT SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." FROM ".TABLE_PRICE_SHEETS." WHERE type='$type' $search ORDER BY $disp_order";
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
-	$include_header   = true;
-	$include_footer   = true;
+    $query_split      = new splitPageResults($_REQUEST['list'], '');
     $include_template = 'template_main.php';
     define('PAGE_TITLE', $type == 'v' ? BOX_PURCHASE_PRICE_SHEETS : BOX_SALES_PRICE_SHEETS);
 }
