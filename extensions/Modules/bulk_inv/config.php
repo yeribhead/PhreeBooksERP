@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -33,7 +32,7 @@ $mainmenu["inventory"]["submenu"]["bulk_inventory"] = array(
     'text'        => MODULE_BULK_INV_TITLE,
     'security_id' => SECURITY_ID_MAINTAIN_INVENTORY,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=bulk_inv&amp;page=bulk_inv', 'SSL'),
-	'show_in_users_settings' => false,
+	'show_in_users_settings' => false, // set with inventory permissions
 	'params'	  => '',
 );
 

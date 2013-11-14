@@ -75,7 +75,7 @@ if (defined('MODULE_PHREEFORM_STATUS')) {
   		'order'       => 99,
   	  	'security_id' => SECURITY_ID_PHREEFORM,
 	  	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=inv', 'SSL'),
-  	  	'show_in_users_settings' => true,
+  	  	'show_in_users_settings' => false,
 	  	'params'      => '',
 	);
   }

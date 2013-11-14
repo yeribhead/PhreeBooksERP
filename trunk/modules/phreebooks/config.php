@@ -407,16 +407,14 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
   		'show_in_users_settings' => true,
     	'params'      => '',
   	);
-  	if(isset($_SESSION['admin_security'][SECURITY_ID_GEN_ADMIN_TOOLS]) && $_SESSION['admin_security'][SECURITY_ID_GEN_ADMIN_TOOLS] > 3){
-		$mainmenu["gl"]['submenu']["admin_tools"] = array(
-	  		'order'		  => 70,
-	    	'text'        => BOX_HEADING_ADMIN_TOOLS,
-	    	'security_id' => SECURITY_ID_GEN_ADMIN_TOOLS, 
-	    	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=admin_tools', 'SSL'),
-			'show_in_users_settings' => true,
-	    	'params'      => '',
-	  	);
-  	}
+	$mainmenu["gl"]['submenu']["admin_tools"] = array(
+	 		'order'		  => 70,
+	   	'text'        => BOX_HEADING_ADMIN_TOOLS,
+	   	'security_id' => SECURITY_ID_GEN_ADMIN_TOOLS, 
+	   	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=admin_tools', 'SSL'),
+		'show_in_users_settings' => true,
+	   	'params'      => '',
+	);
   	if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
   		gen_pull_language('phreebooks', 'admin');
 		$mainmenu["company"]['submenu']["configuration"]['submenu']["phreebooks"] = array(
