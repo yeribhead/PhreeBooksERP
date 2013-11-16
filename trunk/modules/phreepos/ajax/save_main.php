@@ -227,7 +227,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 		}else if ($post_success = $order->post_ordr($_REQUEST['action'])) {	// Post the order class to the db
 			gen_add_audit_log(MENU_HEADING_PHREEPOS . ' - ' . ($_POST['id'] ? TEXT_EDIT : TEXT_ADD), $order->purchase_invoice_id, $order->total_amount);
 	  	} else { // reset the id because the post failed (ID could have been set inside of Post)
-			$error .= 'Posting failt!';
+			$error .= 'Posting fault!';
 			$order->purchase_invoice_id = '';	// reset order num to submitted value (may have been set if payment failed)
 			$order->id = ''; // will be null unless opening an existing purchase/receive
 	  	}
@@ -251,7 +251,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 		  	$report->xfilterlist[0]->min_val   = $order->id;
 		  	$output = BuildForm($report, $delivery_method = 'S'); // force return with report
 		  	if ($output === true) {
-		  		if(DEBUG) $massage .='direct printing failt.';
+		  		if(DEBUG) $massage .='direct printing fault.';
 		  	} else if (!is_array($output) ){// if it is a array then it is not a sequential report
 		    	// fetch the receipt and prepare to print
 		  		$receipt_data = str_replace("\r", "", addslashes($output)); // for javascript multi-line

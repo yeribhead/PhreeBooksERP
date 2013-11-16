@@ -17,7 +17,6 @@
 //  Path: /modules/phreedom/pages/users/template_detail.php
 //
 
-
 echo html_form('users', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action',   '')        . chr(10);

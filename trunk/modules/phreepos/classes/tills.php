@@ -119,8 +119,12 @@ class tills {
   }
 
   function build_form_html($action, $id = '') {
-    global $db, $currencies;
+    global $db, $currencies, $messageStack;
     if ($action <> 'new' && $this->error == false) {
+      	if (!$id) {
+	  		$messageStack->add("No till assigned to this user! Please assign a till to this user in Company -> Users Manager.");
+	  		$id = 1; // set to first till to avoid mysql error
+  		}
         $sql = "select * from " . $this->db_table . " where till_id = " . $id;
         $result = $db->Execute($sql);
         foreach ($result->fields as $key => $value) $this->$key = $value;
@@ -238,8 +242,12 @@ class tills {
     return $result_array;
   }
   
-  function get_till_info($till_id){
-  	global $db;
+  function get_till_info($till_id = 0){
+  	global $db, $messageStack;
+  	if (!$till_id) {
+  		$messageStack->add("No till assigned to this user! Please assign a till to this user in Company -> Users Manager.");
+  		$till_id = 1; // set to first till to avoid mysql error
+  	}
   	$sql = "select * from " . $this->db_table . " where till_id = " . $till_id;
     $result = $db->Execute($sql);
     foreach ($result->fields as $key => $value) $this->$key = $value;

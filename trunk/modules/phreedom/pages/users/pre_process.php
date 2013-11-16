@@ -16,8 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/pages/users/pre_process.php
 //
-if($_SESSION['admin_id'] == 1) $security_level = 4;
-else $security_level = validate_user(SECURITY_ID_USERS);
+$security_level = validate_user(SECURITY_ID_USERS);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 gen_pull_language('contacts');
@@ -43,17 +42,32 @@ switch ($_REQUEST['action']) {
 	if ($_REQUEST['action'] == 'fill_role' ) {
 	  $result = $db->Execute("select admin_prefs, admin_security from " . TABLE_USERS . " where admin_id = " . $fill_role);
 	  $admin_security = $result->fields['admin_security'];
+	  if ($admin_id == 1) { // make sure first user cannot lock themselves out
+	  	$settings = array();
+	  	$temp = explode(",", $admin_security);
+	  	foreach ($temp as $value) {
+	  		$sID = explode(":", $value);
+	  		$settings[$sID[0]] = $sID[1];
+	  	}
+	  	$settings[SECURITY_ID_USERS] = 4;
+	  	$settings = array();
+	  	foreach ($temp as $key => $value) $settings[] = "$key:$value";
+	  	$admin_security = implode(',', $settings);
+	  }
 	  $temp = unserialize($result->fields['admin_prefs']);  // fake the input to look like role
 	  foreach ($temp as $key => $value) $_POST[$key] = $value;
 	} else {
 	  $admin_security = '';
 	  $post_keys = array_keys($_POST);
-      foreach ($post_keys as $key) {
-	    if (strpos($key, 'sID_') === 0) { // it's a security setting post
-		  if ($admin_security) $admin_security .= ',';
-		  $admin_security .= substr($key, 4) . ':' . (($fill_all == '-1') ? substr($_POST[$key], 0, 1) : $fill_all);
-	    }
+	  $temp = array();
+      foreach ($post_keys as $key) if (strpos($key, 'sID_') === 0) { // it's a security setting post
+		$secID = substr($key, 4);
+      	$temp[$secID] =  $fill_all == '-1' ? substr($_POST[$key], 0, 1) : $fill_all;
 	  }
+	  if ($admin_id == 1) $temp[SECURITY_ID_USERS] = 4; // make sure first admin_id (installer) will not lock self out of system
+	  $settings = array();
+	  foreach ($temp as $key => $value) $settings[] = "$key:$value";
+	  $admin_security = implode(',', $settings);
 	}
 	$prefs = array(
 	  'role'            => $fill_role,
