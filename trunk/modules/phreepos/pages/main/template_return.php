@@ -22,7 +22,6 @@ echo html_form('pos', FILENAME_DEFAULT, gen_get_all_get_params(array('action')))
 $hidden_fields = NULL;
 
 // include hidden fields
-echo html_hidden_field('action',               '') . chr(10);
 echo html_hidden_field('id',                 $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('bill_acct_id',       $order->bill_acct_id) . chr(10);	// id of the account in the bill to/remit to
 echo html_hidden_field('bill_address_id',    $order->bill_address_id) . chr(10);
@@ -31,7 +30,7 @@ echo html_hidden_field('printed',            $order->printed) . chr(10);
 echo html_hidden_field('purchase_invoice_id',$order->purchase_invoice_id) . chr(10);
 echo html_hidden_field('post_date',          $order->post_date) . chr(10);
 echo html_hidden_field('gl_acct_id',         $order->gl_acct_id) . chr(10);
-echo html_hidden_field('store_id', $order->store_id) . chr(10);
+echo html_hidden_field('store_id',           $order->store_id) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('display_currency', DEFAULT_CURRENCY) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('currencies_value', '1') . chr(10);
 
@@ -45,12 +44,11 @@ $toolbar->icon_list['print']['show']    = false;
   $toolbar->add_icon('previous_print', 'onclick="GetPrintPreviousReceipt()"', 50);
   $toolbar->icon_list['previous_print']['icon'] = 'actions/go-previous.png';
   $toolbar->icon_list['previous_print']['text'] = TEXT_PRINT_PREVIOUS;
-// open drawer if code is pressent
-  if (defined('PHREEPOS_RECEIPT_PRINTER_OPEN_DRAWER') && PHREEPOS_RECEIPT_PRINTER_OPEN_DRAWER <> '') {  
-  	$toolbar->add_icon('open_drawer', 'onclick="OpenDrawer()"', 50);
-  	$toolbar->icon_list['open_drawer']['icon'] = 'actions/go-bottom.png';
-  	$toolbar->icon_list['open_drawer']['text'] = TEXT_OPEN_DRAWER;
-  }
+// open drawer 
+  $toolbar->add_icon('open_drawer', 'onclick="OpenDrawer()"', 50);
+  $toolbar->icon_list['open_drawer']['icon'] = 'actions/go-bottom.png';
+  $toolbar->icon_list['open_drawer']['text'] = TEXT_OPEN_DRAWER;
+  
 // pull in extra toolbar overrides and additions
 if (count($extra_toolbar_buttons) > 0) {
   foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
@@ -70,7 +68,7 @@ echo $toolbar->build_toolbar();
 		echo html_hidden_field('till_id', $tills->default_till()); 
 	  }?> 
 		<li><label> <?php echo TEXT_SALES_REP . ' ' . html_pull_down_menu('rep_id', gen_get_rep_ids($account_type), $order->rep_id ? $order->rep_id : $default_sales_rep); ?> </label></li>
-<?php if (ENABLE_MULTI_CURRENCY) {	// show currency slection pulldown 
+<?php if (ENABLE_MULTI_CURRENCY) {	// show currency selection pulldown 
 		echo '<li><label>' . TEXT_CURRENCY . ' ' . html_pull_down_menu('display_currency', gen_get_pull_down(TABLE_CURRENCIES, false, false, 'code', 'title'), $order->currencies_code, 'onchange="recalculateCurrencies();"'). '</label></li>'; 
 		echo '<li><label>' . TEXT_EXCHANGE_RATE . ' ' . html_input_field('currencies_value', $order->currencies_value, 'readonly="readonly"'). '</label></li>'; 
  } ?>
@@ -115,7 +113,7 @@ echo $toolbar->build_toolbar();
 		</label></li>
 	<?php if (ENABLE_ORDER_DISCOUNT) { 
 			$hidden_fields .= html_hidden_field('disc_gl_acct_id', '') . chr(10); 
-        	echo '<li><label>' . TEXT_DISCOUNT_PERCENT . ' ' . html_input_field('disc_percent', ($order->disc_percent ? number_format(100*$order->disc_percent,3) : '0'), 'size="10" maxlength="6" onchange="calculateDiscountPercent()" ') . '</label></li> '; 
+        	echo '<li><label>' . TEXT_DISCOUNT_PERCENT . ' ' . html_input_field('disc_percent', ($order->disc_percent ? number_format(100*$order->disc_percent,3) : $currencies->format(0)), 'size="10" maxlength="6" onchange="calculateDiscountPercent()" ') . '</label></li> '; 
 			echo '<li><label>' . TEXT_DISCOUNT_AMOUNT . ' ' . html_input_field('discount', $currencies->format(($order->discount ? $order->discount : '0'), true, $order->currencies_code, $order->currencies_value), 'size="10" maxlength="20" onchange="calculateDiscount()"'). '</label></li> ';
 		  } else {
   			$hidden_fields .= html_hidden_field('disc_gl_acct_id', '') . chr(10);
@@ -169,7 +167,7 @@ echo $toolbar->build_toolbar();
 <div id="search_customer" >
 <?php 
   echo ORD_ACCT_ID . ' ' . html_input_field('copy_search', isset($order->short_name) ? $order->short_name : TEXT_SEARCH, 'size="21" maxlength="20" title="' . TEXT_SEARCH . '" onchange="accountGuess(true)"');
-  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="popupContact()"').'<br>'. chr(10);  
+  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="accountGuess(true)"').'<br>'. chr(10);  
   echo html_input_field('copy_bill_primary_name',$order->bill_primary_name, 'size="33" maxlength="32" onfocus="clearField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')" onblur="setField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')"', true).'<br>'. chr(10);
   echo html_button_field('customer_popup_buttom', TEXT_SELECT_CUSTOMER, 'onclick="popupContact()"').'<br>'. chr(10);?> 
 </div>
@@ -255,13 +253,14 @@ echo $SeccondToolbar->build_toolbar();
 	echo '    </div>';
 	echo '</fieldset>';
 ?>
-	<div id="payment_extra_buttons">
-	<?php echo html_icon('devices/media-floppy.png',		 TEXT_SAVE,  'large', 'onclick="SavePayment(\'save_return\')"' , 0, 0, 'btn_save'); ?>
-	<?php echo html_icon('phreebooks/pdficon_large.gif', TEXT_PRINT, 'large', 'onclick="SavePayment(\'print_return\')"', 0, 0, 'btn_save'); ?>
-	</div>
+	<table id="payment_extra_buttons">
+	<tr><td> <?php echo html_icon('devices/media-floppy.png',		 TEXT_SAVE,  'large', 'onclick="SavePayment(\'save_return\')"' , 0, 0, 'btn_save').'</td><td>' . TEXT_SAVE  ; ?></td></tr>
+	<tr><td> <?php echo html_icon('phreebooks/pdficon_large.gif', TEXT_PRINT, 'large', 'onclick="SavePayment(\'print_return\')"', 0, 0, 'btn_save')   .'</td><td>' . TEXT_PRINT ; ?></td></tr>
+	</table>
 	<?php echo TEXT_AMOUNT . ' ' . html_input_field('amount', $currencies->format($amount), 'size="15" maxlength="20" style="text-align:right; font-size: 1.5em"'); ?>
 	<footer><?php echo PHREEPOS_PAYMENT_NOTES; ?> </footer>
 </div>
+
 <div id="backgroundPopup"></div>
 </form>
 

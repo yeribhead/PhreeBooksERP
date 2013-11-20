@@ -23,6 +23,7 @@ gen_pull_language('contacts');
 gen_pull_language('phreebooks');
 gen_pull_language('inventory');
 gen_pull_language('phreeform');
+require_once(DIR_FS_MODULES . 'payment/defaults.php');
 require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
@@ -88,7 +89,7 @@ if(count($payment_modules) < 1 ){
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 if(AR_TAX_BEFORE_DISCOUNT == false && PHREEPOS_DISCOUNT_OF == true ){ // tax after discount
-	$messageStack->add_session('your setting tax before discount and discount over total don\'t work together, <br/>This has circulair logic one can\'t preceed the other', 'error');
+	$messageStack->add('your setting tax before discount and discount over total don\'t work together, <br/>This has circulair logic one can\'t preceed the other', 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 $js_currency  = 'var currency  = new Array();' . chr(10);

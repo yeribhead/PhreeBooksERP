@@ -42,9 +42,9 @@ echo $toolbar->build_toolbar($add_search = true);
   </thead>
   <tbody id="filter_table_body" class="ui-widget-content">
 	  <?php
-	  if($_POST['filter_field']){
-	  	foreach ($_POST['filter_field'] as $key => $value) {
-			echo '<script type="text/javascript"> TableStartValues("' . $_POST['filter_field'][$key] . '","' . $_POST['filter_criteria'][$key] . '","' . $_POST['filter_value'][$key] . '");</script>'.chr(10);
+	  if($_SESSION['filter_field']){
+	  	foreach ($_SESSION['filter_field'] as $key => $value) {
+			echo '<script type="text/javascript"> TableStartValues("' . $_SESSION['filter_field'][$key] . '","' . $_SESSION['filter_criteria'][$key] . '","' . $_SESSION['filter_value'][$key] . '");</script>'.chr(10);
 	  	}
 	  }else {
 	  	echo'<script type="text/javascript"> TableStartValues("a.sku","0","");</script>'.chr(10);
@@ -58,14 +58,14 @@ echo $toolbar->build_toolbar($add_search = true);
 		<td>&nbsp;</td>
  		<td style="text-align:right">
 		<?php echo html_icon('actions/system-search.png', TEXT_SEARCH, 'medium', 'onclick="submitToDo(\'filter\')"') ?>
-		<?php if($_POST['filter_field']) echo html_icon('actions/view-refresh.png', TEXT_RESET, 'small', 'onclick="location.href = \'index.php?' . gen_get_all_get_params(array('search_text', 'search_period', 'search_date', 'list', 'action')) . '\';" style="cursor:pointer;"');?>
+		<?php if($_SESSION['filter_field']) echo html_icon('actions/view-refresh.png', TEXT_RESET, 'small', 'onclick="location.href = \'index.php?' . gen_get_all_get_params(array('search_text', 'search_period', 'search_date', 'list', 'action')) . '&action=reset\';" style="cursor:pointer;"');?>
 		</td>
  	</tr>
  </tfoot>
 </table>
-
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php  echo $list_header; ?></tr>

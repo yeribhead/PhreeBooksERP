@@ -28,7 +28,7 @@ $error       = false;
 $processed   = false;
 $criteria    = array();
 $fields		 = new inventory_fields();
-$type        = isset($_GET['inventory_type']) ? $_GET['inventory_type'] : 'si'; // default to stock item
+$type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : 'si'; // default to stock item
 if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $first_entry = isset($_GET['add']) ? true : false;
@@ -36,7 +36,6 @@ $first_entry = isset($_GET['add']) ? true : false;
 $f0 = $_GET['f0'] = isset($_POST['action']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
 $f1 = $_GET['f1'] = isset($_POST['f1']) ? $_POST['f1'] : $_GET['f1']; // inventory_type dropdown
 $id = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['cID']);
-$type = db_prepare_input($_POST['inventory_type']);
 if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 // getting the right inventory type.
 if (is_null($type)){
@@ -119,6 +118,14 @@ switch ($_REQUEST['action']) {
 		      die;
 		   }
   	    }
+  case 'reset':
+  		$_SESSION['filter_field']	 = null; 
+  		$_REQUEST['filter_field']	 = null;
+  		$_SESSION['filter_criteria'] = null; 
+  		$_REQUEST['filter_criteria'] = null;
+  		$_SESSION['filter_value'] 	 = null; 
+  		$_REQUEST['filter_value'] 	 = null;
+		break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
   case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
@@ -183,24 +190,27 @@ switch ($_REQUEST['action']) {
     break;
   default:
   	//building filter criteria
+  	$_SESSION['filter_field'] 	 = isset( $_REQUEST['filter_field']) 	?  $_REQUEST['filter_field'] : $_SESSION['filter_field'];
+  	$_SESSION['filter_criteria'] = isset( $_REQUEST['filter_criteria']) ?  $_REQUEST['filter_criteria'] : $_SESSION['filter_criteria'];
+  	$_SESSION['filter_value'] 	 = isset( $_REQUEST['filter_value']) 	?  $_REQUEST['filter_value'] : $_SESSION['filter_value'];
   	$filter_criteria = Array(" = "," != "," LIKE "," NOT LIKE "," > "," < ");
 	$x = 0;
-	while (isset($_POST['filter_field'][$x])) {
-		if(      $filter_criteria[$_POST['filter_criteria'][$x]] == " LIKE " || $_POST['filter_criteria'][$x] == FILTER_CONTAINS){
-			if ( $_POST['filter_value'][$x] <> '' ) $criteria[] = $_POST['filter_field'][$x] . ' Like "%'    . $_POST['filter_value'][$x] . '%" ';
+	while (isset($_SESSION['filter_field'][$x])) {
+		if(      $filter_criteria[$_SESSION['filter_criteria'][$x]] == " LIKE " || $_SESSION['filter_criteria'][$x] == FILTER_CONTAINS){
+			if ( $_SESSION['filter_value'][$x] <> '' ) $criteria[] = $_SESSION['filter_field'][$x] . ' Like "%'    . $_SESSION['filter_value'][$x] . '%" ';
 			
-		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " NOT LIKE "){
-			if ( $_POST['filter_value'][$x] <> '' ) $criteria[] = $_POST['filter_field'][$x] . ' Not Like "%' . $_POST['filter_value'][$x] . '%" ';
+		}elseif( $filter_criteria[$_SESSION['filter_criteria'][$x]] == " NOT LIKE "){
+			if ( $_SESSION['filter_value'][$x] <> '' ) $criteria[] = $_SESSION['filter_field'][$x] . ' Not Like "%' . $_SESSION['filter_value'][$x] . '%" ';
 			
-		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " = "  && $_POST['filter_value'][$x] == ''){
-			if ( $_POST['filter_field'][$x] == 'a.sku' && $_POST['filter_value'][$x] == '' ) { $x++; continue; }
-			$criteria[] = '(' . $_POST['filter_field'][$x] . $filter_criteria[$_POST['filter_criteria'][$x]] . ' "' . $_POST['filter_value'][$x] . '" or ' . $_POST['filter_field'][$x] . ' IS NULL ) ';
+		}elseif( $filter_criteria[$_SESSION['filter_criteria'][$x]] == " = "  && $_SESSION['filter_value'][$x] == ''){
+			if ( $_SESSION['filter_field'][$x] == 'a.sku' && $_SESSION['filter_value'][$x] == '' ) { $x++; continue; }
+			$criteria[] = '(' . $_SESSION['filter_field'][$x] . $filter_criteria[$_SESSION['filter_criteria'][$x]] . ' "' . $_SESSION['filter_value'][$x] . '" or ' . $_SESSION['filter_field'][$x] . ' IS NULL ) ';
 			
-		}elseif( $filter_criteria[$_POST['filter_criteria'][$x]] == " != " && $_POST['filter_value'][$x] == ''){
-			$criteria[] = '(' . $_POST['filter_field'][$x] . $filter_criteria[$_POST['filter_criteria'][$x]] . ' "' . $_POST['filter_value'][$x] . '" or ' . $_POST['filter_field'][$x] . ' IS NOT NULL ) ';
+		}elseif( $filter_criteria[$_SESSION['filter_criteria'][$x]] == " != " && $_SESSION['filter_value'][$x] == ''){
+			$criteria[] = '(' . $_SESSION['filter_field'][$x] . $filter_criteria[$_SESSION['filter_criteria'][$x]] . ' "' . $_SESSION['filter_value'][$x] . '" or ' . $_SESSION['filter_field'][$x] . ' IS NOT NULL ) ';
 			
 		}else{	
-			$criteria[] = $_POST['filter_field'][$x] . $filter_criteria[$_POST['filter_criteria'][$x]]. ' "' . $_POST['filter_value'][$x] . '" ';
+			$criteria[] = $_SESSION['filter_field'][$x] . $filter_criteria[$_SESSION['filter_criteria'][$x]]. ' "' . $_SESSION['filter_value'][$x] . '" ';
 		}		
 		$x++;
 	}	
@@ -322,5 +332,4 @@ switch ($_REQUEST['action']) {
     $include_template = 'template_main.php';
 	break;
 }
-
 ?>

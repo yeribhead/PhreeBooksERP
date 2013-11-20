@@ -1114,18 +1114,29 @@ function parseCard() {
 }
 
 function SavePayment(PrintOrSave) { // request function
+  var error_message = '';
   var amount = cleanCurrency(document.getElementById('amount').value);
   var index  = document.getElementById('payment_method').selectedIndex;
-  var method = document.getElementById('payment_method').options[index].value;
-  var f0 = document.getElementById(method+'_field_0') ? document.getElementById(method+'_field_0').value : '';
-  var f1 = document.getElementById(method+'_field_1') ? document.getElementById(method+'_field_1').value : '';
-  var f2 = document.getElementById(method+'_field_2') ? document.getElementById(method+'_field_2').value : '';
-  var f3 = document.getElementById(method+'_field_3') ? document.getElementById(method+'_field_3').value : '';
-  var f4 = document.getElementById(method+'_field_4') ? document.getElementById(method+'_field_4').value : '';
+  var payment_method = document.getElementById('payment_method').options[index].value;
+  var f0 = document.getElementById(payment_method+'_field_0') ? document.getElementById(payment_method+'_field_0').value : '';
+  var f1 = document.getElementById(payment_method+'_field_1') ? document.getElementById(payment_method+'_field_1').value : '';
+  var f2 = document.getElementById(payment_method+'_field_2') ? document.getElementById(payment_method+'_field_2').value : '';
+  var f3 = document.getElementById(payment_method+'_field_3') ? document.getElementById(payment_method+'_field_3').value : '';
+  var f4 = document.getElementById(payment_method+'_field_4') ? document.getElementById(payment_method+'_field_4').value : '';
+<?php
+  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
+	$value = $pmt_class['id'];
+	echo $$value->javascript_validation();
+  }
+?>
+  if ( error_message != ''){
+	  alert(error_message);
+	  return false;
+  }
   addPmtRow();
   var numRows = document.getElementById('payment_table_body').rows.length;
-  document.getElementById('pdes_'+numRows).value = pmt_types[method];
-  document.getElementById('meth_'+numRows).value = method;
+  document.getElementById('pdes_'+numRows).value = pmt_types[payment_method];
+  document.getElementById('meth_'+numRows).value = payment_method;
   document.getElementById('pmt_'+numRows).value  = formatCurrency(amount);
   document.getElementById('f0_'+numRows).value   = f0;
   document.getElementById('f1_'+numRows).value   = f1;
@@ -1548,7 +1559,7 @@ $(document).keydown(function(event){
 		event.preventDefault();
 		// if alt + r then redirect to template return
 		if (location.search === '?module=phreepos&page=main'){
-			submitToDo('pos_return');
+			window.location.assign('?module=phreepos&page=main&action=pos_return');
 		}else{
 			window.location.assign('?module=phreepos&page=main');
 		}

@@ -36,7 +36,7 @@ class currency {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 3) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	$title = db_prepare_input($_POST['title']);
@@ -65,7 +65,7 @@ class currency {
 	  // first check to see if there are any general ledger entries
 	  $result = $db->Execute("SELECT id FROM " . TABLE_JOURNAL_MAIN . " LIMIT 1");
 	  if ($result->RecordCount() > 0) {
-		$messageStack->add_session(SETUP_ERROR_CANNOT_CHANGE_DEFAULT,'error');
+		$messageStack->add(SETUP_ERROR_CANNOT_CHANGE_DEFAULT,'error');
 	  } else {
 	    write_configure('DEFAULT_CURRENCY', db_input($code));
 		db_perform($this->db_table, array('value' => 1), 'update', "code='$code'"); // change default exc rate to 1
@@ -132,7 +132,7 @@ class currency {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+	  $messageStack->add(ERROR_NO_PERMISSION, 'error');
 	  return false;
 	}
 	// Can't delete default currency or last currency

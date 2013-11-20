@@ -30,7 +30,8 @@ if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] 
 $type        = isset($_GET['type']) ? $_GET['type'] : 'c'; // default to customer
 // load the filters
 $default_f0 = defined('CONTACTS_F0_'.strtoupper($type)) ? constant('CONTACTS_F0_'.strtoupper($type)) : DEFAULT_F0_SETTING;
-if(!isset($_REQUEST['f0'])) $_REQUEST['f0'] = '0'; // show inactive checkbox
+$_SESSION['f0'] = (isset($_SESSION['f0'])) ? $_SESSION['f0'] : $default_f0;
+if($_SERVER['REQUEST_METHOD'] == 'POST') $_SESSION['f0'] = (isset($_REQUEST['f0'])) ? $_REQUEST['f0'] : false; // show inactive checkbox
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 if (file_exists(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php')) { 
 	require_once(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php'); 
@@ -189,7 +190,9 @@ switch ($_REQUEST['action']) {
 		      die;
 		   }
   	    }
-
+ 	case 'reset':
+ 		$_SESSION['f0'] = $default_f0;
+		break;
     case 'go_first':    $_REQUEST['list'] = 1;       break;
     case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
     case 'go_next':     $_REQUEST['list']++;         break;
@@ -257,7 +260,7 @@ switch ($_REQUEST['action']) {
 		  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
 		  $criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 		}
-		if (!$_REQUEST['f0']) $criteria[] = "(c.inactive = '0' or c.inactive = '')"; // inactive flag
+		if (!$_SESSION['f0']) $criteria[] = "(c.inactive = '0' or c.inactive = '')"; // inactive flag
 	
 		$search = (sizeof($criteria) > 0) ? (' where ' . implode(' and ', $criteria)) : '';
 		$field_list = array('c.id', 'c.inactive', 'c.short_name', 'c.contact_first', 'c.contact_last', 

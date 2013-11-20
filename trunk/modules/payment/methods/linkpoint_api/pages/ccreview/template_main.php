@@ -44,8 +44,9 @@ echo $toolbar->build_toolbar($add_search = true, $add_periods = true);
 // Build the page
 ?>
 <h1><?php echo BOX_BANKING_LINK_POINT_CC_REVIEW; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?></div>
+</div>
 <table>
   <tr valign="top"><th><?php echo $list_header; ?></th></tr>
 <?php 

@@ -244,7 +244,7 @@ class orders extends journal {
 	$db->transCommit();	// finished successfully
 //echo 'committed transaction - bailing!'; exit();
 	// ***************************** END TRANSACTION *******************************
-	$messageStack->add_session(sprintf(TEXT_SUCCESSFULLY_POSTED, constant('ORD_HEADING_NUMBER_' . $this->journal_id) . ' ' . $this->purchase_invoice_id), 'success');
+	$messageStack->add(sprintf(TEXT_SUCCESSFULLY_POSTED, constant('ORD_HEADING_NUMBER_' . $this->journal_id) . ' ' . $this->purchase_invoice_id), 'success');
 	return true;
   }
 

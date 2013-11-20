@@ -48,7 +48,7 @@ function create_menu(array $array){
 	if(isset($array['submenu'])){
 		usort($array['submenu'], 'sortByOrder');
 		if(check_permission($array['submenu'])){
-			echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>'.chr(10);
+			echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.(isset($array['icon']) ? $array['icon'].' '.$array['text'] : $array['text']).'</a>'.chr(10);
 			echo '    <ul>' . chr(10);
 			foreach($array['submenu'] as $menu_item) create_menu($menu_item);
 			echo '    </ul>'.chr(10);
@@ -57,7 +57,7 @@ function create_menu(array $array){
 	}else{
 		echo '  <li><a href="'.$array['link'].'" '.$array['params'].'>'.chr(10);
 		if ($array['text'] == TEXT_HOME && ENABLE_ENCRYPTION && strlen($_SESSION['admin_encrypt']) > 0) echo html_icon('emblems/emblem-readonly.png', TEXT_ENCRYPTION_ENABLED, 'small');
-  		echo ($array['icon'] ? $array['icon'].' '.$array['text'] : $array['text']).'</a>  </li>'.chr(10);
+  		echo (isset($array['icon']) ? $array['icon'].' '.$array['text'] : $array['text']).'</a>  </li>'.chr(10);
 	}
 	return true;
 }
@@ -65,7 +65,7 @@ function create_menu(array $array){
 function check_permission(array $array){
 	$valid = false;
 	foreach($array as $menu_item){ 
-		if(is_array($menu_item['submenu'])) {
+		if(isset($array['submenu']) && is_array($menu_item['submenu'])) {
 			if(check_permission($menu_item['submenu'])) $valid = true;
 		}else{
 			if($menu_item['show_in_users_settings'] == false && $menu_item['security_id'] == SECURITY_ID_PHREEFORM) continue;

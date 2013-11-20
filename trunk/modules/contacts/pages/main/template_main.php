@@ -37,14 +37,15 @@ echo $toolbar->build_toolbar($add_search = true);
 <table class="ui-widget" style="border-style:none;">
  <tbody class="ui-widget-content">
   <tr>
-	<td><?php echo TEXT_FILTERS . '&nbsp;' . TEXT_SHOW_INACTIVE . '&nbsp;' . html_checkbox_field('f0', '1', $f0); ?></td>
+	<td><?php echo TEXT_FILTERS . '&nbsp;' . TEXT_SHOW_INACTIVE . '&nbsp;' . html_checkbox_field('f0', '1', $_SESSION['f0']); ?></td>
 	<td><?php echo '&nbsp;' . html_button_field('apply', TEXT_APPLY, 'onclick="document.forms[0].submit();"'); ?></td>
   </tr>
  </tbody>
 </table>
 </div>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . constant('ACT_' . strtoupper($type) . '_TYPE_NAME')); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . constant('ACT_' . strtoupper($type) . '_TYPE_NAME')); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php  echo $list_header; ?></tr>

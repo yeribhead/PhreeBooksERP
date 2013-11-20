@@ -56,6 +56,7 @@ class journal_19 extends journal {
 	public $pmt_recvd			= 0;
 	public $bal_due				= 0;
 	public $shipper_code		= '';
+	public $so_po_ref_id		= '';
     
     public function __construct($id = '') {
         $this->purchase_invoice_id = 'DP' . date('Ymd');
@@ -133,6 +134,7 @@ class journal_19 extends journal {
 			'post_date'        => $this->post_date,
   		);
   	}
+  	
   	function add_payment_row() {
 		global $payment_modules, $messageStack;
 	  	$total = 0;
@@ -302,32 +304,33 @@ class journal_19 extends journal {
   	$messageStack->add(var_dump($this));
   }
   
-  function __destruct(){
-  	global $messageStack;
-	if ( DEBUG ) $messageStack->write_debug();
-  }
+  	function __destruct(){
+  		global $messageStack;
+		if ( DEBUG ) $messageStack->write_debug();
+	}
   
-  function encrypt_payment($method, $card_key_pos = false) {
-	  $encrypt = new encryption();
-	  $cc_info = array();
-	  $cc_info['name']    = isset($_POST[$method.'_field_0']) ? db_prepare_input($_POST[$method.'_field_0']) : '';
-	  $cc_info['number']  = isset($_POST[$method.'_field_1']) ? db_prepare_input($_POST[$method.'_field_1']) : '';
-	  $cc_info['exp_mon'] = isset($_POST[$method.'_field_2']) ? db_prepare_input($_POST[$method.'_field_2']) : '';
-	  $cc_info['exp_year']= isset($_POST[$method.'_field_3']) ? db_prepare_input($_POST[$method.'_field_3']) : '';
-	  $cc_info['cvv2']    = isset($_POST[$method.'_field_4']) ? db_prepare_input($_POST[$method.'_field_4']) : '';
-	  $cc_info['alt1']    = isset($_POST[$method.'_field_5']) ? db_prepare_input($_POST[$method.'_field_5']) : '';
-	  $cc_info['alt2']    = isset($_POST[$method.'_field_6']) ? db_prepare_input($_POST[$method.'_field_6']) : '';
-	  if (!$enc_value = $encrypt->encrypt_cc($cc_info)) return false;
-	  $payment_array = array(
-		'hint'      => $enc_value['hint'],
-		'module'    => 'contacts',
-		'enc_value' => $enc_value['encoded'],
-		'ref_1'     => $this->bill_acct_id,
-		'ref_2'     => $this->bill_address_id,
-		'exp_date'  => $enc_value['exp_date'],
-	  );
-	  db_perform(TABLE_DATA_SECURITY, $payment_array, $this->payment_id ? 'update' : 'insert', 'id = '.$this->payment_id);
-	  return true;
+	function encrypt_payment($method) {
+  		global $messageStack;	
+	  	$encrypt = new encryption();
+	  	$cc_info = array();
+	  	$cc_info['name']    = $method['f0'];
+	  	$cc_info['number']  = $method['f1'];
+	  	$cc_info['exp_mon'] = $method['f2'];
+	  	$cc_info['exp_year']= $method['f3'];
+	  	$cc_info['cvv2']    = $method['f4'];
+	  	$cc_info['alt1']    = $method['f5'];
+	  	$cc_info['alt2']    = $method['f6'];
+	  	if (!$enc_value = $encrypt->encrypt_cc($cc_info)) return false;
+	  	$payment_array = array(
+		  'hint'      => $enc_value['hint'],
+		  'module'    => 'contacts',
+		  'enc_value' => $enc_value['encoded'],
+		  'ref_1'     => $this->bill_acct_id,
+		  'ref_2'     => $this->bill_address_id,
+		  'exp_date'  => $enc_value['exp_date'],
+	  	);
+	   db_perform(TABLE_DATA_SECURITY, $payment_array, $this->payment_id ? 'update' : 'insert', 'id = '.$this->payment_id);
+	   return true;
 	}
 
 }

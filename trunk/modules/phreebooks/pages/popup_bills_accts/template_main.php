@@ -36,8 +36,9 @@ echo $toolbar->build_toolbar($add_search = true);
 // Build the page
 ?>
 <h1><?php echo GEN_HEADING_PLEASE_SELECT; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_CONTACTS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_CONTACTS); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php echo $list_header; ?></tr>

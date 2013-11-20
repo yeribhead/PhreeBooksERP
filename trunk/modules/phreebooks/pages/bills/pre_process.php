@@ -75,7 +75,7 @@ switch (JOURNAL_ID) {
 	$account_type = ($type == 'c') ? 'c' : 'v';
 	break;
   default: // this should never happen
-	$messageStack->add_session('No valid journal id found (module bills), Journal ID needs to be passed to this script to identify the action', 'error');
+	$messageStack->add('No valid journal id found (module bills), Journal ID needs to be passed to this script to identify the action', 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 

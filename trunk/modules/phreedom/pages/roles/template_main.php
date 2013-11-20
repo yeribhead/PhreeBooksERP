@@ -34,8 +34,9 @@ echo $toolbar->build_toolbar($add_search = true);
 // Build the page
 ?>
 <h1><?php echo PAGE_TITLE; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . BOX_HEADING_ROLES); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . BOX_HEADING_ROLES); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr><?php echo $list_header; ?></tr>

@@ -1628,7 +1628,7 @@ class journal {
 
   function session_message($message, $level = 'error') {
 	global $messageStack;
-	$messageStack->add_session($message, $level);
+	$messageStack->add($message, $level);
   }
 
 } // end class journal

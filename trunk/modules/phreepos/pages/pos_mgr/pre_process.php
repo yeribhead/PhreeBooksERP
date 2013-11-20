@@ -33,6 +33,7 @@ if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $date           = isset($_POST['search_date'])    ? gen_db_date($_POST['search_date']) 	: false;
 $acct_period 	= isset($_GET['search_period'])   ? $_GET['search_period']         		: false;
+$oid		 	= isset($_GET['oID'])   		  ? $_GET['oID']		         		: false;
 if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 /***************   hook for custom actions  ***************************/
@@ -130,19 +131,22 @@ if (!$date == false){
 	$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 	$date = '';
 }
-if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
-  $search_fields = array('bill_primary_name', 'purchase_invoice_id', 'purch_order_id', 'bill_postal_code', 'ship_primary_name', 'total_amount');
-  // hook for inserting new search fields to the query criteria.
-  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  $search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
+if ($oid == true){
+	$search = " and id = $oid";
+	$period_filter = null;
+}else if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
+	$search_fields = array('bill_primary_name', 'purchase_invoice_id', 'purch_order_id', 'bill_postal_code', 'ship_primary_name', 'total_amount');
+	// hook for inserting new search fields to the query criteria.
+  	if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
+  	$search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 } else {
-  $search = '';
+  	$search = '';
 }
 $field_list = array('id', 'post_date', 'shipper_code', 'purchase_invoice_id', 'total_amount', 'bill_primary_name', 'journal_id', 'currencies_code', 'currencies_value','total_amount as new_total_amount');
 // hook to add new fields to the query return results
 if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " from " . TABLE_JOURNAL_MAIN . " 
-		where journal_id in (19,21) " . $period_filter . $search . " order by $disp_order, purchase_invoice_id DESC";
+		where journal_id in (19,21) $period_filter $search order by $disp_order, purchase_invoice_id DESC";
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');

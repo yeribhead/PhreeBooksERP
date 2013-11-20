@@ -58,8 +58,9 @@ while (!$query_result->EOF) {
 }
 if ($doc_cnt > 0) {
   $fieldset_content .= '</tbody></table>' . chr(10);
+  $fieldset_content .= '<div style="height:19px">' . $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_FILES) . chr(10);
   $fieldset_content .= '<div style="float:right">' . $query_split->display_links() . '</div>' . chr(10);
-  $fieldset_content .= '<div>' . $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_FILES) . '</div>' . chr(10);
+  $fieldset_content .= '</div>' . chr(10);
 } else {
   $fieldset_content .= '  <tr>' . chr(10);
   $fieldset_content .= '	<td colspan="3">' . TEXT_EMPTY_FOLDER . '</td>' . chr(10);

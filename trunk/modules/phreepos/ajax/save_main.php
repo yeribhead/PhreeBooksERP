@@ -182,15 +182,9 @@ if (file_exists($custom_path)) { include($custom_path); }
 		'f2'   => db_prepare_input($_POST['f2_' . $x]),
 		'f3'   => db_prepare_input($_POST['f3_' . $x]),
 		'f4'   => db_prepare_input($_POST['f4_' . $x]),
+	  	'f5'   => db_prepare_input($_POST['f5_' . $x]),
+	  	'f6'   => db_prepare_input($_POST['f6_' . $x]),
 	  );
-	  // initialize payment methods
-	  // preset some post variables to fake out the payment methods
-	  $_POST[$pmt_meth . '_field_0'] = $_POST['f0_' . $x];
-	  $_POST[$pmt_meth . '_field_1'] = $_POST['f1_' . $x];
-	  $_POST[$pmt_meth . '_field_2'] = $_POST['f2_' . $x];
-	  $_POST[$pmt_meth . '_field_3'] = $_POST['f3_' . $x];
-	  $_POST[$pmt_meth . '_field_4'] = $_POST['f4_' . $x];
-	  $x++;
 	}
 	$order->shipper_code = $pmt_meth;  // store last payment method in shipper_code field
     // adding the rounding of line

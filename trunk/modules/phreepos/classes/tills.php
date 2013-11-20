@@ -33,6 +33,7 @@ class tills {
          foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
          $this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
          $this->store_ids = gen_get_store_ids();
+         if($_REQUEST['page'] == 'main') $this->showDropDown();
     }
 
   function btn_save($id = '') {
@@ -119,12 +120,8 @@ class tills {
   }
 
   function build_form_html($action, $id = '') {
-    global $db, $currencies, $messageStack;
+    global $db, $currencies;
     if ($action <> 'new' && $this->error == false) {
-      	if (!$id) {
-	  		$messageStack->add("No till assigned to this user! Please assign a till to this user in Company -> Users Manager.");
-	  		$id = 1; // set to first till to avoid mysql error
-  		}
         $sql = "select * from " . $this->db_table . " where till_id = " . $id;
         $result = $db->Execute($sql);
         foreach ($result->fields as $key => $value) $this->$key = $value;
@@ -207,12 +204,16 @@ class tills {
   
 // functions for template main  
   function showDropDown(){
-  	global $db;
+  	global $db, $messageStack;
   	foreach ($this->store_ids as $store){
   		$temp[]= $store['id'];
   	}
   	$sql = "select till_id, description from " . $this->db_table . " where store_id in (" . implode(',', $temp) . ")";
-    $result = $db->Execute($sql);    
+    $result = $db->Execute($sql);
+    if ($result->RecordCount()== 0){// trigger_error("Before continuing set a till for this store. This will contain default values to allow this page to work", E_USER_ERROR);// there should always be a till because of defaults values.
+    	$messageStack->add("Before continuing set a till for this store.<br> This will contain default values to allow this page to work", 'error');
+    	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL')); 
+    }
     if ($result->RecordCount()== 1) {
     	return false;
     }else{
@@ -242,12 +243,8 @@ class tills {
     return $result_array;
   }
   
-  function get_till_info($till_id = 0){
-  	global $db, $messageStack;
-  	if (!$till_id) {
-  		$messageStack->add("No till assigned to this user! Please assign a till to this user in Company -> Users Manager.");
-  		$till_id = 1; // set to first till to avoid mysql error
-  	}
+  function get_till_info($till_id){
+  	global $db;
   	$sql = "select * from " . $this->db_table . " where till_id = " . $till_id;
     $result = $db->Execute($sql);
     foreach ($result->fields as $key => $value) $this->$key = $value;
