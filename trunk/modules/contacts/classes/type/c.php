@@ -25,7 +25,7 @@ class c extends contacts{
 	public $auto_field     = 'next_cust_id_num';
 	public $journals	   = '12,13,19';
 	public $help		   = '07.03.02.02';
-	public $address_types  = array('cm', 'cs', 'cb', 'im');
+	public $address_types  = array('cm', 'cs', 'cb');
 	public $type           = 'c';
 	
 	public function __construct(){

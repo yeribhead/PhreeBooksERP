@@ -57,7 +57,7 @@ switch ($_REQUEST['action']) {
 	$default_levels = implode(';', $encoded_prices);
 	// Check for duplicate price sheet names
 	if ($_REQUEST['action'] == 'save') {
-	  $result = $db->Execute("select id from " . TABLE_PRICE_SHEETS . " where sheet_name = '$sheet_name'");
+	  $result = $db->Execute("SELECT id FROM " . TABLE_PRICE_SHEETS . " WHERE sheet_name='".addslashes($sheet_name)."'");
 	  if ($result->RecordCount() > 0) {
 		$messageStack->add(SRVCS_DUPLICATE_SHEET_NAME,'error');
 		$effective_date = gen_locale_date($effective_date);
@@ -80,13 +80,13 @@ switch ($_REQUEST['action']) {
 	}
 	if ($default_sheet) {
 		// Reset all other price sheet default flags if set to this price sheet
-		$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '0' where sheet_name <> '$sheet_name' and type = '$type'");
+		$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '0' where sheet_name <> '".addslashes($sheet_name)."' and type = '$type'");
 		// Set all price sheets with this name to default
-	  	$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '1' where sheet_name = '$sheet_name' and type = '$type'");
+	  	$db->Execute("update " . TABLE_PRICE_SHEETS . " set default_sheet = '1' where sheet_name = '".addslashes($sheet_name)."' and type = '$type'");
 	}
 	// set expiration date of previous rev if there is a older rev of this price sheet
 	if ($id != '') $db->Execute("update " . TABLE_PRICE_SHEETS . " set expiration_date = '" . gen_specific_date($effective_date, -1) . "' 
-	  where sheet_name = '$sheet_name' and type = '$type' and ( expiration_date IS NULL or expiration_date = '0000-00-00' or expiration_date >= '$effective_date' ) and id < $id");
+	  where sheet_name = '".addslashes($sheet_name)."' and type = '$type' and ( expiration_date IS NULL or expiration_date = '0000-00-00' or expiration_date >= '$effective_date' ) and id < $id");
 	gen_add_audit_log(PRICE_SHEETS_LOG . ($_REQUEST['action'] == 'save') ? TEXT_SAVE : TEXT_UPDATE, $sheet_name);
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('psID', 'action')), 'SSL'));
 	break;

@@ -16,5 +16,5 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/language/en_us/menu.php
 //
-define('BOX_IMPORT_BANK_MODULE','Import bank statement');
+define('BOX_IMPORT_BANK_MODULE','Import Bank Statement');
 ?>

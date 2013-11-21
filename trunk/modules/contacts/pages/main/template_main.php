@@ -32,7 +32,7 @@ if (!$cInfo->help == '') $toolbar->add_help($cInfo->help);
 echo $toolbar->build_toolbar($add_search = true);
 // Build the page
 ?>
-<h1><?php echo constant('ACT_' . strtoupper($type) . '_HEADING_TITLE'); ?></h1>
+<h1><?php echo PAGE_TITLE; ?></h1>
 <div id="filter_bar">
 <table class="ui-widget" style="border-style:none;">
  <tbody class="ui-widget-content">

@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -25,7 +24,7 @@ class v extends contacts{
 	public $auto_field     = 'next_vend_id_num';
 	public $journals	   = '6,7,21';
 	public $help		   = '07.02.02.02';
-	public $address_types  = array('vm', 'vs', 'vb', 'im');
+	public $address_types  = array('vm', 'vs', 'vb');
 	public $type           = 'v';
 	
 	public function __construct(){

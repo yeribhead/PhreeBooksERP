@@ -75,11 +75,13 @@ switch ($_REQUEST['action']) {
 		if (!$error) {
 		  $cInfo->save_contact(); 
 		  $cInfo->save_addres();
-		  if ($type <> 'i' && $_POST['i_short_name']) { // is null
-		  	 $crmInfo      = new i;
+		  if ($type <> 'i' && ($_POST['i_short_name'] || $_POST['address']['im']['primary_name'])) { // is null
+		  	$crmInfo = new i;
              // error check contact
 			 $error = $crmInfo->data_complete($error);
 	         if (!$error) {
+	           $crmInfo->auto_field  = $cInfo->type=='v' ? 'next_vend_id_num' : 'next_cust_id_num';
+	           $crmInfo->dept_rep_id = $cInfo->id;
 	      	   $crmInfo->save_contact();
 	      	   $crmInfo->save_addres();
 			 }
@@ -269,7 +271,16 @@ switch ($_REQUEST['action']) {
 	    // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     	$query_split  = new splitPageResults($_REQUEST['list'], '');
 	    $include_template = 'template_main.php'; // include display template (required)
-		define('PAGE_TITLE', constant('ACT_' . strtoupper($type) . '_HEADING_TITLE'));
+	    switch ($type) {
+	    	default: define('PAGE_TITLE', constant('ACT_' . strtoupper($type) . '_HEADING_TITLE')); break;
+	    	case 'b':define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, TEXT_BRANCHES)); break;
+	    	case 'c':define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, TEXT_CUSTOMER)); break;
+	    	case 'e':define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, TEXT_EMPLOYEE)); break;
+	    	case 'i':define('PAGE_TITLE', BOX_PHREECRM_MODULE); break;
+	    	case 'j':define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, TEXT_PROJECT)); break;
+	    	case 'v':define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, TEXT_VENDOR)); break;
+	    }
+		
 }
 
 ?>

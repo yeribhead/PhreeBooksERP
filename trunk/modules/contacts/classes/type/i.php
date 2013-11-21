@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -36,12 +35,12 @@ class i extends contacts{
 		}else{
 			$this->id             = '';
 		}
-		if ($_POST['i_short_name'])     $this->short_name     = db_prepare_input($_POST['i_short_name']);
-		if ($_POST['i_contact_first'])  $this->contact_first  = db_prepare_input($_POST['i_contact_first']);
-	    if ($_POST['i_contact_middle']) $this->contact_middle = db_prepare_input($_POST['i_contact_middle']);
-	    if ($_POST['i_contact_last'])   $this->contact_last   = db_prepare_input($_POST['i_contact_last']);
-	    if ($_POST['i_gov_id_number'])  $this->gov_id_number  = db_prepare_input($_POST['i_gov_id_number']);
-	    if ($_POST['i_account_number']) $this->account_number = db_prepare_input($_POST['i_account_number']);
+		$this->short_name     = db_prepare_input($_POST['i_short_name']);
+		$this->contact_first  = db_prepare_input($_POST['i_contact_first']);
+	    $this->contact_middle = db_prepare_input($_POST['i_contact_middle']);
+	    $this->contact_last   = db_prepare_input($_POST['i_contact_last']);
+	    $this->gov_id_number  = db_prepare_input($_POST['i_gov_id_number']);
+	    $this->account_number = db_prepare_input($_POST['i_account_number']);
 	    $this->dept_rep_id    = db_prepare_input($_POST['id']); // this id is from the parent.
 	}
   }
@@ -54,6 +53,11 @@ class i extends contacts{
   
   public function data_complete($error){
     global $messageStack;
+    if ($this->auto_type && $this->short_name == '') {
+    	$result = $db->Execute("select ".$this->auto_field." from ".TABLE_CURRENT_STATUS);
+    	$this->short_name  = $result->fields[$this->auto_field];
+    	$this->inc_auto_id = true;
+    }
     foreach ($this->address_types as $value) {
       if (($value == 'im') || // contact main address when editing the contact directly
           ($this->address[$value]['primary_name'] <> '')) { // optional billing, shipping, and contact
@@ -78,6 +82,7 @@ class i extends contacts{
   
   public function save_contact(){
     global $db;
+   
     $sql_data_array['type']            = $this->type;
     $sql_data_array['short_name']      = $this->short_name;
     $sql_data_array['inactive']        = isset($this->inactive) ? '1' : '0';
@@ -93,6 +98,7 @@ class i extends contacts{
     $sql_data_array['price_sheet']     = $this->price_sheet;
     $sql_data_array['tax_id']          = $this->tax_id;
     $sql_data_array['last_update']     = 'now()';
+    
     if ($this->id == '') { //create record
         $sql_data_array['first_date'] = 'now()';
         db_perform(TABLE_CONTACTS, $sql_data_array, 'insert');
