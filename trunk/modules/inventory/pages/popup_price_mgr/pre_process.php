@@ -23,10 +23,9 @@ require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 /**************   page specific initialization  *************************/
 $id         = (int)$_GET['iID'];
 $full_price = $_GET['price'];
-$item_cost  = isset($_GET['cost'])   ? $_GET['cost']   : false;
-$type       = isset($_GET['type'])   ? $_GET['type']   : 'c';
+$type       = isset($_GET['type']) ? $_GET['type'] : 'c';
 // retrieve some item details
-$inventory_details = $db->Execute("select sku, description_short, quantity_on_hand, quantity_on_order,
+$inventory_details = $db->Execute("select sku, description_short, quantity_on_hand, quantity_on_order, item_cost, 
 	quantity_on_allocation, quantity_on_sales_order from " . TABLE_INVENTORY . " where id = " . $id);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_price_mgr/extra_actions.php';
@@ -79,10 +78,8 @@ switch ($_REQUEST['action']) {
 }
 
 /*****************   prepare to display templates  *************************/
-if ($item_cost === false) {
-	$temp = inv_calculate_sales_price(1, $id, 0, 'v');
-	$item_cost = $temp['price'];
-}
+$temp = inv_calculate_sales_price(1, $id, 0, 'v');
+$item_cost = $temp['price'];
 
 // some preliminary information
 $sql = "select id, sheet_name, revision, default_sheet, default_levels from " . TABLE_PRICE_SHEETS . " 
