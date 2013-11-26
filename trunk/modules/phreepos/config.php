@@ -57,7 +57,7 @@ if (defined('MODULE_PHREEPOS_STATUS')) {
     'params'      => '',
   );
   $mainmenu["banking"]['submenu']['phreepos'] = array(
-  	'order' 	  => 51,
+  	'order' 	  => 50,
   	'text'        => BOX_PHREEPOS, 
     'security_id' => '',
     'show_in_users_settings' => false,
@@ -79,9 +79,9 @@ if (defined('MODULE_PHREEPOS_STATUS')) {
     'show_in_users_settings' => true,
     'params'      => '',
   );
-  $mainmenu["banking"]['submenu']['customer_deposit'] = array(
+  $mainmenu["banking"]['submenu']["receipts"]['submenu']['customer_deposit'] = array(
     'text'        => BOX_CUSTOMER_DEPOSITS,
-    'order'       => 10,
+    'order'       => 60,
     'security_id' => SECURITY_ID_CUSTOMER_DEPOSITS,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=deposit&amp;type=c', 'SSL'),
     'show_in_users_settings' => true,
@@ -89,13 +89,13 @@ if (defined('MODULE_PHREEPOS_STATUS')) {
   );
   $mainmenu["banking"]['submenu']["vendor_payments"]['submenu']['vendor_deposit'] = array(
     'text'        => BOX_VENDOR_DEPOSITS,
-    'order'       => 50,
+    'order'       => 60,
     'security_id' => SECURITY_ID_VENDOR_DEPOSITS,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreepos&amp;page=deposit&amp;type=v', 'SSL'),
     'show_in_users_settings' => true,
     'params'      => '',
   );
-	if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+  if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0) {
 	  gen_pull_language('phreepos', 'admin');
 	  $mainmenu["company"]['submenu']["configuration"]['submenu']["phreepos"] = array(
 		'order'	      => MODULE_PHREEPOS_TITLE,
