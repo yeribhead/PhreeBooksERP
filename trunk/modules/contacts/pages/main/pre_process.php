@@ -78,11 +78,11 @@ switch ($_REQUEST['action']) {
 		  $cInfo->save_addres();
 		  if ($type <> 'i' && ($_POST['i_short_name'] || $_POST['address']['im']['primary_name'])) { // is null
 		  	$crmInfo = new i;
-             // error check contact
+	        $crmInfo->auto_field  = $cInfo->type=='v' ? 'next_vend_id_num' : 'next_cust_id_num';
+	        $crmInfo->dept_rep_id = $cInfo->id;
+		  	// error check contact
 			 $error = $crmInfo->data_complete($error);
 	         if (!$error) {
-	           $crmInfo->auto_field  = $cInfo->type=='v' ? 'next_vend_id_num' : 'next_cust_id_num';
-	           $crmInfo->dept_rep_id = $cInfo->id;
 	      	   $crmInfo->save_contact();
 	      	   $crmInfo->save_addres();
 			 }

@@ -52,8 +52,8 @@ class i extends contacts{
   }
   
   public function data_complete($error){
-    global $messageStack;
-    if ($this->auto_type && $this->short_name == '') {
+    global $db, $messageStack;
+    if ($this->auto_field && $this->short_name == '') {
     	$result = $db->Execute("select ".$this->auto_field." from ".TABLE_CURRENT_STATUS);
     	$this->short_name  = $result->fields[$this->auto_field];
     	$this->inc_auto_id = true;
