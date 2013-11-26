@@ -407,38 +407,38 @@ function hideLoading() {
   $("#please_wait").hide();
 }
 
-function submitToDo(todo, multi_submit) {
+function submitToDo(action, multi_submit) {
   if (!multi_submit) multi_submit = false;  
-  document.getElementById('todo').value = todo;
+  document.getElementById('action').value = action;
   if (!form_submitted && check_form() && !multi_submit) {
 	showLoading();
 	form_submitted = true;
-	document.getElementById('todo').form.submit();
+	document.getElementById('action').form.submit();
   } else if (multi_submit) {
-	document.getElementById('todo').form.submit();						 
+	document.getElementById('action').form.submit();						 
   }
 }
 
-function submitSeq(rowSeq, todo, multi_submit) {
+function submitSeq(rowSeq, action, multi_submit) {
   if (!multi_submit) multi_submit = false;  
   document.getElementById('rowSeq').value = rowSeq;
-  submitToDo(todo, multi_submit);
+  submitToDo(action, multi_submit);
 }
 
 function submitSortOrder(sField, sOrder) {
-  document.getElementById('sort_field').value = sField;
-  document.getElementById('sort_order').value = sOrder;
-  document.getElementById('todo').form.submit();
+  document.getElementById('sf').value = sField;
+  document.getElementById('so').value = sOrder;
+  document.getElementById('action').form.submit();
 }
 
 function searchPage(get_params) {
   var searchText = document.getElementById('search_text').value;
-  location.href = 'index.php?'+get_params+'search_text='+searchText;
+  location.href = 'index.php?'+get_params+'&search_text='+searchText;
 }
 
 function periodPage(get_params) {
   var searchPeriod = document.getElementById('search_period').value;
-  location.href = 'index.php?'+get_params+'search_period='+searchPeriod;
+  location.href = 'index.php?'+get_params+'&search_period='+searchPeriod;
 }
 
 function jumpToPage(get_params) {
@@ -454,7 +454,7 @@ function checkEnter(e) {
     keycode = e.which;
   }
   if (keycode == 13) {
-	  document.getElementById('todo').value = 'search';
+	  document.getElementById('action').value = 'search';
 	  document.getElementById('search_text').form.submit();
   }
 }
@@ -466,7 +466,29 @@ function parseXml(xml) {
     xmlDoc.loadXML(xml);
     xml = xmlDoc;
   }
+  var error = null;
+  var msg   = null;
+  var caution = null;
   if ($(xml).find("debug").text()) alert($(xml).find("debug").text());
+  $(xml).find("messageStack").each(function() {
+	  if ($(this).find("messageStack_error").text()){
+		  error += $(this).find("messageStack_error").text() + "\n";
+	  }else if ($(xml).find("messageStack_msg").text()){
+		  msg += $(this).find("messageStack_msg").text() + "\n";
+	  }else if ($(xml).find("messageStack_caution").text()){
+		  caution += $(this).find("messageStack_caution").text() + "\n";
+	  }
+  });  
+  if (error != null ) {
+	  alert("error : " + error);
+	  return false;
+  }
+  if (msg != null ) {
+	  alert("msg : " + msg);
+  }
+  if (caution != null ) {
+	  alert("caution : " + caution);
+  }
   if ($(xml).find("error").text()) {
     alert($(xml).find("error").text());
 	return false;
