@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -35,8 +34,6 @@
 // Redirect to another page or site
   function gen_redirect($url) {
     global $messageStack;
-	// put any messages form the messageStack into a session variable to recover after redirect
-	$messageStack->convert_add_to_session();
 	// clean up URL before executing it
     while (strstr($url, '&&'))    $url = str_replace('&&', '&', $url);
     // header locates should not have the &amp; in the address it breaks things
@@ -476,10 +473,14 @@
     if ($exclude_array == '') $exclude_array = array();
     $get_url = '';
     reset($_GET);
+    $output = array();
     while (list($key, $value) = each($_GET)) {
-      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array))) $get_url .= $key . '=' . $_REQUEST[$key] . '&amp;';
+      if (($key != session_name()) && ($key != 'error') && (!in_array($key, $exclude_array)) && $key != 'search_text') {
+      	if (strlen($_REQUEST[$key]) > 0) $output[] = "$key=".$_REQUEST[$key];
+      }
     }
-    return $get_url;
+    if(isset($_REQUEST['search_text']) && $_REQUEST['search_text'] != '' && in_array('search_text', $exclude_array) == false) $output[] = "search_text=".$_REQUEST['search_text'];
+    return implode('&amp;', $output);
   }
 
   function js_get_all_get_params($exclude_array = '') { // for use within javascript language validator
@@ -1214,18 +1215,25 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	return $field;
   }
 
-  // function html_heading_bar will be deprecated in Phreedom Release 3.3
-  function html_heading_bar($heading_array, $sort_field = '', $sort_order = 'asc', $extra_headings = array(TEXT_ACTION)) {
+/**
+ * this function creates a heading for a table that will be able to sort 
+ * @param array $heading_array the fields of the table
+ * @param array $extra_headings extra columns that do not have the abillety to sort
+ * @return 'html_code' this is the table heading
+ * @return 'disp_order' this is the field + display order for the sql statement_builder
+ */
+	
+  function html_heading_bar($heading_array, $extra_headings = array(TEXT_ACTION)) {
 	global $PHP_SELF; 
 	$result = array();
-	$output .= html_hidden_field('sort_field', $sort_field) . chr(10);
-    $output .= html_hidden_field('sort_order', $sort_order) . chr(10);
+	$output .= html_hidden_field('sf', $_REQUEST['sf']) . chr(10);
+    $output .= html_hidden_field('so', ($_REQUEST['so'] == 'desc' ? 'desc' : 'asc') ) . chr(10);
 	foreach ($heading_array as $key => $value) {
 	  if (!isset($result['disp_order'])) $result['disp_order'] = $key; // set the first key to the default
       $image_asc  = 'sort_asc_disabled.png';
       $image_desc = 'sort_desc_disabled.png';
-	  if ($value == $sort_field || ($result['disp_order'] == $key && $sort_field == '') ){
-	       if ($sort_order == 'desc'){
+	  if ($value == $_REQUEST['sf'] || ($result['disp_order'] == $key && $_REQUEST['sf'] == '') ){
+	       if ($_REQUEST['so'] == 'desc'){
 	           $result['disp_order'] = $key . ' DESC';
                $image_desc = 'sort_desc.png';
 	       }else{
@@ -1353,17 +1361,17 @@ function charConv($string, $in, $out) {
   function strtolower_utf8($string){
     $convert_from = array(
       "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-      "V", "W", "X", "Y", "Z", "Ãƒâ‚¬", "Ãƒï¿½", "Ãƒâ€š", "ÃƒÆ’", "Ãƒâ€ž", "Ãƒâ€¦", "Ãƒâ€ ", "Ãƒâ€¡", "ÃƒË†", "Ãƒâ€°", "ÃƒÅ ", "Ãƒâ€¹", "ÃƒÅ’", "Ãƒï¿½", "ÃƒÅ½", "Ãƒï¿½",
-      "Ãƒï¿½", "Ãƒâ€˜", "Ãƒâ€™", "Ãƒâ€œ", "Ãƒâ€�", "Ãƒâ€¢", "Ãƒâ€“", "ÃƒËœ", "Ãƒâ„¢", "ÃƒÅ¡", "Ãƒâ€º", "ÃƒÅ“", "Ãƒï¿½", "Ã�ï¿½", "Ã�â€˜", "Ã�â€™", "Ã�â€œ", "Ã�â€�", "Ã�â€¢", "Ã�ï¿½", "Ã�â€“",
-      "Ã�â€”", "Ã�Ëœ", "Ã�â„¢", "Ã�Å¡", "Ã�â€º", "Ã�Å“", "Ã�ï¿½", "Ã�Å¾", "Ã�Å¸", "Ã�Â ", "Ã�Â¡", "Ã�Â¢", "Ã�Â£", "Ã�Â¤", "Ã�Â¥", "Ã�Â¦", "Ã�Â§", "Ã�Â¨", "Ã�Â©", "Ã�Âª", "Ã�Âª",
-      "Ã�Â¬", "Ã�Â­", "Ã�Â®", "Ã�Â¯"
+      "V", "W", "X", "Y", "Z", "ÃƒÆ’Ã¢â€šÂ¬", "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã¢â‚¬Å¡", "ÃƒÆ’Ã†â€™", "ÃƒÆ’Ã¢â‚¬Å¾", "ÃƒÆ’Ã¢â‚¬Â¦", "ÃƒÆ’Ã¢â‚¬Â ", "ÃƒÆ’Ã¢â‚¬Â¡", "ÃƒÆ’Ã‹â€ ", "ÃƒÆ’Ã¢â‚¬Â°", "ÃƒÆ’Ã…Â ", "ÃƒÆ’Ã¢â‚¬Â¹", "ÃƒÆ’Ã…â€™", "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã…Â½", "ÃƒÆ’Ã¯Â¿Â½",
+      "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã¢â‚¬Ëœ", "ÃƒÆ’Ã¢â‚¬â„¢", "ÃƒÆ’Ã¢â‚¬Å“", "ÃƒÆ’Ã¢â‚¬ï¿½", "ÃƒÆ’Ã¢â‚¬Â¢", "ÃƒÆ’Ã¢â‚¬â€œ", "ÃƒÆ’Ã‹Å“", "ÃƒÆ’Ã¢â€žÂ¢", "ÃƒÆ’Ã…Â¡", "ÃƒÆ’Ã¢â‚¬Âº", "ÃƒÆ’Ã…â€œ", "ÃƒÆ’Ã¯Â¿Â½", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã¢â‚¬Ëœ", "Ãƒï¿½Ã¢â‚¬â„¢", "Ãƒï¿½Ã¢â‚¬Å“", "Ãƒï¿½Ã¢â‚¬ï¿½", "Ãƒï¿½Ã¢â‚¬Â¢", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã¢â‚¬â€œ",
+      "Ãƒï¿½Ã¢â‚¬â€�", "Ãƒï¿½Ã‹Å“", "Ãƒï¿½Ã¢â€žÂ¢", "Ãƒï¿½Ã…Â¡", "Ãƒï¿½Ã¢â‚¬Âº", "Ãƒï¿½Ã…â€œ", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã…Â¾", "Ãƒï¿½Ã…Â¸", "Ãƒï¿½Ã‚Â ", "Ãƒï¿½Ã‚Â¡", "Ãƒï¿½Ã‚Â¢", "Ãƒï¿½Ã‚Â£", "Ãƒï¿½Ã‚Â¤", "Ãƒï¿½Ã‚Â¥", "Ãƒï¿½Ã‚Â¦", "Ãƒï¿½Ã‚Â§", "Ãƒï¿½Ã‚Â¨", "Ãƒï¿½Ã‚Â©", "Ãƒï¿½Ã‚Âª", "Ãƒï¿½Ã‚Âª",
+      "Ãƒï¿½Ã‚Â¬", "Ãƒï¿½Ã‚Â­", "Ãƒï¿½Ã‚Â®", "Ãƒï¿½Ã‚Â¯"
     );
     $convert_to = array(
       "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
-      "v", "w", "x", "y", "z", "ÃƒÂ ", "ÃƒÂ¡", "ÃƒÂ¢", "ÃƒÂ£", "ÃƒÂ¤", "ÃƒÂ¥", "ÃƒÂ¦", "ÃƒÂ§", "ÃƒÂ¨", "ÃƒÂ©", "ÃƒÂª", "ÃƒÂ«", "ÃƒÂ¬", "ÃƒÂ­", "ÃƒÂ®", "ÃƒÂ¯",
-      "ÃƒÂ°", "ÃƒÂ±", "ÃƒÂ²", "ÃƒÂ³", "ÃƒÂ´", "ÃƒÂµ", "ÃƒÂ¶", "ÃƒÂ¸", "ÃƒÂ¹", "ÃƒÂº", "ÃƒÂ»", "ÃƒÂ¼", "ÃƒÂ½", "Ã�Â°", "Ã�Â±", "Ã�Â²", "Ã�Â³", "Ã�Â´", "Ã�Âµ", "Ã‘â€˜", "Ã�Â¶",
-      "Ã�Â·", "Ã�Â¸", "Ã�Â¹", "Ã�Âº", "Ã�Â»", "Ã�Â¼", "Ã�Â½", "Ã�Â¾", "Ã�Â¿", "Ã‘â‚¬", "Ã‘ï¿½", "Ã‘â€š", "Ã‘Æ’", "Ã‘â€ž", "Ã‘â€¦", "Ã‘â€ ", "Ã‘â€¡", "Ã‘Ë†", "Ã‘â€°", "Ã‘Å ", "Ã‘â€¹",
-      "Ã‘Å’", "Ã‘ï¿½", "Ã‘Å½", "Ã‘ï¿½"
+      "v", "w", "x", "y", "z", "ÃƒÆ’Ã‚Â ", "ÃƒÆ’Ã‚Â¡", "ÃƒÆ’Ã‚Â¢", "ÃƒÆ’Ã‚Â£", "ÃƒÆ’Ã‚Â¤", "ÃƒÆ’Ã‚Â¥", "ÃƒÆ’Ã‚Â¦", "ÃƒÆ’Ã‚Â§", "ÃƒÆ’Ã‚Â¨", "ÃƒÆ’Ã‚Â©", "ÃƒÆ’Ã‚Âª", "ÃƒÆ’Ã‚Â«", "ÃƒÆ’Ã‚Â¬", "ÃƒÆ’Ã‚Â­", "ÃƒÆ’Ã‚Â®", "ÃƒÆ’Ã‚Â¯",
+      "ÃƒÆ’Ã‚Â°", "ÃƒÆ’Ã‚Â±", "ÃƒÆ’Ã‚Â²", "ÃƒÆ’Ã‚Â³", "ÃƒÆ’Ã‚Â´", "ÃƒÆ’Ã‚Âµ", "ÃƒÆ’Ã‚Â¶", "ÃƒÆ’Ã‚Â¸", "ÃƒÆ’Ã‚Â¹", "ÃƒÆ’Ã‚Âº", "ÃƒÆ’Ã‚Â»", "ÃƒÆ’Ã‚Â¼", "ÃƒÆ’Ã‚Â½", "Ãƒï¿½Ã‚Â°", "Ãƒï¿½Ã‚Â±", "Ãƒï¿½Ã‚Â²", "Ãƒï¿½Ã‚Â³", "Ãƒï¿½Ã‚Â´", "Ãƒï¿½Ã‚Âµ", "Ãƒâ€˜Ã¢â‚¬Ëœ", "Ãƒï¿½Ã‚Â¶",
+      "Ãƒï¿½Ã‚Â·", "Ãƒï¿½Ã‚Â¸", "Ãƒï¿½Ã‚Â¹", "Ãƒï¿½Ã‚Âº", "Ãƒï¿½Ã‚Â»", "Ãƒï¿½Ã‚Â¼", "Ãƒï¿½Ã‚Â½", "Ãƒï¿½Ã‚Â¾", "Ãƒï¿½Ã‚Â¿", "Ãƒâ€˜Ã¢â€šÂ¬", "Ãƒâ€˜Ã¯Â¿Â½", "Ãƒâ€˜Ã¢â‚¬Å¡", "Ãƒâ€˜Ã†â€™", "Ãƒâ€˜Ã¢â‚¬Å¾", "Ãƒâ€˜Ã¢â‚¬Â¦", "Ãƒâ€˜Ã¢â‚¬Â ", "Ãƒâ€˜Ã¢â‚¬Â¡", "Ãƒâ€˜Ã‹â€ ", "Ãƒâ€˜Ã¢â‚¬Â°", "Ãƒâ€˜Ã…Â ", "Ãƒâ€˜Ã¢â‚¬Â¹",
+      "Ãƒâ€˜Ã…â€™", "Ãƒâ€˜Ã¯Â¿Â½", "Ãƒâ€˜Ã…Â½", "Ãƒâ€˜Ã¯Â¿Â½"
     );
     return str_replace($convert_from, $convert_to, $string);
   }
@@ -1371,17 +1379,17 @@ function charConv($string, $in, $out) {
   function strtoupper_utf8($string){
     $convert_from = array(
       "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u",
-      "v", "w", "x", "y", "z", "ÃƒÂ ", "ÃƒÂ¡", "ÃƒÂ¢", "ÃƒÂ£", "ÃƒÂ¤", "ÃƒÂ¥", "ÃƒÂ¦", "ÃƒÂ§", "ÃƒÂ¨", "ÃƒÂ©", "ÃƒÂª", "ÃƒÂ«", "ÃƒÂ¬", "ÃƒÂ­", "ÃƒÂ®", "ÃƒÂ¯",
-      "ÃƒÂ°", "ÃƒÂ±", "ÃƒÂ²", "ÃƒÂ³", "ÃƒÂ´", "ÃƒÂµ", "ÃƒÂ¶", "ÃƒÂ¸", "ÃƒÂ¹", "ÃƒÂº", "ÃƒÂ»", "ÃƒÂ¼", "ÃƒÂ½", "Ã�Â°", "Ã�Â±", "Ã�Â²", "Ã�Â³", "Ã�Â´", "Ã�Âµ", "Ã‘â€˜", "Ã�Â¶",
-      "Ã�Â·", "Ã�Â¸", "Ã�Â¹", "Ã�Âº", "Ã�Â»", "Ã�Â¼", "Ã�Â½", "Ã�Â¾", "Ã�Â¿", "Ã‘â‚¬", "Ã‘ï¿½", "Ã‘â€š", "Ã‘Æ’", "Ã‘â€ž", "Ã‘â€¦", "Ã‘â€ ", "Ã‘â€¡", "Ã‘Ë†", "Ã‘â€°", "Ã‘Å ", "Ã‘â€¹",
-      "Ã‘Å’", "Ã‘ï¿½", "Ã‘Å½", "Ã‘ï¿½"
+      "v", "w", "x", "y", "z", "ÃƒÆ’Ã‚Â ", "ÃƒÆ’Ã‚Â¡", "ÃƒÆ’Ã‚Â¢", "ÃƒÆ’Ã‚Â£", "ÃƒÆ’Ã‚Â¤", "ÃƒÆ’Ã‚Â¥", "ÃƒÆ’Ã‚Â¦", "ÃƒÆ’Ã‚Â§", "ÃƒÆ’Ã‚Â¨", "ÃƒÆ’Ã‚Â©", "ÃƒÆ’Ã‚Âª", "ÃƒÆ’Ã‚Â«", "ÃƒÆ’Ã‚Â¬", "ÃƒÆ’Ã‚Â­", "ÃƒÆ’Ã‚Â®", "ÃƒÆ’Ã‚Â¯",
+      "ÃƒÆ’Ã‚Â°", "ÃƒÆ’Ã‚Â±", "ÃƒÆ’Ã‚Â²", "ÃƒÆ’Ã‚Â³", "ÃƒÆ’Ã‚Â´", "ÃƒÆ’Ã‚Âµ", "ÃƒÆ’Ã‚Â¶", "ÃƒÆ’Ã‚Â¸", "ÃƒÆ’Ã‚Â¹", "ÃƒÆ’Ã‚Âº", "ÃƒÆ’Ã‚Â»", "ÃƒÆ’Ã‚Â¼", "ÃƒÆ’Ã‚Â½", "Ãƒï¿½Ã‚Â°", "Ãƒï¿½Ã‚Â±", "Ãƒï¿½Ã‚Â²", "Ãƒï¿½Ã‚Â³", "Ãƒï¿½Ã‚Â´", "Ãƒï¿½Ã‚Âµ", "Ãƒâ€˜Ã¢â‚¬Ëœ", "Ãƒï¿½Ã‚Â¶",
+      "Ãƒï¿½Ã‚Â·", "Ãƒï¿½Ã‚Â¸", "Ãƒï¿½Ã‚Â¹", "Ãƒï¿½Ã‚Âº", "Ãƒï¿½Ã‚Â»", "Ãƒï¿½Ã‚Â¼", "Ãƒï¿½Ã‚Â½", "Ãƒï¿½Ã‚Â¾", "Ãƒï¿½Ã‚Â¿", "Ãƒâ€˜Ã¢â€šÂ¬", "Ãƒâ€˜Ã¯Â¿Â½", "Ãƒâ€˜Ã¢â‚¬Å¡", "Ãƒâ€˜Ã†â€™", "Ãƒâ€˜Ã¢â‚¬Å¾", "Ãƒâ€˜Ã¢â‚¬Â¦", "Ãƒâ€˜Ã¢â‚¬Â ", "Ãƒâ€˜Ã¢â‚¬Â¡", "Ãƒâ€˜Ã‹â€ ", "Ãƒâ€˜Ã¢â‚¬Â°", "Ãƒâ€˜Ã…Â ", "Ãƒâ€˜Ã¢â‚¬Â¹",
+      "Ãƒâ€˜Ã…â€™", "Ãƒâ€˜Ã¯Â¿Â½", "Ãƒâ€˜Ã…Â½", "Ãƒâ€˜Ã¯Â¿Â½"
     );
     $convert_to = array(
       "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
-      "V", "W", "X", "Y", "Z", "Ãƒâ‚¬", "Ãƒï¿½", "Ãƒâ€š", "ÃƒÆ’", "Ãƒâ€ž", "Ãƒâ€¦", "Ãƒâ€ ", "Ãƒâ€¡", "ÃƒË†", "Ãƒâ€°", "ÃƒÅ ", "Ãƒâ€¹", "ÃƒÅ’", "Ãƒï¿½", "ÃƒÅ½", "Ãƒï¿½",
-      "Ãƒï¿½", "Ãƒâ€˜", "Ãƒâ€™", "Ãƒâ€œ", "Ãƒâ€�", "Ãƒâ€¢", "Ãƒâ€“", "ÃƒËœ", "Ãƒâ„¢", "ÃƒÅ¡", "Ãƒâ€º", "ÃƒÅ“", "Ãƒï¿½", "Ã�ï¿½", "Ã�â€˜", "Ã�â€™", "Ã�â€œ", "Ã�â€�", "Ã�â€¢", "Ã�ï¿½", "Ã�â€“",
-      "Ã�â€”", "Ã�Ëœ", "Ã�â„¢", "Ã�Å¡", "Ã�â€º", "Ã�Å“", "Ã�ï¿½", "Ã�Å¾", "Ã�Å¸", "Ã�Â ", "Ã�Â¡", "Ã�Â¢", "Ã�Â£", "Ã�Â¤", "Ã�Â¥", "Ã�Â¦", "Ã�Â§", "Ã�Â¨", "Ã�Â©", "Ã�Âª", "Ã�Âª",
-      "Ã�Â¬", "Ã�Â­", "Ã�Â®", "Ã�Â¯"
+      "V", "W", "X", "Y", "Z", "ÃƒÆ’Ã¢â€šÂ¬", "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã¢â‚¬Å¡", "ÃƒÆ’Ã†â€™", "ÃƒÆ’Ã¢â‚¬Å¾", "ÃƒÆ’Ã¢â‚¬Â¦", "ÃƒÆ’Ã¢â‚¬Â ", "ÃƒÆ’Ã¢â‚¬Â¡", "ÃƒÆ’Ã‹â€ ", "ÃƒÆ’Ã¢â‚¬Â°", "ÃƒÆ’Ã…Â ", "ÃƒÆ’Ã¢â‚¬Â¹", "ÃƒÆ’Ã…â€™", "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã…Â½", "ÃƒÆ’Ã¯Â¿Â½",
+      "ÃƒÆ’Ã¯Â¿Â½", "ÃƒÆ’Ã¢â‚¬Ëœ", "ÃƒÆ’Ã¢â‚¬â„¢", "ÃƒÆ’Ã¢â‚¬Å“", "ÃƒÆ’Ã¢â‚¬ï¿½", "ÃƒÆ’Ã¢â‚¬Â¢", "ÃƒÆ’Ã¢â‚¬â€œ", "ÃƒÆ’Ã‹Å“", "ÃƒÆ’Ã¢â€žÂ¢", "ÃƒÆ’Ã…Â¡", "ÃƒÆ’Ã¢â‚¬Âº", "ÃƒÆ’Ã…â€œ", "ÃƒÆ’Ã¯Â¿Â½", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã¢â‚¬Ëœ", "Ãƒï¿½Ã¢â‚¬â„¢", "Ãƒï¿½Ã¢â‚¬Å“", "Ãƒï¿½Ã¢â‚¬ï¿½", "Ãƒï¿½Ã¢â‚¬Â¢", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã¢â‚¬â€œ",
+      "Ãƒï¿½Ã¢â‚¬â€�", "Ãƒï¿½Ã‹Å“", "Ãƒï¿½Ã¢â€žÂ¢", "Ãƒï¿½Ã…Â¡", "Ãƒï¿½Ã¢â‚¬Âº", "Ãƒï¿½Ã…â€œ", "Ãƒï¿½Ã¯Â¿Â½", "Ãƒï¿½Ã…Â¾", "Ãƒï¿½Ã…Â¸", "Ãƒï¿½Ã‚Â ", "Ãƒï¿½Ã‚Â¡", "Ãƒï¿½Ã‚Â¢", "Ãƒï¿½Ã‚Â£", "Ãƒï¿½Ã‚Â¤", "Ãƒï¿½Ã‚Â¥", "Ãƒï¿½Ã‚Â¦", "Ãƒï¿½Ã‚Â§", "Ãƒï¿½Ã‚Â¨", "Ãƒï¿½Ã‚Â©", "Ãƒï¿½Ã‚Âª", "Ãƒï¿½Ã‚Âª",
+      "Ãƒï¿½Ã‚Â¬", "Ãƒï¿½Ã‚Â­", "Ãƒï¿½Ã‚Â®", "Ãƒï¿½Ã‚Â¯"
     );
     return str_replace($convert_from, $convert_to, $string);
   }
@@ -1476,7 +1484,7 @@ function validate_user($token = 0, $user_active = false) {
   global $messageStack;
   $security_level = $_SESSION['admin_security'][$token];
   if (!in_array($security_level, array(1,2,3,4)) && !$user_active) { // not suppose to be here, bail
-    $messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+    $messageStack->add(ERROR_NO_PERMISSION, 'error');
     gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
   }
   return $user_active ? 1 : $security_level;
@@ -1485,7 +1493,7 @@ function validate_user($token = 0, $user_active = false) {
 function validate_security($security_level = 0, $required_level = 1) {
   global $messageStack;
   if ($security_level < $required_level) {
-	$messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+	$messageStack->add(ERROR_NO_PERMISSION, 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
   }
   return true;
@@ -1771,7 +1779,10 @@ function createXmlHeader($type = '') {
 }
 
 function createXmlFooter() {
-	return "</data>\n";
+	global $messageStack;
+	$xml  = $messageStack->output_xml();
+	$xml .=  "</data>\n"; 
+	return $xml;
 }
 
 //encases the data in its xml tags and CDATA declaration
@@ -1793,6 +1804,7 @@ function xml_to_object($xml = '') {
   if ($xml == '') return '';
   $output  = new objectInfo();
   $runaway = 0;
+  if( strlen(substr($xml, 0,strpos($xml, '<?xml'))) != 0) throw new Exception("There is a unforseen error on the other side: " . substr($xml, 0,strpos($xml, '<?xml')));
   while (strlen($xml) > 0) {
 	if (strpos($xml, '<?xml') === 0) { // header xml, ignore
 	  $xml = trim(substr($xml, strpos($xml, '>') + 1));
@@ -1829,12 +1841,11 @@ function xml_to_object($xml = '') {
 	  }
 	  // TBD, the attr array is set but how to add to output?
 	  if (!$selfclose && strpos($xml, $end_tag) === false) {
-	    $messageStack->add('PhreeBooks XML parse error looking for end tag: ' . $tag . ' but could not find it!','error');
-	    return false;
+	  	throw new Exception('PhreeBooks XML parse error looking for end tag: ' . $tag . ' but could not find it!');
 	  }
 	  while(true) {
 		$runaway++;
-		if ($runaway > 10000) return $messageStack->add('Runaway counter 1 reached. There is an error in the xml entry!','error');	
+		if ($runaway > 10000) throw new Exception('PhreeBooks Runaway counter 1 reached. There is an error in the xml entry!');	
 		$data = $selfclose ? '' : trim(substr($xml, $taglen, strpos($xml, $end_tag) - $taglen));
 		if (isset($output->$tag)) {
 		  if (!is_array($output->$tag)) $output->$tag = array($output->$tag);
@@ -1850,7 +1861,7 @@ function xml_to_object($xml = '') {
 	  return $xml;
 	}
 	$runaway++;
-	if ($runaway > 10000) $messageStack->add('Runaway counter 2 reached. There is an error in the xml entry!','error');	
+	if ($runaway > 10000) throw new Exception('Phreebooks Runaway counter 2 reached. There is an error in the xml entry!');	
   }
   return $output;
 }
@@ -1906,10 +1917,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
         // This error code is not included in error_reporting
         return;
     }
-
+    $temp = '';
+	if(isset($_SESSION['admin_id'])) $temp = " User: " . $_SESSION['admin_id'];
+	if(isset($_SESSION['company'])) $temp .= " Company: " . $_SESSION['company'];
     switch ($errno) {
     	case E_ERROR: //1
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL RUN-TIME ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1922,22 +1935,22 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 1 FATAL RUN-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
     	case E_WARNING: //2
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RUN-TIME WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_PARSE: //4
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " COMPILE-TIME PARSE ERROR: '$errstr' error on line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_NOTICE: //8
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RUN-TIME NOTICE:  '$errstr' line $errline in file $errfile";
-    		if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		if(!defined('DEBUG') || DEBUG == true) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_CORE_ERROR: //16
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1945,12 +1958,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 16 FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
         case E_CORE_WARNING: //32
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " WARNING THAT OCCURED DURING PHP's INITIAL STARTUP: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_COMPILE_ERROR://64
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL COMPILE-TIME ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
@@ -1963,12 +1976,12 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		die("<h1>Sorry! 64 FATAL COMPILE-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
         case E_COMPILE_WARNING: //128
-        	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+        	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " COMPILE-TIME WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_USER_ERROR: //256
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
     		//error_log($text, 1, "operator@example.com");
@@ -1982,32 +1995,32 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		//die("<h1>Sorry! 256 User Error</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
 	        break;
     	case E_USER_WARNING: //512
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_USER_NOTICE: //1024
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER NOTICE:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
     	case E_RECOVERABLE_ERROR : //4096
-    		$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RECOVERABLE ERROR:  '$errstr' error on line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_DEPRECATED : //4096
-    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . $temp;
     		$text .= " DEPRECATED FUNCTION:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_USER_DEPRECATED : //16384 	
-    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+    		$text  = "PLEASE REPORT THIS TO THE DEV TEAM ".date('Y-m-d H:i:s') . $temp;
     		$text .= " USER DEPRECATED FUNCTION:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break; 	
         default:
-	    	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
+	    	$text  = date('Y-m-d H:i:s') . $temp;
 	    	$text .=  " Unknown error type: [$errno] '$errstr' error on line $errline in file $errfile";
 	    	error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
@@ -2026,5 +2039,26 @@ function PhreebooksExceptionHandler($exception) {
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     $text .= " EXCEPTION: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
     if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+}
+
+function Phreebooks_autoloader($class){
+	if(class_exists($class)) print("class is geladen $class");
+	$class = str_replace("\\", "/", $class);
+	$path = explode("/", $class, 2);
+	if($path[0] == 'core'){
+		print(DIR_FS_ADMIN."includes/classes/$path[1].php<br/>");
+		if (file_exists(DIR_FS_ADMIN."includes/classes/$path[1].php"))
+		require_once DIR_FS_ADMIN."includes/classes/$path[1].php";	
+	}else{
+		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){
+			print((DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php<br/>"));
+			require_once DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php";
+		}else{
+			print("$class<br/>");
+			print((DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php<br/>"));
+			require_once DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php";
+		}
+	}
+	
 }
 ?>

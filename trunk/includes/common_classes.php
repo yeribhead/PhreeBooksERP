@@ -99,11 +99,12 @@ class toolbar {
 	}
 	$output .= '</div>' . "\n"; // end of the right justified icons
 	// display alerts/error messages, if any
-    if ($messageStack->size > 0) $output .= $messageStack->output();
+    $output .= $messageStack->output();
     return $output;
   }
 
   function add_search() {
+  	if($this->search_text == '') $this->search_text = $_REQUEST['search_text'];
 	$output = '<div id="tb_search_' . $this->id . '" class="ui-state-hover" style="float:right; border:0px;">' . "\n";
 	$output .= HEADING_TITLE_SEARCH_DETAIL . '<br />';
 	$output .= html_input_field('search_text', $this->search_text, $params = 'onkeypress="checkEnter(event);"');
@@ -162,21 +163,21 @@ class splitPageResults {
 	    if ($this->total_num_pages > 1) {
 	        $display_links = '';
 	        if ($this->current_page_number > 1) {
-			  	$display_links .= html_icon('actions/media-skip-backward.png', TEXT_GO_FIRST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_first', 'SSL') . '\'" style="cursor:pointer;"');
-			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', TEXT_GO_PREVIOUS, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_previous', 'SSL') . '\'" style="cursor:pointer;"');
+			  	$display_links .= html_icon('actions/media-skip-backward.png', TEXT_GO_FIRST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_first', 'SSL') . '\'" style="cursor:pointer;"');
+			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', TEXT_GO_PREVIOUS, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_previous', 'SSL') . '\'" style="cursor:pointer;"');
 	        } else {
 			  	$display_links .= html_icon('actions/media-skip-backward.png', '', 'small', '');
 			  	$display_links .= html_icon('phreebooks/media-playback-previous.png', '', 'small', '');
 	        }
 	        if (!$this->jump_page_displayed) { // only diplay pull down once (the rest are not read by browser)
-			  	$display_links .= sprintf(TEXT_RESULT_PAGE, html_pull_down_menu($page_name, $pages_array, $this->current_page_number, 'onchange="jumpToPage(\'' . gen_get_all_get_params(array('list', 'action')) . 'action=go_page\')"'), $this->total_num_pages);
+			  	$display_links .= sprintf(TEXT_RESULT_PAGE, html_pull_down_menu($page_name, $pages_array, $this->current_page_number, 'onchange="jumpToPage(\'' . gen_get_all_get_params(array('list', 'action')) . '&action=go_page\')"'), $this->total_num_pages);
 			  	$this->jump_page_displayed = true;
 			} else {
 				$display_links .= sprintf(TEXT_RESULT_PAGE, $this->current_page_number, $this->total_num_pages);
 			}
 	        if (($this->current_page_number < $this->total_num_pages) && ($this->total_num_pages != 1)) {
-				$display_links .= html_icon('actions/media-playback-start.png', TEXT_GO_NEXT, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_next', 'SSL') . '\'" style="cursor:pointer;"');
-				$display_links .= html_icon('actions/media-skip-forward.png', TEXT_GO_LAST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . 'action=go_last', 'SSL') . '\'" style="cursor:pointer;"');
+				$display_links .= html_icon('actions/media-playback-start.png', TEXT_GO_NEXT, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_next', 'SSL') . '\'" style="cursor:pointer;"');
+				$display_links .= html_icon('actions/media-skip-forward.png', TEXT_GO_LAST, 'small', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')) . '&action=go_last', 'SSL') . '\'" style="cursor:pointer;"');
 	        } else {
 				$display_links .= html_icon('actions/media-playback-start.png', '', 'small', '');
 				$display_links .= html_icon('actions/media-skip-forward.png', '', 'small', '');
@@ -250,94 +251,113 @@ class objectInfo {
 // Section 4. Class messageStack
 /**************************************************************************************************************/
   class messageStack {
-    public $size 		= 0;
-    public $errors		= array();
     public $debug_info 	= NULL;
     
-    function __construct() {
-	  if (isset($_SESSION['messageQueue'])) {
-		$this->errors = $_SESSION['messageQueue'];
-		$this->size = sizeof($_SESSION['messageQueue']);
-		unset($_SESSION['messageQueue']);
-      }
-      if (isset($_SESSION['messageToStack'])) {
-        for ($i = 0, $n = sizeof($_SESSION['messageToStack']); $i < $n; $i++) {
-          $this->add($_SESSION['messageToStack'][$i]['text'], $_SESSION['messageToStack'][$i]['type']);
-        }
-        unset($_SESSION['messageToStack']);
-      }
-    }
-
     function add($message, $type = 'error') {
-      if ($type == 'error') {
-        $this->errors[] = array('params' => 'class="ui-state-error"', 'text' => html_icon('emblems/emblem-unreadable.png', TEXT_ERROR) . '&nbsp;' . $message);
-      } elseif ($type == 'success') {
-	    if (!HIDE_SUCCESS_MESSAGES) $this->errors[] = array('params' => 'class="ui-state-active"', 'text' => html_icon('emotes/face-smile.png', TEXT_SUCCESS) . '&nbsp;' . $message);
-      } elseif ($type == 'caution' || $type == 'warning') {
-        $this->errors[] = array('params' => 'class="ui-state-highlight"', 'text' => html_icon('emblems/emblem-important.png', TEXT_CAUTION) . '&nbsp;' . $message);
-      } else {
-        $this->errors[] = array('params' => 'class="ui-state-error"', 'text' => $message);
-      }
-      $this->size++;
-      $this->debug("\n On screen displaying '".$type."' message = ".$message);
-	  return true;
+      	if ($type == 'error') {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => html_icon('emblems/emblem-unreadable.png', TEXT_ERROR) . '&nbsp;' . $message, 'message' => $message);
+      	} elseif ($type == 'success') {
+	    	if (!HIDE_SUCCESS_MESSAGES) $_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-active"', 'text' => html_icon('emotes/face-smile.png', TEXT_SUCCESS) . '&nbsp;' . $message, 'message' => $message);
+      	} elseif ($type == 'caution' || $type == 'warning') {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-highlight"', 'text' => html_icon('emblems/emblem-important.png', TEXT_CAUTION) . '&nbsp;' . $message, 'message' => $message);
+      	} else {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => $message, 'message' => $message);
+      	}
+      	$this->debug("\n On screen displaying '$type' message = $message file = $file line = $line");
+	  	return true;
     }
-
-    function add_session($message, $type = 'error') {
-      if (!$_SESSION['messageToStack']) $_SESSION['messageToStack'] = array();
-      $_SESSION['messageToStack'][] = array('text' => $message, 'type' => $type);
-    }
-
-	function convert_add_to_session() {
-	  $_SESSION['messageQueue'] = $this->errors;
-	}
 
     function reset() {
-      $this->errors = array();
-      $this->size   = 0;
+      unset($_SESSION['messageToStack']);
+    }
+    
+    /**
+     * this function will be replaced by the add function.
+     * @todo = Remove 
+     */
+    
+    function add_session($message, $type = 'error') {
+    	trigger_error('messageStack->add_session will be removed', E_USER_DEPRECATED);
+      	if ($type == 'error') {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => html_icon('emblems/emblem-unreadable.png', TEXT_ERROR) . '&nbsp;' . $message);
+      	} elseif ($type == 'success') {
+	    	if (!HIDE_SUCCESS_MESSAGES) $_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-active"', 'text' => html_icon('emotes/face-smile.png', TEXT_SUCCESS) . '&nbsp;' . $message);
+      	} elseif ($type == 'caution' || $type == 'warning') {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-highlight"', 'text' => html_icon('emblems/emblem-important.png', TEXT_CAUTION) . '&nbsp;' . $message);
+      	} else {
+        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => $message);
+      	}
+      	$this->debug("\n On screen displaying '$type' message = $message file = $file line = $line");
     }
 
     function output() {
-	  $output = NULL;
-      $this->table_data_parameters = '';
-	  if (sizeof($this->errors) > 0) {
-	    $output .= '<table style="border-collapse:collapse;width:100%">' . chr(10);
-		foreach ($this->errors as $value) {
-		  $output .= '<tr><td ' . $value['params'] . ' style="width:100%">' . $value['text'] . '</td></tr>' . chr(10);
-		}
-		$output .= '</table>' . chr(10);
-	  }
-	  unset($this->errors);
-      return $output;
+		$output = NULL;
+	  	if (! isset($_SESSION['messageToStack'])) return '';
+	  	$output .= '<table style="border-collapse:collapse;width:100%">' . chr(10);
+		foreach ($_SESSION['messageToStack'] as $value) {
+			$output .= '<tr><td ' . $value['params'] . ' style="width:100%">' . $value['text'] . '</td></tr>' . chr(10);
+	  	}
+	  	$output .= '</table>' . chr(10);
+	  	$this->reset();
+      	return $output;
+    }
+    
+  	function output_xml() {
+		$xml = "<messageStack>\n";
+	  	if (! isset($_SESSION['messageToStack'])) return '';
+		foreach ($_SESSION['messageToStack'] as $value) {
+			if ($value['type'] == 'error') {
+				foreach (explode("\n",$value['message']) as $temp){
+					$xml .= xmlEntry("messageStack_error", $temp['message']);
+				}
+      		} elseif ($value['type'] == 'success') {
+	    		if (!HIDE_SUCCESS_MESSAGES) foreach (explode("\n",$value['message']) as $temp){
+					$xml .= xmlEntry("messageStack_msg", $temp['message']);
+				}  
+      		} elseif ($value['type'] == 'caution' || $type == 'warning') {
+      			foreach (explode("\n",$value['message']) as $temp){
+					$xml .= xmlEntry("messageStack_caution", $temp['message']);
+				}
+      		} else {
+      			foreach (explode("\n",$value['message']) as $temp){
+					$xml .= xmlEntry("messageStack_error", $temp['message']);
+				}
+      		}
+	  	}
+	  	$xml .= "</messageStack>\n";
+	  	$this->reset();
+      	return $xml;
     }
 
 	function debug_header() {
-	  $this->debug_info .= "Trace information for debug purposes. Phreedom release " . MODULE_PHREEDOM_VERSION . ", generated " . date('Y-m-d H:i:s') . ".\n\n";
-	  $this->debug_info .= "\nGET Vars = "  . arr2string($_GET);
-	  $this->debug_info .= "\nPOST Vars = " . arr2string($_POST);
+	  	$this->debug_info .= "Trace information for debug purposes. Phreedom release " . MODULE_PHREEDOM_VERSION . ", generated " . date('Y-m-d H:i:s') . ".\n\n";
+	  	$this->debug_info .= "\nGET     Vars = " . arr2string($_GET);
+	  	$this->debug_info .= "\nPOST    Vars = " . arr2string($_POST);
+	  	$this->debug_info .= "\nREQUEST Vars = " . arr2string($_REQUEST);
+	  	$this->debug_info .= "\nSESSION Vars = " . arr2string($_SESSION);
 	}
 
 	function debug($txt) {
-	  global $db;
-	  if (substr($txt, 0, 1) == "\n") {
+	  	global $db;
+	  	if (substr($txt, 0, 1) == "\n") {
 //echo "\nTime: " . (int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME)) . " ms, " . $db->count_queries . " SQLs " . (int)($db->total_query_time * 1000)." ms => " . substr($txt, 1) . '<br>';
-	    $this->debug_info .= "\nTime: " . (int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME)) . " ms, " . $db->count_queries . " SQLs " . (int)($db->total_query_time * 1000)." ms => ";
-	    $this->debug_info .= substr($txt, 1);
-	  } else {
-	    $this->debug_info .= $txt;
-	  }
+	    	$this->debug_info .= "\nTime: " . (int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME)) . " ms, " . $db->count_queries . " SQLs " . (int)($db->total_query_time * 1000)." ms => ";
+	    	$this->debug_info .= substr($txt, 1);
+	  	} else {
+	    	$this->debug_info .= $txt;
+	  	}
 	}
 
 	function write_debug() {
-	  global $db;
-	  if (strlen($this->debug_info) < 1) return;
-	  $this->debug_info .= "\n\nPage trace stats: Execution Time: " . (int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME)) . " ms, " . $db->count_queries . " queries taking " . (int)($db->total_query_time * 1000)." ms";
-      $filename = DIR_FS_MY_FILES . 'trace.txt';
-      if (!$handle = fopen($filename, 'w')) return $this->add("Cannot open file ($filename)", "error");
-      if (fwrite($handle, $this->debug_info) === false) return $this->add("Cannot write to file ($filename)","error");
-      fclose($handle);
-	  $this->debug_info = NULL;
-	  $this->add("Successfully created trace.txt file.","success");
+	  	global $db;
+	  	if (strlen($this->debug_info) < 1) return;
+	  	$this->debug_info .= "\n\nPage trace stats: Execution Time: " . (int)(1000 * (microtime(true) - PAGE_EXECUTION_START_TIME)) . " ms, " . $db->count_queries . " queries taking " . (int)($db->total_query_time * 1000)." ms";
+      	$filename = DIR_FS_MY_FILES . 'trace.txt';
+      	if (!$handle = fopen($filename, 'w')) return $this->add("Cannot open file ($filename)", "error");
+      	if (fwrite($handle, $this->debug_info) === false) return $this->add("Cannot write to file ($filename)","error");
+      	fclose($handle);
+	  	$this->debug_info = NULL;
+	  	$this->add("Successfully created trace.txt file.","success");
 	}
   }
 
@@ -441,7 +461,7 @@ class ctl_panel {
 		$output .= '<input type="hidden" name="dashboard_id" value="' . $this->dashboard_id . '" />' . chr(10);
 		$output .= '<input type="hidden" name="column_id" value="' . $this->column_id . '" />' . chr(10);
 		$output .= '<input type="hidden" name="row_id" value="' . $this->row_id . '" />' . chr(10);
-		$output .= '<input type="hidden" name="todo" id="' . $this->dashboard_id . '_action" value="save" />' . chr(10);
+		$output .= '<input type="hidden" name="action" id="' . $this->dashboard_id . '_action" value="save" />' . chr(10);
 		$output .= '</form></td></tr>' . chr(10);
 		$output .= '<tr id="' . $this->dashboard_id . '_hr" style="display:none"><td colspan="4"><hr /></td></tr>' . chr(10);
 		// box contents

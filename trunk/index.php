@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,12 +18,13 @@
 //
 ini_set('display_errors', '0');
 error_reporting(E_ALL ^ E_NOTICE);
-if ($_POST['module'])    $module = $_POST['module'];
-elseif ($_GET['module']) $module = $_GET['module'];
-else                     $module = 'phreedom';
-if ($_POST['page'])      $page = $_POST['page'];
-elseif ($_GET['page'])   $page = $_GET['page'];
-else                     $page = 'main';
+if (isset($_POST['module']))    $module = $_POST['module'];
+elseif (isset($_GET['module'])) $module = $_GET['module'];
+else                            $module = 'phreedom';
+if (isset($_POST['page']))      $page = $_POST['page'];
+elseif (isset($_GET['page']))   $page = $_GET['page'];
+else                     		$page = 'main';
+$user_validated = false;
 require_once('includes/application_top.php');
 if (!$user_validated) {
   if ($page == 'ajax'){
@@ -37,7 +37,7 @@ if (!$user_validated) {
   $_SESSION['pb_type']   = isset($_GET['type'])		? $_GET['type']		: '';
   $module = 'phreedom';
   $page   = 'main';
-  if ($_GET['action'] <> 'validate') $_GET['action'] = 'login';
+  if (!isset($_REQUEST['action']) || $_REQUEST['action'] <> 'validate') $_REQUEST['action'] = 'login';
 } else {
   unset($_SESSION['pb_cat']);
   unset($_SESSION['pb_module']);
@@ -57,7 +57,7 @@ $include_footer   = false;
 $include_template = 'template_main.php';
 $pre_process_path = DIR_FS_MODULES . $module . '/pages/' . $page . '/pre_process.php';
 if (file_exists($pre_process_path)) { define('DIR_FS_WORKING', DIR_FS_MODULES . $module . '/'); }
-  else die('No pre_process file, looking for the file: ' . $pre_process_path);
+  else trigger_error('No pre_process file, looking for the file: ' . $pre_process_path, E_USER_ERROR);
 require($pre_process_path); 
 if (file_exists(DIR_FS_WORKING . 'custom/pages/' . $page . '/' . $include_template)) {
   $template_path = DIR_FS_WORKING . 'custom/pages/' . $page . '/' . $include_template;
