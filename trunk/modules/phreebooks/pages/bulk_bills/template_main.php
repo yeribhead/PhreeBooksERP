@@ -34,7 +34,7 @@ $toolbar->add_help('07.05.01');
 echo $toolbar->build_toolbar(); 
 // Build the page
 ?>
-<h1><?php echo ORD_TEXT_20_V_WINDOW_TITLE; ?></h1>
+<h1><?php echo BOX_BANKING_SELECT_FOR_PAYMENT; ?></h1>
 <div>
  <table class="ui-widget" style="border-style:none;margin-left:auto;margin-right:auto"">
   <tbody class="ui-widget-content">
