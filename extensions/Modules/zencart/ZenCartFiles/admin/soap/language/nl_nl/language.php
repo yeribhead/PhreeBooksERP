@@ -15,9 +15,8 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /admin/soap/language/en_us/language.php
+//  Path: /admin/soap/language/dutch/language.php
 //
-
 define('ZENCART_PRODUCT_TAX_CLASS_ID',2); // sets the record id for the default sales tax to use
 // General defines for SOAP interface
 define('SOAP_NO_USER_PW','The username and password submitted cannot be found in the XML string.');

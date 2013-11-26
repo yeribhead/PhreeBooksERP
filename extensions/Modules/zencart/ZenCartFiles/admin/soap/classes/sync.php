@@ -21,62 +21,68 @@
 require_once('classes/parser.php');
 
 class xml_sync extends parser {
-  function xml_sync() {
-  }
+  	function __construct() {
+  	}
 
-  function processXML($rawXML) {
-//	$rawXML = str_replace('&', '&amp;', $rawXML); // this character causes parser to break
-//echo '<pre>' . $rawXML . '</pre><br>';
-//	if (!$this->parse($rawXML)) {
-	if (!$objXML = $this->xml_to_object($rawXML)) {
-//echo '<pre>' . $rawXML . '</pre><br>';
-//echo 'parsed string at shopping cart = '; print_r($this->arrOutput); echo '<br>';
-	  return false;  // parse the submitted string, check for errors
+  	function processXML($rawXML) {
+	  	try{
+			//	$rawXML = str_replace('&', '&amp;', $rawXML); // this character causes parser to break
+			//echo '<pre>' . $rawXML . '</pre><br>';
+			//	if (!$this->parse($rawXML)) {
+			$objXML = $this->xml_to_object($rawXML);
+			//echo '<pre>' . $rawXML . '</pre><br>';
+			//echo 'parsed string at shopping cart = '; print_r($this->arrOutput); echo '<br>';
+			// try to determine the language used, default to en_us
+			$this->language = $objXML->Request->Language;
+			if (file_exists('language/' . $this->product['language'] . '/language.php')) {
+				require ('language/' . $this->product['language'] . '/language.php');
+			} else {
+				require ('language/en_us/language.php');
+			}
+			$this->validateUser($objXML);
+			$this->syncProducts($this->formatArray($objXML));
+			return true;
+	  		$this->validateUser($objXML);
+			$this->updateDatabase($this->formatArray($objXML));
+			return true;
+	  	}catch(Exception $e){
+	  		$this->responseXML('1', $e->getMessage(), 'error');
+	  	}
 	}
-	// try to determine the language used, default to en_us
-	$this->language = $objXML->Request->Language;
-	if (file_exists('language/' . $this->product['language'] . '/language.php')) {
-	  require ('language/' . $this->product['language'] . '/language.php');
-	} else {
-	  require ('language/en_us/language.php');
-	}
-	if (!$this->validateUser($objXML)) return false;
-	if (!$product = $this->formatArray($objXML)) return false;
-	if (!$this->syncProducts($product)) return false;
-	return true;
-  }
 
-  function formatArray($objXML) { // specific to XML spec for a product sync
-	// Here we map the received xml array to the pre-defined generic structure (application specific format later)
-	$this->reference = $objXML->Request->Reference;
-	$products = array('action' => $objXML->Request->Action);
-	if (is_array($objXML->Request->Product->SKU)) foreach ($objXML->Request->Product->SKU as $item) {
-	  $products['product'][] = $item;
-	}
-	return $products;
-  }
+  	function formatArray($objXML) { // specific to XML spec for a product sync
+		// Here we map the received xml array to the pre-defined generic structure (application specific format later)
+		$this->reference = $objXML->Request->Reference;
+		$products = array('action' => $objXML->Request->Action);
+		if (is_array($objXML->Request->Product->SKU)) foreach ($objXML->Request->Product->SKU as $item) {
+	  		$products['product'][] = $item;
+		}
+		return $products;
+  	}
 
-// The remaining functions are specific to ZenCart. they need to be modified for the specific application.
-// It also needs to check for errors, i.e. missing information, bad data, etc. 
-  function syncProducts($products) {
-	global $db, $messageStack;
-	// error check input
-	if (sizeof($products['product']) == 0) return $this->responseXML('20', SOAP_NO_SKUS_UPLOADED, 'error');
-	if ($products['action'] <> 'Validate') return $this->responseXML('16', SOAP_BAD_ACTION,       'error');
-	
-	$result = $db->Execute("select phreebooks_sku from " . TABLE_PRODUCTS);
-	$missing_skus = array();
-	while(!$result->EOF) {
-	  if (!in_array($result->fields['phreebooks_sku'], $products['product'])) $missing_skus[] = $result->fields['phreebooks_sku'];
-	  $result->MoveNext();
+	/**
+ 	 * The remaining functions are specific to ZenCart. they need to be modified for the specific application.
+ 	 * It also needs to check for errors, i.e. missing information, bad data, etc.
+ 	 */ 
+	function syncProducts($products) {
+		global $db, $messageStack;
+		// error check input
+		if (sizeof($products['product']) == 0) throw new Exception(SOAP_NO_SKUS_UPLOADED);
+		if ($products['action'] <> 'Validate') throw new Exception(SOAP_BAD_ACTION);
+		
+		$result = $db->Execute("select phreebooks_sku from " . TABLE_PRODUCTS);
+		$missing_skus = array();
+		while(!$result->EOF) {
+		  if (!in_array($result->fields['phreebooks_sku'], $products['product'])) $missing_skus[] = $result->fields['phreebooks_sku'];
+		  $result->MoveNext();
+		}
+		// make sure everything went as planned
+		if (sizeof($missing_skus) > 0) {
+		  $text = SOAP_SKUS_MISSING . implode(', ', $missing_skus);
+		  return $this->responseXML('0', $text, 'caution');
+		}
+		$this->responseXML('0', SOAP_PRODUCTS_IN_SYNC, 'success');
+		return true;
 	}
-	// make sure everything went as planned
-	if (sizeof($missing_skus) > 0) {
-	  $text = SOAP_SKUS_MISSING . implode(', ', $missing_skus);
-	  return $this->responseXML('0', $text, 'caution');
-	}
-	$this->responseXML('0', SOAP_PRODUCTS_IN_SYNC, 'success');
-	return true;
-  }
 }
 ?>

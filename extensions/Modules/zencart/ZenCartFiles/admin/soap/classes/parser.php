@@ -21,7 +21,6 @@
 class parser {
 
   function doCURLRequest($method = 'GET', $url, $vars) {
-	global $messageStack;
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_VERBOSE, 0);
@@ -46,8 +45,7 @@ class parser {
 	if ($data != '') {
 	  return $data;
 	} else {
-	  $messageStack->add('ZenCart Interface cURL error: ' . $error, 'error');
-	  return false; 
+	  throw new Exception('ZenCart Interface cURL error: ' . $error);
 	}
   }
 
@@ -59,7 +57,6 @@ class parser {
   }
 
   function xml_to_object($xml = '') {
-    global $messageStack;
     $xml     = trim($xml);
     $output  = NULL;
     $runaway = 0;
@@ -74,13 +71,10 @@ class parser {
 	    $tag = substr($xml, 1, strpos($xml, '>') - 1);
 	    $taglen = strlen($tag) + 2;
 	    $end_tag = '</' . $tag . '>';
-	    if (strpos($xml, $end_tag) === false) {
-	      $messageStack->add('PhreeBooks XML parse error looking for end tag: ' . $tag . ' but could not find it!','error');
-	      return false;
-	    }
+	    if (strpos($xml, $end_tag) === false) throw new Exception('ZenCart XML parse error looking for end tag: ' . $tag . ' but could not find it!');
 	    while(true) {
 		  $runaway++;
-		  if ($runaway > 10000) return $messageStack->add('Runaway counter 1 reached. There is an error in the xml entry!','error');	
+		  if ($runaway > 10000) throw new Exception('Runaway counter 1 reached. There is an error in the xml entry!');	
 	      $data = trim(substr($xml, $taglen, strpos($xml, $end_tag) - $taglen));
 		  if (isset($output->$tag)) {
 		    if (!is_array($output->$tag)) $output->$tag = array($output->$tag);
@@ -96,7 +90,7 @@ class parser {
 	    return $xml;
 	  }
 	  $runaway++;
-	  if ($runaway > 10000) $messageStack->add('Runaway counter 2 reached. There is an error in the xml entry!','error');	
+	  if ($runaway > 10000) throw new Exception('ZenCart Runaway counter 2 reached. There is an error in the xml entry!');	
     }
     return $output;
   }
@@ -121,14 +115,14 @@ class parser {
 	global $db;
 	$this->username = $objXML->Request->UserName;
 	$this->password = $objXML->Request->UserPassword;
-	if (!$this->username || !$this->password) return $this->responseXML('10', SOAP_NO_USER_PW, 'error');
+	if (!$this->username || !$this->password) throw new Exception(SOAP_NO_USER_PW);
 // TBD - This portion is specific to the application database name, fields and password validation methods
 //	if (!is_object($db)) { echo 'the database is not open ...'; return false; }
 	// validate user with db (call validation function)
 	$result = $db->Execute("select admin_pass from " . DB_PREFIX . "admin where admin_name = '" . $this->username . "'");
-	if ($result->RecordCount() == 0) return $this->responseXML('11', SOAP_USER_NOT_FOUND, 'error');
+	if ($result->RecordCount() == 0) throw new Exception( SOAP_USER_NOT_FOUND);
 	if (!zen_validate_password($this->password, $result->fields['admin_pass'])) {
-	  return $this->responseXML('12', SOAP_PASSWORD_NOT_FOUND, 'error');
+	  throw new Exception(SOAP_PASSWORD_NOT_FOUND);
 	}
 	return true; // if both the username and password are correct
   }
@@ -155,7 +149,6 @@ class parser {
 	}
 	$strResponse .= '</Response>';
 	echo $strResponse;
-	return false;
   }
 
 }

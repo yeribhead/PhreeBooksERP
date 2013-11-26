@@ -21,29 +21,30 @@
 require_once('classes/parser.php');
 
 class xml_confirm extends parser {
-  function xml_confirm() {
+  function __construct() {
   }
 
   function processXML($rawXML) {
-//	$rawXML = str_replace('&', '&amp;', $rawXML); // this character causes parser to break
-//echo '<pre>' . $rawXML . '</pre><br>';
-//	if (!$this->parse($rawXML)) {
-	if (!$objXML = $this->xml_to_object($rawXML)) {
-//echo '<pre>' . $rawXML . '</pre><br>';
-//echo 'parsed string at shopping cart = '; print_r($objXML); echo '<br>';
-	  return false;  // parse the submitted string, check for errors
-	}
-	// try to determine the language used, default to en_us
-	$this->language = $objXML->Request->Language;
-	if (file_exists('language/' . $this->language . '/language.php')) {
-	  require ('language/' . $this->language . '/language.php');
-	} else {
-	  require ('language/en_us/language.php');
-	}
-	if (!$this->validateUser($objXML)) return false;
-	if (!$orders = $this->formatArray($objXML)) return false;
-	if (!$this->orderConfirm($orders)) return false;
-	return true;
+  	try{
+		//	$rawXML = str_replace('&', '&amp;', $rawXML); // this character causes parser to break
+		//echo '<pre>' . $rawXML . '</pre><br>';
+		//	if (!$this->parse($rawXML)) {
+		$objXML = $this->xml_to_object($rawXML);
+		//	echo '<pre>' . $rawXML . '</pre><br>';
+		//echo 'parsed string at shopping cart = '; print_r($objXML); echo '<br>';
+		// try to determine the language used, default to en_us
+		$this->language = $objXML->Request->Language;
+		if (file_exists('language/' . $this->language . '/language.php')) {
+		  require ('language/' . $this->language . '/language.php');
+		} else {
+		  require ('language/en_us/language.php');
+		}
+		$this->validateUser($objXML);
+		$this->orderConfirm($this->formatArray($objXML));
+  		return true;
+  	}catch(Exception $e){
+  		$this->responseXML('1', $e->getMessage(), 'error');
+  	}
   }
 
   function formatArray($objXML) { // specific to XML spec for a order confirm
@@ -64,10 +65,10 @@ class xml_confirm extends parser {
 // The remaining functions are specific to ZenCart. they need to be modified for the specific application.
 // It also needs to check for errors, i.e. missing information, bad data, etc. 
   function orderConfirm($orders) {
-	global $db, $messageStack;
+	global $db;
 	// error check input
-	if (sizeof($orders['order']) == 0)  return $this->responseXML('20', SOAP_NO_ORDERS_TO_CONFIRM, 'error');
-	if ($orders['action'] <> 'Confirm') return $this->responseXML('16', SOAP_BAD_ACTION, 'error');
+	if (sizeof($orders['order']) == 0)  throw new Exception(SOAP_NO_ORDERS_TO_CONFIRM);
+	if ($orders['action'] <> 'Confirm') throw new Exception(SOAP_BAD_ACTION);
 
     $order_cnt = 0;
 	$order_list = array();
