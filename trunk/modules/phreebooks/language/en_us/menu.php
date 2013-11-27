@@ -37,7 +37,7 @@ define('ORD_TEXT_18_C_WINDOW_TITLE','Customer Receipts');
 define('ORD_TEXT_18_V_WINDOW_TITLE','Vendor Refunds');
 define('ORD_TEXT_19_WINDOW_TITLE','Pos Sales');
 define('ORD_TEXT_20_C_WINDOW_TITLE','Customer Refunds');
-define('ORD_TEXT_20_V_WINDOW_TITLE','Payments');
+define('ORD_TEXT_20_V_WINDOW_TITLE','Vendor Payments');
 
 define('BOX_BANKING_SELECT_FOR_PAYMENT', 'Pay by Due Date');
 define('BOX_BANKING_BANK_ACCOUNT_REGISTER', 'Bank Account Register');

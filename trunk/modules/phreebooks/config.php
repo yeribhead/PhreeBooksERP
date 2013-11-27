@@ -135,7 +135,7 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
 	);
 	$mainmenu["banking"]['submenu']["vendor_payments"]['submenu']["pay_bills_mgr"] = array(
 	    'order'		  => 25,
-	    'text'        => sprintf(BOX_STATUS_MGR, ORD_TEXT_PAYMENTS_TITLE),
+	    'text'        => sprintf(BOX_STATUS_MGR, ORD_TEXT_20_V_WINDOW_TITLE),
 	    'security_id' => SECURITY_ID_PAYMENTS_STATUS,
 	    'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=20&amp;list=1', 'SSL'),
 	    'show_in_users_settings' => true,
