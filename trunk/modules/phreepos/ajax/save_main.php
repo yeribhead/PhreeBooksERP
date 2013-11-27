@@ -164,11 +164,13 @@ if (file_exists($custom_path)) { include($custom_path); }
 		}
 	}
 	// load the payments
-	$x   = 0;
+	$x   = 1;
 	$tot_paid = 0;
 	while (isset($_POST['meth_' . $x])) { // while there are item rows to read in
-	  $x++;
-	  if (!$_POST['meth_' . $x]) continue;
+	  if (!$_POST['meth_' . $x]) {
+	    $x++;
+		continue;
+	  }
 	  $pmt_meth = $_POST['meth_' . $x];
 	  $pmt_amt  = $currencies->clean_value(db_prepare_input($_POST['pmt_' . $x]), $order->currencies_code) / $order->currencies_value;
 	  $tot_paid += $pmt_amt;
@@ -183,6 +185,16 @@ if (file_exists($custom_path)) { include($custom_path); }
 	  	'f5'   => db_prepare_input($_POST['f5_' . $x]),
 	  	'f6'   => db_prepare_input($_POST['f6_' . $x]),
 	  );
+	  // initialize payment methods
+	  // preset some post variables to fake out the payment methods
+	  $_POST[$pmt_meth . '_field_0'] = $_POST['f0_' . $x];
+	  $_POST[$pmt_meth . '_field_1'] = $_POST['f1_' . $x];
+	  $_POST[$pmt_meth . '_field_2'] = $_POST['f2_' . $x];
+	  $_POST[$pmt_meth . '_field_3'] = $_POST['f3_' . $x];
+	  $_POST[$pmt_meth . '_field_4'] = $_POST['f4_' . $x];
+	  $_POST[$pmt_meth . '_field_5'] = $_POST['f5_' . $x];
+	  $_POST[$pmt_meth . '_field_6'] = $_POST['f6_' . $x];
+	  $x++;
 	}
 	$order->shipper_code = $pmt_meth;  // store last payment method in shipper_code field
     // adding the rounding of line
