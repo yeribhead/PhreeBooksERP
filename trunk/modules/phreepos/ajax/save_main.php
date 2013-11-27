@@ -164,13 +164,11 @@ if (file_exists($custom_path)) { include($custom_path); }
 		}
 	}
 	// load the payments
-	$x   = 1;
+	$x   = 0;
 	$tot_paid = 0;
 	while (isset($_POST['meth_' . $x])) { // while there are item rows to read in
-	  if (!$_POST['meth_' . $x]) {
-	    $x++;
-		continue;
-	  }
+	  $x++;
+	  if (!$_POST['meth_' . $x]) continue;
 	  $pmt_meth = $_POST['meth_' . $x];
 	  $pmt_amt  = $currencies->clean_value(db_prepare_input($_POST['pmt_' . $x]), $order->currencies_code) / $order->currencies_value;
 	  $tot_paid += $pmt_amt;
