@@ -1,4 +1,4 @@
-PreeBooks Open Source ERP
+PhreeBooks Open Source ERP
 =========================
 
 Main code development branch
