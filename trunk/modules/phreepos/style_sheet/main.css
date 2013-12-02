@@ -355,7 +355,7 @@ html>body img#curr_image:hover{
 }
 
 a:link, a:visited, a:active {
-    color: #ffffff;
+    color: inherit;
 }
 
 <!-- styles for ajax popup
