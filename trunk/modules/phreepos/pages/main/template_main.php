@@ -66,8 +66,8 @@ echo $toolbar->build_toolbar();
 <img id='curr_image'>
                      
 <h1><?php echo PAGE_TITLE; ?></h1>
-<h3 id='open_other_options'><?php echo OTHER_OPTIONS; ?></h3>
-<div id='other_options'>
+<h3 id='open_other_options' class="ui-state-default ui-corner-all"><?php echo OTHER_OPTIONS; ?></h3>
+<div id='other_options' class="ui-state-default ui-corner-all">
 <?php echo html_button_field('home', TEXT_HOME, 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"'); ?><br/><br/>
 <?php echo html_button_field('open_sales', POS_PRINT_OTHER,'onclick="OpenOrdrList(this)"');?><br/><br/>
 <?php echo html_button_field('other_trans', TEXT_OTHER_TRANS,'onclick="ShowOtherTrans()"');?><br/><br/>

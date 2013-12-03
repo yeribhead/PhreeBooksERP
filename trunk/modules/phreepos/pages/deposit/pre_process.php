@@ -112,6 +112,7 @@ switch ($_REQUEST['action']) {
 	$order->gl_acct_id          = $gl_acct_id;
 	$order->payment_id          = db_prepare_input($_POST['payment_id']);
 	$order->save_payment        = isset($_POST['save_payment']) ? true : false;
+	$order->waiting				= 1;
 	// load item row data
 	$order->item_rows[] = array(
 	  'id'        => db_prepare_input($_POST['id_1']),

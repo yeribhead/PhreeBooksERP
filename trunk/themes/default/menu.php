@@ -65,7 +65,7 @@ function create_menu(array $array){
 function check_permission(array $array){
 	$valid = false;
 	foreach($array as $menu_item){ 
-		if(isset($array['submenu']) && is_array($menu_item['submenu'])) {
+		if(is_array($menu_item['submenu'])) {
 			if(check_permission($menu_item['submenu'])) $valid = true;
 		}else{
 			if($menu_item['show_in_users_settings'] == false && $menu_item['security_id'] == SECURITY_ID_PHREEFORM) continue;

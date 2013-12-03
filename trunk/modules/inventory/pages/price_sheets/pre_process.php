@@ -118,9 +118,9 @@ switch ($_REQUEST['action']) {
 	  'default_levels' => $result->fields['default_levels'],
 	);
 	db_perform(TABLE_PRICE_SHEETS, $output_array, 'insert');
+	$id = db_insert_id(); // this is used by the edit function later on.
 	// expire the old sheet
 	$db->Execute("UPDATE ".TABLE_PRICE_SHEETS." SET expiration_date='".gen_specific_date($result->fields['effective_date'], 1)."' WHERE id=$old_id");
-	$id = db_insert_id();
 	// Copy special pricing information to new sheet
 	$levels = $db->Execute("select inventory_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where price_sheet_id = $old_id");
 	while (!$levels->EOF){
@@ -129,8 +129,7 @@ switch ($_REQUEST['action']) {
 	  $levels->MoveNext();
 	}
 	gen_add_audit_log(PRICE_SHEETS_LOG . TEXT_REVISE, $result->fields['sheet_name'] . ' Rev. ' . $old_rev . ' => ' . ($old_rev + 1));
-//	$_REQUEST['action'] = 'edit';
-	break; // return to price sheet list, user can edit from there
+	$_REQUEST['action'] = 'edit'; // continue with edit.
   case 'edit':
 	if(!isset($id)) $id = db_prepare_input($_POST['rowSeq']);
 	$result         = $db->Execute("select * from " . TABLE_PRICE_SHEETS . " where id = $id");

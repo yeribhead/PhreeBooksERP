@@ -699,7 +699,7 @@ function BuildSeq($report, $delivery_method = 'D') { // for forms only - Sequent
 		  if ($report->special_class) {
 			$data = $special_form->load_table_data($field->boxfield);
 		  } else {
-			$tblField = array();
+			  $tblField = array();
 			  foreach ($field->boxfield as $key => $TableField) $tblField[] = prefixTables($TableField->fieldname) . ' as r' . $key;
 			  $tblField = implode(', ', $tblField);
 			  $result = $db->Execute("select " . $tblField . $TrailingSQL);

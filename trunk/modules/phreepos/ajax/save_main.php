@@ -186,7 +186,8 @@ if (file_exists($custom_path)) { include($custom_path); }
 	  	'f6'   => db_prepare_input($_POST['f6_' . $x]),
 	  );
 	  // initialize payment methods
-	  // preset some post variables to fake out the payment methods
+	  // preset some post variables to fake out the payment methods, 
+	  // the following lines should be in place because the payment module uses them to return journal lines.
 	  $_POST[$pmt_meth . '_field_0'] = $_POST['f0_' . $x];
 	  $_POST[$pmt_meth . '_field_1'] = $_POST['f1_' . $x];
 	  $_POST[$pmt_meth . '_field_2'] = $_POST['f2_' . $x];

@@ -26,7 +26,6 @@ html>body h3{
     width: 200px;
     height: 90%;
     margin-top: -5px;
-    background:#77d5f7;
     z-index:100; 
     display:none;
 }
@@ -352,10 +351,6 @@ html>body img#curr_image{
 
 html>body img#curr_image:hover{
 	height:300px;
-}
-
-a:link, a:visited, a:active {
-    color: inherit;
 }
 
 <!-- styles for ajax popup

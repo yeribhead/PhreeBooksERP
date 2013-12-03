@@ -38,8 +38,8 @@ var text_search          = '<?php echo TEXT_SEARCH;?>';
 var text_enter_new       = '<?php echo TEXT_ENTER_NEW; ?>';
 var text_properties      = '<?php echo TEXT_PROPERTIES; ?>';
 var post_error           = <?php echo $error ? "true" : "false"; ?>;
-var default_sales_tax    = '-1';
-var contact_sales_tax    = '-1';
+var default_sales_tax    = -1;
+var contact_sales_tax    = -1;
 var image_delete_text    = '<?php echo TEXT_DELETE; ?>';
 var image_delete_msg     = '<?php echo TEXT_DELETE_ENTRY; ?>';
 var store_country_code   = '<?php echo COMPANY_COUNTRY; ?>';
@@ -72,6 +72,8 @@ var newthousands_point   = '';
 function init() {
   document.getElementById('disc_gl_acct_id').value    = default_disc_acct;
   // change color of the bill address fields if they are the default values
+  default_sales_tax    = -1;
+  contact_sales_tax    = -1;
   clearAddress('bill');
   setImage('');
   refreshOrderClock(); 
@@ -279,7 +281,7 @@ function orderFillAddress(xml, type, fill_address) {
 		  document.getElementById('tax_'+rowCnt).value = $(this).find("tax_id").text();
 		  rowCnt++;
 		}
-		if (show_status == '1') {
+		if (show_status == 1) {
 		  window.open("index.php?module=phreebooks&page=popup_status&id="+id,"contact_status","width=500px,height=300px,resizable=0,scrollbars=1,top=150,left=200");
 		}
 		break;
@@ -336,7 +338,7 @@ function fillOrder(xml) {
     // fix some special cases, checkboxes, and active fields
     document.getElementById('display_currency').value = $(this).find("currencies_code").text();
     // disable the purchase_invoice_id field since it cannot change, except purchase/receive
-    if ($(this).find("id").first().text() && journalID != '6' && journalID != '7' && journalID != '21') {
+    if ($(this).find("id").first().text() && journalID != 6 && journalID != 7 && journalID != 21) {
 	  document.getElementById('purchase_invoice_id').readOnly = true;
     }
     if ($(this).find("id").first().text() && securityLevel < 3) { // turn off some icons
@@ -628,10 +630,10 @@ function removePmtRow(index) {
 } 
 
 function rowWithTax(rowCnt){
-	tax_index = document.getElementById('tax_'+rowCnt).value;
+	var tax_index = document.getElementById('tax_'+rowCnt).value;
 	var price = document.getElementById('wtprice_'+rowCnt).value;
 	document.getElementById('wtprice_'+rowCnt).value = formatCurrency(cleanCurrency(price));
-	text = formatCurrency(cleanCurrency(price )/ (1+(tax_rates[tax_index].rate / 100)));
+	var text = formatCurrency(cleanCurrency(price )/ (1+(tax_rates[tax_index].rate / 100)));
 	document.getElementById('price_'+rowCnt).value = text;
 	updateRowTotal(rowCnt, false);
 }
@@ -640,7 +642,7 @@ function updateRowTotal(rowCnt, useAjax) {
 	var unit_price   = cleanCurrency(document.getElementById('price_'+rowCnt).value);
 	var full_price   = cleanCurrency(document.getElementById('full_' +rowCnt).value);
 	var tax_index    = document.getElementById('tax_'+rowCnt).value;
-	if(tax_index == '-1' || tax_index == '') tax_index = 0;
+	if (tax_index == -1 || tax_index == '') tax_index = 0;
 	var wtunit_price = unit_price * (1 +(tax_rates[tax_index].rate / 100));
 	var qty          = parseFloat(document.getElementById('pstd_'+rowCnt).value);
 	if (isNaN(qty)) qty = 1; // if blank or a non-numeric value is in the pstd field, assume one
@@ -744,7 +746,7 @@ function updateTotalPrices() {
   for (var i=1; i<=numRows; i++) {
 	var tax_index    = document.getElementById('tax_'+i).value;
     lineTotal  = parseFloat(cleanCurrency(document.getElementById('total_'+i).value));
-  	if (tax_index != '0') {
+  	if (tax_index != 0) {
 	  if (tax_index == -1 || tax_index == '') { // if the rate array index is not defined
 		tax_index = 0;
 		document.getElementById('tax_'+i).value = tax_index;
@@ -971,7 +973,7 @@ function fillInventory(sXml) {
   		$('#serial_' +rowCnt).show();
   }
   document.getElementById('product_tax_'+rowCnt).value    = $(xml).find("item_taxable").text();
-  if(default_sales_tax == '-1'){
+  if(default_sales_tax == -1){
 	document.getElementById('tax_'   +rowCnt).value       = $(xml).find("item_taxable").text();
   }else{
 	document.getElementById('tax_'   +rowCnt).value       = default_sales_tax;
@@ -994,7 +996,7 @@ function fillInventory(sXml) {
 function changeOfTill(){
 	var tillId = document.getElementById('till_id').value;
 	var qz = document.getElementById('qz');
-	if( tills[tillId].restrictCurrency == '1'){
+	if( tills[tillId].restrictCurrency == 1){
 		$('#display_currency').attr("disabled", true);
 	}else{
 		$('#display_currency').attr("disabled", false);
@@ -1010,11 +1012,11 @@ function changeOfTill(){
 	}
 	var old_tax = default_sales_tax;
 	default_sales_tax = tills[tillId].defaultTax;
-	if(contact_sales_tax == '-1'){
+	if(contact_sales_tax == -1){
 		var rowCnt = 1;
 		while(true) {
 	  		if (!document.getElementById('tax_'+rowCnt)) break;
-	  		if(old_tax != '-1' && tills[tillId].defaultTax == '-1'){
+	  		if(old_tax != -1 && tills[tillId].defaultTax == -1){
 	  			document.getElementById('tax_'+rowCnt).value = document.getElementById('product_tax_'+rowCnt).value;
 	  		}else{
 	  			document.getElementById('tax_'+rowCnt).value = tills[tillId].defaultTax;
@@ -1023,7 +1025,7 @@ function changeOfTill(){
 	  		rowCnt++;
 		}
 	}
-	qz.findPrinter(tills[tillId].printer);
+	if (qz != null) qz.findPrinter(tills[tillId].printer);
 	//if (qz.getVersion() <= '1.4.9' ) alert('update jzebra');
 	set_ot_options();
 	document.getElementById('ot_till_id').value = tillId ;
@@ -1038,7 +1040,7 @@ function monitorPrinting() {
     } else {
       var e = qz.getException();
       if (e != null) {
-	    alert("Exception occured: " + e.getLocalizedMessage());
+	    alert("printing exception occured: " + e.getLocalizedMessage());
 	  }
     }
   } else {
@@ -1211,7 +1213,7 @@ function ajaxPrintAndClean(sXml) { // call back function
 
 function jzebraReady(){
 //	alert('POS is now ready');
-	qz = document.getElementById('qz');
+	//qz = document.getElementById('qz');
 }
 
 //Automatically gets called when applet is done appending a file
@@ -1234,19 +1236,23 @@ function jzebraDoneAppending(){
 }
 
 //Automatically gets called when applet is done finding
-function jzebraDoneFinding() {
+function jzebraDoneFindingPrinters() {
 	var tillId = document.getElementById('till_id').value;
 	var qz = document.getElementById('qz');
-   	if (qz.getPrinter() == null) {
-    	return alert('Error: Can not find Printer ' + tills[tillId].printer); 
+	if (qz != null) {
+		if (qz.getPrinter() == null) {
+    		return alert('Error: Can not find Printer ' + tills[tillId].printer);
+		} 
    	}
 }
 
 // Automatically gets called when the applet is done printing
 function jzebraDonePrinting() {
 	var qz = document.getElementById('qz');
-   	if (qz.getException() != null) {
-    	return alert('Error:' + qz.getExceptionMessage());
+	if (qz != null){
+   		if (qz.getException() != null) {
+    		return alert('printing error:' + qz.getExceptionMessage());
+   		}
    	}
 }
 
@@ -1328,7 +1334,7 @@ function changeOfType(){
 				//show description amount and tax if aplicable.
 				$('.ot_desc').show();
 				$('.ot_amount').show();
-				if(ot_options[i].use_tax == '1'){
+				if(ot_options[i].use_tax == 1){
 					$('.ot_rate').show();
 					$('.ot_tax').show();
 					document.getElementById('ot_rate').value = ot_options[i].taxable;
@@ -1524,6 +1530,7 @@ function disablePopup(){
 function setImage(src){
 	if (src == ''){
 		$('#curr_image').hide();
+		$('#curr_image').attr('src', '');
 	}else{
 		$('#curr_image').show();
 		$('#curr_image').attr('src', src);

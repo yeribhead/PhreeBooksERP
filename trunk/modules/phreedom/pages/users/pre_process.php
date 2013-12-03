@@ -16,7 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/pages/users/pre_process.php
 //
-$security_level = validate_user(SECURITY_ID_USERS);
+if($_SESSION['admin_id'] == 1) $security_level = 4;
+else $security_level = validate_user(SECURITY_ID_USERS);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 gen_pull_language('contacts');

@@ -133,7 +133,7 @@ echo $toolbar->build_toolbar();
 </fieldset>  
 
 <table id="payment_table" class="ui-widget" style="border-collapse:collapse;">
-	<caption><?php echo html_button_field('payment', TEXT_PAYMENT, 'onclick="popupPayment()"'); ?></caption>
+	<caption class="ui-state-default ui-corner-all"><?php echo html_button_field('payment', TEXT_PAYMENT, 'onclick="popupPayment()"'); ?></caption>
 	<thead class="ui-widget-header">
 		<tr>
 			<th class="dataTableHeadingContent"></th>

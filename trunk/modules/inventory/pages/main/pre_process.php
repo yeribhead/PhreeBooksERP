@@ -28,7 +28,7 @@ $error       = false;
 $processed   = false;
 $criteria    = array();
 $fields		 = new inventory_fields();
-$type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : 'si'; // default to stock item
+$type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : null; // default to stock item
 if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
 if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $first_entry = isset($_GET['add']) ? true : false;
