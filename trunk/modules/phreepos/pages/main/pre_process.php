@@ -85,7 +85,7 @@ foreach ($payment_modules as $key => $pmts) {
 }
 //check if setting are right for usage of phreepos 
 if(count($payment_modules) < 1 ){
-	$messageStack->add_session(ERROR_NO_PAYMENT_METHODES, 'error');
+	$messageStack->add(ERROR_NO_PAYMENT_METHODES, 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }
 if(AR_TAX_BEFORE_DISCOUNT == false && PHREEPOS_DISCOUNT_OF == true ){ // tax after discount
