@@ -65,7 +65,7 @@ class phreebooks_admin {
 	  'AR_ADD_SALES_TAX_TO_SHIPPING'   => '0',
 	  'AUTO_INC_CUST_ID'               => '0',
 	  'AR_SHOW_CONTACT_STATUS'         => '0',
-	  'AR_TAX_BEFORE_DISCOUNT'         => '1',
+	  'AR_TAX_BEFORE_DISCOUNT'         => '0',
 	  'AP_DEFAULT_INVENTORY_ACCOUNT'   => '1200',
 	  'AP_DEFAULT_PURCHASE_ACCOUNT'    => '2000',
 	  'AP_PURCHASE_INVOICE_ACCOUNT'    => '1020',
@@ -89,7 +89,7 @@ class phreebooks_admin {
 	  'AP_ADD_SALES_TAX_TO_SHIPPING'   => '0',
 	  'AUTO_INC_VEND_ID'               => '0',
 	  'AP_SHOW_CONTACT_STATUS'         => '0',
-	  'AP_TAX_BEFORE_DISCOUNT'         => '1',
+	  'AP_TAX_BEFORE_DISCOUNT'         => '0',
 	);
 	// add new directories to store images and data
 	$this->dirlist = array(
