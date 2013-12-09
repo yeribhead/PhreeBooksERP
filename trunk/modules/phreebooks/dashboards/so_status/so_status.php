@@ -65,7 +65,10 @@ class so_status extends ctl_panel {
 			$contents = ACT_NO_RESULTS;
 		} else {
 			while (!$result->EOF) {
-				$contents .= '<div style="float:right">' . $currencies->format_full($result->fields['total_amount'], true, $result->fields['currencies_code'], $result->fields['currencies_value']) . '</div>';
+			  	$contents .= '<div style="float:right">' ;
+			  	$contents .= html_button_field('invoice_' . $result->fields['id'], TEXT_INVOICE, 'onclick="window.open(\'' . html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=orders&amp;oID=' . $result->fields['id'] . '&amp;jID=12&amp;action=prc_so', 'SSL') . '\',\'_blank\')"') . "  ";
+				$contents .= $currencies->format_full($result->fields['total_amount'], true, $result->fields['currencies_code'], $result->fields['currencies_value']); 
+				$contents .= '</div>';
 				$contents .= '<div>';
 				$contents .= '<a href="' . html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=orders&amp;oID=' . $result->fields['id'] . '&amp;jID=10&amp;action=edit', 'SSL') . '">';
 				$contents .= $result->fields['purchase_invoice_id'] . ' - ';
