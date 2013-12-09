@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -141,10 +140,8 @@ function processEditJournal(sXml) {
   // delete the rows
   while (document.getElementById("item_table").rows.length > 0) document.getElementById("item_table").deleteRow(-1);
   // turn off some icons
-  if (id && securityLevel < 3) {
-	removeElement('tb_main_0', 'tb_icon_recur');
-	removeElement('tb_main_0', 'tb_icon_save');
-  }
+  if (id && securityLevel < 3) removeElement('tb_main_0', 'tb_icon_save');
+  removeElement('tb_main_0', 'tb_icon_recur');// turn off recur if transaction already saved
   // fill item rows
   var jIndex = 1;
   $(xml).find("items").each(function() {

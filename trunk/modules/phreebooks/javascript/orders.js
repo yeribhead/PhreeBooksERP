@@ -270,9 +270,9 @@ function fillOrder(xml) {
 	  removeElement('tb_main_0', 'tb_icon_save');
 	  removeElement('tb_main_0', 'tb_icon_payment');
 	  removeElement('tb_main_0', 'tb_icon_save_as_so');
-	  removeElement('tb_main_0', 'tb_icon_recur');
 	  removeElement('tb_main_0', 'tb_icon_ship_all');
     }
+	removeElement('tb_main_0', 'tb_icon_recur');
     // fill inventory rows and add a new blank one
     var order_discount = formatted_zero;
     var jIndex = 1;
