@@ -299,7 +299,7 @@ if (defined('MODULE_PHREEBOOKS_STATUS')) {
 	);
   	$mainmenu["vendors"]['submenu']["orders"] = array(
   	  	'order'		  => 20,
-    	'text'        => ORD_TEXT_ORDERS_TITLE, 
+    	'text'        => ORD_TEXT_4_WINDOW_TITLE, 
 	    'link'        => '',//html_href_link(FILENAME_DEFAULT, 'module=phreebooks&amp;page=status&amp;jID=4&amp;list=1', 'SSL'),
   		'show_in_users_settings' => false,
 	    'params'      => '',
