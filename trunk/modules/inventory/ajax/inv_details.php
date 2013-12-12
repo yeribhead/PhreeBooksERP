@@ -33,7 +33,7 @@ $cID    = db_prepare_input($_GET['cID']); // specifies the contact ID
 $jID    = db_prepare_input($_GET['jID']); // specifies the journal ID
 $rID    = db_prepare_input($_GET['rID']); // specifies the row to update
 $qty    = db_prepare_input($_GET['qty']); // specifes the quantity (for pricing)
-$strict = isset($_GET['strict']) ? true : false; // specifes strict match of sku value
+$strict = isset($_GET['strict']) ? $_GET['strict'] : false; // specifes strict match of sku value
 // some error checking
 if (!$sku && !$UPC && !$iID) {
 	echo createXmlHeader() . xmlEntry('error', AJAX_INV_NO_INFO) . createXmlFooter();
@@ -45,48 +45,51 @@ if(!$UPC && !$iID && (validate_UPCABarcode($sku) || validate_EAN13Barcode($sku) 
 }
 // Load the sku information
 if ($iID) {
-  $search = " where id = '" . $iID . "'";
+  $search = " where id = '$iID'";
 } else if ($UPC) {
-  $search = " where upc_code = '" . $UPC . "'";
+  $search = " where upc_code = '$UPC'";
 } else if ($strict){ // exact search for sku match
-  $search = " where sku = '" . $sku . "'";
+  $search = " where sku = '$sku'";
 } else { // broad search for a match
   $search_fields = array('sku', 'upc_code', 'description_short', 'description_sales', 'description_purchase');
-  $search = ' where ' . implode(' like \'%' . $sku . '%\' or ', $search_fields) . ' like \'%' . $sku . '%\'';
+  $search = " where " . implode(" like '%$sku%' or ", $search_fields) . " like '%$sku%'";
 }
-
-$vendor        = in_array($jID, array(3,4,6,7)) ? true : false;
-if ($vendor && $strict == false && $UPC == false) { // just search for products from that vendor for purchases
- 	$v_search_fields = array('a.sku', 'a.upc_code', 'a.description_short', 'a.description_sales', 'p.description_purchase' );
-  	$first_search = ' where ' . implode(' like \'%' . $sku . '%\' or ', $v_search_fields) . ' like \'%' . $sku . '%\'  and p.vendor_id = "' . $cID . '"';
-  	$purchase     = $db->Execute("select a.id as id, p.vendor_id as vendor_id, p.description_purchase as description_purchase, p.purch_package_quantity as purch_package_quantity, 
-  	p.purch_taxable as purch_taxable, p.item_cost as item_cost, p.price_sheet_v as price_sheet_v from " . TABLE_INVENTORY . " a join " . TABLE_INVENTORY_PURCHASE . " p on a.sku = p.sku " . $first_search);
-  	if($purchase->recordCount() == 1){
-  		$search = " where id = '" . $purchase->fields['id'] . "'";
-  	}
-} 
-$inventory = $db->Execute("select * from " . TABLE_INVENTORY . $search);
 
 if (!$bID) $bID = 0; // assume only one branch or main branch if not specified
 if ($cID) $xml .= xmlEntry("cID", $cID);
 if ($jID) $xml .= xmlEntry("jID", $jID);
 if ($rID) $xml .= xmlEntry("rID", $rID);
 
-if ($UPC && $inventory->RecordCount() <> 1) { // for UPC codes submitted only, send an error
-	$xml .= xmlEntry('error', ORD_JS_SKU_NOT_UNIQUE);
-	$xml .= xmlEntry("qty", 1);
-  	echo createXmlHeader() . $xml . createXmlFooter();
-  	die;
-} elseif ($inventory->RecordCount() <> 1) { // need to return something to avoid error in FireFox
-	$xml .= xmlEntry('result', 'Not enough or too many hits, exiting!');
+$vendor = in_array($jID, array(3,4,6,7)) ? true : false;
+if ($vendor && !$iID && $strict == false && $UPC == false) { // just search for products from that vendor for purchases
+ 	$v_search_fields = array('a.sku', 'a.upc_code', 'a.description_short', 'a.description_sales', 'p.description_purchase' );
+  	$first_search = " where " . implode(" like '%$sku%' or ", $v_search_fields) . " like '%$sku%' and p.vendor_id = '$cID' and a.inactive = '0'";
+  	$purchase     = $db->Execute("select DISTINCT a.id as id, p.vendor_id as vendor_id, p.description_purchase as description_purchase, p.purch_package_quantity as purch_package_quantity, 
+  	p.purch_taxable as purch_taxable, p.item_cost as item_cost, p.price_sheet_v as price_sheet_v from " . TABLE_INVENTORY . " a LEFT JOIN " . TABLE_INVENTORY_PURCHASE . " p on a.sku = p.sku $first_search GROUP BY a.sku");
+  	if($purchase->recordCount() == 1){
+  		$search = " where id = '" . $purchase->fields['id'] . "'";
+  	}elseif($purchase->recordCount() != 0){
+  		$messageStack->add(sprintf("Too many hits for row %s!", $rID), "error");
+		$xml .= xmlEntry("qty", 1);
+  		echo createXmlHeader() . $xml . createXmlFooter();  
+  		die;
+  	}
+} 
+$inventory = $db->Execute("select * from " . TABLE_INVENTORY . $search . " and inactive = '0'");
+if ($inventory->RecordCount() == 0 ){//second try with inactive items
+	$inventory = $db->Execute("select * from " . TABLE_INVENTORY . $search);
+}
+if ($inventory->RecordCount() != 1) { // need to return something to avoid error in FireFox
+	if($UPC) 	$messageStack->add(sprintf(ORD_JS_SKU_NOT_UNIQUE, $rID), "error"); // for UPC codes submitted only, send an error
+	else 		$messageStack->add(sprintf("Not enough or too many hits for row %s!", $rID), "caution");
 	$xml .= xmlEntry("qty", 1);
   	echo createXmlHeader() . $xml . createXmlFooter();  
   	die;
 }
 foreach ($inventory->fields as $key => $value) $inventory_array[$key] = $value;
 if($vendor) {
-	$purchase  = $db->Execute("select vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v from " . TABLE_INVENTORY_PURCHASE . " where sku = '" .$inventory_array['sku']."' and vendor_id = '" . $cID . "'" );
-	if($purchase->RecordCount() == 1 )foreach ($purchase->fields as $key => $value) $inventory_array[$key] = $value;
+	$purchase  = $db->Execute("select vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v from " . TABLE_INVENTORY_PURCHASE . " where sku = '" .$inventory_array['sku']."' and vendor_id = '$cID'" );
+	if($purchase->RecordCount() == 1 ) foreach ($purchase->fields as $key => $value) $inventory_array[$key] = $value;
 	$purchase  = $db->Execute("select MIN(item_cost) as cheapest from " . TABLE_INVENTORY_PURCHASE . " where sku = '" .$inventory_array['sku']."'" );
 	if( $jID == 4 && $inventory_array['price_sheet_v'] == '' && $inventory_array['item_cost'] >= $purchase->fields['cheapest'] &&
 	  abs($inventory_array['item_cost'] - $purchase->fields['cheapest']) > 0.00001 ) $stock_note[] = sprintf(INV_CHEAPER_ELSEWHERE, $inventory_array['sku']);
@@ -96,13 +99,15 @@ if($vendor) {
 }
 if($inventory_array['purch_package_quantity'] == 0) $inventory_array['purch_package_quantity'] = 1;
 if (!$qty){
-	if($jID == 4 && $inventory_array['reorder_quantity'] != 0) {
+	if($jID == 6 && $inventory_array['purch_package_quantity'] != 0) {
+		$qty = $inventory_array['purch_package_quantity'];
+	}elseif($jID == 4 && $inventory_array['reorder_quantity'] != 0) {
 		$qty = ceil($inventory_array['reorder_quantity'] / $inventory_array['purch_package_quantity']); 
 	}else{
 		$qty = 1; // assume that one is required, will set to 1 on the form
 	}
 }
-$xml .= xmlEntry("qty", $qty); // assume that one is required, will set to 1 on the form
+$xml .= xmlEntry("qty", $qty); 
 $iID = $inventory_array['id']; // set the item id (just in case UPC or sku was the only identifying parameter)
 $sku = $inventory_array['sku'];
 // fix some values for special cases
@@ -114,7 +119,7 @@ $inventory_array['branch_qty_in_stock'] = (strpos(COG_ITEM_TYPES,$inventory_arra
 // Load the assembly information
 $assy_cost = 0;
 if ($inventory_array['inventory_type'] == 'ma' || $inventory_array['inventory_type'] == 'sa') {
-  $result = $db->Execute("select sku, qty from " . TABLE_INVENTORY_ASSY_LIST . " where ref_id = '" . $iID . "'");
+  $result = $db->Execute("select sku, qty from " . TABLE_INVENTORY_ASSY_LIST . " where ref_id = '$iID'");
   $bom    = array();
   while (!$result->EOF) {
 	$sql = "select description_short, inventory_type, item_cost, quantity_on_hand from " . TABLE_INVENTORY . " where sku = '" . $result->fields['sku'] . "'";
@@ -138,7 +143,7 @@ if ($inventory_array['inventory_type'] == 'ma' || $inventory_array['inventory_ty
   $assy_cost = $inventory_array['item_cost'];
 }
 // load where used
-$result = $db->Execute("select ref_id, qty from " . TABLE_INVENTORY_ASSY_LIST . " where sku = '" . $sku . "'");
+$result = $db->Execute("select ref_id, qty from " . TABLE_INVENTORY_ASSY_LIST . " where sku = '$sku'");
 if ($result->RecordCount() == 0) {
   $sku_usage = array(JS_INV_TEXT_USAGE_NONE);
 } else {

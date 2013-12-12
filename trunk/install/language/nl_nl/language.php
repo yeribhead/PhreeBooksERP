@@ -7,7 +7,6 @@
 // Version: 3.3
 // +-----------------------------------------------------------------+
 // Path: /Iinstall/language/nl_nl/language.php
-
 define('LANGUAGE','Nederlands (NL)');
 define('HTML_PARAMS','lang="nl-NL" xml:lang="nl-NL"');
 define('CHARSET','UTF-8');

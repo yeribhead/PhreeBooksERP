@@ -495,9 +495,8 @@
   }
 
 function saveUploadZip($file_field, $dest_dir, $dest_name) {
-	global $messageStack;
 	if ($_FILES[$file_field]['error']) { // php error uploading file
-		$messageStack->add(TEXT_IMP_ERMSG5 . $_FILES[$file_field]['error'], 'error');
+		throw new Exception(TEXT_IMP_ERMSG5 . $_FILES[$file_field]['error']);
 	} elseif ($_FILES[$file_field]['size'] > 0) {
 		require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 		$backup              = new backup();
@@ -2032,13 +2031,17 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
 function PhreebooksExceptionHandler($exception) {
 	global $messageStack;
 	if ($_POST['page'] == 'ajax' || $_GET['page'] == 'ajax'){
-    	echo createXmlHeader() . xmlEntry('error', "Exception: " , $exception->getMessage()) . createXmlFooter();
+    	echo createXmlHeader() . xmlEntry('MessageStack error', "Exception: " . $exception->getMessage()) . createXmlFooter();
         die();
     }
     $messageStack->add($exception->getMessage(), 'error');
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
-    $text .= " EXCEPTION: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
+    $text .= " Exception: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
     if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+	if ($_REQUEST['page'] == 'ajax'){
+    	echo createXmlHeader() . createXmlFooter();
+        die();
+    }
 }
 
 function Phreebooks_autoloader($class){

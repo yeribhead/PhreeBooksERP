@@ -226,9 +226,9 @@ function formatPrecise(amount) { // convert to expected currency format with the
   }
 }
 
-function AlertError(MethodName,e)  {
-  if (e.description == null) { alert(MethodName + " Exception: " + e.message); }
-  else {  alert(MethodName + " Exception: " + e.description); }
+function AlertError(MethodName, e)  {
+  if (e.description == null) { alert(MethodName + " method Exception: " + e.message); }
+  else {  alert(MethodName + " method Exception: " + e.description); }
 }
 
 // Chart functions
@@ -466,28 +466,42 @@ function parseXml(xml) {
     xmlDoc.loadXML(xml);
     xml = xmlDoc;
   }
-  var error = null;
-  var msg   = null;
-  var caution = null;
-  if ($(xml).find("debug").text()) alert($(xml).find("debug").text());
+  var error = '';
+  var msg = '';
+  var caution = '';
+  if ($(xml).find("debug").text() != '') alert($(xml).find("debug").text());
   $(xml).find("messageStack").each(function() {
-	  if ($(this).find("messageStack_error").text()){
+	  if ($(this).find("messageStack_error").text() != ''){
 		  error += $(this).find("messageStack_error").text() + "\n";
-	  }else if ($(xml).find("messageStack_msg").text()){
+	  }else if ($(xml).find("messageStack_msg").text() != ''){
 		  msg += $(this).find("messageStack_msg").text() + "\n";
-	  }else if ($(xml).find("messageStack_caution").text()){
+	  }else if ($(xml).find("messageStack_caution").text() != ''){
 		  caution += $(this).find("messageStack_caution").text() + "\n";
 	  }
-  });  
-  if (error != null ) {
-	  alert("error : " + error);
+  });
+  if (error) {
+	  $.messager.show({
+		  title:'Error',
+		  msg: error,
+		  timeout:0,
+		  showType:'fade'
+	  });  
 	  return false;
   }
-  if (msg != null ) {
-	  alert("msg : " + msg);
+  if (msg) {
+	  $.messager.show({
+		  title:'MessageStack msg',
+		  msg: msg,
+		  timeout:0,
+		  showType:'fade'
+	  });
   }
-  if (caution != null ) {
-	  alert("caution : " + caution);
+  if (caution) {
+	  $.messager.show({
+		  title:'MessageStack Caution',
+		  msg: caution,
+		  showType:'show'
+	  });
   }
   if ($(xml).find("error").text()) {
     alert($(xml).find("error").text());

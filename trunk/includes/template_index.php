@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,8 +21,14 @@ if ($custom_html) { // load the template only as the rest of the html will be ge
 } else {
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" <?php echo HTML_PARAMS; ?>>
+<html <?php echo HTML_PARAMS; ?>>
  <head>
+  <script type="text/javascript">
+    window.onerror = function(msg, url, linenumber) {
+        alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
+        return true;
+    }
+  </script>
   <!-- module: <?php echo $module; ?> - page: <?php echo $page; ?> -->
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>" />
 <?php if ($force_reset_cache) { header("Cache-Control: no-cache, must-revalidate"); header("Expires: ".date('D, j M \2\0\0\0 G:i:s T')); } ?>  
@@ -32,6 +37,8 @@ if ($custom_html) { // load the template only as the rest of the html will be ge
   <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES.'css/'.MY_COLORS.'/stylesheet.css'; ?>" />
   <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES.'css/'.MY_COLORS.'/jquery_datatables.css'; ?>" />
   <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES.'css/'.MY_COLORS.'/jquery-ui.css'; ?>" />
+  <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES.'css/'.MY_COLORS.'/easyui.css'; ?>" />
+  <link rel="stylesheet" type="text/css" href="<?php echo DIR_WS_THEMES.'css/icon.css'; ?>" />
   <script type="text/javascript">
   var module              = '<?php echo $module; ?>';
   var pbBrowser           = (document.all) ? 'IE' : 'FF';
@@ -55,6 +62,7 @@ if ($custom_html) { // load the template only as the rest of the html will be ge
   <script type="text/javascript" src="includes/jquery-1.6.2.min.js"></script>
   <script type="text/javascript" src="includes/jquery-ui-1.8.16.custom.min.js"></script>
   <script type="text/javascript" src="includes/jquery.dataTables.min.js"></script>
+  <script type="text/javascript" src="includes/jquery.easyui.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="includes/common.js"></script>
 <?php 

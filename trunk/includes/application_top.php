@@ -41,21 +41,23 @@ define('DIR_FS_MY_FILES',  DIR_FS_ADMIN . PATH_TO_MY_FILES);
 define('DIR_FS_THEMES',    DIR_FS_ADMIN . 'themes/');
 define('FILENAME_DEFAULT', 'index');
 // set the type of request (secure or not)
-$request_type = (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1' || strstr(strtoupper($_SERVER['HTTP_X_FORWARDED_BY']),'SSL') || strstr(strtoupper($_SERVER['HTTP_X_FORWARDED_HOST']),'SSL')) ? 'SSL' : 'NONSSL';
+$request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '1' || strstr(strtoupper($_SERVER['HTTP_X_FORWARDED_BY']),'SSL') || strstr(strtoupper($_SERVER['HTTP_X_FORWARDED_HOST']),'SSL'))) ? 'SSL' : 'NONSSL';
 // define the inventory types that are tracked in cost of goods sold
 define('COG_ITEM_TYPES','si,sr,ms,mi,ma,sa');
 @ini_set('session.gc_maxlifetime', (SESSION_TIMEOUT_ADMIN < 900 ? (SESSION_TIMEOUT_ADMIN + 900) : SESSION_TIMEOUT_ADMIN));
 $_REQUEST = array_merge($_GET, $_POST);
+// The line below breaks the $_REQUEST string as array_map expects 2 parameters and the second array is null thus erasing all the values in $_REQUEST while keeping the keys.
+//$_REQUEST = array_map('mysql_real_escape_string', $_REQUEST); // this should pas all variables in the $_REQUEST pas the db_prepare_input function
 session_start();
 $session_started = true;
 // set the language
 if   (isset($_GET['language'])) { $_SESSION['language'] = $_GET['language']; } 
 elseif (!$_SESSION['language']) { $_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us'; }
 // see if the user is logged in
-$user_validated = ($_SESSION['admin_id']) ? true : false;
+$user_validated = isset($_SESSION['admin_id']) ? true : false;
 // load general language translation, Check for global define overrides first
 $path = DIR_FS_MODULES . 'phreedom/custom/language/' . $_SESSION['language'] . '/language.php';
-if (file_exists($path)) { include($path); }
+if (file_exists($path)) { require_once($path); }
 $path = DIR_FS_MODULES . 'phreedom/language/' . $_SESSION['language'] . '/language.php';
 if (file_exists($path)) { require_once($path); } 
 else { require_once(DIR_FS_MODULES . 'phreedom/language/en_us/language.php'); }
@@ -96,6 +98,7 @@ if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
   }
   // search the list modules and load configuration files and language files
   gen_pull_language('phreedom', 'menu');
+  gen_pull_language('phreebooks', 'menu');
   require_once(DIR_FS_MODULES . 'phreedom/config.php');
   $messageStack->debug_header();
   $loaded_modules = array();

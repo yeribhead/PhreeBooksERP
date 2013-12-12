@@ -55,11 +55,22 @@ function install_lang($module, $lang = 'en_us', $file = 'menu') {
 }
 
 function load_full_access_security() {
-	global $menu;
-	foreach ($menu as $value) $security .= $value['security_id'] . ':4,';
-	if (!$security) $security = '1:4,'; // if loading security tokens fails this will allow access to the user menu
-	$security = substr($security, 0, -1);
-	return $security;
+	global $mainmenu;
+	$securitys = null;
+	foreach($mainmenu as $menu_item){ 
+		$securitys .= create_id($menu_item);
+	}
+	if ($securitys == null) return '1:4,';
+	else return $securitys;
 }
 
+function create_id($array){
+	$securitys = '';
+	if(isset($array['submenu'])) foreach($array['submenu'] as $menu_item){ 
+		$securitys .= create_id($menu_item);
+	}else{
+		if(isset($array['security_id'])) $securitys = $array['security_id'] . ':4,';
+	}
+	return $securitys;
+}
 ?>

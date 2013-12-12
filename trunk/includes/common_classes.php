@@ -308,23 +308,23 @@ class objectInfo {
 		foreach ($_SESSION['messageToStack'] as $value) {
 			if ($value['type'] == 'error') {
 				foreach (explode("\n",$value['message']) as $temp){
-					$xml .= xmlEntry("messageStack_error", $temp['message']);
+					if($temp != '') $xml .= xmlEntry("messageStack_error", gen_js_encode($temp));
 				}
       		} elseif ($value['type'] == 'success') {
 	    		if (!HIDE_SUCCESS_MESSAGES) foreach (explode("\n",$value['message']) as $temp){
-					$xml .= xmlEntry("messageStack_msg", $temp['message']);
+					if($temp != '') $xml .= xmlEntry("messageStack_msg", gen_js_encode($temp));
 				}  
       		} elseif ($value['type'] == 'caution' || $type == 'warning') {
       			foreach (explode("\n",$value['message']) as $temp){
-					$xml .= xmlEntry("messageStack_caution", $temp['message']);
+					if($temp != '') $xml .= xmlEntry("messageStack_caution", gen_js_encode($temp));
 				}
       		} else {
       			foreach (explode("\n",$value['message']) as $temp){
-					$xml .= xmlEntry("messageStack_error", $temp['message']);
+					if($temp != '') $xml .= xmlEntry("messageStack_error", gen_js_encode($temp));
 				}
       		}
 	  	}
-	  	$xml .= "</messageStack>\n";
+	  	$xml .= "</messageStack>\n ";
 	  	$this->reset();
       	return $xml;
     }
@@ -425,15 +425,23 @@ class ctl_panel {
 	  	$output = '';
 	  	if($this->version < 3.5 || ! $this->version ) $output .= 'update dashboard ' . $this->title . '<br/>';
 		$output .= '<!--// start: ' . $this->dashboard_id . ' //-->' . chr(10);
-		$output .= '<div id="' . $this->dashboard_id . '" style="position:relative;">' . chr(10);
-		$output .= '<table class="ui-widget" style="border-collapse:collapse;width:100%">' . chr(10);
-		$output .= '<thead class="ui-widget-header">' . chr(10);
-		$output .= '<tr>' . chr(10);
+//		id="p" class="easyui-panel" title="Panel Tools" style="width:500px;height:200px;padding:10px;"
+//data-options="iconCls:'icon-save',collapsible:true,minimizable:true,maximizable:true,closable:true">
+		$output .= '<div id="'.$this->dashboard_id.'" style="position:relative;" class="easyui-panel" title="'.$this->title.'" data-options="minimizable:true,maximizable:true,closable:true,tools:\'#'.$this->dashboard_id.'_tt\'">' . chr(10);
+//		$output .= '<table class="ui-widget" style="border-collapse:collapse;width:100%">' . chr(10);
+//		$output .= '<thead class="ui-widget-header">' . chr(10);
+//		$output .= '<tr>' . chr(10);
 		// heading text
-		$output .= '<td style="width:90%">' . $this->title . '&nbsp;</td>' . chr(10);
+		$output .= '<div id="'.$this->dashboard_id.'_tt">' . chr(10);
+//		$output .= '	<a href="javascript:void(0)" class="icon-add"  onclick="javascript:alert('add')"></a>' . chr(10);
+		$output .= '	<a href="javascript:void(0)" class="icon-edit" onclick="return box_edit(\''.$this->dashboard_id.'\')"></a>' . chr(10);
+		$output .= '	<a href="javascript:void(0)" class="icon-cut"  onclick="return del_box(\'' . $this->dashboard_id . '\')"></a>' . chr(10);
+		//$output .= '	<a href="javascript:void(0)" class="icon-help" onclick="javascript:alert(help)"></a>' . chr(10);
+		$output .= '</div>' . chr(10);
+//		$output .= '<td style="width:90%">' . $this->title . '&nbsp;</td>' . chr(10);
 		// edit/cancel image (text)
-		$output .= '<td>' . chr(10);
-		$output .= '  <div id="'.$this->dashboard_id.'_add"><a href="javascript:void(0)" onclick ="return box_edit(\''.$this->dashboard_id.'\');">';
+		$output .= '<table style="border-collapse:collapse;width:100%">'. chr(10);
+/*		$output .= '  <div id="'.$this->dashboard_id.'_add"><a href="javascript:void(0)" onclick ="return box_edit(\''.$this->dashboard_id.'\');">';
 		$output .= html_icon('categories/preferences-system.png', TEXT_PROPERTIES, $size = 'small', '', '16', '16');
 		$output .= '  </a></div>' . chr(10);
 		$output .= '  <div id="'.$this->dashboard_id . '_can" style="display:none"><a href="javascript:void(0)" onclick ="return box_cancel(\'' . $this->dashboard_id . '\');">';
@@ -451,7 +459,7 @@ class ctl_panel {
 		$output .= html_icon('emblems/emblem-unreadable.png', TEXT_REMOVE, $size = 'small');
 		$output .= '</a>' . chr(10);
 		$output .= '</td></tr>' . chr(10);
-		$output .= '</thead>' . chr(10);
+		$output .= '</thead>' . chr(10);*/
 		// properties contents
 		$output .= '<tbody class="ui-widget-content">' . chr(10);
 		$output .= '<tr id="' . $this->dashboard_id . '_prop" style="display:none"><td colspan="4">' . chr(10);
@@ -541,7 +549,7 @@ class currencies {
   public $currencies = array();
   
   function __construct() {
-    global $db, $messageStack;
+    global $db;
     $currencies = $db->Execute("select * from " . TABLE_CURRENCIES);
     while (!$currencies->EOF) {
 	  $this->currencies[$currencies->fields['code']] = array(
@@ -557,7 +565,7 @@ class currencies {
       $currencies->MoveNext();
     }
 	if (DEFAULT_CURRENCY == '') { // do not put this in the translation file, it is loaded before the language file is loaded.
-	  $messageStack->add('You do not have a default currency set, PhreeBooks requires a default currency to operate properly! Please set the default currency in Setup -> Currencies.', 'error');
+	  trigger_error('You do not have a default currency set, PhreeBooks requires a default currency to operate properly! Please set the default currency in Setup -> Currencies.');
 	}
   }
 
@@ -631,161 +639,132 @@ class currencies {
 // Section 7. Class encryption
 /**************************************************************************************************************/
 class encryption {
-  private $scramble1	= '';
-  private $scramble2	= '';
-  public  $errors		= array();
-  private $adj			= 1.75;
-  private $mod			= 3;
+  	private $scramble1	= '';
+  	private $scramble2	= '';
+  	private $adj		= 1.75;
+  	private $mod		= 3;
 
-  function __construct() {
-	$this->scramble1 = '! #$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-	$this->scramble2 = 'f^jAE]okIOzU[2&q1{3`h5w_794p@6s8?BgP>dFV=m D<TcS%Ze|r:lGK/uCy.Jx)HiQ!#$~(;Lt-R}Ma,NvW+Ynb*0X';
-	if (strlen($this->scramble1) <> strlen($this->scramble2)) {
-		trigger_error('** SCRAMBLE1 is not same length as SCRAMBLE2 **', E_USER_ERROR);
-	}
-  }
+  	function __construct() {
+		$this->scramble1 = '! #$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+		$this->scramble2 = 'f^jAE]okIOzU[2&q1{3`h5w_794p@6s8?BgP>dFV=m D<TcS%Ze|r:lGK/uCy.Jx)HiQ!#$~(;Lt-R}Ma,NvW+Ynb*0X';
+		if (strlen($this->scramble1) <> strlen($this->scramble2)) {
+			trigger_error('** SCRAMBLE1 is not same length as SCRAMBLE2 **', E_USER_ERROR);
+		}
+  	}
 
-  function encrypt_cc($params) {
-  	global $messageStack;
-	if (strlen($_SESSION['admin_encrypt']) < 1) {
-	  $messageStack->add(ACT_NO_KEY_EXISTS,'error');
-	  return false;
-	}
-	if ($params['number']) {
-	  $params['number'] = preg_replace("/[^0-9]/", "", $params['number']);
-	  $hint  = substr($params['number'], 0, 4);
-	  for ($a = 0; $a < (strlen($params['number']) - 8); $a++) $hint .= '*'; 
-	  $hint .= substr($params['number'], -4);
-	  $payment = array(); // the sequence is important!
-		$payment[] = $params['name'];
-		$payment[] = $params['number'];
-		$payment[] = $params['exp_mon'];
-		$payment[] = $params['exp_year'];
-		$payment[] = $params['cvv2'];
-		if (isset($params['alt1'])) $payment[] = $params['alt1'];
-		if (isset($params['alt2'])) $payment[] = $params['alt2'];
-		$val = implode(':', $payment).':';
-	  if (!$enc_value = $this->encrypt($_SESSION['admin_encrypt'], $val, 128)) {
-		$messageStack->add('Encryption error - ' . implode('. ', $encrypt->errors), 'error');
-		return false;
-	  }
-	}
-	if (strlen($params['exp_year']) == 2) $params['exp_year'] = '20'.$params['exp_year'];
-	$exp_date = $params['exp_year'].'-'.$params['exp_mon'].'-01';
-	return array('hint' => $hint, 'encoded' => $enc_value, 'exp_date' => $exp_date);
-  }
+  	function encrypt_cc($params) {
+		if (strlen($_SESSION['admin_encrypt']) < 1) throw new Exception(ACT_NO_KEY_EXISTS);
+		if ($params['number']) {
+	  		$params['number'] = preg_replace("/[^0-9]/", "", $params['number']);
+	  		$hint  = substr($params['number'], 0, 4);
+	  		for ($a = 0; $a < (strlen($params['number']) - 8); $a++) $hint .= '*'; 
+	  		$hint .= substr($params['number'], -4);
+	  		$payment = array(); // the sequence is important!
+			$payment[] = $params['name'];
+			$payment[] = $params['number'];
+			$payment[] = $params['exp_mon'];
+			$payment[] = $params['exp_year'];
+			$payment[] = $params['cvv2'];
+			if (isset($params['alt1'])) $payment[] = $params['alt1'];
+			if (isset($params['alt2'])) $payment[] = $params['alt2'];
+			$val = implode(':', $payment).':';
+			if (!$enc_value = $this->encrypt($_SESSION['admin_encrypt'], $val, 128)) throw new Exception('Encryption error - ' . implode('. ', $encrypt->errors));		
+		}
+		if (strlen($params['exp_year']) == 2) $params['exp_year'] = '20'.$params['exp_year'];
+		$exp_date = $params['exp_year'].'-'.$params['exp_mon'].'-01';
+		return array('hint' => $hint, 'encoded' => $enc_value, 'exp_date' => $exp_date);
+  	}
 
-  function decrypt ($key, $source) {
-	$this->errors = array();
-	$fudgefactor = $this->_convertKey($key);
-	if ($this->errors) return;
-	if (empty($source)) {
-	  $this->errors[] = 'No value has been supplied for decryption';
-	  return;
-	}
-	$target  = null;
-	$factor2 = 0;
-	for ($i = 0; $i < strlen($source); $i++) {
-	  $char2 = substr($source, $i, 1);
-	  $num2 = strpos($this->scramble2, $char2);
-	  if ($num2 === false) {
-		$this->errors[] = "Source string contains an invalid character ($char2)";
-		return;
-	  }
-	  $adj     = $this->_applyFudgeFactor($fudgefactor);
-	  $factor1 = $factor2 + $adj;
-	  $num1    = $num2 - round($factor1);
-	  $num1    = $this->_checkRange($num1);
-	  $factor2 = $factor1 + $num2;
-	  $char1 = substr($this->scramble1, $num1, 1);
-	  $target .= $char1;
-//echo "char1=$char1, num1=$num1, adj= $adj, factor1= $factor1, num2=$num2, char2=$char2, factor2= $factor2<br />\n";
-	}
-	return rtrim($target);
-  }
+  	function decrypt ($key, $source) {
+		$fudgefactor = $this->_convertKey($key);
+		if (empty($source)) throw new Exception('No value has been supplied for decryption');
+		$target  = null;
+		$factor2 = 0;
+		for ($i = 0; $i < strlen($source); $i++) {
+	  		$char2 = substr($source, $i, 1);
+	  		$num2 = strpos($this->scramble2, $char2);
+	  		if ($num2 === false) throw new Exception("Source string contains an invalid character ($char2)");
+			$adj     = $this->_applyFudgeFactor($fudgefactor);
+	  		$factor1 = $factor2 + $adj;
+	  		$num1    = $num2 - round($factor1);
+	  		$num1    = $this->_checkRange($num1);
+	  		$factor2 = $factor1 + $num2;
+	  		$char1 = substr($this->scramble1, $num1, 1);
+	  		$target .= $char1;
+			//echo "char1=$char1, num1=$num1, adj= $adj, factor1= $factor1, num2=$num2, char2=$char2, factor2= $factor2<br />\n";
+		}
+		return rtrim($target);
+  	}
 
-  function encrypt ($key, $source, $sourcelen = 0) {
-	$this->errors = array();
-	$fudgefactor  = $this->_convertKey($key);
-	if ($this->errors) return;
-	if (empty($source)) {
-	  $this->errors[] = 'No value has been supplied for encryption';
-	  return;
-	}
-	while (strlen($source) < $sourcelen) $source .= ' ';
-	$target = null;
-	$factor2 = 0;
-	for ($i = 0; $i < strlen($source); $i++) {
-	  $char1 = substr($source, $i, 1);
-	  $num1 = strpos($this->scramble1, $char1);
-	  if ($num1 === false) {
-		$this->errors[] = "Source string contains an invalid character ($char1)";
-		return;
-	  }
-	  $adj     = $this->_applyFudgeFactor($fudgefactor);
-	  $factor1 = $factor2 + $adj;
-	  $num2    = round($factor1) + $num1;
-	  $num2    = $this->_checkRange($num2);
-	  $factor2 = $factor1 + $num2;
-	  $char2   = substr($this->scramble2, $num2, 1);
-	  $target .= $char2;
-//echo "char1=$char1, num1=$num1, adj= $adj, factor1= $factor1, num2=$num2, char2=$char2, factor2= $factor2<br />\n";
-	}
-	return $target;
-  }
+  	function encrypt ($key, $source, $sourcelen = 0) {
+		$fudgefactor  = $this->_convertKey($key);
+		if ($this->errors) return;
+		if (empty($source)) throw new Exception('No value has been supplied for encryption');
+	  	while (strlen($source) < $sourcelen) $source .= ' ';
+		$target = null;
+		$factor2 = 0;
+		for ($i = 0; $i < strlen($source); $i++) {
+	  		$char1 = substr($source, $i, 1);
+	  		$num1 = strpos($this->scramble1, $char1);
+	  		if ($num1 === false) throw new Exception("Source string contains an invalid character ($char1)");
+			$adj     = $this->_applyFudgeFactor($fudgefactor);
+	  		$factor1 = $factor2 + $adj;
+	  		$num2    = round($factor1) + $num1;
+	  		$num2    = $this->_checkRange($num2);
+	  		$factor2 = $factor1 + $num2;
+	  		$char2   = substr($this->scramble2, $num2, 1);
+	  		$target .= $char2;
+			//	echo "char1=$char1, num1=$num1, adj= $adj, factor1= $factor1, num2=$num2, char2=$char2, factor2= $factor2<br />\n";
+		}
+		return $target;
+  	}
 
-  function getAdjustment () {
-	return $this->adj;
-  }
+  	function getAdjustment () {
+		return $this->adj;
+  	}
 
-  function getModulus () {
-	return $this->mod;
-  }
+  	function getModulus () {
+		return $this->mod;
+  	}
 
-  function setAdjustment ($adj) {
-    $this->adj = (float)$adj;
-  }
+  	function setAdjustment ($adj) {
+    	$this->adj = (float)$adj;
+  	}
 
-  function setModulus ($mod) {
-    $this->mod = (int)abs($mod);
-  }
+  	function setModulus ($mod) {
+    	$this->mod = (int)abs($mod);
+  	}
 
-  function _applyFudgeFactor (&$fudgefactor) {
-	$fudge = array_shift($fudgefactor);
-	$fudge = $fudge + $this->adj;
-	$fudgefactor[] = $fudge;
-	if (!empty($this->mod)) if ($fudge % $this->mod == 0) $fudge = $fudge * -1;
-	return $fudge;
-  }
+  	function _applyFudgeFactor (&$fudgefactor) {
+		$fudge = array_shift($fudgefactor);
+		$fudge = $fudge + $this->adj;
+		$fudgefactor[] = $fudge;
+		if (!empty($this->mod)) if ($fudge % $this->mod == 0) $fudge = $fudge * -1;
+		return $fudge;
+  	}
 
-  function _checkRange ($num) {
-	$num = round($num);
-	$limit = strlen($this->scramble1);
-	while ($num >= $limit) $num = $num - $limit;
-	while ($num < 0) $num = $num + $limit;
-	return $num;
-  }
+  	function _checkRange ($num) {
+		$num = round($num);
+		$limit = strlen($this->scramble1);
+		while ($num >= $limit) $num = $num - $limit;
+		while ($num < 0) $num = $num + $limit;
+		return $num;
+  	}
 
-  function _convertKey ($key) {
-	if (empty($key)) {
-	  $this->errors[] = 'No value has been supplied for the encryption key';
-	  return;
-	}
-	$array[] = strlen($key);
-	$tot = 0;
-	for ($i = 0; $i < strlen($key); $i++) {
-	  $char = substr($key, $i, 1);
-	  $num = strpos($this->scramble1, $char);
-	  if ($num === false) {
-		$this->errors[] = "Key contains an invalid character ($char)";
-		return;
-	  }
-	  $array[] = $num;
-	  $tot = $tot + $num;
-	}
-	$array[] = $tot;
-	return $array;
-  }
+  	function _convertKey ($key) {
+		if (empty($key)) throw new Exception('No value has been supplied for the encryption key');
+	  	$array[] = strlen($key);
+		$tot = 0;
+		for ($i = 0; $i < strlen($key); $i++) {
+	  		$char = substr($key, $i, 1);
+	  		$num = strpos($this->scramble1, $char);
+	  		if ($num === false) throw new Exception("Key contains an invalid character ($char)");
+			$array[] = $num;
+	  		$tot = $tot + $num;
+		}
+		$array[] = $tot;
+		return $array;
+  	}
 }
 
 ?>
