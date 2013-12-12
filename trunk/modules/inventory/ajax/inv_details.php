@@ -143,16 +143,21 @@ if ($inventory_array['inventory_type'] == 'ma' || $inventory_array['inventory_ty
   $assy_cost = $inventory_array['item_cost'];
 }
 // load where used
+$sku_usage = array();
 $result = $db->Execute("select ref_id, qty from " . TABLE_INVENTORY_ASSY_LIST . " where sku = '$sku'");
-if ($result->RecordCount() == 0) {
-  $sku_usage = array(JS_INV_TEXT_USAGE_NONE);
-} else {
-  $sku_usage = array(JS_INV_TEXT_USAGE);
+if ($result->RecordCount() > 0) {
   while (!$result->EOF) {
-    $stock = $db->Execute("select sku, description_short from " . TABLE_INVENTORY . " where id = '" . $result->fields['ref_id'] . "'");
-    $sku_usage[] =  TEXT_QUANTITY . ' ' . $result->fields['qty'] . ' ' . TEXT_SKU . ': ' . $stock->fields['sku'] . ' - ' . $stock->fields['description_short'];
+    $stock = $db->Execute("select sku, description_short from ".TABLE_INVENTORY." where id='" . $result->fields['ref_id'] . "' and inactive = '0'");
+    if ($stock->RecordCount() > 0) {
+    	$sku_usage[] =  TEXT_QUANTITY . ' ' . $result->fields['qty'] . ' ' . TEXT_SKU . ': ' . $stock->fields['sku'] . ' - ' . $stock->fields['description_short'];
+    }
     $result->MoveNext();
   }
+}
+if (sizeof($sku_usage) > 0) {
+	array_unshift($sku_usage, JS_INV_TEXT_USAGE);
+} else {
+	$sku_usage = array(JS_INV_TEXT_USAGE_NONE);
 }
 // load prices, tax
 $prices = inv_calculate_sales_price(abs($qty), $iID, $cID, $vendor ? 'v' : 'c');
