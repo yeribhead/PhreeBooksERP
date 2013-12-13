@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -25,13 +24,10 @@ require(DIR_FS_WORKING . 'functions/phreeform.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
-
+history_filter();
 $group  = isset($_GET['group'])   ? $_GET['group']                     : false;
 $rID    = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['docID']);
-$list   = isset($_REQUEST['list'])    ? $_REQUEST['list']                      : $_POST['list'];
+$list   = isset($_REQUEST['list'])? $_REQUEST['list']                  : $_POST['list'];
 $tab    = $_GET['tab'];
 $groups = build_groups();
 /***************   Act on the action request   *************************/
@@ -157,6 +153,12 @@ switch ($_REQUEST['action']) { // figure which detail page to load
 	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     $query_split  = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    }
+    history_save();
     $div_template = DIR_FS_WORKING . 'pages/main/' . ($id ? 'tab_report.php' : 'tab_folder.php');
 	break;
   case 'home':

@@ -29,14 +29,12 @@ $processed   = false;
 $criteria    = array();
 $fields		 = new inventory_fields();
 $type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : null; // default to stock item
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+history_filter('inventory');
 $first_entry = isset($_GET['add']) ? true : false;
 // load the filters
 $f0 = $_GET['f0'] = isset($_POST['action']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
 $f1 = $_GET['f1'] = isset($_POST['f1']) ? $_POST['f1'] : $_GET['f1']; // inventory_type dropdown
 $id = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['cID']);
-if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 // getting the right inventory type.
 if (is_null($type)){
 	if(isset($_REQUEST['sku'])) $result = $db->Execute("SELECT inventory_type FROM ".TABLE_INVENTORY." WHERE sku='".$_REQUEST['sku']."'");
@@ -247,6 +245,12 @@ switch ($_REQUEST['action']) {
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     $query_split  = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    }
+	history_save('inventory');
     //building array's for filter dropdown selection
 	$i=0;
 	$result = $db->Execute("SELECT * FROM " . TABLE_EXTRA_FIELDS ." WHERE module_id = 'inventory' AND use_in_inventory_filter = '1' ORDER BY description ASC");

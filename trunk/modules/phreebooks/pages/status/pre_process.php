@@ -38,13 +38,7 @@ $security_level = validate_user($security_token);
 require(DIR_FS_WORKING . 'defaults.php');
 require(DIR_FS_WORKING . 'functions/phreebooks.php');
 /**************   page specific initialization  *************************/
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-// load the sort fields
-if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_DATE;
-if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
-$acct_period = isset($_REQUEST['search_period']) ? $_REQUEST['search_period'] : CURRENT_ACCOUNTING_PERIOD;
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action']      = 'search'; // if enter key pressed and search not blank
+history_filter('pb'.JOURNAL_ID, $defaults = array('sf'=>TEXT_DATE, 'so'=>'desc', 'search_period'=>CURRENT_ACCOUNTING_PERIOD));
 $date_today = date('Y-m-d');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/status/extra_actions.php';
@@ -152,7 +146,7 @@ $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 
 // build the list for the page selected
-$period_filter = ($acct_period == 'all') ? '' : (" and period = $acct_period ");
+$period_filter = ($_REQUEST['search_period'] == 'all') ? '' : (" and period=".$_REQUEST['search_period']." ");
 if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
   // hook for inserting new search fields to the query criteria.
   if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
@@ -168,6 +162,12 @@ $query_raw    = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " f
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('pb'.JOURNAL_ID);
 
 $include_header   = true;
 $include_footer   = true;

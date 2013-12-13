@@ -19,13 +19,11 @@
 $security_level = validate_user(0, true);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
+history_filter('inv_pop_adj');
 $filters = array();
-$acct_period   = isset($_REQUEST['search_period']) ? $_REQUEST['search_period'] : CURRENT_ACCOUNTING_PERIOD;
+$acct_period   = $_REQUEST['search_period'];
 if ($acct_period <> 'all') $filters[] = 'm.period = ' . $acct_period;
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $adj_type      = isset($_GET['adj_type']) ? $_GET['adj_type'] : 'adj'; // types are xfr or adj
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_adj/module/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -80,6 +78,12 @@ $query_raw    = "SELECT SQL_CALC_FOUND_ROWS DISTINCT " . implode(', ', $field_li
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split      = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('inv_pop_adj');
 
 $include_header   = false;
 $include_footer   = false;

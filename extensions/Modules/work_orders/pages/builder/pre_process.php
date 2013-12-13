@@ -25,11 +25,9 @@ $processed   = false;
 $lock_title  = false;
 $hide_save   = false;
 $criteria    = array();
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+history_filter('wo_build');
 // load the filters
 $f0 = $_GET['f0'] = isset($_POST['action']) ? (isset($_POST['f0']) ? '1' : '0') : $_GET['f0']; // show inactive checkbox
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/builder/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -292,6 +290,13 @@ switch ($_REQUEST['action']) {
 	  from " . TABLE_WO_MAIN . " m inner join " . TABLE_INVENTORY . " i on m.sku_id = i.id" . $search . " order by $disp_order, m.revision DESC";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     $query_split  = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    	$query_split      = new splitPageResults($_REQUEST['list'], '');
+    }
+    history_save('wo_build');
+    
 	// build highest rev level list, reset results
 	$rev_list = array();
 	while (!$query_result->EOF) {

@@ -1215,6 +1215,39 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	return $field;
   }
 
+  function history_filter($key=false, $defaults = array()) {
+  	if (!$key) $key = $_GET['module'];
+  	if (!isset($_REQUEST['sf']))   $_REQUEST['sf']   = isset($_SESSION[$key]['sf'])   ? $_SESSION[$key]['sf']   : $defaults['sf'];
+  	if (!isset($_REQUEST['so']))   $_REQUEST['so']   = isset($_SESSION[$key]['so'])   ? $_SESSION[$key]['so']   : $defaults['so'];
+  	if (!isset($_REQUEST['list'])) $_REQUEST['list'] = isset($_SESSION[$key]['list']) ? $_SESSION[$key]['list'] : 1;
+  	$_REQUEST['list'] = max(1, $_REQUEST['list']);
+  	if (!isset($_REQUEST['search_text'])) $_REQUEST['search_text'] = isset($_SESSION[$key]['search']) ? $_SESSION[$key]['search'] : '';
+  	if ( $_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+  	if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+  	if ( $_REQUEST['search_text'] <> '' && $_REQUEST['search_text'] <> $_SESSION[$key]['search']) $_REQUEST['list'] = 1;
+  	if (!isset($_REQUEST['search_period'])) $_REQUEST['search_period']= isset($_SESSION[$key]['period'])? $_SESSION[$key]['period']: CURRENT_ACCOUNTING_PERIOD;
+  	if (!isset($_REQUEST['search_date']))   $_REQUEST['search_date']  = isset($_SESSION[$key]['date'])  ? $_SESSION[$key]['date']  : '';
+  	if ($_REQUEST['reset']) {
+  		$_REQUEST['sf']    = $defaults['sf'];
+  		$_REQUEST['so']    = $defaults['so'];
+  		$_REQUEST['list']  = 1;
+  		$_REQUEST['search_text']  = '';
+  		$_REQUEST['search_period']= CURRENT_ACCOUNTING_PERIOD;
+  		$_REQUEST['search_date']  = '';
+  		unset($_GET['reset']);
+  	}
+  }
+
+  function history_save($key=false) {
+  	if (!$key) $key = $_GET['module'];
+  	$_SESSION[$key]['sf']    = $_REQUEST['sf'];
+  	$_SESSION[$key]['so']    = $_REQUEST['so'];
+    $_SESSION[$key]['list']  = $_REQUEST['list'];
+    $_SESSION[$key]['search']= $_REQUEST['search_text'];
+    $_SESSION[$key]['period']= $_REQUEST['search_period'];
+    $_SESSION[$key]['date']  = $_REQUEST['search_date'];
+  }
+
 /**
  * this function creates a heading for a table that will be able to sort 
  * @param array $heading_array the fields of the table

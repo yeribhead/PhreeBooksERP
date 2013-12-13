@@ -21,9 +21,7 @@ $security_level = validate_user(SECURITY_ID_PRICE_SHEET_MANAGER);
 require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $type        = isset($_GET['type'])  ? $_GET['type']   : 'c';
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
+history_filter('inv_prices');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_MODULES . 'inventory/pages/price_sheets/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -204,6 +202,13 @@ switch ($_REQUEST['action']) {
 	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     $query_split      = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    }
+    history_save('inv_prices');
+    
     $include_template = 'template_main.php';
     define('PAGE_TITLE', $type == 'v' ? BOX_PURCHASE_PRICE_SHEETS : BOX_SALES_PRICE_SHEETS);
 }

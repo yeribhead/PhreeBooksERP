@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,15 +21,13 @@ $security_level = validate_user(0, true);
 require(DIR_FS_WORKING . 'functions/inventory.php');
 
 /**************   page specific initialization  *************************/
-$acct_period = isset($_REQUEST['search_period']) ? $_REQUEST['search_period'] : CURRENT_ACCOUNTING_PERIOD;
+history_filter('inv_pop_assy');
+$acct_period = $_REQUEST['search_period'];
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 $period_filter = ($acct_period == 'all') ? '' : (' and m.period = ' . $acct_period);
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_assy/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
-
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'go_first':    $_REQUEST['list'] = 1;       break;
@@ -76,8 +73,13 @@ $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . "
 	where i.gl_type = 'asy' and m.journal_id = 14" . $period_filter . $search . " order by $disp_order, m.id";
 
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-// the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split      = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('inv_pop_assy');
 
 $include_header   = false;
 $include_footer   = true;

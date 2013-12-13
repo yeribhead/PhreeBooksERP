@@ -20,9 +20,7 @@ $security_level = validate_user(0, true);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
 $rowID = (isset($_GET['rowID']) ? $_GET['rowID'] : 0);
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+history_filter('wo_poptask');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_tasks/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -67,6 +65,13 @@ if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_lis
 $query_raw = "select " . implode(', ', $field_list)  . " from " . TABLE_WO_TASK . $search . " order by $disp_order";
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split      = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('wo_poptask');
+
 $include_header   = false;
 $include_footer   = false;
 $include_template = 'template_main.php';
