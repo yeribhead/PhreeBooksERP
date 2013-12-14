@@ -29,9 +29,9 @@ switch (JOURNAL_ID) {
   case 20: $terms_type = 'AP'; break;
   default: die ('Bad Journal id in modules/phreebooks/popup_bills.php');
 }
-$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 history_filter('pb_pop_bills');
 $acct_period = $_REQUEST['search_period'];
+$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_bills/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
