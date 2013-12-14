@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -51,9 +50,9 @@ function init() {
 	}
   }
   document.getElementById('search').focus();
-<?php if ($action == 'edit') { // if paying from sales window automatically check first box
+<?php if ($_REQUEST['action'] == 'edit') { // if paying from sales window automatically check first box
     echo 'ajaxBillData(0, ' . $oID . ', ' . JOURNAL_ID . ');';
-  } else if ($action == 'pmt') {
+  } else if ($_REQUEST['action'] == 'pmt') {
 	echo 'loadNewPayment();' . chr(10);
     echo 'updateTotalPrices();' . chr(10);
   } else {
@@ -61,7 +60,7 @@ function init() {
   }
 ?>
 
-<?php if ($post_success && $action == 'print') { ?>
+<?php if ($post_success && $_REQUEST['action'] == 'print') { ?>
   ClearForm();
   var printWin = window.open("index.php?module=phreeform&page=popup_gen&gID=<?php echo POPUP_FORM_TYPE; ?>&date=a&xfld=journal_main.id&xcr=EQUAL&xmin=<?php echo $print_record_id; ?>","reportFilter","width=700px,height=550px,resizable=1,scrollbars=1,top=150px,left=200px");
   printWin.focus();
@@ -75,7 +74,7 @@ function check_form() {
   var error = 0;
   var error_message = "<?php echo JS_ERROR; ?>";
 
-  var todo = document.getElementById('todo').value;
+  var todo = document.getElementById('action').value;
 
   if (journalID == '18' && (todo == 'save' || todo == 'print')) { // only check payment if saving
     var index = document.getElementById('shipper_code').selectedIndex;

@@ -34,7 +34,6 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_WORKING . 'functions/import_bank.php');
 /**************   page specific initialization  *************************/
 $error     = false; 
-$action    = (isset($_GET['action'])    ? $_GET['action']    : $_POST['todo']);
 $bank_acct = (isset($_GET['bank_acct']) ? $_GET['bank_acct'] : $_POST['bank_acct']);
 $page_list = array();
 
@@ -49,7 +48,7 @@ $custom_path = DIR_FS_MODULES . 'import_bank/custom/pages/main/extra_actions.php
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
 	case'import_csv':
 		if (!validate_upload('file_name', 'text', 'csv')) break;
 		$result = bank_import_csv($page_list[$subject]['structure'], 'file_name', $bank_acct);
@@ -73,9 +72,6 @@ $cash_chart = gen_coa_pull_down(2, false, true, false, $restrict_types = array(0
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
-
 $include_template = 'template_main.php';
 define('PAGE_TITLE', HEADING_MODULE_IMPORT_BANK);
 

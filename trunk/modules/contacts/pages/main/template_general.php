@@ -17,7 +17,7 @@
 //  Path: /modules/contacts/pages/main/template_general.php
 //
 ?>
-<div id="tab_general">
+<div title="<?php echo TEXT_GENERAL;?>" id="tab_general">
   <fieldset>
     <legend><?php echo ACT_CATEGORY_CONTACT; ?></legend>
     <table>
@@ -39,7 +39,7 @@
       </tr>
       <tr>
        <td align="right"><?php echo constant('ACT_' . strtoupper($type) . '_GL_ACCOUNT_TYPE'); ?></td>
-       <td><?php echo html_pull_down_menu('gl_type_account', gen_coa_pull_down(), $action=='new' ? AR_DEF_GL_SALES_ACCT : $cInfo->gl_type_account); ?></td>
+       <td><?php echo html_pull_down_menu('gl_type_account', gen_coa_pull_down(), $_REQUEST['action']=='new' ? AR_DEF_GL_SALES_ACCT : $cInfo->gl_type_account); ?></td>
        <td align="right"><?php echo constant('ACT_' . strtoupper($type) . '_ACCOUNT_NUMBER'); ?></td>
        <td><?php echo html_input_field('account_number', $cInfo->account_number, 'size="17" maxlength="16"'); ?></td>
        <td align="right"><?php echo TEXT_DEFAULT_PRICE_SHEET; ?></td>

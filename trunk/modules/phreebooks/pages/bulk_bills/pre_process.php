@@ -29,22 +29,21 @@ define('POPUP_FORM_TYPE','bnk:chk');
 define('AUDIT_LOG_DESC',ORD_TEXT_20_WINDOW_TITLE);
 $post_success      = false;
 $error             = false;
-$action            = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-$post_date         = ($_POST['post_date']) ? gen_db_date($_POST['post_date']) : ($_GET['post_date'] ? $_GET['post_date'] : date('Y-m-d', time()));
+$post_date         = isset($_REQUEST['post_date']) ? gen_db_date($_REQUEST['post_date']) : date('Y-m-d', time());
 $_GET['post_date'] = $post_date;
 $period = gen_calculate_period($post_date);
 if (!$period) { // bad post_date was submitted
-  $action = '';
+  $_REQUEST['action'] = '';
   $post_date = date('Y-m-d', time());
   $period = 0;
 }
-$invoice_date            = ($_POST['invoice_date'])  ?   gen_db_date($_POST['invoice_date'])   : ($_GET['invoice_date']     ? $_GET['invoice_date']     : date('Y-m-d', time()));
+$invoice_date            = isset($_REQUEST['invoice_date'])  ?   gen_db_date($_REQUEST['invoice_date'])   : date('Y-m-d', time());
 $_GET['invoice_date']    = $invoice_date;
-$discount_date           = ($_POST['discount_date']) ?   gen_db_date($_POST['discount_date'])  : ($_GET['discount_date']    ? $_GET['discount_date']    : date('Y-m-d', time()));
+$discount_date           = isset($_REQUEST['discount_date']) ?   gen_db_date($_REQUEST['discount_date'])  : date('Y-m-d', time());
 $_GET['discount_date']   = $discount_date;
-$gl_acct_id              = ($_POST['gl_acct_id']) ?      db_prepare_input($_POST['gl_acct_id'])      : ($_GET['gl_acct_id']       ? $_GET['gl_acct_id']       : AP_PURCHASE_INVOICE_ACCOUNT);
+$gl_acct_id              = isset($_REQUEST['gl_acct_id']) ?      db_prepare_input($_REQUEST['gl_acct_id'])      : AP_PURCHASE_INVOICE_ACCOUNT;
 $_GET['gl_acct_id']      = $gl_acct_id;
-$gl_disc_acct_id         = ($_POST['gl_disc_acct_id']) ? db_prepare_input($_POST['gl_disc_acct_id']) : ($_GET['gl_disc_acct_id']  ? $_GET['gl_disc_acct_id']  : AP_DISCOUNT_PURCHASE_ACCOUNT);
+$gl_disc_acct_id         = isset($_REQUEST['gl_disc_acct_id']) ? db_prepare_input($_REQUEST['gl_disc_acct_id']) : AP_DISCOUNT_PURCHASE_ACCOUNT;
 $_GET['gl_disc_acct_id'] = $gl_disc_acct_id;
 $purch_order_id          = db_prepare_input($_POST['purch_order_id']); // reference text
 $purchase_invoice_id     = db_prepare_input($_POST['purchase_invoice_id']);	// PhreeBooks starting check number
@@ -52,14 +51,11 @@ if (!$purchase_invoice_id) {
   $result = $db->Execute("select next_check_num from " . TABLE_CURRENT_STATUS);
   $purchase_invoice_id = $result->fields['next_check_num'];
 }
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/bills/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'print':
 	validate_security($security_level, 2);
   	// read the input data, place into array
@@ -180,7 +176,7 @@ $heading_array = array(
   'purchase_invoice_id' => BNK_INVOICE_NUM,
   'total_amount'        => BNK_AMOUNT_DUE,
 );
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], array(TEXT_NOTES, BNK_DUE_DATE, TEXT_DISCOUNT, BNK_20_AMOUNT_PAID, TEXT_PAY));
+$result      = html_heading_bar($heading_array, array(TEXT_NOTES, BNK_DUE_DATE, TEXT_DISCOUNT, BNK_20_AMOUNT_PAID, TEXT_PAY));
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 if (!$disp_order) $disp_order = 'post_date';
@@ -220,7 +216,6 @@ $cal_bills2 = array(
 );
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', ORD_TEXT_20_V_WINDOW_TITLE);
 

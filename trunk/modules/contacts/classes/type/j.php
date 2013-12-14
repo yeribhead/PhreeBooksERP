@@ -21,11 +21,11 @@ require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
 
 class j extends contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_PROJECTS;
-	public $page_title_new = BOX_CONTACTS_NEW_PROJECT;
 	public $address_types  = array('jm', 'js', 'jb', 'im');
 	public $type            = 'j';
 	
 	public function __construct(){
+		$this->page_title_new = sprintf(BOX_TEXT_NEW_TITLE, TEXT_PROJECT);
 		$this->tab_list[] = array('file'=>'template_notes',		'tag'=>'notes',    'order'=>40, 'text'=>TEXT_NOTES);
 		$this->tab_list[] = array('file'=>'template_j_general',	'tag'=>'general',  'order'=> 1, 'text'=>TEXT_GENERAL);
 		parent::__construct();

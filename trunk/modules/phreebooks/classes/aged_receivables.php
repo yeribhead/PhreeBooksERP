@@ -198,24 +198,29 @@ class aged_receivables {
 	$new_data = array();
 	$result = $db->Execute("select debit_amount, credit_amount from " . TABLE_JOURNAL_ITEM . " where gl_type = 'ttl' and ref_id = " . $id);
 	$result2 = $db->Execute("select journal_id, post_date from " . TABLE_JOURNAL_MAIN . " where id = " . $id);
-	$total_billed = $result->fields['debit_amount'] - $result->fields['credit_amount'];
 	$post_date = $result2->fields['post_date'];
+	$negate = false;
 	if (in_array($result2->fields['journal_id'], array(6,7))) {
 	  $late_30 = gen_specific_date($today, -AP_AGING_DATE_1);
 	  $late_60 = gen_specific_date($today, -AP_AGING_DATE_2);
 	  $late_90 = gen_specific_date($today, -AP_AGING_DATE_3);
-	  $negate = true;
+	  if($result2->fields['journal_id'] != 7) $negate = true;
 	} else {
 	  $late_30 = gen_specific_date($today, -AR_AGING_PERIOD_1);
 	  $late_60 = gen_specific_date($today, -AR_AGING_PERIOD_2);
 	  $late_90 = gen_specific_date($today, -AR_AGING_PERIOD_3);
-	  $negate = false;
+	  if($result2->fields['journal_id'] != 12) $negate = true;
 	}
-	$result = $db->Execute("select sum(debit_amount) as debits, sum(credit_amount) as credits 
+	$result3 = $db->Execute("select sum(debit_amount) as debits, sum(credit_amount) as credits 
 	  from " . TABLE_JOURNAL_ITEM . " where so_po_item_ref_id = '" . $id . "' and gl_type in ('pmt', 'chk')");
-	$total_paid = $result->fields['credits'] - $result->fields['debits'];
+	if($negate){
+		$total_billed = $result->fields['credit_amount'] - $result->fields['debit_amount'];
+		$total_paid = $result3->fields['debits'] - $result3->fields['credits'];	
+	}else{
+		$total_billed = $result->fields['debit_amount'] - $result->fields['credit_amount'];
+		$total_paid = $result3->fields['credits'] - $result3->fields['debits'];
+	}
 	$balance = $total_billed - $total_paid;
-	if($negate) $balance = -$balance;	
 	$new_data['balance_0']  = 0;
 	$new_data['balance_30'] = 0;
 	$new_data['balance_60'] = 0;

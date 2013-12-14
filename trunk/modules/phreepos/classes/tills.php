@@ -30,9 +30,10 @@ class tills {
     
     public function __construct(){
          $this->security_id           = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
-         foreach ($_POST as $key => $value) $this->$key = $value;
+         foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
          $this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
          $this->store_ids = gen_get_store_ids();
+         if($_REQUEST['page'] == 'main') $this->showDropDown();
     }
 
   function btn_save($id = '') {
@@ -203,12 +204,16 @@ class tills {
   
 // functions for template main  
   function showDropDown(){
-  	global $db;
+  	global $db, $messageStack;
   	foreach ($this->store_ids as $store){
   		$temp[]= $store['id'];
   	}
   	$sql = "select till_id, description from " . $this->db_table . " where store_id in (" . implode(',', $temp) . ")";
-    $result = $db->Execute($sql);    
+    $result = $db->Execute($sql);
+    if ($result->RecordCount()== 0){// trigger_error("Before continuing set a till for this store. This will contain default values to allow this page to work", E_USER_ERROR);// there should always be a till because of defaults values.
+    	$messageStack->add("Before continuing set a till for this store.<br> This will contain default values to allow this page to work", 'error');
+    	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL')); 
+    }
     if ($result->RecordCount()== 1) {
     	return false;
     }else{
@@ -282,7 +287,7 @@ class tills {
 		$startingline = rtrim($startingline, '","');
 		$closingline  = rtrim($closingline , '","');
 		$opendrawer   = rtrim($opendrawer  , '","');
-		$js_tills .= 'tills["' . $result->fields['till_id'] . '"] = new till("' . $result->fields['till_id'] . '", "' . $result->fields['restrict_currency'] . '", "' . $result->fields['currencies_code'] . '", "' . $result->fields['printer_name'] . '", Array("' . $startingline . '"), Array("' . $closingline . '"), Array("' . $opendrawer . '" ), "' . $result->fields['tax_id'] . '");' . chr(10);
+		$js_tills .= 'tills["' . $result->fields['till_id'] . '"] = new till("' . $result->fields['till_id'] . '", "' . $result->fields['restrict_currency'] . '", "' . $result->fields['currencies_code'] . '", "' . $result->fields['printer_name'] . '", Array("' . $startingline . '"), Array("' . $closingline . '"), Array("' . $opendrawer . '" ), "' . $result->fields['tax_id'] . '", "' . $result->fields['store_id'] . '");' . chr(10);
 		$result->MoveNext();
 	}
 	return $js_tills;

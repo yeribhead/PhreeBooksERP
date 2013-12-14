@@ -45,14 +45,15 @@ var text_properties     = '<?php echo TEXT_PROPERTIES;?>';
 <?php if(isset($SecondFieldId)) 	echo $SecondFieldId; ?>;
 // required function called with every page load
 function init() {
-	$(function() { $('#detailtabs').tabs(); });
 	$('#inv_image').dialog({ autoOpen:false, width:800 });
 	<?php 
 	$action_array = array('edit','properties','create');
-  	if(in_array($action, $action_array)&& empty($cInfo->purchase_array)) {
+  	if(in_array($_REQUEST['action'], $action_array)&& empty($cInfo->purchase_array)) {
   		echo "  addVendorRow();";
   	}
   	?>
+  	$('#search_text').focus();
+  	$('#search_text').select();
 }
 
 function check_form() {
@@ -60,7 +61,7 @@ function check_form() {
   var error_message = "<?php echo JS_ERROR; ?>";
 
   if (error == 1) {
-	alert(error_message);
+	$.messager.alert("Error",error_message,"error");
 	return false;
   } else {
 	return true;
@@ -85,7 +86,7 @@ function check_sku() {
   }
 
   if (error == 1) {
-	alert(error_message);
+	$.messager.alert("Error",error_message,"error");
 	return false;
   } else {
 	return true;
@@ -241,16 +242,16 @@ function masterStockBuildList(action, id) {
   switch (action) {
     case 'add':
 	  if (document.getElementById('attr_id_'+id).value == '' || document.getElementById('attr_id_'+id).value == '') {
-	    alert('<?php echo JS_MS_INVALID_ENTRY; ?>');
+		$.messager.alert("Error","<?php echo JS_MS_INVALID_ENTRY; ?>","error");
 		return;
 	  }
 	  var str = document.getElementById('attr_desc_'+id).value ;
 	  if(str.search(",") == true){
-		  alert('<?php echo JS_MS_COMMA_NOT_ALLOWED; ?>');
+		  $.messager.alert("Error","<?php echo JS_MS_COMMA_NOT_ALLOWED; ?>","error");
 		  return;
 	  } 
 	  if(str.search(":") == true){
-		  alert('<?php echo JS_MS_COLON_NOT_ALLOWED; ?>');
+		  $.messager.alert("Error","<?php echo JS_MS_COLON_NOT_ALLOWED; ?>","error");
 		  return;
 	  } 
 	  var newOpt = document.createElement("option");
@@ -451,7 +452,7 @@ function loadSkuDetails(iID, rID) {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&iID='+iID+'&rID='+rID,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
       },
 	  success: processSkuDetails
     });
@@ -480,25 +481,8 @@ function processSkuDetails(sXml) { // call back function
 function InventoryProp(rID) {
 	var sku = document.getElementById('sku_'+rID).value;
 	if (sku != text_search && sku != '') {
-	    $.ajax({
-	    	type: "GET",
-		  	url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuValid&strict=1&sku='+sku,
-	      	dataType: ($.browser.msie) ? "text" : "xml",
-	      	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
-	      		},
-		  	success: processSkuProp
-	    });
+		  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
 	}
-}
-
-function processSkuProp(sXml) {
-  var xml = parseXml(sXml);
-  if (!xml) return;
-  if ($(xml).find("id").first().text() != 0) {
-	var id = $(xml).find("id").first().text();
-	window.open("index.php?module=inventory&page=main&action=properties&cID="+id,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
-  }
 }
 // ******* EOF - AJAX BOM item Properties pair *********/
 // ******* BOF - AJAX BOM Cost function pair *********/
@@ -510,7 +494,7 @@ function ajaxAssyCost() {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=bomCost&iID='+id,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: showBOMCost
     });
@@ -521,7 +505,7 @@ function showBOMCost(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
   if ($(xml).find("assy_cost").text()) {
-    alert('<?php echo JS_INV_TEXT_ASSY_COST; ?>'+formatPrecise($(xml).find("assy_cost").text()));
+	  $.messager.alert("Bom Cost",'<?php echo JS_INV_TEXT_ASSY_COST; ?>'+formatPrecise($(xml).find("assy_cost").text()),"info");
   }
 }
 // ******* EOF - AJAX BOM Cost function pair *********/
@@ -534,7 +518,7 @@ function bom_guess(rID){
 		  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&sku='+sku+'&strict=1&rID='+rID,
 	      dataType: ($.browser.msie) ? "text" : "xml",
 	      error: function(XMLHttpRequest, textStatus, errorThrown) {
-	        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+		  $.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	      },
 		  success: processSkuDetails
 	    });
@@ -568,7 +552,7 @@ function ajaxWhereUsed() {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=whereUsed&iID='+id,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: showWhereUsed
     });
@@ -583,7 +567,7 @@ function showWhereUsed(sXml) {
     $(xml).find("sku_usage").each(function() {
 	  text += $(this).find("text_line").text() + "\n";
     });
-	alert(text);
+    $.messager.alert("Where Used",text,"info");
   }
 }
 // ******* EOF - AJAX Where Used pair *********/
@@ -755,12 +739,13 @@ function TableStartValues( valueFilterField, valueCriteriaField, valueValueField
 	document.getElementById('filter_criteria'+ rowCnt ).value = valueCriteriaField;
 	document.getElementById('filter_value'+ rowCnt ).value = valueValueField;
 }
-
+<?php if($include_template == 'template_main.php'){?>
 $(document).keydown(function(e) {
     if(e.keyCode == 13) {
     	submitToDo('filter'); 
     }
  });
+ <?php }?>
 // *********** EOF - filter functions *****************/
 
 

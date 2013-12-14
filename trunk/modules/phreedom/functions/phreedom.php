@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -170,11 +169,11 @@ function admin_remove_dirs($dirlist, $path = DIR_FS_MY_FILES) {
 }
 
 function admin_install_tables($tables) {
-  global $db;
+  global $db, $messageStack;
   $error = false;
   foreach ($tables as $table => $create_table_sql) {
     if (!db_table_exists($table)) {
-	  if (!$db->Execute($create_table_sql)) $error = true;
+	  if (!$db->Execute($create_table_sql)) $error = $messageStack->add(sprintf("Error installing table: %s", $table), 'error');
 	}
   }
   return $error;
@@ -621,18 +620,6 @@ function csv_explode($str, $delim = ',', $enclose = '"', $preserve = false){
 		}
 	}
 	return;
-  }
-
-  function xtra_field_get_tabs($module = '') {
-    global $db;
-    $tab_array = array(0 => TEXT_SYSTEM);
-	if (!$module) return $tab_array;
-    $result = $db->Execute("select id, tab_name from " . TABLE_EXTRA_TABS . " where module_id = '" . $module . "' order by tab_name");
-    while (!$result->EOF) {
-      $tab_array[$result->fields['id']] = $result->fields['tab_name'];
-      $result->MoveNext();
-    }
-    return $tab_array;
   }
 
   function xtra_field_prep_form($form_array) {

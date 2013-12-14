@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,13 +18,15 @@
 //
 
 class translator_admin {
+	public $notes 			= array();// placeholder for any operational notes
+	public $prerequisites 	= array();// modules required and rev level for this module to work properly
+	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
+	public $dirlist			= array();// add new directories to store images and data
+	public $tables			= array();// Load tables
+	
   function translator_admin() {
-	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom' => '3.3',
-	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array(
+	  'phreedom' => 3.3,
 	);
 	// add new directories to store images and data
 	$this->dirlist = array(
@@ -40,7 +41,7 @@ class translator_admin {
 		  version char(6) NOT NULL DEFAULT '',
 		  pathtofile varchar(255) collate utf8_unicode_ci NOT NULL DEFAULT '/',
 		  defined_constant varchar(96) collate utf8_unicode_ci NOT NULL DEFAULT '',
-		  translation text collate utf8_unicode_ci NOT NULL DEFAULT '',
+		  translation text collate utf8_unicode_ci DEFAULT '',
 		  translated enum('0','1') NOT NULL default '0',
 		  PRIMARY KEY (id)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci",

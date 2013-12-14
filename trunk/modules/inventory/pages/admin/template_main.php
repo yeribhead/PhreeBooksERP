@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 echo html_form('admin', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('subject','') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
@@ -32,19 +31,7 @@ $toolbar->icon_list['print']['show']    = false;
 echo $toolbar->build_toolbar();
 ?>
 <h1><?php echo PAGE_TITLE; ?></h1>
-<div id="admintabs">
-<ul>
-<?php
-  echo add_tab_list('tab_inventory',MENU_HEADING_INVENTORY);
-  echo add_tab_list('tab_tabs',     TEXT_EXTRA_TABS);
-  echo add_tab_list('tab_fields',   TEXT_EXTRA_FIELDS);
-  echo add_tab_list('tab_tools',    TEXT_TOOLS);
-  if (file_exists(DIR_FS_MODULES . $module . '/custom/pages/admin/template_tab_custom.php')) {
-    echo add_tab_list('tab_custom', TEXT_CUSTOM_TAB);    
-  }
-  echo add_tab_list('tab_stats',    TEXT_STATISTICS);
-?>
-</ul>
+<div class="easyui-tabs" id="admintabs">
 <?php
   require (DIR_FS_MODULES . $module . '/pages/admin/template_tab_inventory.php');
   require (DIR_FS_MODULES . $module . '/pages/admin/template_tab_tabs.php');

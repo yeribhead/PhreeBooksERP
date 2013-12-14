@@ -27,14 +27,14 @@ class tax_auths {
     
     public function __construct(){
         $this->security_id = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
-        foreach ($_POST as $key => $value) $this->$key = $value;
+        foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
         $this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
     }
 
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	$sql_data_array = array(
@@ -58,7 +58,7 @@ class tax_auths {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	// Check for this authority being used in a tax rate calculation, if so do not delete

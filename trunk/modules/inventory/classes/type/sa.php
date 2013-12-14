@@ -7,10 +7,9 @@ class sa extends inventory {//Serialized Assembly
     public $account_sales_income	= INV_SERIALIZE_DEFAULT_SALES;
 	public $account_inventory_wage	= INV_SERIALIZE_DEFAULT_INVENTORY;
 	public $account_cost_of_sales	= INV_SERIALIZE_DEFAULT_COS; 
-	public $cost_method				= INV_SERIALIZE_DEFAULT_COSTING;
+	public $cost_method				= 'f';
 	public $bom		 				= array();
 	public $allow_edit_bom			= true;
-	public $cost_method				= 'f';
 	public $posible_cost_methodes   = array('f');	
 	
 	function __construct(){
@@ -21,11 +20,13 @@ class sa extends inventory {//Serialized Assembly
 	function get_item_by_id($id){
 		parent::get_item_by_id($id);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_item_by_sku($sku){
 		parent::get_item_by_sku($sku);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_bom_list(){
@@ -43,7 +44,6 @@ class sa extends inventory {//Serialized Assembly
 	  		$x++;
 	  		$result->MoveNext();
 		}
-		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '') && ($result->fields['quantity_on_hand'] == 0|| $result->fields['quantity_on_hand'] == '')) ? true : false;
 	}
 	
 	function remove(){
@@ -75,7 +75,7 @@ class sa extends inventory {//Serialized Assembly
 		}
 		$this->bom = $bom_list;
 		if (!parent::save()) return false;	
-		$temp = $db->Execute("select last_journal_date, quantity_on_hand  from " . TABLE_INVENTORY . " where id = " . $this->id);
+		$result = $db->Execute("select last_journal_date, quantity_on_hand  from " . TABLE_INVENTORY . " where id = " . $this->id);
 		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '') && ($result->fields['quantity_on_hand'] == 0|| $result->fields['quantity_on_hand'] == '')) ? true : false;
 		if($error) return false;
 	  	if ($this->allow_edit_bom == true) { // only update if no posting has been performed

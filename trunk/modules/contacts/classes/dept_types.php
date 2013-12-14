@@ -26,7 +26,7 @@ class dept_types {
     public $error         = false;
 
     public function __construct(){
-    	foreach ($_POST as $key => $value) $this->$key = $value;
+    	foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
     	$this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
         $this->security_id = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
     }
@@ -34,7 +34,7 @@ class dept_types {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
     $description = db_prepare_input($_POST['description']);
@@ -52,7 +52,7 @@ class dept_types {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	// Check for this department type being used in a department, if so do not delete

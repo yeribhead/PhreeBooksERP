@@ -41,7 +41,7 @@ class fields {
   function btn_save($id = '') {
   	global $db, $messageStack, $currencies;
 	if ($this->security_id < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
     // clean out all non-allowed values and then check if we have a empty string 
@@ -205,13 +205,13 @@ class fields {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
 	$result = $db->Execute("SELECT * FROM ".TABLE_EXTRA_FIELDS." WHERE id=$id");
 	foreach ($result->fields as $key => $value) $this->$key = $value;
 	if ($this->tab_id == '0') { // don't allow deletion of system fields
-	  $messageStack->add_session(INV_CANNOT_DELETE_SYSTEM,'error');
+	  $messageStack->add(INV_CANNOT_DELETE_SYSTEM,'error');
 	  return false;
 	}
 	$db->Execute("DELETE FROM ".TABLE_EXTRA_FIELDS." WHERE id=$this->id");
@@ -222,7 +222,7 @@ class fields {
 
   function build_main_html() {
   	global $db, $messageStack;
-	$tab_array = xtra_field_get_tabs($this->module);
+	$tab_array = $this->xtra_field_get_tabs($this->module);
     $content = array();
 	$content['thead'] = array(
 	  'value' => array(TEXT_DESCRIPTION, TEXT_FLDNAME, TEXT_TAB_NAME, TEXT_TYPE, $this->type_desc, TEXT_SORT_ORDER, TEXT_GROUP, TEXT_ACTION),
@@ -297,11 +297,10 @@ class fields {
 	   }
 	}
 	// build the tab list
-	$tab_list = gen_build_pull_down(xtra_field_get_tabs($this->module));
+	$tab_list = gen_build_pull_down($this->xtra_field_get_tabs($this->module));
 	array_shift($tab_list);
 	if ($action == 'new' && sizeof($tab_list) < 1) {
 	  $messageStack->add(EXTRA_FIELDS_ERROR_NO_TABS, 'error');
-	  echo $messageStack->output();
 	}
     $choices  =  explode(':',$params[$this->type_params]);
 	$disabled = ($this->tab_id !== '0') ? '' : 'disabled="disabled" ';
@@ -473,7 +472,7 @@ class fields {
   			}
   			$tab_array[] = $tab_id;
   			$this->extra_tab_li    .= '  <li><a href="#tab_' . $tab_id . '">' . $result->fields['tab_name'] . '</a></li>' . chr(10);
-  			$this->extra_tab_html .= '<div id="tab_' . $tab_id . '">' . chr(10);
+  			$this->extra_tab_html .= '<div title="'. $result->fields['tab_name'] .'" id="tab_' . $tab_id . '">' . chr(10);
 	  		$this->extra_tab_html .= '  <table>' . chr(10);
   		}else if($previous_group <> $result->fields['group_by']){
   			$this->extra_tab_html .= '<tr class="ui-widget-header" height="5px"><td colspan="2"></td></tr>' . chr(10);
@@ -508,6 +507,18 @@ class fields {
   		$result->MoveNext();
 	}
 	return $values;
+  }
+  
+  function xtra_field_get_tabs($module = '') {
+    global $db;
+    $tab_array = array(0 => TEXT_SYSTEM);
+	if (!$module) return $tab_array;
+    $result = $db->Execute("select id, tab_name from " . TABLE_EXTRA_TABS . " where module_id = '" . $module . "' order by tab_name");
+    while (!$result->EOF) {
+      $tab_array[$result->fields['id']] = $result->fields['tab_name'];
+      $result->MoveNext();
+    }
+    return $tab_array;
   }
 }
 ?>

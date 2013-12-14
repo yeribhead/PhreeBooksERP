@@ -25,9 +25,8 @@ require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
 /**************   page specific initialization  *************************/
 $xml     = NULL;
 $message = array();
-$action  = $_GET['action'];
  
-switch ($action) {
+switch ($_REQUEST['action']) {
 	case 'get_address':
 		$id   = $_GET['aID'];
 		$type = $_GET['type'];

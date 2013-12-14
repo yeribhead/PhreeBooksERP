@@ -27,7 +27,6 @@ require_once(DIR_FS_WORKING . 'classes/shipping.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $pkg         = new shipment();
-$action      = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $methods     = array();
 $files       = scandir(DEFAULT_MOD_DIR);
 foreach ($files as $choice) {
@@ -40,7 +39,7 @@ foreach ($files as $choice) {
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_shipping/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'rates':
 	// overwrite the defaults with data from the form
 	reset ($_POST);
@@ -73,7 +72,7 @@ switch ($action) {
 		}
 	  }
 	}
-	if ($error) $action = ''; // reload selection form
+	if ($error) $_REQUEST['action'] = ''; // reload selection form
 	break;
   default:
 }
@@ -88,9 +87,7 @@ $cal_ship = array(
 );
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = true;
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'rates':
     $include_template = 'template_detail.php';
     define('PAGE_TITLE', SHIPPING_POPUP_WINDOW_RATE_TITLE);

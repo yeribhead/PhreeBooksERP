@@ -25,7 +25,7 @@ class known_transactions {
     
     public function __construct(){
          $this->security_id           = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
-         foreach ($_POST as $key => $value) $this->$key = $value;
+         foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
          $this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
     }
 

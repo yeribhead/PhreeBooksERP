@@ -48,7 +48,6 @@ $total_fixed     = 0;
 $account_type    = 'c';
 $post_success    = false;
 $order           = new journal_19();
-$action          = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $payment_modules = load_all_methods('payment');
 $tills           = new tills();
 /***************   hook for custom actions  ***************************/
@@ -183,14 +182,19 @@ if (file_exists($custom_path)) { include($custom_path); }
 		'f2'   => db_prepare_input($_POST['f2_' . $x]),
 		'f3'   => db_prepare_input($_POST['f3_' . $x]),
 		'f4'   => db_prepare_input($_POST['f4_' . $x]),
+	  	'f5'   => db_prepare_input($_POST['f5_' . $x]),
+	  	'f6'   => db_prepare_input($_POST['f6_' . $x]),
 	  );
 	  // initialize payment methods
-	  // preset some post variables to fake out the payment methods
+	  // preset some post variables to fake out the payment methods, 
+	  // the following lines should be in place because the payment module uses them to return journal lines.
 	  $_POST[$pmt_meth . '_field_0'] = $_POST['f0_' . $x];
 	  $_POST[$pmt_meth . '_field_1'] = $_POST['f1_' . $x];
 	  $_POST[$pmt_meth . '_field_2'] = $_POST['f2_' . $x];
 	  $_POST[$pmt_meth . '_field_3'] = $_POST['f3_' . $x];
 	  $_POST[$pmt_meth . '_field_4'] = $_POST['f4_' . $x];
+	  $_POST[$pmt_meth . '_field_5'] = $_POST['f5_' . $x];
+	  $_POST[$pmt_meth . '_field_6'] = $_POST['f6_' . $x];
 	  $x++;
 	}
 	$order->shipper_code = $pmt_meth;  // store last payment method in shipper_code field
@@ -216,7 +220,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 	  $error .= 'The total payment was not equal to the order total!'. chr(10);
 	  $error .= $tot_paid .' + '. $order->rounding_amt.' + '. $order->total_amount;
 	}
-	if(substr($action,0,5) == 'print') {
+	if(substr($_REQUEST['action'],0,5) == 'print') {
 		$order->printed = true;
 	}else{
 		$order->printed = FALSE;
@@ -225,10 +229,10 @@ if (file_exists($custom_path)) { include($custom_path); }
 	if (!$error) { // Post the order
 		if (!$order->item_rows) {
 			$error .= GL_ERROR_NO_ITEMS;
-		}else if ($post_success = $order->post_ordr($action)) {	// Post the order class to the db
+		}else if ($post_success = $order->post_ordr($_REQUEST['action'])) {	// Post the order class to the db
 			gen_add_audit_log(MENU_HEADING_PHREEPOS . ' - ' . ($_POST['id'] ? TEXT_EDIT : TEXT_ADD), $order->purchase_invoice_id, $order->total_amount);
 	  	} else { // reset the id because the post failed (ID could have been set inside of Post)
-			$error .= 'Posting failt!';
+			$error .= 'Posting fault!';
 			$order->purchase_invoice_id = '';	// reset order num to submitted value (may have been set if payment failed)
 			$order->id = ''; // will be null unless opening an existing purchase/receive
 	  	}
@@ -252,7 +256,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 		  	$report->xfilterlist[0]->min_val   = $order->id;
 		  	$output = BuildForm($report, $delivery_method = 'S'); // force return with report
 		  	if ($output === true) {
-		  		if(DEBUG) $massage .='direct printing failt.';
+		  		if(DEBUG) $massage .='direct printing fault.';
 		  	} else if (!is_array($output) ){// if it is a array then it is not a sequential report
 		    	// fetch the receipt and prepare to print
 		  		$receipt_data = str_replace("\r", "", addslashes($output)); // for javascript multi-line
@@ -264,7 +268,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 		  	}
 		}
 	}
-						$xml .= "\t" . xmlEntry("action",			$action);
+						$xml .= "\t" . xmlEntry("action",			$_REQUEST['action']);
 						$xml .= "\t" . xmlEntry("open_cash_drawer", $order->opendrawer);
 if (!$error)			$xml .= "\t" . xmlEntry("order_id",		 	$order->id);
 if ($error)  			$xml .= "\t" . xmlEntry("error", 			$error);

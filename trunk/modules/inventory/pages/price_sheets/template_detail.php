@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -21,12 +20,12 @@ echo html_form('pricesheet', FILENAME_DEFAULT, gen_get_all_get_params(array('act
 $hidden_fields = NULL;
 // include hidden fields
 echo html_hidden_field('id', $id);
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']     = false;
 if ($security_level > 1) {
-  $toolbar->icon_list['save']['params'] = 'onclick="submitToDo(\'' . (($action == 'new') ? 'save' : 'update') . '\')"';
+  $toolbar->icon_list['save']['params'] = 'onclick="submitToDo(\'' . (($_REQUEST['action'] == 'new') ? 'save' : 'update') . '\')"';
 } else {
   $toolbar->icon_list['save']['show']   = false;
 }
@@ -43,8 +42,8 @@ echo $toolbar->build_toolbar();
   <tr>
     <td><?php echo PRICE_SHEET_NAME; ?></td>
     <td><?php echo html_input_field('sheet_name', $sheet_name, '', false); ?></td>
-    <td align="right"><?php echo TEXT_REVISION; ?></td>
-    <td><?php echo html_input_field('revision', $revision, 'readonly="readonly" size="5"', false); ?></td>
+    <td align="right"><?php echo TEXT_INACTIVE . html_checkbox_field('inactive', '1', ($inactive) ? ' checked' : ''); ?></td>
+    <td align="right"><?php echo TEXT_REVISION . html_input_field('revision', $revision, 'readonly="readonly" size="5"', false); ?></td>
   </tr>
   <tr>
     <td><?php echo TEXT_EFFECTIVE_DATE; ?></td>

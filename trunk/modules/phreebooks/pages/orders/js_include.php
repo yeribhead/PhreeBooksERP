@@ -85,7 +85,14 @@ var lowStockExecute      = true;
 var custCreditLimit      = <?php echo AR_CREDIT_LIMIT_AMOUNT; ?>;
 var applyCreditLimit     = '<?php echo APPLY_CUSTOMER_CREDIT_LIMIT ?>';
 var adminNotValidated    = '<?php echo TEXT_ADMIN_NOT_VALIDATED; ?>';
-var action				 = '<?php echo $action; ?>';
+var action				 = '<?php echo $_REQUEST['action']; ?>';
+var ItemIsAlreadyOnOrder = '<?php echo ITEM_IS_ALREADY_ON_ORDER; ?>';
+var ItemIsOnHand		 = '<?php echo ITEM_IS_ON_HAND; ?>';
+var ItemIsInactive		 = '<?php echo ITEM_IS_INACTIVE; ?>';
+var ItemIsOutOfStockAndInactive  = '<?php echo ITEM_IS_OUT_OF_STOCK_AND_INACTIVE; ?>';
+var SalesOrderForItem	 = '<?php echo THERE_IS_SALES_ORDER_FOR_THIS_ITEM; ?>';
+var ItemIsOnOrder		 = '<?php echo ITEM_IS_ON_ORDER; ?>';
+var ItemMustBeOrderd	 = '<?php echo ITEM_MUST_BE_ORDERD; ?>';
 <?php 
 echo js_calendar_init($cal_order);
 if ($template_options['terminal_date']) echo js_calendar_init($cal_terminal);
@@ -136,20 +143,20 @@ function init() {
 
 <?php 
   if (!$error) echo 'DropShipView(document.orders);' . "\n";
-  if (!$error && $action == 'print') {
+  if (!$error && $_REQUEST['action'] == 'print') {
     echo '  force_clear = true;' . "\n";
 	echo '  ClearForm();' . "\n";
 	echo '  var printWin = window.open("index.php?module=phreeform&page=popup_gen&gID=' . POPUP_FORM_TYPE . '&date=a&xfld=journal_main.id&xcr=EQUAL&xmin=' . $order->id . '","popup_gen","width=700px,height=550px,resizable=1,scrollbars=1,top=150px,left=200px");' . "\n";
     echo '  printWin.focus();' . "\n";
   }
-  if (!$error && $action == 'email') {
+  if (!$error && $_REQUEST['action'] == 'email') {
     echo '  force_clear = true;' . "\n";
 	echo '  ClearForm();' . "\n";
 	echo '  var printWin = window.open("index.php?module=phreebooks&page=popup_email&oID=' . $order->id . '","forms","width=500px,height=350px,resizable=1,scrollbars=1,top=150px,left=200px");' . "\n";
     echo '  printWin.focus()' . "\n";
   }
-  if ($action == 'edit')   echo '  ajaxOrderData(0, ' . $oID . ', ' . JOURNAL_ID . ', false, false);' . "\n";
-  if ($action == 'prc_so') echo '  ajaxOrderData(0, ' . $oID . ', ' . JOURNAL_ID . ', true, false);' . "\n";
+  if ($_REQUEST['action'] == 'edit')   echo '  ajaxOrderData(0, ' . $oID . ', ' . JOURNAL_ID . ', false, false);' . "\n";
+  if ($_REQUEST['action'] == 'prc_so') echo '  ajaxOrderData(0, ' . $oID . ', ' . JOURNAL_ID . ', true, false);' . "\n";
   if (ORD_ENABLE_LINE_ITEM_BAR_CODE) echo 'refreshOrderClock();'; 
 ?>
   $("#search").change(function(){
@@ -161,7 +168,7 @@ function check_form() {
   var error = 0;
   var i, stock, qty, inactive, message;
   var error_message = "<?php echo JS_ERROR; ?>";
-  var todo = document.getElementById('todo').value;
+  var todo = document.getElementById('action').value;
   if (single_line_list=='1') {
 	var numRows = document.getElementById('item_table').rows.length;
   } else {

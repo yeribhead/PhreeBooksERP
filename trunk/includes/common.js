@@ -16,6 +16,31 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/common.js
 //
+/******************************* overwrite General js Functions ****************************************/
+
+function alert(msg){
+	$.messager.alert('Warning!!',msg);
+}
+
+function confirm(msg){
+	$.messager.confirm('Please Confirm',msg,function(r){
+		if (r){
+			return true;
+		}
+	});
+	return false;
+}
+
+function prompt(msg, defaultText){
+	$.messager.prompt('Question', msg, function(r){
+		if (r){
+			return r;
+		}
+	});
+	$('.messager-input').val(defaultText).focus();
+	return false;
+}
+
 /******************************* General Functions ****************************************/
 function addLoadEvent(func) { 
   var oldonload = window.onload; 
@@ -227,8 +252,8 @@ function formatPrecise(amount) { // convert to expected currency format with the
 }
 
 function AlertError(MethodName, e)  {
-  if (e.description == null) { alert(MethodName + " method Exception: " + e.message); }
-  else {  alert(MethodName + " method Exception: " + e.description); }
+  if (e.description == null) {  $.messager.alert("methode error",MethodName + "Exception: " + e.message, "error"); }
+  else {  $.messager.alert("methode error",MethodName + " Exception: " + e.description, "error"); }
 }
 
 // Chart functions
@@ -246,7 +271,7 @@ function phreedomChart() {
 	url: 'index.php?module=phreedom&page=ajax&op=phreedom&action=chart&modID='+modID+'&fID='+func+'&d0='+d0,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  alert ("Ajax Error: " + errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus);
+	  $.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
 	},
 	success: phreedomChartResp
   });
@@ -256,7 +281,7 @@ function phreedomChartResp(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
   var error = $(xml).find("error").text();
-  if (error) { alert (error); }
+  if (error) { $.messager.alert("Chart error",error,"error"); }
   else { // activate the chart response
 	$('#'+chartProps.divID).dialog("option", "title", $(xml).find("title").text());
 	$('#'+chartProps.divID).dialog("option", "width", parseInt($(xml).find("width").text())+40);
@@ -341,7 +366,7 @@ function htmlComboBox(name, values, defaultVal, parameters, width, onChange) {
 
 function cbMmenuActivate(idEdit, idMenu, idSel, idImg) {
   if (fActiveMenu) return mouseSelect(0);
-//alert('idEdit = '+idEdit+' and idMenu = '+idMenu+' and idSel = '+idSel+' and idImg = '+idImg);
+//$.messager.alert("cbMmenuActivate",'idEdit = '+idEdit+' and idMenu = '+idMenu+' and idSel = '+idSel+' and idImg = '+idImg,"info");
   oEdit = document.getElementById(idEdit);
   oMenu = document.getElementById(idMenu);
   oSel  = document.getElementById(idSel);
@@ -469,7 +494,7 @@ function parseXml(xml) {
   var error = '';
   var msg = '';
   var caution = '';
-  if ($(xml).find("debug").text() != '') alert($(xml).find("debug").text());
+  if ($(xml).find("debug").text() != '') $.messager.alert("debug info",$(xml).find("debug").text(),"info");
   $(xml).find("messageStack").each(function() {
 	  if ($(this).find("messageStack_error").text() != ''){
 		  error += $(this).find("messageStack_error").text() + "\n";
@@ -481,7 +506,7 @@ function parseXml(xml) {
   });
   if (error) {
 	  $.messager.show({
-		  title:'Error',
+		  title:'MessageStack Error',
 		  msg: error,
 		  timeout:0,
 		  showType:'fade'
@@ -504,8 +529,8 @@ function parseXml(xml) {
 	  });
   }
   if ($(xml).find("error").text()) {
-    alert($(xml).find("error").text());
-	return false;
+	  $.messager.alert("xml Error", $(xml).find("error").text(),"error");
+	  return false;
   }
   return xml;
 }
@@ -518,7 +543,7 @@ function tabPage(subject, action, rID) {
 	  url: 'index.php?module=phreedom&page=ajax&op=tab_details&mod='+module+'&subject='+subject+'&action='+action+'&rID='+rID,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error: ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: processTabPage
     });
@@ -530,10 +555,10 @@ function processTabPage(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
   subject = $(xml).find("subject").text();
-  if (!subject) alert('no subject returned');
+  if (!subject) $.messager.alert('error','no subject returned','error');
   obj = document.getElementById(subject+'_content');
   obj.innerHTML = $(xml).find("htmlContents").text();
-  if ($(xml).find("message").text()) alert($(xml).find("message").text());
+  if ($(xml).find("message").text()) $.messager.alert("Message",$(xml).find("message").text(),'info');
 }
 
 /************************ Folder Navigation Functions **********************************/

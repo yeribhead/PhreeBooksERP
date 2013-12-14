@@ -42,11 +42,15 @@ class inventory {
 	public $purchases_history		= array();
 	public $sales_history			= array();
 	
+	/**
+	 * 
+	 * this is the class construct
+	 */
 	public function __construct(){
 		global $db;
 		foreach ($_POST as $key => $value) $this->$key = $value;
-		$this->creation_date = date('Y-m-d');
-	  	$this->last_update = date('Y-m-d');
+		$this->creation_date = date('Y-m-d H:i:s');
+	  	$this->last_update   = date('Y-m-d H:i:s');
 		$this->tab_list['general'] = array('file'=>'template_tab_gen',	'tag'=>'general', 'order'=>10, 'text'=>TEXT_SYSTEM);
 		$this->tab_list['history'] = array('file'=>'template_tab_hist',	'tag'=>'history', 'order'=>20, 'text'=>TEXT_HISTORY);
 		if($this->auto_field){
@@ -55,7 +59,11 @@ class inventory {
 		}
 	}
 	
-	function get_item_by_id($id) {
+	/**
+	 * this function gets inventory details from the database by id
+	 * @param integer $id
+	 */
+	function get_item_by_id(integer $id) {
 		global $db;
 		$this->purchases_history = null;
 		$this->sales_history	 = null;
@@ -74,7 +82,12 @@ class inventory {
 		$this->gather_history();
 	}
 	
-	function get_item_by_sku($sku){
+	/** 
+	 * this function gets inventory details from the database by sku
+	 * @param char $sku
+	 */
+	
+	function get_item_by_sku(char $sku){
 		global $db;
 		$this->purchases_history = null;
 		$this->sales_history	 = null;
@@ -93,6 +106,10 @@ class inventory {
 		$this->create_purchase_array();
 		$this->gather_history();
 	}
+	
+	/** 
+	 * this function removes keys from this inventory type that we do not need.
+	 */
 	
 	function remove_unwanted_keys(){
 		global $fields;
@@ -220,7 +237,7 @@ class inventory {
 		$this->history 						= array();
 		$this->qty_per_store				= array();
 		$this->attachments					= array();
-		$result = $db->Execute("select price_sheet_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where inventory_id = " . $id);
+		$result = $db->Execute("select price_sheet_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " where inventory_id = $id");
 		while(!$result->EOF) {
 	  		$output_array = array(
 				'inventory_id'   => $this->id,
@@ -287,6 +304,7 @@ class inventory {
 	  		$result = $db->Execute("update " . TABLE_INVENTORY_PURCHASE .  " set sku = '" . $new_sku . "' where sku = '" . $sku_list[$i] . "'");
 		}
 		$db->transCommit();
+		return true;
 	}
 	
 	//this is to check if you are allowed to remove
@@ -342,7 +360,8 @@ class inventory {
 	    }     
 		$sql_data_array['last_update'] 			= date('Y-m-d H-i-s');
 		if ($_SESSION['admin_security'][SECURITY_ID_PURCHASE_INVENTORY] > 1){
-			$this->store_purchase_array();	
+			$sql_data_array['item_cost'] = $this->store_purchase_array();	
+			$sql_data_array['vendor_id'] = $this->min_vendor_id;
 		} else{
 			if (isset($sql_data_array['item_cost'])) unset($sql_data_array['item_cost']);
 		}
@@ -405,7 +424,9 @@ class inventory {
 	  		}
 	  		$sql_data_array ['attachments'] = sizeof($this->attachments) > 0 ? serialize($this->attachments) : '';
 		}
+		unset($sql_data_array['last_journal_date]']);
 		if ($this->id != ''){
+			unset($sql_data_array['creation_date]']);
 			db_perform(TABLE_INVENTORY, $sql_data_array, 'update', "id = " . $this->id);
 			gen_add_audit_log(INV_LOG_INVENTORY . TEXT_UPDATE, $this->sku . ' - ' . $sql_data_array['description_short']);
 		}else{
@@ -445,9 +466,10 @@ class inventory {
 	}
 
 	function store_purchase_array(){
-		global $db, $currencies, $action;
+		global $db, $currencies;
+		$lowest_cost = 99999999999;
 		$this->backup_purchase_array = array();
-		$result = $db->Execute("select * from " . TABLE_INVENTORY_PURCHASE . " where sku = '" . $this->sku  . "'");
+		$result = $db->Execute("SELECT * FROM ".TABLE_INVENTORY_PURCHASE." WHERE sku='$this->sku'");
 		while(!$result->EOF){
 			$this->backup_purchase_array[$result->fields['id']]= array (
 				'id'						=> $result->fields['id'],
@@ -464,7 +486,8 @@ class inventory {
 		$i = 0;
 		if($_POST['vendor_id_array']) foreach ($_POST['vendor_id_array'] as $key => $value) {
 			$sql_data_array = array ();
-			$sql_data_array['sku'] 		= $this->sku;
+			if($_POST['vendor_id_array'][$key] == '' && $_POST['description_purchase_array'][$key] == '' && $currencies->clean_value($_POST['item_cost_array'][$key]) == 0) break;
+			$sql_data_array['sku'] = $this->sku;
 			$this->purchase_array[$i]['id']	= isset($_POST['row_id_array'][$key]) ? $_POST['row_id_array'][$key] : '';
 			if(isset($_POST['vendor_id_array'][$key])) {
 				$sql_data_array['vendor_id'] 					= $_POST['vendor_id_array'][$key];
@@ -507,12 +530,15 @@ class inventory {
 						'action'					=> 'insert',
 					);// mark delete by default overwrite later if 
 				}
+				$lowest_cost = min($lowest_cost, $sql_data_array['item_cost']);
+				if ($lowest_cost == $sql_data_array['item_cost']) $this->min_vendor_id = $sql_data_array['vendor_id'];
 			}
 			$i++;
 		}
 		foreach($this->backup_purchase_array as $key => $value){
 			if($value['action'] == 'delete') $result = $db->Execute("delete from " . TABLE_INVENTORY_PURCHASE . " where id = '" . $value['id'] . "'");
 		}
+		return $lowest_cost; 
 	}
 	
 	function gather_history() {

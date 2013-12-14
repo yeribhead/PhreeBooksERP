@@ -19,7 +19,7 @@
 echo html_form('orders', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"', true) . chr(10);
 $hidden_fields = NULL;
 // include hidden fields
-echo html_hidden_field('todo',            '') . chr(10);
+echo html_hidden_field('action',            '') . chr(10);
 echo html_hidden_field('id',              $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('recur_id',        $order->recur_id ? $order->recur_id : 0) . chr(10);	// recur entry flag - number of recurs
 echo html_hidden_field('recur_frequency', $order->recur_frequency ? $order->recur_frequency : 0) . chr(10);	// recur entry flag - how often
@@ -50,7 +50,7 @@ $toolbar->icon_list['open']['params']   = 'onclick="OpenOrdrList(this)"';
 $toolbar->icon_list['delete']['params'] = 'onclick="if (confirm(\'' . ORD_DELETE_ALERT . '\')) submitToDo(\'delete\')"';
 $toolbar->icon_list['save']['params']   = 'onclick="submitToDo(\'save\')"';
 $toolbar->icon_list['print']['params']  = 'onclick="submitToDo(\'print\')"';
-$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . 'jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
+$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . '&jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
 if ($security_level > 1 && ENABLE_BAR_CODE_READERS) {
   $toolbar->add_icon('bar_code', 'onclick="openBarCode()"', 9);
   $toolbar->icon_list['bar_code']['icon'] = 'devices/network-wired.png';
@@ -315,7 +315,7 @@ echo html_input_field('bill_email', $order->bill_email, 'size="35" maxlength="48
 <?php
 		  if ($order->item_rows) {
 			for ($j = 0, $i = 1; $j < count($order->item_rows); $j++, $i++) {
-				echo '<tr class='.  $odd?'odd':'even' .' >' . chr(10);
+				echo '<tr class="'.  ($odd?'odd':'even').'">' . chr(10);
 				// turn off delete icon if required
 				if (($order->item_rows[$j]['so_po_item_ref_id']) || ((JOURNAL_ID == 4 || JOURNAL_ID == 10) && $order->item_rows[$j]['pstd'])) {
 					echo '  <td align="center">&nbsp;</td>' . chr(10);
@@ -347,7 +347,7 @@ echo html_input_field('bill_email', $order->bill_email, 'size="35" maxlength="48
 				  echo '  <td>' . html_combo_box('acct_' . $i, $gl_array_list, $order->item_rows[$j]['acct'], 'size="10"') . '</td>' . chr(10);
 				} else {
 				  echo '  <td colspan="2">' . html_pull_down_menu('proj_' . $i, $proj_list, $order->item_rows[$j]['proj']) . '</td>' . chr(10);
-				  echo '</tr>' . chr(10) .  '<tr class='.  $odd?'odd':'even' .' >' . chr(10);
+				  echo '</tr>' . chr(10) .  '<tr class="'.($odd?'odd':'even').'">' . chr(10);
 				  echo '  <td>' . html_input_field('item_cnt_' . $i, $order->item_rows[$j]['item_cnt'], 'size="3" maxlength="3" readonly="readonly"') . '</td>' . chr(10);
 				  echo '  <td colspan="3">' . html_pull_down_menu('acct_' . $i, $gl_array_list, $order->item_rows[$j]['acct']) . '</td>' . chr(10);
 				  echo '  <td>' . html_input_field('full_' . $i, '', 'readonly="readonly" size="11" maxlength="10" style="text-align:right"') . '</td>' . chr(10);

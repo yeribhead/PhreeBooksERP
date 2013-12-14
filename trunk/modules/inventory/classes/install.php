@@ -265,6 +265,7 @@ class inventory_admin {
 	}
 	// set the fields to view in the inventory field filters 
 	$haystack = array('attachments', 'account_sales_income', 'item_taxable', 'purch_taxable', 'image_with_path', 'account_inventory_wage', 'account_cost_of_sales', 'cost_method', 'lead_time');
+	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type='check_box' where field_name='inactive'");
 	$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'");
 	while (!$result->EOF) {
 		$use_in_inventory_filter = '1';
@@ -383,6 +384,7 @@ class inventory_admin {
 	    	$result->MoveNext();
 	  	}
 	  	$haystack = array('attachments', 'account_sales_income', 'item_taxable', 'purch_taxable', 'image_with_path', 'account_inventory_wage', 'account_cost_of_sales', 'cost_method', 'lead_time');
+	  	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type` = 'check_box' where field_name = 'inactive'");
 	  	$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'");
 	  	while (!$result->EOF) {
 	  		$use_in_inventory_filter = '1';
@@ -391,14 +393,16 @@ class inventory_admin {
 			$result->MoveNext();
 	  	}
 		if(!db_table_exists(TABLE_INVENTORY_PURCHASE)){ 
-			foreach ($this->tables as $table => $sql) if ($table == TABLE_INVENTORY_PURCHASE) admin_install_tables(array($table => $sql));
+			foreach ($this->tables as $table => $sql) {
+				if ($table == TABLE_INVENTORY_PURCHASE) admin_install_tables(array($table => $sql));
+	  		}
+		  	if (db_field_exists(TABLE_INVENTORY, 'purch_package_quantity')){
+	  			$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
+	  			$db->Execute("ALTER TABLE " . TABLE_INVENTORY . " DROP `purch_package_quantity`");
+	  		}else{
+	  			$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, 1, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
+	  		}
 		}
-	  	if (db_field_exists(TABLE_INVENTORY, 'purch_package_quantity')){
-	  		$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
-	  		$db->Execute("ALTER TABLE " . TABLE_INVENTORY . " DROP `purch_package_quantity`");
-	  	} else {
-	  		$result = $db->Execute("insert into ".TABLE_INVENTORY_PURCHASE." ( sku, vendor_id, description_purchase, purch_package_quantity, purch_taxable, item_cost, price_sheet_v ) select sku, vendor_id, description_purchase, 1, purch_taxable, item_cost, price_sheet_v  from " . TABLE_INVENTORY);
-	  	}
 		require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 		$tax_rates = ord_calculate_tax_drop_down('c');
 		$result = $db->Execute("SELECT id, item_taxable, full_price, item_cost FROM ".TABLE_INVENTORY);
@@ -500,7 +504,9 @@ class inventory_admin {
 	// copy the demo images
 	require(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 	$backups = new backup;
-	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
+	if (!is_dir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) {
+		if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
+	}
 	$dir_source = DIR_FS_MODULES  . 'inventory/images/demo/';
 	$dir_dest   = DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo/';
 	$backups->copy_dir($dir_source, $dir_dest);

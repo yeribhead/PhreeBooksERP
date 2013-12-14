@@ -24,10 +24,11 @@
 // Include translations here as well.
 var securityLevel = <?php echo $security_level; ?>;
 var text_search   = '<?php echo TEXT_SEARCH; ?>';
+var ItemIsInactive	 = '<?php echo ITEM_IS_INACTIVE; ?>';
 <?php echo js_calendar_init($cal_adj); ?>
 
 function init() {
-<?php if ($action == 'edit') echo '  EditAdjustment(' . $oID . ')'; ?>
+<?php if ($_REQUEST['action'] == 'edit') echo '  EditAdjustment(' . $oID . ')'; ?>
 }
 
 function check_form() {
@@ -58,14 +59,14 @@ function serialList(rowID) {
 
 function loadSkuDetails(iID, rowCnt, strict) {
   var bID = document.getElementById('store_id').value;
-  var sku = iID==0 ? document.getElementById('sku_'+rowCnt).value : '';
+  var sku = iID == 0 ? document.getElementById('sku_'+rowCnt).value : '';
   if (sku == text_search) return;
   $.ajax({
 	type: "GET",
 	url: 'index.php?module=inventory&page=ajax&op=inv_details&iID='+iID+'&sku='+sku+'&bID='+bID+'&rID='+rowCnt+'&strict='+strict,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
 	},
 	success: processSkuStock
   });
@@ -76,6 +77,11 @@ function processSkuStock(sXml) {
   if (!xml) return;
   if (!$(xml).find("rID").text()) return; // no results
   var rCnt = $(xml).find("rID").text();
+  var sku  = $(xml).find("sku").first().text(); // only the first find, avoids bom add-ons
+  if (!sku || $(xml).find("inventory_type").text() == 'ms' || $(xml).find("inventory_type").text() == 'mb') {
+	  InventoryList(rCnt);
+	  return;
+  }
   var rQty = parseFloat(document.getElementById('qty_'+rCnt).value);
   if (isNaN(rQty)) {
     rQty = 1;
@@ -83,8 +89,15 @@ function processSkuStock(sXml) {
   }
   var id = document.getElementById('id').value;
   if (!id) { // new line, fill in all fields
-    document.getElementById('sku_'+rCnt).value      = $(xml).find("sku").text();
+    document.getElementById('sku_'+rCnt).value      = sku;
     document.getElementById('sku_'+rCnt).style.color= '';
+    if($(xml).find("inactive").text() == 1) {
+    	document.getElementById('sku_'+rCnt).style.backgroundColor = 'pink';
+    	document.getElementById('sku_'+rCnt).title = ItemIsInactive;
+    }else{
+    	document.getElementById('sku_'+rCnt).style.backgroundColor = '';
+    	document.getElementById('sku_'+rCnt).removeAttribute("title");
+    }
     document.getElementById('stock_'+rCnt).value    = parseFloat($(xml).find("branch_qty_in_stock").text());
     document.getElementById('price_'+rCnt).value    = formatCurrency($(xml).find("item_cost").text());
     document.getElementById('serial_'+rCnt).value   = '';
@@ -127,7 +140,7 @@ function addInvRow() {
   var rowCnt = newRow.rowIndex;
   // NOTE: any change here also need to be intemplate form for reload if action fails
   cell[0]  = buildIcon(icon_path+'16x16/emblems/emblem-unreadable.png', '<?php echo TEXT_DELETE; ?>', 'style="cursor:pointer" onclick="if (confirm(\'<?php echo TEXT_ROW_DELETE_ALERT; ?>\')) removeInvRow('+rowCnt+');"');
-  cell[1]  = '    <input type="text" name="sku_'+rowCnt+'" id="sku_'+rowCnt+'" value="'+text_search+'" size="<?php echo (MAX_INVENTORY_SKU_LENGTH + 1); ?>" maxlength="<?php echo MAX_INVENTORY_SKU_LENGTH; ?>" onfocus="clearField(\'sku_'+rowCnt+'\', \''+text_search+'\')" onblur="setField(\'sku_'+rowCnt+'\', \''+text_search+'\'); loadSkuDetails(0, '+rowCnt+',0)">';
+  cell[1]  = '    <input type="text" name="sku_'+rowCnt+'" id="sku_'+rowCnt+'" value="'+text_search+'" size="<?php echo (MAX_INVENTORY_SKU_LENGTH + 1); ?>" maxlength="<?php echo MAX_INVENTORY_SKU_LENGTH; ?>" onfocus="clearField(\'sku_'+rowCnt+'\', \''+text_search+'\')" onblur="setField(\'sku_'+rowCnt+'\', \''+text_search+'\'); loadSkuDetails(0, '+rowCnt+',1)">';
   cell[1] += buildIcon(icon_path+'16x16/actions/system-search.png', '<?php echo TEXT_SEARCH; ?>', 'style="cursor:pointer" onclick="InventoryList('+rowCnt+')"');
   cell[1] += buildIcon(icon_path+'16x16/actions/tab-new.png', '<?php echo TEXT_SERIAL_NUMBER; ?>', 'id="imgSerial_'+rowCnt+'" style="cursor:pointer; display:none;" onclick="serialList('+rowCnt+')"');
 // Hidden fields
@@ -181,7 +194,7 @@ function EditAdjustment(rID) {
     url: 'index.php?module=phreebooks&page=ajax&op=load_record&rID='+rID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
     },
 	success: processEditAdjustment
   });

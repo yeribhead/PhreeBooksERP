@@ -18,6 +18,8 @@
 //
 // Revision history
 
+require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
+
 class open_inv_branch extends ctl_panel {
 	public $dashboard_id 		= 'open_inv_branch';
 	public $description	 		= CP_OPEN_INV_BRANCH_DESCRIPTION;

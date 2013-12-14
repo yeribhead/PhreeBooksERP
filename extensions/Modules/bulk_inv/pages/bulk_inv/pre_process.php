@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -21,22 +20,17 @@
 $security_level = validate_user(SECURITY_ID_MAINTAIN_INVENTORY);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
-$search_text  = $_POST['search_text'] ? db_input($_POST['search_text']) : db_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$_GET['search_text'] = $search_text;
-$action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search';
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search';
 $field_cnt    = $_POST['field_cnt'] ? $_POST['field_cnt'] : ($_GET['c'] ? $_GET['c'] : '3');
 $_GET['c']    = $field_cnt;
 for ($i = 0; $i < $field_cnt; $i++) {
 	$field[$i] = $_POST['field'.$i] ? $_POST['field'.$i] : ($_GET['f'.$i] ? $_GET['f'.$i] : 'upc_code');
 	$_GET['f'.$i] = $field[$i];
 }
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
 	$row = 0;
@@ -54,7 +48,7 @@ switch ($action) {
 	$messageStack->add('Finished updating inventory database', 'success');
 	break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -81,25 +75,25 @@ while (!$result->EOF) {
 // build the list header
 $heading_array = array('sku' => TEXT_SKU);
 for ($i = 0; $i < $field_cnt; $i++) $heading_array[$field[$i]] = $field[$i];
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+$result      = html_heading_bar($heading_array);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 
 // build the list for the page selected
 $criteria = array();
-if (isset($search_text) && $search_text <> '') {
+if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	$search_fields = array('sku', 'description_short', 'description_sales', 'description_purchase');
 	// hook for inserting new search fields to the query criteria.
-	$criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+	$criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 }
 // build search filter string
 $search = (sizeof($criteria) > 0) ? (' where ' . implode(' and ', $criteria)) : '';
 $field_list = array('id', 'sku', 'description_short');
 for ($i = 0; $i < $field_cnt; $i++) $field_list[] = $field[$i] . ' as f'.$i;
 
-$query_raw        = "select ".implode(', ', $field_list)." from ".TABLE_INVENTORY."$search order by $disp_order";
-$query_split      = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-$query_result     = $db->Execute($query_raw);
+$query_raw        = "select SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." from ".TABLE_INVENTORY."$search order by $disp_order";
+$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+$query_split      = new splitPageResults($_REQUEST['list'], '');
 $include_header   = true;
 $include_footer   = true;
 $include_template = 'template_main.php';

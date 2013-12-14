@@ -53,8 +53,8 @@ $cost_methods = array(
 $price_mgr_sources = array(
   '0' => TEXT_NOT_USED,	// Do not remove this selection, leave as first entry
   '1' => TEXT_DIR_ENTRY,
-  '2' => TEXT_ITEM_COST,
-  '3' => TEXT_RETAIL_PRICE,
+  '2' => INV_ENTRY_INV_ITEM_COST,
+  '3' => INV_ENTRY_FULL_PRICE,
 // Price Level 1 needs to always be at the end (it is pulled from the first row to avoid a circular reference)
 // The index can change but must be matched with the javascript to update the price source values.
   '4' => TEXT_PRICE_LVL_1,

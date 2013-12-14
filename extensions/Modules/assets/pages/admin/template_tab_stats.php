@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -18,7 +17,7 @@
 //  Path: /modules/assets/pages/admin/template_tab_stats.php
 //
 ?>
-<div id="tab_stats">
+<div title="<?php echo TEXT_STATISTICS;?>" id="tab_stats">
 <?php 
   if (sizeof($install->tables) > 0) {
     echo "  <fieldset><!-- db table stats -->\n";

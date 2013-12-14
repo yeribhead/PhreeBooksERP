@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -27,13 +26,13 @@ var fetchDetails  = false;
 // required function called with every page load
 function init() {
   $('#inv_image').dialog({ autoOpen:false, width:800 });
-  <?php if ($action <> 'new' && $action <> 'edit' && $action <> 'build') { // set focus for main window
+  <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit' && $_REQUEST['action'] <> 'build') { // set focus for main window
 	echo "  document.getElementById('search_text').focus();";
 	echo "  document.getElementById('search_text').select();";
   } ?>
 <?php
-  if (!$error && $action == 'print') echo '  printWOrder(' . $id . ');';
-  if (!$error && $action == 'new')   echo '  document.getElementById("sku").focus();';
+  if (!$error && $_REQUEST['action'] == 'print') echo '  printWOrder(' . $id . ');';
+  if (!$error && $_REQUEST['action'] == 'new')   echo '  document.getElementById("sku").focus();';
 ?>
 }
 

@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -30,7 +29,7 @@ var image_delete_msg  = '<?php echo SHIPPING_DELETE_CONFIRM; ?>';
 
 function init() {
   <?php 
-    if (!$error && !$auto_print && ($action == 'label' || $action == 'delete')) {
+    if (!$error && !$auto_print && ($_REQUEST['action'] == 'label' || $_REQUEST['action'] == 'delete')) {
 	  echo '  window.opener.location.reload();' . chr(10);
 	  echo '  self.close();' . chr(10);
     } 
@@ -113,7 +112,7 @@ function updateWeight() {
 
 // java label printing
 function labelPrint() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
 	applet.append("<?php echo $label_data; ?>");
 	applet.print();
@@ -122,7 +121,7 @@ function labelPrint() {
 }
 
 function monitorPrinting() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
     if (!applet.isDonePrinting()) {
       window.setTimeout('monitorPrinting()', 1000);
@@ -131,13 +130,7 @@ function monitorPrinting() {
       if (e != null) {
 	    alert("Exception occured: " + e.getLocalizedMessage());
 	  } else {
-<?php
-if (sizeof($pdf_list) > 0) {
-  echo "	    paperPrint();\n";
-} else {
-	echo "      window.opener.location.reload();\n";
-	echo "	    self.close();\n";
-} ?>
+		<?php echo (sizeof($pdf_list) > 0) ? " paperPrint();\n" : " window.opener.location.reload();\n self.close();\n"; ?>
 	  }
     }
   } else {

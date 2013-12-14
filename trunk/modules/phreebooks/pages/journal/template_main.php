@@ -19,7 +19,7 @@
 echo html_form('journal', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"', true) . chr(10);
 $hidden_fields = NULL;
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('id', $cInfo->id) . chr(10);
 echo html_hidden_field('recur_id', $cInfo->recur_id ? $cInfo->recur_id : 0) . chr(10);	// recur entry flag - number of recurs
 echo html_hidden_field('recur_frequency', $cInfo->recur_frequency ? $cInfo->recur_frequency : 0) . chr(10);	// recur entry flag - how often
@@ -34,7 +34,7 @@ if ($security_level < 2) $toolbar->icon_list['save']['show'] = false;
 $toolbar->icon_list['print']['show']    = false;
 $toolbar->add_icon('new',   'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL') . '\'"', $order = 2);
 $toolbar->add_icon('copy',  'onclick="verifyCopy()"', 9);
-$toolbar->add_icon('recur', 'onclick="OpenRecurList(this)"', 10);
+if (!$cInfo->id) $toolbar->add_icon('recur', 'onclick="OpenRecurList(this)"', 10);
 if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
 $toolbar->add_help('07.06.02');
 echo $toolbar->build_toolbar(); 

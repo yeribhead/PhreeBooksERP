@@ -22,7 +22,6 @@ echo html_form('pos', FILENAME_DEFAULT, gen_get_all_get_params(array('action')))
 $hidden_fields = NULL;
 
 // include hidden fields
-echo html_hidden_field('todo',               '') . chr(10);
 echo html_hidden_field('id',                 $order->id) . chr(10); // db journal entry id, null = new entry; not null = edit
 echo html_hidden_field('bill_acct_id',       $order->bill_acct_id) . chr(10);	// id of the account in the bill to/remit to
 echo html_hidden_field('bill_address_id',    $order->bill_address_id) . chr(10);
@@ -31,7 +30,7 @@ echo html_hidden_field('printed',            $order->printed) . chr(10);
 echo html_hidden_field('purchase_invoice_id',$order->purchase_invoice_id) . chr(10);
 echo html_hidden_field('post_date',          $order->post_date) . chr(10);
 echo html_hidden_field('gl_acct_id',         $order->gl_acct_id) . chr(10);
-echo html_hidden_field('store_id', $order->store_id) . chr(10);
+echo html_hidden_field('store_id',           $order->store_id) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('display_currency', DEFAULT_CURRENCY) . chr(10);
 if (!ENABLE_MULTI_CURRENCY) echo html_hidden_field('currencies_value', '1') . chr(10);
 
@@ -41,9 +40,9 @@ $toolbar->icon_list['open']['show']     = false;
 $toolbar->icon_list['delete']['show']   = false;
 $toolbar->icon_list['save']['show']     = false;
 $toolbar->icon_list['print']['show']    = false;
-$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . 'jID=' . JOURNAL_ID, 'SSL') . '\'"', 2);
+$toolbar->add_icon('new', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . '&jID='.JOURNAL_ID, 'SSL') . '\'"', 2);
 if ($security_level > 1) {
-  $toolbar->add_icon('pos_return', 'onclick="submitToDo(\'pos_return\')"', 50);
+  $toolbar->add_icon('pos_return', 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'jID')) . '&action=pos_return&jID='.JOURNAL_ID, 'SSL') . '\'"', 50);
   $toolbar->icon_list['pos_return']['icon'] = 'actions/document-save-as.png';
   $toolbar->icon_list['pos_return']['text'] = TEXT_RETURN;
 }
@@ -67,8 +66,8 @@ echo $toolbar->build_toolbar();
 <img id='curr_image'>
                      
 <h1><?php echo PAGE_TITLE; ?></h1>
-<h3 id='open_other_options'><?php echo OTHER_OPTIONS; ?></h3>
-<div id='other_options'>
+<h3 id='open_other_options' class="ui-state-default ui-corner-all"><?php echo OTHER_OPTIONS; ?></h3>
+<div id='other_options' class="ui-state-default ui-corner-all">
 <?php echo html_button_field('home', TEXT_HOME, 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"'); ?><br/><br/>
 <?php echo html_button_field('open_sales', POS_PRINT_OTHER,'onclick="OpenOrdrList(this)"');?><br/><br/>
 <?php echo html_button_field('other_trans', TEXT_OTHER_TRANS,'onclick="ShowOtherTrans()"');?><br/><br/>
@@ -147,7 +146,7 @@ echo $toolbar->build_toolbar();
 </fieldset>  
 
 <table id="payment_table" class="ui-widget" style="border-collapse:collapse;">
-	<caption><?php echo html_button_field('payment', TEXT_PAYMENT, 'onclick="popupPayment()"'); ?></caption>
+	<caption class="ui-state-default ui-corner-all"><?php echo html_button_field('payment', TEXT_PAYMENT, 'onclick="popupPayment()"'); ?></caption>
 	<thead class="ui-widget-header">
 		<tr>
 			<th class="dataTableHeadingContent"></th>
@@ -181,7 +180,7 @@ echo $toolbar->build_toolbar();
 <div id="search_customer" >
 <?php 
   echo ORD_ACCT_ID . ' ' . html_input_field('copy_search', isset($order->short_name) ? $order->short_name : TEXT_SEARCH, 'size="21" maxlength="20" title="' . TEXT_SEARCH . '" onchange="accountGuess(true)"');
-  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="accountGuess(false)"').'<br>'. chr(10);  
+  echo '&nbsp;' . html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="accountGuess(true)"').'<br>'. chr(10);  
   echo html_input_field('copy_bill_primary_name',$order->bill_primary_name, 'size="33" maxlength="32" onfocus="clearField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')" onblur="setField(\'bill_primary_name\', \'' . GEN_PRIMARY_NAME . '\')"', true).'<br>'. chr(10);
   echo html_button_field('customer_popup_buttom', TEXT_SELECT_CUSTOMER, 'onclick="popupContact()"').'<br>'. chr(10);?> 
 </div>
@@ -217,9 +216,16 @@ echo $toolbar->build_toolbar();
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
 ?>
-<applet name="jZebra" code="jzebra.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" width="16" height="16">
-    
-</applet>
+<!--
+<object type="application/x-java-applet" width="16" height="16" id="jZebra" name="jZebra">
+  	<param name="archive"   value="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" />
+  	<param name="code"      value="jzebra.PrintApplet.class" />
+  	<param name="mayscript" value="true" />
+</object>
+-->
+  <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
+	<param name="permissions" value="all-permissions" />
+  </applet>
 <div id="popupPayment">
 <?php 
 $SeccondToolbar      = new toolbar;

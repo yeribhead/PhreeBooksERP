@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -32,7 +31,6 @@ require_once(DIR_FS_WORKING . 'classes/contact_tabs.php');
 require_once(DIR_FS_WORKING . 'classes/contact_fields.php');
 /**************   page specific initialization  *************************/
 $error          = false; 
-$action         = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install        = new contacts_admin();
 $departments    = new departments();
 $dept_types     = new dept_types();
@@ -41,7 +39,7 @@ $project_phases = new project_phases();
 $tabs           = new contact_tabs();
 $fields         = new contact_fields();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	foreach ($install->keys as $key => $default) {
@@ -70,8 +68,6 @@ $sel_yes_no = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_CONTACTS_ADMIN);
 

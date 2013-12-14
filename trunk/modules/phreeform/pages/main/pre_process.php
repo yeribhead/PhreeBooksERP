@@ -26,27 +26,22 @@ require(DIR_FS_WORKING . 'functions/phreeform.php');
 $error       = false;
 $processed   = false;
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-$search_text = db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 
 $group  = isset($_GET['group'])   ? $_GET['group']                     : false;
 $rID    = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['docID']);
 $list   = isset($_REQUEST['list'])    ? $_REQUEST['list']                      : $_POST['list'];
 $tab    = $_GET['tab'];
 $groups = build_groups();
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'copy':
   case 'rename':
     $doc_title = db_prepare_input($_POST['newName']);
     $report    = get_report_details($rID);
 	$report->title = $doc_title;
-	if ($action == 'rename') {
+	if ($_REQUEST['action'] == 'rename') {
 	  $sql_array = array(
 	    'doc_title'   => $doc_title,
 	    'last_update' => date('Y-m-d'),
@@ -112,13 +107,13 @@ switch ($action) {
 	print $contents;
 	exit();  
     break;
-  case 'go_first':    $_REQUEST['list'] = 1;       $action = 'search'; break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); $action = 'search'; break;
-  case 'go_next':     $_REQUEST['list']++;         $action = 'search'; break;
-  case 'go_last':     $_REQUEST['list'] = 99999;   $action = 'search'; break;
+  case 'go_first':    $_REQUEST['list'] = 1;       						$_REQUEST['action'] = 'search'; break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); 	$_REQUEST['action'] = 'search'; break;
+  case 'go_next':     $_REQUEST['list']++;         						$_REQUEST['action'] = 'search'; break;
+  case 'go_last':     $_REQUEST['list'] = 99999;   						$_REQUEST['action'] = 'search'; break;
   case 'search':
   case 'search_reset':
-  case 'go_page':                                  $action = 'search'; break;
+  case 'go_page':                                  $_REQUEST['action'] = 'search'; break;
   default:
 }
 
@@ -145,15 +140,15 @@ if ($group) {
   if ($result->RecordCount() > 0) $toggle_list = buildToggleList($result->fields['id']);
 }
 
-switch ($action) { // figure which detail page to load
+switch ($_REQUEST['action']) { // figure which detail page to load
   case 'search':
   case 'view':
-  	$result      = html_heading_bar(array(), $_GET['sf'], $_GET['so'], array(' ', TEXT_DOCUMENT_TITLE, TEXT_ACTION));
+  	$result      = html_heading_bar(array(),array(' ', TEXT_DOCUMENT_TITLE, TEXT_ACTION));
 	$list_header = $result['html_code'];
 	// build the list for the page selected
-	if (isset($search_text) && $search_text <> '') {
+	if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	  $search_fields = array('doc_title');
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
 	} else {
 	  $search = '';
 	}
@@ -171,8 +166,6 @@ switch ($action) { // figure which detail page to load
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', TEXT_REPORTS);
 

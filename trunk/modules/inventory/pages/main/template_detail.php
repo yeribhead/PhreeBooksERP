@@ -19,13 +19,13 @@
 // start the form
 echo html_form('inventory', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'cID', 'sku', 'add')), 'post', 'enctype="multipart/form-data"');
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', 	$cInfo->id) . chr(10);
 echo html_hidden_field('id', 		$cInfo->id) . chr(10);
 if(isset($cInfo->ms_attr_0)) echo html_hidden_field('ms_attr_0', $cInfo->ms_attr_0) . chr(10);
 if(isset($cInfo->ms_attr_1)) echo html_hidden_field('ms_attr_1', $cInfo->ms_attr_1) . chr(10);
 // customize the toolbar actions
-if ($action == 'properties') {
+if ($_REQUEST['action'] == 'properties') {
   echo html_hidden_field('search_text', '') . chr(10);
   $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
   $toolbar->icon_list['open']['show']     = false;
@@ -35,7 +35,12 @@ if ($action == 'properties') {
 } else {
   $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action','page')), 'SSL') . '\'"';
   $toolbar->icon_list['open']['show']     = false;
-  $toolbar->icon_list['delete']['show']   = false;
+  if ($security_level > 3 && $cInfo->inventory_type != 'mi' && $cInfo->inventory_type != 'ia' && ($cInfo->last_journal_date != '0000-00-00 00:00:00' || $cInfo->last_journal_date != '') ){ 
+  	$toolbar->icon_list['delete']['show']   = true;
+  	$toolbar->icon_list['delete']['params'] = 'onclick="if (confirm(\'' . INV_MSG_DELETE_INV_ITEM . '\')) deleteItem(' . $cInfo->id . ')"';
+  }else{
+  	$toolbar->icon_list['delete']['show']   = false;
+  } 
   if ($security_level > 2 || $first_entry) {
     $toolbar->icon_list['save']['params'] = 'onclick="submitToDo(\'save\')"';
   } else {
@@ -50,25 +55,9 @@ if (count($extra_toolbar_buttons_detail) > 0) {
 }
 echo $toolbar->build_toolbar(); 
 $fields->set_fields_to_display($cInfo->inventory_type);
-
-// pull in additional custom tabs
-if (isset($extra_inventory_tabs) && is_array($extra_inventory_tabs)) foreach ($extra_inventory_tabs as $tab) {
-	$cInfo->tab_list[$tab['id']] = array('file'=>$tab['filename'], 'tag'=>$tab['id'], 'order'=>$tab['order'], 'text'=>$tab['title']);
-}
-
-$temp = array();
-foreach ($cInfo->tab_list as $key => $value) $temp[$key] = $value['order'];
-array_multisort($temp, SORT_ASC, $cInfo->tab_list);
-
 ?>
 <h1 id='heading_title'><?php echo MENU_HEADING_INVENTORY . ' - ' . TEXT_SKU . '# ' . $cInfo->sku . ' (' . $cInfo->description_short . ')'; ?></h1>
-<div id="detailtabs">
-<ul>
-<?php // build the tab list's
-  foreach ($cInfo->tab_list as $value) echo add_tab_list('tab_'.$value['tag'],  $value['text']);
-  echo $fields->extra_tab_li . chr(10); // user added extra tabs
-?>
-</ul>
+<div class="easyui-tabs" id="detailtabs">
 <?php
 foreach ($cInfo->tab_list as $value) {
   if (file_exists(DIR_FS_WORKING . 'custom/pages/main/' . $value['file'] . '.php')) {

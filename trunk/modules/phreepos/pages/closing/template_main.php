@@ -18,7 +18,7 @@
 //
 echo html_form('closingpos', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('statement_balance', $statement_balance)  . chr(10);
 echo html_hidden_field('current_cleard_items', serialize($cleared_items))  . chr(10);
 // customize the toolbar actions
@@ -60,7 +60,7 @@ echo html_hidden_field('post_date', gen_locale_date($post_date))      . chr(10);
   <tr>
 <?php
 	$heading_array = array();
-	$result      = html_heading_bar($heading_array, $_POST['sort_field'], $_POST['sort_order'], array(TEXT_REFERENCE, TEXT_DATE, TEXT_SOURCE, TEXT_AMOUNT, TEXT_CLEAR, '&nbsp;'));
+	$result      = html_heading_bar($heading_array, array(TEXT_REFERENCE, TEXT_DATE, TEXT_SOURCE, TEXT_AMOUNT, TEXT_CLEAR, '&nbsp;'));
 	echo $result['html_code'];
 ?>
   </tr>

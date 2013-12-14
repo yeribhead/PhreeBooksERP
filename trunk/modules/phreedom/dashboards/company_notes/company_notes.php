@@ -32,7 +32,7 @@ class company_notes extends ctl_panel {
 		// fetch the pages params to copy to new install
 		$result = $db->Execute("select params from " . TABLE_USERS_PROFILES . "
 		  where menu_id = '".$this->menu_id."' and dashboard_id = '".$this->dashboard_id."'"); // just need one
-		$this->params = unserialize($result->fields['params']);
+		$this->default_params = unserialize($result->fields['params']);
 		parent::Install($column_id, $row_id);
 	}
 

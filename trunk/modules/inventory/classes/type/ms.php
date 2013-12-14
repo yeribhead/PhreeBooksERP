@@ -262,7 +262,7 @@ class ms extends inventory {//Master Stock Item parent of mi
 			}
 		}
 		if (count($delete_list) && $security_level < 4){
-			$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+			$messageStack->add(ERROR_NO_PERMISSION,'error');
 			$this->get_ms_list();
 	  		return false;
 		}

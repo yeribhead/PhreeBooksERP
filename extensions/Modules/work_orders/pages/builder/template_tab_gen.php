@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 $hidden_fields = '';
 ?>
-<div id="tab_general">
+<div title="<?php echo TEXT_GENERAL;?>" id="tab_general">
   <div id="inv_image" title="<?php echo $wo_title; ?>">
     <?php if ($image_with_path) echo html_image(DIR_WS_MY_FILES . $_SESSION['company'] . '/inventory/images/' . $image_with_path, '', 600) . chr(10);
 			else echo TEXT_NO_IMAGE; ?>

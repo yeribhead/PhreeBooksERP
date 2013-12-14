@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -172,10 +171,11 @@ class banking extends journal {
 					$desc = GEN_ADM_TOOLS_J20 . '-' . TEXT_TOTAL;
 			}
 			$this->journal_rows[] = array( // record for accounts receivable
-				'gl_type'                 => 'ttl',
-				$debit_credit . '_amount' => $amount,
-				'description'             => $desc,
-				'gl_account'              => $this->gl_acct_id,
+				'gl_type'              => 'ttl',
+				$debit_credit.'_amount'=> $amount,
+				'description'          => $desc,
+				'gl_account'           => $this->gl_acct_id,
+				'post_date'            => $this->post_date,
 			);
 			return $amount;
 		} else {

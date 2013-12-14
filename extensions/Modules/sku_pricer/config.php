@@ -20,19 +20,20 @@
 // Release History
 // 1.0 => 2011-05-26 - Initial Release
 // Module software version information
-define('MODULE_SKU_PRICER_VERSION', '1.0');
+define('MODULE_SKU_PRICER_VERSION', 1.0);
 // Menu Sort Positions
 // Security id's
 define('SECURITY_ID_SKU_PRICER', 999);
 // New Database Tables
 // Menu Locations
 if (defined('MODULE_SKU_PRICER_STATUS')) {
-  $menu[] = array(
+  $mainmenu["inventory"]['submenu']['sku_pricer'] = array(
     'text'        => BOX_SKU_PRICER_TITLE, 
-    'heading'     => MENU_HEADING_TOOLS, 
-    'rank'        => 159, 
+    'order'       => 159, 
     'security_id' => SECURITY_ID_SKU_PRICER, 
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=sku_pricer&amp;page=main', 'SSL'),
+    'show_in_users_settings' => true,
+    'params'      => '',
   );
 }
 ?>

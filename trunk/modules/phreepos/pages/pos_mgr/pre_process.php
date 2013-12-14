@@ -29,21 +29,18 @@ $class = 'journal_'.JOURNAL_ID;
 /**************   page specific initialization  *************************/
 define('POPUP_FORM_TYPE','pos:rcpt');
 $error      = false;
-$_GET['sf'] = isset($_POST['sort_field']) ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = isset($_POST['sort_order']) ? $_POST['sort_order'] : $_GET['so'];
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
 /***************   hook for custom actions  ***************************/
 $date           = isset($_POST['search_date'])    ? gen_db_date($_POST['search_date']) 	: false;
 $acct_period 	= isset($_GET['search_period'])   ? $_GET['search_period']         		: false;
-$search_text 	= db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action         = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+$oid		 	= isset($_GET['oID'])   		  ? $_GET['oID']		         		: false;
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/pos_mgr/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'delete':
     $id = db_prepare_input($_POST['rowSeq']);
 	if ($id) {
@@ -93,7 +90,7 @@ switch ($action) {
 	}
     break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -103,10 +100,9 @@ switch ($action) {
 }
 /*****************   prepare to display templates  *************************/
 // build the list header
-if (!isset($_POST['sort_field'])) {
-	$_POST['sort_field'] = 'post_date'; 
-	$_POST['sort_order'] = 'desc';// default to descending by postdate
-}
+if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = 'post_date'; 
+if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';// default to descending by postdate
+
 if (ENABLE_MULTI_CURRENCY){
 	$heading_array = array(
 	  'post_date'           => TEXT_DATE,
@@ -123,7 +119,7 @@ if (ENABLE_MULTI_CURRENCY){
 	  'bill_primary_name'   => GEN_PRIMARY_NAME,
 	);
 }
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], array(TEXT_ACTION));
+$result      = html_heading_bar($heading_array);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 // build the list for the page selected
@@ -135,19 +131,22 @@ if (!$date == false){
 	$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 	$date = '';
 }
-if (isset($search_text) && $search_text <> '') {
-  $search_fields = array('bill_primary_name', 'purchase_invoice_id', 'purch_order_id', 'bill_postal_code', 'ship_primary_name', 'total_amount');
-  // hook for inserting new search fields to the query criteria.
-  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  $search = ' and (' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+if ($oid == true){
+	$search = " and id = $oid";
+	$period_filter = null;
+}else if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
+	$search_fields = array('bill_primary_name', 'purchase_invoice_id', 'purch_order_id', 'bill_postal_code', 'ship_primary_name', 'total_amount');
+	// hook for inserting new search fields to the query criteria.
+  	if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
+  	$search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 } else {
-  $search = '';
+  	$search = '';
 }
 $field_list = array('id', 'post_date', 'shipper_code', 'purchase_invoice_id', 'total_amount', 'bill_primary_name', 'journal_id', 'currencies_code', 'currencies_value','total_amount as new_total_amount');
 // hook to add new fields to the query return results
 if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " from " . TABLE_JOURNAL_MAIN . " 
-		where journal_id in (19,21) " . $period_filter . $search . " order by $disp_order, purchase_invoice_id DESC";
+		where journal_id in (19,21) $period_filter $search order by $disp_order, purchase_invoice_id DESC";
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
@@ -163,8 +162,6 @@ $cal_date = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_POS_MGR);
 

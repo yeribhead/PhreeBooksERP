@@ -184,7 +184,7 @@ define('ORD_INV_STOCK_LOW','Not enough stock on hand of this item.');
 define('ORD_INV_STOCK_BAL','The number of units in stock is: ');
 define('ORD_INV_OPEN_POS','The following open POs are in the system:');
 define('ORD_INV_STOCK_STATUS','Store: %s PO: %s Qty: %s Due: %s');
-define('ORD_JS_SKU_NOT_UNIQUE','No unique matches for this sku could be found. Either the SKU search field resulted in multiple matches or no matches were found.');
+define('ORD_JS_SKU_NOT_UNIQUE','No unique matches for row %s could be found. Either the SKU search field resulted in multiple matches or no matches were found.');
 define('SRVCS_DUPLICATE_SHEET_NAME','The price sheet name already exists. Please enter a new sheet name.');
 define('INV_ERROR_DELETE_HISTORY_EXISTS','Cannot delete this inventory item since there is a record in the inventory_history table.');
 define('INV_ERROR_DELETE_ASSEMBLY_PART','Cannot delete this inventory item since it is part of an assembly.');

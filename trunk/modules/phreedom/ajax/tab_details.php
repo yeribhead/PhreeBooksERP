@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -26,23 +25,22 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 /**************   page specific initialization  *************************/
 $page    = $_GET['mod'];
 $subject = $_GET['subject'];
-$action  = $_GET['action'];
 $rID     = $_GET['rID'];
 $xml     = NULL;
 
 if (!$page || !subject) die('no subject or module');
-if (!$_REQUEST['list']) $_REQUEST['list'] = 1;
-if (!$action) $action = 'go_first';
+if (!$_REQUEST['list']) 	$_REQUEST['list'] = 1;
+if (!$_REQUEST['action']) 	$_REQUEST['action'] = 'go_first';
 
 require_once(DIR_FS_MODULES . $page . '/classes/' . $subject . '.php');
 $my_class = new $subject();
 $my_class->message = false;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'delete':      if ($rID) $my_class->btn_delete($rID); break;
   case 'update':      $my_class->btn_update($rID); break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'go_page':                            break;

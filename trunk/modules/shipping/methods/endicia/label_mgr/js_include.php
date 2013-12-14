@@ -27,7 +27,7 @@ var method = '<?php echo $shipping_module; ?>';
 
 function init() {
   <?php 
-    if (!$error && !$auto_print && ($action == 'label' || $action == 'delete')) {
+    if (!$error && !$auto_print && ($_REQUEST['action'] == 'label' || $_REQUEST['action'] == 'delete')) {
 	  echo '  window.opener.location.reload();' . chr(10);
 	  echo '  self.close();' . chr(10);
     } 
@@ -95,7 +95,7 @@ function paperPrint() {
 
 // java label printing
 function labelPrint() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
 	applet.append("<?php echo $label_data; ?>");
 	applet.print();
@@ -104,7 +104,7 @@ function labelPrint() {
 }
 
 function monitorPrinting() {
-  var applet = document.jZebra;
+  var applet = document.qz;
   if (applet != null) {
     if (!applet.isDonePrinting()) {
       window.setTimeout('monitorPrinting()', 1000);

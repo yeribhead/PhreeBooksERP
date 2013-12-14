@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -240,12 +239,12 @@
 	$levels = false;
 	if ($sheet_name <> '') {
 	  $sql = "select id, default_levels from " . TABLE_PRICE_SHEETS . " 
-	    where inactive = '0' and type = '" . $type . "' and sheet_name = '" . $sheet_name . "' and 
+	    where inactive = '0' and type = '$type' and sheet_name = '$sheet_name' and 
 	    (expiration_date is null or expiration_date = '0000-00-00' or expiration_date >= '" . date('Y-m-d') . "')";
 	  $price_sheets = $db->Execute($sql);
 	  // retrieve special pricing for this inventory item
 	  $sql = "select price_sheet_id, price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " 
-		where price_sheet_id = '" . $price_sheets->fields['id'] . "' and inventory_id = " . $sku_id;
+		where price_sheet_id = '" . $price_sheets->fields['id'] . "' and inventory_id = $sku_id";
 	  $result = $db->Execute($sql);
 	  $special_prices = array();
 	  while (!$result->EOF) {

@@ -23,5 +23,10 @@ define('PF_DEFAULT_ORIENTATION_TEXT','Stelt het standaard afdrukstand in voor ra
 define('PF_DEFAULT_TRIM_LENGTH_TEXT','Stelt de trim lengte in van rapport en formulier namen bij het opsommen in directory-indeling (standaard: 25)');
 define('PF_DEFAULT_ROWSPACE_TEXT','Stelt de scheiding in tussen de koptekst rijen voor rapporten (standaard: 2)');
 define('PDF_APP_TEXT','Stelt de standaard PDF generator in. Aantekening: TCPDF is vereist voor UTF-8 en Bar Code.');
+// Tools
+define('PHREEFORM_TOOLS_REBUILD_TITLE','PhreeForm Stuctuur verificatie en herbouw');
+define('PHREEFORM_TOOLS_REBUILD_DESC','Deze tool verifieerd, en herbouwt de rapport en menu structuur. Het zal de mappen structuur opnieuw laden, en voorkomen dat er ontkoppelde rapporten zijn');
+define('PHREEFORM_TOOLS_REBUILD_SUBMIT','Start Structuur Verificatie en herbouw');
+define('PHREEFORM_TOOLS_REBUILD_SUCCESS','Succesvol de rapporten tabel herbouwt. %s rapporten herbouwd. %s ontkoppelde rapporten zijn in de Miscellaneous map geplaatst.');
 
 ?>

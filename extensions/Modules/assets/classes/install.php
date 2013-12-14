@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,11 +18,16 @@
 //
 
 class assets_admin {
-  function assets_admin() {
-	$this->notes = array(); // placeholder for any operational notes
+	public $notes 			= array();// placeholder for any operational notes
+	public $prerequisites 	= array();// modules required and rev level for this module to work properly
+	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
+	public $dirlist			= array();// add new directories to store images and data
+	public $tables			= array();// Load tables
+	
+  function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => '3.3',
-	  'phreebooks' => '3.3',
+	  'phreedom'   => 3.6,
+	  'phreebooks' => 3.6,
 	);
 	// Load configuration constants for this module, must match entries in admin tabs
     $this->keys = array(
@@ -74,34 +78,38 @@ class assets_admin {
   function update($module) {
     global $db, $messageStack;
 	$error = false;
-    if (MODULE_ASSETS_STATUS < '3.1') {
+    if (MODULE_ASSETS_STATUS < 3.1) {
 	  $tab_map = array('0' => '0');
-	  $result = $db->Execute("select * from " . DB_PREFIX . 'assets_tabs');
-	  while (!$result->EOF) {
-	    $updateDB = $db->Execute("insert into " . TABLE_EXTRA_TABS . " set 
-		  module_id = 'assets',
-		  tab_name = '"    . $result->fields['category_name']        . "',
-		  description = '" . $result->fields['category_description'] . "',
-		  sort_order = '"  . $result->fields['sort_order']           . "'");
-	    $tab_map[$result->fields['category_id']] = db_insert_id();
-	    $result->MoveNext();
+	  if(db_table_exists(DB_PREFIX . 'assets_tabs')){
+		  $result = $db->Execute("select * from " . DB_PREFIX . 'assets_tabs');
+		  while (!$result->EOF) {
+		    $updateDB = $db->Execute("insert into " . TABLE_EXTRA_TABS . " set 
+			  module_id = 'assets',
+			  tab_name = '"    . $result->fields['category_name']        . "',
+			  description = '" . $result->fields['category_description'] . "',
+			  sort_order = '"  . $result->fields['sort_order']           . "'");
+		    $tab_map[$result->fields['category_id']] = db_insert_id();
+		    $result->MoveNext();
+		  }
+		  $db->Execute("DROP TABLE " . DB_PREFIX . "assets_tabs");
 	  }
-	  $result = $db->Execute("select * from " . DB_PREFIX . 'assets_fields');
-	  while (!$result->EOF) {
-	    $updateDB = $db->Execute("insert into " . TABLE_EXTRA_FIELDS . " set 
-		  module_id = 'assets',
-		  tab_id = '"      . $tab_map[$result->fields['category_id']] . "',
-		  entry_type = '"  . $result->fields['entry_type']  . "',
-		  field_name = '"  . $result->fields['field_name']  . "',
-		  description = '" . $result->fields['description'] . "',
-		  params = '"      . $result->fields['params']      . "'");
-	    $result->MoveNext();
-	  } 
-	  $db->Execute("DROP TABLE " . DB_PREFIX . "assets_tabs");
-	  $db->Execute("DROP TABLE " . DB_PREFIX . "assets_fields");
+	  if(db_table_exists(DB_PREFIX . 'assets_fields')){
+		  $result = $db->Execute("select * from " . DB_PREFIX . 'assets_fields');
+		  while (!$result->EOF) {
+		    $updateDB = $db->Execute("insert into " . TABLE_EXTRA_FIELDS . " set 
+			  module_id = 'assets',
+			  tab_id = '"      . $tab_map[$result->fields['category_id']] . "',
+			  entry_type = '"  . $result->fields['entry_type']  . "',
+			  field_name = '"  . $result->fields['field_name']  . "',
+			  description = '" . $result->fields['description'] . "',
+			  params = '"      . $result->fields['params']      . "'");
+		    $result->MoveNext();
+		  } 
+		  $db->Execute("DROP TABLE " . DB_PREFIX . "assets_fields");
+	  }
 	  xtra_field_sync_list('assets', TABLE_ASSETS);
 	}
-    if (MODULE_ASSETS_STATUS < '3.3') {
+    if (MODULE_ASSETS_STATUS < 3.3) {
 	  if (!db_field_exists(TABLE_ASSETS, 'attachments')) $db->Execute("ALTER TABLE " . TABLE_ASSETS . " ADD attachments TEXT NOT NULL AFTER terminal_date");
 	  require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 	  xtra_field_sync_list('assets', TABLE_ASSETS);

@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -38,10 +37,9 @@ var delete_icon_HTML  = '<?php echo substr(html_icon("emblems/emblem-unreadable.
 
 // required function called with every page load
 function init() {
-	$(function() { $('#detailtabs').tabs(); });
-  <?php if ($action <> 'new' && $action <> 'edit') { // set focus for main window
-	echo "  document.getElementById('search_text').focus();";
-	echo "  document.getElementById('search_text').select();";
+  <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
+	echo "  $('#search_text').focus();";
+	echo "  $('#search_text').select();";
   } ?>
 }
 
@@ -122,11 +120,11 @@ function addItemRow() {
   rowCnt = newRow.rowIndex;
 
   cell[0] = buildIcon(icon_path+'16x16/emblems/emblem-unreadable.png', image_delete_text);
-  cell[1] = '<input type="text" id="dis_qty_'+rowCnt+'" name="qty[]" size="7" style="text-align:right">';
-  cell[2] = '<input type="text" id="dis_sku_'+rowCnt+'" name="sku[]" title="'+text_search+'" size="24" onchange="loadSkuDetails(0,'+rowCnt+') ">&nbsp;';
+  cell[1] = '<input type="text" id="dis_qty_'+rowCnt+'" name="dis_qty[]" size="7" style="text-align:right">';
+  cell[2] = '<input type="text" id="dis_sku_'+rowCnt+'" name="dis_sku[]" title="'+text_search+'" size="24" onchange="loadSkuDetails(0,'+rowCnt+') ">&nbsp;';
   cell[2] += buildIcon(icon_path+'16x16/status/folder-open.png', text_search, 'id="sku_open_'+rowCnt+'" align="top" style="cursor:pointer" onclick="ItemList(\'dis_\','+rowCnt+')"');
-  cell[3] = '<input type="text" id="dis_notes_'+rowCnt+'" name="notes[]" size="48">';
-  cell[4] = '<select id="dis_action_'+rowCnt+'" name="action[]"><\/select>';
+  cell[3] = '<input type="text" id="dis_notes_'+rowCnt+'" name="dis_notes[]" size="48">';
+  cell[4] = '<select id="dis_action_'+rowCnt+'" name="dis_action[]"><\/select>';
 
   for (var i=0; i<cell.length; i++) {
     newCell = newRow.insertCell(-1);

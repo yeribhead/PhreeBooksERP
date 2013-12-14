@@ -33,7 +33,6 @@ $rID         = $_GET['rID']          ? $_GET['rID']      : $_POST['rID'];
 $parent_id   = $_GET['parent_id']    ? $_GET['parent_id']: $_POST['parent_id'];
 $def_module  = $_POST['mod']         ? $_POST['mod']     : DEFAULT_MODULE;
 $def_lang    = $_POST['lang']        ? $_POST['lang']    : DEFAULT_LANGUAGE;
-$action      = isset($_GET['action'])? $_GET['action']   : $_POST['todo'];
 $import_path = "modules/$def_module/language/$def_lang/reports/";
 $report      = new objectInfo();
 // load the directory tree to java array (use for page display and error checking on update
@@ -44,7 +43,7 @@ while (!$js_dir->EOF) {
   $js_dir->MoveNext();
 }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
   case 'preview':
   	if (!isset($_POST['filename_prefix'])) { // check for truncated post vars
@@ -252,7 +251,7 @@ switch ($action) {
 	}
 	if (!$error) {
 	  $success = save_report($report, $rID);
-	  if ($action == 'save' && $success) $self_close  = true;
+	  if ($_REQUEST['action'] == 'save' && $success) $self_close  = true;
 	}
     break;
   case 'save_dir':
@@ -309,7 +308,7 @@ switch ($action) {
     break;
   case 'import_one':
     if ($success = ImportReport($_POST['reportname'], $_POST['RptFileName'], $import_path)) {
-	  $messageStack->add_session(PHREEFORM_IMPORT_SUCCESS, 'success');
+	  $messageStack->add(PHREEFORM_IMPORT_SUCCESS, 'success');
 	  $self_close = true;
 	}
 	break;
@@ -320,13 +319,13 @@ switch ($action) {
         if ($file <> "." && $file <> "..") $output[] = $file;
       }
 	} else {
-	  $messageStack->add_session('error opening the directory for reading!','error');
+	  $messageStack->add('error opening the directory for reading!','error');
 	  break;
 	}
     closedir($handle);
 	foreach ($output as $file) if (!$success = ImportReport(NULL, $file, $import_path)) $error = true;
     if (!$error) {
-	  $messageStack->add_session(PHREEFORM_DIR_IMPORT_SUCCESS, 'success');
+	  $messageStack->add(PHREEFORM_DIR_IMPORT_SUCCESS, 'success');
 	  $self_close = true;
 	}
 	break;
@@ -339,9 +338,7 @@ $sel_yes_no = array(
 );
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'import':
   case 'import_one':
   case 'import_all':
@@ -357,9 +354,9 @@ switch ($action) {
   case 'new_frm':
   case 'new_ltr':
   	$report = default_report();
-	if ($action == 'new_rpt') $report->reporttype = 'rpt';
-	if ($action == 'new_frm') $report->reporttype = 'frm';
-	if ($action == 'new_ltr') $report->reporttype = 'ltr';
+	if ($_REQUEST['action'] == 'new_rpt') $report->reporttype = 'rpt';
+	if ($_REQUEST['action'] == 'new_frm') $report->reporttype = 'frm';
+	if ($_REQUEST['action'] == 'new_ltr') $report->reporttype = 'ltr';
 	case 'save':
   case 'preview':
   case 'design':
@@ -373,8 +370,6 @@ switch ($action) {
 	  $mbr_id = array_shift($member);
 	  $security[$mbr_id] = $member;
 	}
-
-	$include_tabs = true;
     $kFonts       = gen_build_pull_down($Fonts);
     $kFontSizes   = gen_build_pull_down($FontSizes);
 	$kLineSizes   = gen_build_pull_down($LineSizes);

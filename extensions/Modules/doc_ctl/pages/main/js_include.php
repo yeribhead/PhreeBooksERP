@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -234,7 +233,7 @@ function fetch_doc(id) {
 	url: 'index.php?module=doc_ctl&page=ajax&op=load_doc_details&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
     },
 	success: fillDocDetails
   });
@@ -257,7 +256,7 @@ function docAction(action) {
 	url: 'index.php?module=doc_ctl&page=ajax&op=doc_operation&action='+action+'&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
     },
 	success: docActionResp
   });
@@ -266,7 +265,7 @@ function docAction(action) {
 function docActionResp(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
-  if ($(xml).find("msg").text()) alert($(xml).find("msg").text());
+  if ($(xml).find("msg").text()) $.messager.alert("Info",$(xml).find("msg").text(),"info"); 
   fetch_doc($(xml).find("docID").text());
   if ($(xml).find("action").text() == 'reload_tree') $('#demo').jstree('refresh',-1);
 }
@@ -278,7 +277,7 @@ function deleteBookmark(id) {
     url: 'index.php?module=doc_ctl&page=ajax&op=doc_operation&fID=rcvBkMkDel&action=del_bookmark&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
     },
     success: respDelBookmark
   });
@@ -287,7 +286,7 @@ function deleteBookmark(id) {
 function respDelBookmark(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
-  if ($(xml).find("msg").text()) alert($(xml).find("msg").text());
+  if ($(xml).find("msg").text()) $.messager.alert("Info",$(xml).find("msg").text(),"info"); 
   location.reload(true);
 }
 

@@ -425,46 +425,24 @@ class ctl_panel {
 	  	$output = '';
 	  	if($this->version < 3.5 || ! $this->version ) $output .= 'update dashboard ' . $this->title . '<br/>';
 		$output .= '<!--// start: ' . $this->dashboard_id . ' //-->' . chr(10);
-//		id="p" class="easyui-panel" title="Panel Tools" style="width:500px;height:200px;padding:10px;"
-//data-options="iconCls:'icon-save',collapsible:true,minimizable:true,maximizable:true,closable:true">
-		$output .= '<div id="'.$this->dashboard_id.'" style="position:relative;" class="easyui-panel" title="'.$this->title.'" data-options="minimizable:true,maximizable:true,closable:true,tools:\'#'.$this->dashboard_id.'_tt\'">' . chr(10);
-//		$output .= '<table class="ui-widget" style="border-collapse:collapse;width:100%">' . chr(10);
-//		$output .= '<thead class="ui-widget-header">' . chr(10);
-//		$output .= '<tr>' . chr(10);
+		$output .= '<div id="'.$this->dashboard_id.'" style="position:relative;" class="easyui-panel" title="'.$this->title.'" data-options="collapsible:true,tools:\'#'.$this->dashboard_id.'_tt\'">' . chr(10);
 		// heading text
 		$output .= '<div id="'.$this->dashboard_id.'_tt">' . chr(10);
-//		$output .= '	<a href="javascript:void(0)" class="icon-add"  onclick="javascript:alert('add')"></a>' . chr(10);
-		$output .= '	<a href="javascript:void(0)" class="icon-edit" onclick="return box_edit(\''.$this->dashboard_id.'\')"></a>' . chr(10);
-		$output .= '	<a href="javascript:void(0)" class="icon-cut"  onclick="return del_box(\'' . $this->dashboard_id . '\')"></a>' . chr(10);
+		if ($this->column_id > 1) 				$output .= '	<a href="javascript:void(0)" class="icon-go_previous"	onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_left\')"></a>' . chr(10);
+		if ($this->column_id < MAX_CP_COLUMNS)	$output .= '	<a href="javascript:void(0)" class="icon-go_next"		onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_right\')"></a>' . chr(10);
+		if ($this->row_id > 1)					$output .= '	<a href="javascript:void(0)" class="icon-go_up"    onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_up\')"></a>' . chr(10);
+		if ($this->row_id < $this->get_next_row($this->column_id) - 1)
+												$output .= '	<a href="javascript:void(0)" class="icon-go_down"    onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_down\')"></a>' . chr(10);
+		$output .= '	<a id="'.$this->dashboard_id.'_add" href="javascript:void(0)" class="icon-edit"    onclick="return box_edit(\''.$this->dashboard_id.'\')"></a>' . chr(10);
+		$output .= '	<a id="'.$this->dashboard_id.'_can" href="javascript:void(0)" class="icon-undo"    onclick="return box_cancel(\'' . $this->dashboard_id . '\')" style="display:none"></a>' . chr(10);
+		$output .= '	<a id="'.$this->dashboard_id.'_del" href="javascript:void(0)" class="icon-cancel"  onclick="return del_box(\'' . $this->dashboard_id . '\')"></a>' . chr(10);
 		//$output .= '	<a href="javascript:void(0)" class="icon-help" onclick="javascript:alert(help)"></a>' . chr(10);
 		$output .= '</div>' . chr(10);
-//		$output .= '<td style="width:90%">' . $this->title . '&nbsp;</td>' . chr(10);
-		// edit/cancel image (text)
 		$output .= '<table style="border-collapse:collapse;width:100%">'. chr(10);
-/*		$output .= '  <div id="'.$this->dashboard_id.'_add"><a href="javascript:void(0)" onclick ="return box_edit(\''.$this->dashboard_id.'\');">';
-		$output .= html_icon('categories/preferences-system.png', TEXT_PROPERTIES, $size = 'small', '', '16', '16');
-		$output .= '  </a></div>' . chr(10);
-		$output .= '  <div id="'.$this->dashboard_id . '_can" style="display:none"><a href="javascript:void(0)" onclick ="return box_cancel(\'' . $this->dashboard_id . '\');">';
-		$output .= html_icon('status/dialog-error.png', TEXT_CANCEL, $size = 'small', '', '16', '16');
-		$output .= '  </a></div>' . chr(10);
-		$output .= '</td>' . chr(10);
-		// minimize/maximize image
-		$output .= '<td>' . chr(10);
-		$output .= '<a href="javascript:void(0)" id="' . $this->dashboard_id . '_min" onclick="this.blur(); return min_box(\'' . $this->dashboard_id . '\')">' . chr(10);
-		$output .= html_icon('actions/list-remove.png', TEXT_COLLAPSE, $size = 'small', '', '16', '16', $this->dashboard_id . '_exp');
-		$output .= '</a></td>' . chr(10);
-		// delete image
-		$output .= '<td>' . chr(10);
-		$output .= '<a href="javascript:void(0)" id="' . $this->dashboard_id . '_del" onclick="return del_box(\'' . $this->dashboard_id . '\')">';
-		$output .= html_icon('emblems/emblem-unreadable.png', TEXT_REMOVE, $size = 'small');
-		$output .= '</a>' . chr(10);
-		$output .= '</td></tr>' . chr(10);
-		$output .= '</thead>' . chr(10);*/
 		// properties contents
 		$output .= '<tbody class="ui-widget-content">' . chr(10);
 		$output .= '<tr id="' . $this->dashboard_id . '_prop" style="display:none"><td colspan="4">' . chr(10);
 		$output .= html_form($this->dashboard_id . '_frm', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
-		$output .= $this->build_move_buttons($this->column_id, $this->row_id);
 		$output .= $controls . chr(10);
 		$output .= '<input type="hidden" name="dashboard_id" value="' . $this->dashboard_id . '" />' . chr(10);
 		$output .= '<input type="hidden" name="column_id" value="' . $this->column_id . '" />' . chr(10);
@@ -481,44 +459,6 @@ class ctl_panel {
 		// finish it up
 		$output .= '</div>' . chr(10);
 		$output .= '<!--// end: ' . $this->dashboard_id . ' //--><br />' . chr(10) . chr(10);
-		return $output;
-  	}
-
-  	function build_move_buttons($column_id, $row_id) {
-		$output = '<table style="border-collapse:collapse"><tr>' . chr(10);
-		// move button - Left
-		if ($column_id > 1) {
-			$output .= '<td>' . chr(10);
-		  	$output .= '<a href="javascript:void(0)" onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_left\')">';
-		  	$output .= html_icon('actions/go-previous.png', TEXT_MOVE_LEFT, $size = 'small');
-		  	$output .= '</a>' . chr(10);
-		  	$output .= '</td>' . chr(10);
-		}
-		// move button - Right
-		if ($column_id < MAX_CP_COLUMNS) {
-		  	$output .= '<td>' . chr(10);
-		  	$output .= '<a href="javascript:void(0)" onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_right\')">';
-		  	$output .= html_icon('actions/go-next.png', TEXT_MOVE_RIGHT, $size = 'small');
-		  	$output .= '</a>' . chr(10);
-		  	$output .= '</td>' . chr(10);
-		}
-		// move button - Up
-		if ($row_id > 1) {
-		  	$output .= '<td>' . chr(10);
-		  	$output .= '<a href="javascript:void(0)" onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_up\')">';
-		  	$output .= html_icon('actions/go-up.png', TEXT_MOVE_UP, $size = 'small');
-		  	$output .= '</a>' . chr(10);
-		  	$output .= '</td>' . chr(10);
-		}
-		// move button - Down
-		if ($row_id < $this->get_next_row($column_id) - 1) {
-		  	$output .= '<td>' . chr(10);
-		  	$output .= '<a href="javascript:void(0)" onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_down\')">';
-		  	$output .= html_icon('actions/go-down.png', TEXT_MOVE_DOWN, $size = 'small');
-		  	$output .= '</a>' . chr(10);
-		  	$output .= '</td>' . chr(10);
-		}
-		$output .= '</tr></table>';
 		return $output;
   	}
 

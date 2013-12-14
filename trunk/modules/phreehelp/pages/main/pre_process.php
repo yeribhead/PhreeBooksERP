@@ -28,7 +28,6 @@ if (PHREEHELP_FORCE_RELOAD == '1') { // load/reload db tables if forced to
 }
 $frame_id    = isset($_GET['fID'])          ? $_GET['fID']          : 'main';
 $context_ref = isset($_GET['idx'])          ? $_GET['idx']          : '';
-$search_text = db_input($_REQUEST['search_text']);
 $result = false;
 $start_page = DOC_ROOT_URL;
 if ($context_ref) {
@@ -44,8 +43,6 @@ if (file_exists($custom_path)) { include($custom_path); }
 /*****************   prepare to display templates  *************************/
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = false;
 $custom_html      = true;
 
 switch ($frame_id) {
@@ -54,7 +51,6 @@ switch ($frame_id) {
   case 'top':  $include_template = 'template_top.php';  break;
   case 'left': 
     $include_template = 'template_left.php';
-	$include_tabs     = true;
     break;
 }
 define('PAGE_TITLE', HEADING_TITLE);

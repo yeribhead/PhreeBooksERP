@@ -34,15 +34,25 @@ define('TABLE_SHIPPING_LOG', DB_PREFIX . 'shipping_log');
 // Set the title menu
 // Set the menus
 if (defined('MODULE_SHIPPING_STATUS')) {
-  $menu[] = array(
-    'text'        => BOX_SHIPPING_MANAGER, 
-    'heading'     => MENU_HEADING_TOOLS, 
-    'rank'        => 5, 
-    'security_id' => SECURITY_ID_SHIPPING_MANAGER,
-    'hidden'      => false, 
-    'link'        => html_href_link(FILENAME_DEFAULT, 'module=shipping&amp;page=ship_mgr', 'SSL'),
-    'params'      => '',
+  $mainmenu["tools"]['submenu']['shipping'] = array(
+    	'text'        => BOX_SHIPPING_MANAGER,
+    	'order'       => 5,
+    	'security_id' => SECURITY_ID_SHIPPING_MANAGER,
+    	'link'        => html_href_link(FILENAME_DEFAULT, 'module=shipping&amp;page=ship_mgr', 'SSL'),
+    	'show_in_users_settings' => true,
   );
+  if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+	  gen_pull_language('shipping', 'admin');
+	  $mainmenu["company"]['submenu']["configuration"]['submenu']["shipping"] = array(
+		'order'	      => MODULE_SHIPPING_TITLE,
+		'text'        => MODULE_SHIPPING_TITLE,
+		'security_id' => SECURITY_ID_CONFIGURATION, 
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=shipping&amp;page=admin', 'SSL'),
+	    'show_in_users_settings' => false,
+		'params'      => '',
+	  );
+  }
+  
 }
 
 ?>

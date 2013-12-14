@@ -19,7 +19,7 @@
 //
 echo html_form('popup_bills', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '')   . chr(10);
+echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -32,14 +32,14 @@ switch (JOURNAL_ID) {
   case 18: $toolbar->add_help('07.05.02'); break;
   case 20: $toolbar->add_help('07.05.01'); break;
 }
-if ($search_text) $toolbar->search_text = $search_text;
 $toolbar->search_period = $acct_period;
 echo $toolbar->build_toolbar($add_search = true, $add_period = true); 
 // Build the page
 ?>
 <h1><?php echo GEN_HEADING_PLEASE_SELECT; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . (JOURNAL_ID == 18 ? TEXT_RECEIPTS : TEXT_PAYMENTS)); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . (JOURNAL_ID == 18 ? TEXT_RECEIPTS : TEXT_PAYMENTS)); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr valign="top"><?php echo $list_header; ?></tr>

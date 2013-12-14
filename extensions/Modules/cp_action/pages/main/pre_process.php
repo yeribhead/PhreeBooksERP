@@ -24,20 +24,15 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 $error         = false;
 $cInfo         = new objectInfo();
 $creation_date = $_POST['creation_date'] ? gen_db_date($_POST['creation_date']) : date('Y-m-d');
-$search_text   = ($_POST['search_text'])   ? db_prepare_input($_POST['search_text'])    : db_prepare_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action        = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
   	$id = db_prepare_input($_POST['rowSeq']);
@@ -129,7 +124,7 @@ switch ($action) {
 	break;
 
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -223,7 +218,7 @@ $cal_date9 = array(
 $include_header   = true;
 $include_footer   = true;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
     // set some defaults
     $cInfo->creation_date = date('Y-m-d');
@@ -244,16 +239,16 @@ switch ($action) {
 	  'capa_status'   => TEXT_STATUS,
 	  'closed_date'   => TEXT_CLOSED_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('capa_num', 'purchase_invoice_id', 'notes_issue', 'caller_name', 'caller_telephone1');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
     } else { $search = ''; }
 
 	$field_list = array('id', 'capa_num', 'capa_status', 'notes_issue', 'creation_date', 'closed_date');

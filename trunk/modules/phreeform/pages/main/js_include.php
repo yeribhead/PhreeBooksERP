@@ -64,7 +64,7 @@ function ReportPopup(action, rID) {
 
 function ReportGenPopup(rID, type) {
   if (!rID) return false;
-  var popupWin = window.open("index.php?module=phreeform&page=popup_gen&rID="+rID+"&todo=open","popup_gen","width=900,height=650,resizable=1,scrollbars=1,top=150,left=200");
+  var popupWin = window.open("index.php?module=phreeform&page=popup_gen&rID="+rID+"&action=open","popup_gen","width=900,height=650,resizable=1,scrollbars=1,top=150,left=200");
 //  popupWin.focus();
 }
 

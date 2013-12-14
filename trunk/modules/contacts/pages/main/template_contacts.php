@@ -17,12 +17,12 @@
 //  Path: /modules/contacts/pages/main/template_contacts.php
 //
 ?>
-<div id="tab_contacts">
+<div title="<?php echo TEXT_CONTACTS;?>" id="tab_contacts">
 <?php 
   if (is_array($cInfo->contacts)) { 
 	$heading_array  = array(); // don't sort
 	$non_sort_array = array(GEN_LAST_NAME, GEN_FIRST_NAME, TEXT_TITLE, GEN_TELEPHONE1, GEN_TELEPHONE4, GEN_EMAIL, TEXT_ACTION);
-	$crm_headings   = html_heading_bar($heading_array, '', '', $non_sort_array);
+	$crm_headings   = html_heading_bar($heading_array, $non_sort_array);
 ?>
   <fieldset>
     <legend><?php echo TEXT_CONTACTS; ?></legend>

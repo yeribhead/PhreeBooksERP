@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -30,23 +29,22 @@ require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$action  = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $subject = $_POST['subject'];
-if (substr($action, 0, 3) == 'go_') {
-  $subject = substr($action, 3);
-  $action  = 'module';
-} elseif (substr($action, 0, 11) == 'sample_xml_') {
-  $db_table = substr($action, 11);
-  $action   = 'sample_xml';
-} elseif (substr($action, 0, 11) == 'sample_csv_') {
-  $db_table = substr($action, 11);
-  $action   = 'sample_csv';
-} elseif (substr($action, 0, 13) == 'import_table_') {
-  $db_table = substr($action, 13);
-  $action   = 'import_table';
-} elseif (substr($action, 0, 13) == 'export_table_') {
-  $db_table = substr($action, 13);
-  $action   = 'export_table';
+if (substr($_REQUEST['action'], 0, 3) == 'go_') {
+  $subject = substr($_REQUEST['action'], 3);
+  $_REQUEST['action']  = 'module';
+} elseif (substr($_REQUEST['action'], 0, 11) == 'sample_xml_') {
+  $db_table = substr($_REQUEST['action'], 11);
+  $_REQUEST['action']   = 'sample_xml';
+} elseif (substr($_REQUEST['action'], 0, 11) == 'sample_csv_') {
+  $db_table = substr($_REQUEST['action'], 11);
+  $_REQUEST['action']   = 'sample_csv';
+} elseif (substr($_REQUEST['action'], 0, 13) == 'import_table_') {
+  $db_table = substr($_REQUEST['action'], 13);
+  $_REQUEST['action']   = 'import_table';
+} elseif (substr($_REQUEST['action'], 0, 13) == 'export_table_') {
+  $db_table = substr($_REQUEST['action'], 13);
+  $_REQUEST['action']   = 'export_table';
 }
 $coa_types = load_coa_types();
 $glEntry   = new journal();
@@ -86,10 +84,10 @@ foreach ($dir as $file) {
 $custom_path = DIR_FS_MODULES . 'phreedom/custom/pages/import_export/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'sample_xml':
   case 'sample_csv':
-    $type = $action=='sample_csv' ? 'csv' : 'xml';
+    $type = $_REQUEST['action']=='sample_csv' ? 'csv' : 'xml';
     switch ($type) {
 	  case 'xml':
 	  	$output = build_sample_xml($page_list[$subject]['structure'], $db_table);
@@ -120,7 +118,7 @@ switch ($action) {
     	$result = table_import_csv($page_list[$subject]['structure'], $db_table, 'file_name_' . $db_table);
 	    break;
 	}
-	$action = 'module'; // retun to module page
+	$_REQUEST['action'] = 'module'; // retun to module page
 	break;
   case 'export_table':
 	$format = $_POST['export_format_' . $db_table];
@@ -139,7 +137,7 @@ switch ($action) {
 	  exit();  
 	} else{
 	  $messageStack->add('There are no records in this database table.','caution');
-	  $action = 'module'; // retun to module page
+	  $_REQUEST['action'] = 'module'; // retun to module page
 	}
 	break;
   case 'save_bb':
@@ -191,7 +189,7 @@ switch ($action) {
   case 'import_so':
   case 'import_ar':
 	validate_security($security_level, 4);
-    switch ($action) {
+    switch ($_REQUEST['action']) {
 	  case 'import_inv':
 		$upload_name = 'file_name_inv';
 		define('JOURNAL_ID',0);
@@ -240,7 +238,7 @@ switch ($action) {
 	  break;
 	}
 	$so_po = new beg_bal_import();
-	switch ($action) {
+	switch ($_REQUEST['action']) {
 	  case 'import_inv': if (!$so_po->processInventory($upload_name)) $error = true; break;
 	  case 'import_po':
 	  case 'import_ap':
@@ -259,10 +257,8 @@ switch ($action) {
 /*****************   prepare to display templates  *************************/
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'beg_balances':
   case 'import_inv':
   case 'import_po':

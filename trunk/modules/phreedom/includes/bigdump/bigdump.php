@@ -267,10 +267,7 @@ td.bgpctbar
 <?php // ****************************** BOF - Mods by PhreeSoft ****************************************
 //if ($include_header) { require(DIR_FS_INCLUDES . 'header.php'); }
 
-echo html_form('restore', FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')) . 'action=restore', 'post', 'enctype="multipart/form-data"', true) . chr(10);
-
-// include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_form('restore', FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')) . '&action=restore', 'post', 'enctype="multipart/form-data"', true) . chr(10);
 
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action','delete','start','fn','foffset','totalqueries')), 'SSL') . '\'"';
@@ -449,9 +446,9 @@ if (!$error && !isset($_REQUEST["fn"]) && $filename=="")
 // ****************************** BOF - Mods by PhreeSoft ****************************************
 //          echo ("<td><a href=\"".$_SERVER["PHP_SELF"]."?start=1&amp;fn=".urlencode($dirfile)."&amp;foffset=0&amp;totalqueries=0\">Start Import</a> into $db_name at $db_server</td>\n <td><a href=\"".$_SERVER["PHP_SELF"]."?delete=".urlencode($dirfile)."\">Delete file</a></td></tr>\n");
           echo "<td>" . 
-		   "<a href=\"" . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('delete','start','fn','foffset','totalqueries')) . 'action=restore', 'SSL') . "&amp;start=1&amp;fn=".urlencode($dirfile)."&amp;foffset=0&amp;totalqueries=0\">" . BIGDUMP_START_IMP . "</a> " . sprintf(BIGDUMP_START_LOC, $db_name, $db_server) . 
+		   "<a href=\"" . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('delete','start','fn','foffset','totalqueries')) . '&action=restore', 'SSL') . "&amp;start=1&amp;fn=".urlencode($dirfile)."&amp;foffset=0&amp;totalqueries=0\">" . BIGDUMP_START_IMP . "</a> " . sprintf(BIGDUMP_START_LOC, $db_name, $db_server) . 
 		   "</td>\n<td>" . 
-		   "<a href=\"" . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('delete','start','fn','foffset','totalqueries')) . 'action=restore', 'SSL') . "&amp;delete=".urlencode($dirfile)."\">".BIGDUMP_DEL_FILE."</a>" . 
+		   "<a href=\"" . html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('delete','start','fn','foffset','totalqueries')) . '&action=restore', 'SSL') . "&amp;delete=".urlencode($dirfile)."\">".BIGDUMP_DEL_FILE."</a>" . 
 		   "</td></tr>\n";
 // ****************************** EOF - Mods by PhreeSoft ****************************************
         else

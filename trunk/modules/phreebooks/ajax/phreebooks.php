@@ -24,9 +24,8 @@ require_once(DIR_FS_MODULES . 'phreebooks/defaults.php');
 /**************   page specific initialization  *************************/
 $xml     = NULL;
 $message = array();
-$action  = $_GET['action'];
- 
-switch ($action) {
+
+switch ($_REQUEST['action']) {
 
 	default: die;
 }

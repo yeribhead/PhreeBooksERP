@@ -227,6 +227,6 @@
 		<description><![CDATA[Journal ID]]></description>
 		<visible><![CDATA[0]]></visible>
 		<type><![CDATA[9]]></type>
-		<min_val><![CDATA[2, 18]]></min_val>
+		<min_val><![CDATA[2, 18, 19]]></min_val>
 	</filterlist>
 </PhreeformReport>

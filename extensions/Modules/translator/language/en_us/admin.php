@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -17,11 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/translator/language/en_us/admin.php
 //
-
 // Module information
 define('MODULE_TRANSLATOR_TITLE','Translator Module');
 define('MODULE_TRANSLATOR_DESCRIPTION','The Translator module provides a convenient interface to translate language files from one language ot another. This module handles version updates as well as full initial translation support.');
-// Headings
-// Defaults
 
 ?>

@@ -17,7 +17,7 @@
 //  Path: /modules/phreepos/pages/admin/template_tab_stats.php
 //
 ?>
-<div id="tab_stats">
+<div title="<?php echo TEXT_STATISTICS;?>" id="tab_stats">
 <?php 
   if (sizeof($install->tables) > 0) {
     echo "  <fieldset><!-- db table stats -->\n";

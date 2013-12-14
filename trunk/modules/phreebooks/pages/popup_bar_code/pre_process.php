@@ -27,7 +27,7 @@ $custom_path = DIR_FS_WORKING . 'custom/pages/popup_bar_code/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   default:
 }
 
@@ -35,8 +35,6 @@ switch ($action) {
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', POPUP_BAR_CODE_TITLE);
 

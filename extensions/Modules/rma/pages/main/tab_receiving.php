@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 ?>
 
-<div id="tab_receiving">
+<div title="<?php echo TEXT_RECEIVING;?>" id="tab_receiving">
 <fieldset>
   <legend><?php echo TEXT_DETAILS; ?></legend>
 <table class="ui-widget" style="border-style:none;width:100%">

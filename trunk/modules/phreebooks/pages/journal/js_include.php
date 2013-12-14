@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -34,7 +33,7 @@ var securityLevel     = <?php echo $security_level; ?>;
 <?php echo $js_gl_array; ?>
 
 function init() {
-<?php if ($action == 'edit') echo '  EditJournal(' . $oID . ');' . chr(10); ?>
+<?php if ($_REQUEST['action'] == 'edit') echo '  EditJournal(' . $oID . ');' . chr(10); ?>
   document.getElementById("purchase_invoice_id").focus();
 }
 
@@ -56,7 +55,7 @@ function check_form() {
 	}
   }
   // With edit of order and recur, ask if roll through future entries or only this entry
-  var todo = document.getElementById('todo').value;
+  var todo = document.getElementById('action').value;
   if (document.getElementById('id').value != "" && document.getElementById('recur_id').value > 0) {
 	switch (todo) {
 	  case 'delete':
@@ -132,19 +131,17 @@ function processEditJournal(sXml) {
   document.getElementById('recur_id').value  = $(xml).find("recur_id").text();
   document.getElementById('store_id').value  = $(xml).find("store_id").text();
   if ($(xml).find("attach_exist").text() == 1) {
-	alert ('Showing attach val = '+$(xml).find("attach_exist").text());
+//	alert ('Showing attach val = '+$(xml).find("attach_exist").text());
 	document.getElementById('show_attach').style.display = ''; // show attachment button and delete checkbox if it exists
   } else {
-	alert ('Not showing attach val = '+$(xml).find("attach_exist").text());
+//	alert ('Not showing attach val = '+$(xml).find("attach_exist").text());
   }
   
   // delete the rows
   while (document.getElementById("item_table").rows.length > 0) document.getElementById("item_table").deleteRow(-1);
   // turn off some icons
-  if (id && securityLevel < 3) {
-	removeElement('tb_main_0', 'tb_icon_recur');
-	removeElement('tb_main_0', 'tb_icon_save');
-  }
+  if (id && securityLevel < 3) removeElement('tb_main_0', 'tb_icon_save');
+  removeElement('tb_main_0', 'tb_icon_recur');// turn off recur if transaction already saved
   // fill item rows
   var jIndex = 1;
   $(xml).find("items").each(function() {
@@ -163,8 +160,8 @@ function processEditJournal(sXml) {
 }
 
 function downloadAttachment() {
-  document.getElementById('todo').value = 'dn_attach';
-  document.getElementById('todo').form.submit();
+  document.getElementById('action').value = 'dn_attach';
+  document.getElementById('action').form.submit();
 }
 
 function glProperties(id, description, asset) {

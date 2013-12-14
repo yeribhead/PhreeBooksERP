@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -30,19 +29,17 @@ $creation_date = isset($_POST['creation_date']) ? gen_db_date($_POST['creation_d
 $receive_date  = isset($_POST['receive_date'])  ? gen_db_date($_POST['receive_date'])  : '';
 $closed_date   = isset($_POST['closed_date'])   ? gen_db_date($_POST['closed_date'])   : '';
 $invoice_date  = isset($_POST['invoice_date'])  ? gen_db_date($_POST['invoice_date'])  : '';
-$search_text 	= db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action        = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 // load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_RMA_ID);
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_RMA_ID;
+if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	if ($security_level < 2) {
 	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
@@ -77,13 +74,14 @@ switch ($action) {
 		  'mfg'   => $_POST['rcv_mfg'][$key],
 		  'wrnty' => $_POST['rcv_wrnty'][$key],
 		);
-	} 
-	if (is_array($_POST['sku'])) foreach ($_POST['dis_sku'] as $key => $value) {
+	}
+
+	if (is_array($_POST['dis_sku'])) foreach ($_POST['dis_sku'] as $key => $value) {
 		$close_details[] = array(
 		  'qty'    => $_POST['dis_qty'][$key],
 		  'sku'    => $_POST['dis_sku'][$key],
 		  'notes'  => $_POST['dis_notes'][$key],
-		  'action' => $_POST['action'][$key],
+		  'action' => $_POST['dis_action'][$key],
 		);
 	} 
 	// Check attachments
@@ -137,19 +135,6 @@ switch ($action) {
 	    'receive_date'        => $receive_date,
 	    'attachments'         => sizeof($attachments)>0 ? serialize($attachments) : '',
 	  );
-	  // build the item list
-      $sql_item_array = array();
-	  $id_array = array();
-	  if (is_array($cInfo->item_rows)) foreach ($cInfo->item_rows as $value) {
-		$sql_item_array[] = array(
-		  'id'          => $value['id'],
-		  'qty'         => $value['qty'],
-		  'sku'         => $value['sku'],
-		  'item_action' => $value['actn'],
-		  'item_notes'  => $value['desc'],
-		);
-		if ($value['id']) $id_array[] = $value['id'];
-	  }
 	  if ($id) {
 	    $success = db_perform(TABLE_RMA, $sql_data_array, 'update', 'id = ' . $id);
 		if ($success) gen_add_audit_log(RMA_LOG_USER_UPDATE . $rma_num);
@@ -226,7 +211,7 @@ switch ($action) {
     break;
 	
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -283,7 +268,7 @@ $cal_invoice = array(
 $include_header   = true;
 $include_footer   = true;
 
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
     // set some defaults
     $cInfo->creation_date = date('Y-m-d');
@@ -308,15 +293,15 @@ switch ($action) {
 	  'status'              => TEXT_STATUS,
 	  'closed_date'         => TEXT_CLOSED,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('rma_num', 'purchase_invoice_id', 'caller_name', 'caller_telephone1');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
     } else {
 	  $search = '';
 	}

@@ -27,7 +27,6 @@ var default_country = '<?php echo COMPANY_COUNTRY; ?>';
 var account_type    = '<?php echo $type; ?>';
 
 function init() {
-  $(function() { $('#detailtabs').tabs(); });
   $('#contact_chart').dialog({ autoOpen:false });
 
 <?php if ($include_template == 'template_main.php') {
@@ -41,7 +40,7 @@ function init() {
 function check_form() {
   var error = 0;
   var error_message = "<?php echo JS_ERROR; ?>";
-  <?php if ($cInfo->auto_type == false && ($action == 'edit' || $action == 'update' || $action == 'new')) { ?> // if showing the edit/update detail form
+  <?php if ($cInfo->auto_type == false && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'update' || $_REQUEST['action'] == 'new')) { ?> // if showing the edit/update detail form
   var acctId = document.getElementById('short_name').value;
   if (acctId == '') {
       error_message += "<?php echo ACT_JS_SHORT_NAME; ?>";
@@ -49,7 +48,7 @@ function check_form() {
   }
   <?php } ?>
   if (error == 1) {
-    alert(error_message);
+	$.messager.alert("Processing error",error_message,"error");
     return false;
   } else {
     return true;
@@ -67,7 +66,7 @@ function loadContacts() {
     url: 'index.php?module=contacts&page=ajax&op=load_contact_info&guess='+guess,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
     },
 	success: fillContacts
   });

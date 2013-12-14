@@ -35,27 +35,22 @@ $_GET['f0'] = $f0;
 $_GET['f1'] = $f1;
 $_GET['f2'] = $f2;
 if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-$search_text = db_input($_REQUEST['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action       = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 
 switch ($account_type) {
   default:
   case 'c': $terms_type = 'AR'; break;
   case 'v': $terms_type = 'AP';
 }
-// load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : $_GET['sf'];
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : $_GET['so'];
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_inv/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -81,17 +76,17 @@ $heading_array = array(
   'a.quantity_on_order' => INV_HEADING_QTY_ON_ORDER,
 );
 $extras      = (ENABLE_MULTI_BRANCH) ? array(TEXT_QTY_THIS_STORE) : array();
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], $extras);
+$result      = html_heading_bar($heading_array, $extras);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 
 // build the list for the page selected
 $criteria = array();
-if (isset($search_text) && $search_text <> '') {
+if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
   $search_fields = array('a.sku', 'a.description_short', 'p.description_purchase', 'description_sales');
   // hook for inserting new search fields to the query criteria.
   if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  $criteria[] = '(' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+  $criteria[] = '(' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 }
 if (!$f0) $criteria[] = "inactive = '0'"; // inactive flag
 if ($f1) { // sort by inventory type

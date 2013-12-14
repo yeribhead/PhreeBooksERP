@@ -21,6 +21,7 @@ require_once(DIR_FS_MODULES . 'contacts/classes/contact_fields.php');
 
 class contacts {
 	public  $terms_type         = 'AP'; 
+	public  $page_title_new     = '';
 	public  $auto_type          = false;
 	public  $inc_auto_id 		= false;
 	public  $auto_field         = '';
@@ -47,7 +48,7 @@ class contacts {
     	//set defaults
         $this->crm_date        = date('Y-m-d');
         $this->crm_rep_id      = $_SESSION['account_id'] <> 0 ? $_SESSION['account_id'] : $_SESSION['admin_id'];
-        foreach ($_POST as $key => $value) $this->$key = $value;
+        foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
         $this->special_terms  =  db_prepare_input($_POST['terms']); // TBD will fix when popup terms is redesigned
         if ($this->id  == '') $this->id  = db_prepare_input($_POST['rowSeq'], true) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['cID']);
         if ($this->aid == '') $this->aid = db_prepare_input($_GET['aID'],     true) ? db_prepare_input($_GET['aID'])     : db_prepare_input($_POST['aID']); 
@@ -102,6 +103,12 @@ class contacts {
 		  $addRec = $db->Execute("select * from ".TABLE_ADDRESS_BOOK." where type='im' and ref_id=".$result->fields['id']);
 		  $cObj->address['m'][] = new objectInfo($addRec->fields);
 		  $this->contacts[] = $cObj; //unserialize(serialize($cObj));
+    	  // load crm notes
+		  $logs = $db->Execute("select * from ".TABLE_CONTACTS_LOG." where contact_id = ". $result->fields['id']. " order by log_date desc");
+		  while (!$logs->EOF) {
+		    $this->crm_log[] = new objectInfo($logs->fields);
+		    $logs->MoveNext();
+		  }
 		  $result->MoveNext();
 		}
 		// load crm notes
@@ -202,7 +209,7 @@ class contacts {
     } else {
       $result = $db->Execute("select id from ".TABLE_CONTACTS." where short_name = '$this->short_name' and type = '$this->type' and id <> $this->id");
     }
-    if ($result->RecordCount() > 0) $error = $messageStack->add($duplicate_id_error,'error');    
+    if ($result->RecordCount() > 0) $error = $messageStack->add($this->duplicate_id_error,'error');    
     return $error;
   }
 

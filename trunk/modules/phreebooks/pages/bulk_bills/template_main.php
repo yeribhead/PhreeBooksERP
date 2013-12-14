@@ -19,7 +19,7 @@
 //
 echo html_form('bulk_bills', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
 $toolbar->icon_list['open']['show']     = false;
@@ -34,7 +34,7 @@ $toolbar->add_help('07.05.01');
 echo $toolbar->build_toolbar(); 
 // Build the page
 ?>
-<h1><?php echo ORD_TEXT_20_V_WINDOW_TITLE; ?></h1>
+<h1><?php echo BOX_BANKING_SELECT_FOR_PAYMENT; ?></h1>
 <div>
  <table class="ui-widget" style="border-style:none;margin-left:auto;margin-right:auto"">
   <tbody class="ui-widget-content">

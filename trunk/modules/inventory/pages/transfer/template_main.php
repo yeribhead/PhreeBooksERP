@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -20,7 +19,7 @@
 $hidden_fields = NULL;
 echo html_form('inv_xfer', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',   '') . chr(10);
+echo html_hidden_field('action',   '') . chr(10);
 echo html_hidden_field('id',     $cInfo->id) . chr(10);
 echo html_hidden_field('ref_id', $cInfo->ref_id) . chr(10);
 // customize the toolbar actions
@@ -55,10 +54,6 @@ echo $toolbar->build_toolbar();
 	  <td><?php echo html_input_field('adj_reason', $cInfo->adj_reason, 'size="50"'); ?></td>
 	  <td align="right"><?php echo TEXT_REFERENCE; ?></td>
 	  <td><?php echo html_input_field('purchase_invoice_id', $cInfo->purchase_invoice_id); ?></td>
-	</tr>
-	<tr>
-	  <td align="right"><?php echo TEXT_TRANSFER_ACCT; ?></td>
-	  <td><?php echo html_pull_down_menu('gl_acct', $gl_array_list, $cInfo->gl_acct ? $cInfo->gl_acct : INV_STOCK_DEFAULT_INVENTORY); ?></td>
 	</tr>
   </tbody>
  </table>

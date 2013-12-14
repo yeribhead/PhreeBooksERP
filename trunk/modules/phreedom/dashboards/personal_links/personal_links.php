@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -77,9 +76,9 @@ class personal_links extends ctl_panel {
 		  	$this->params	= array_merge($first_part, $last_part);
 		} elseif ($result->fields['params']) { // append new note and sort
 		  	$this->params   = unserialize($result->fields['params']);
-		  	$this->params[] = $my_note;
+		  	$this->params[$my_title] = $my_url;
 		} else { // first entry
-		  	$this->params[] = $my_note;
+		  	$this->params[$my_title] = $my_url;
 		}
 		ksort($this->params);	
 		db_perform(TABLE_USERS_PROFILES, array('params' => serialize($this->params)), "update", "user_id = ".$_SESSION['admin_id']." and menu_id = '".$this->menu_id."' and dashboard_id = '".$this->dashboard_id."'");

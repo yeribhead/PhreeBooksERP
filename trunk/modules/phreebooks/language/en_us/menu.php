@@ -37,9 +37,9 @@ define('ORD_TEXT_18_C_WINDOW_TITLE','Customer Receipts');
 define('ORD_TEXT_18_V_WINDOW_TITLE','Vendor Refunds');
 define('ORD_TEXT_19_WINDOW_TITLE','Pos Sales');
 define('ORD_TEXT_20_C_WINDOW_TITLE','Customer Refunds');
-define('ORD_TEXT_20_V_WINDOW_TITLE','Pay Bills');
+define('ORD_TEXT_20_V_WINDOW_TITLE','Vendor Payments');
 
-define('BOX_BANKING_SELECT_FOR_PAYMENT', 'Select for Payment');
+define('BOX_BANKING_SELECT_FOR_PAYMENT', 'Pay by Due Date');
 define('BOX_BANKING_BANK_ACCOUNT_REGISTER', 'Bank Account Register');
 define('BOX_BANKING_ACCOUNT_RECONCILIATION', 'Account Reconciliation');
 define('BOX_BANKING_VOID_CHECKS', 'Void Checks');
@@ -47,5 +47,11 @@ define('BOX_GL_BUDGET', 'Budgeting');
 define('BOX_GL_UTILITIES', 'General Journal Utilities');
 define('BOX_PHREEBOOKS_MODULE_ADM','PhreeBooks Admin');
 define('BOX_STATUS_MGR','%s Manager');
-
+define('ORD_TEXT_RECEIPTS_TITLE','Receipts');
+define('ORD_TEXT_PAYMENTS_TITLE','Payments');
+define('ORD_TEXT_QUOTES_TITLE','Quotes');
+define('BOX_TEXT_NEW_TITLE','New %s');
+define('ORD_TEXT_ORDERS_TITLE','Orders');
+define('ORD_TEXT_INVOICE_TITLE','Invoices');
+define('ORD_TEXT_CREDIT_TITLE','Credit');
 ?>

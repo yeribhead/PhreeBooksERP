@@ -54,7 +54,7 @@ if (!$error ) {
 	$report->xfilterlist[0]->min_val   = $journal_id;
 	$output = BuildForm($report, $delivery_method = 'S'); // force return with report
 	if ($output === true) {
-	  	if(DEBUG) $massage .='direct printing failt.';
+	  	if(DEBUG) $massage .='direct printing fault.';
 	} else if (!is_array($output) ){ // if it is a array then it is not a sequential report
 	  	// fetch the receipt and prepare to print
 	  	$receipt_data = str_replace("\r", "", addslashes($output)); // for javascript multi-line
@@ -65,7 +65,7 @@ if (!$error ) {
 		}
 	}
 }
-				 $xml .= "\t" . xmlEntry("action",$action);
+				 $xml .= "\t" . xmlEntry("action",$_REQUEST['action']);
 				 $xml .= "\t" . xmlEntry("open_cash_drawer", false);
 				 $xml .= "\t" . xmlEntry("order_id", $journal_id);
 if ($error)  	 $xml .= "\t" . xmlEntry("error", $error);

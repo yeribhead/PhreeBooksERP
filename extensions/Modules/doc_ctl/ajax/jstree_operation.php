@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -35,7 +34,7 @@ require_once(DIR_FS_MODULES . "doc_ctl/includes/jstree/_lib/class.tree.php");
 /**************   page specific initialization  *************************/
 $jstree = new json_tree();
 
-$messageStack->write_debug();
+if (DEBUG) $messageStack->write_debug();
 
 if ($_REQUEST["operation"] && strpos($_REQUEST["operation"], "_") !== 0 && method_exists($jstree, $_REQUEST["operation"])) {
 	header("HTTP/1.0 200 OK");

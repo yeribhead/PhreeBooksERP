@@ -23,7 +23,7 @@
 echo html_form('cc_view', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);	
+echo html_hidden_field('action', '') . chr(10);	
 
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="location.href = \'' . html_href_link(FILENAME_DEFAULT, '', 'SSL') . '\'"';
@@ -39,14 +39,14 @@ if (count($extra_toolbar_buttons) > 0) {
 
 // add the help file index and build the toolbar	
 $toolbar->search_period = $acct_period;
-if ($search_text) $toolbar->search_text = $search_text;	
 echo $toolbar->build_toolbar($add_search = true, $add_periods = true); 
 
 // Build the page
 ?>
 <h1><?php echo BOX_BANKING_LINK_POINT_CC_REVIEW; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ITEMS); ?></div>
+</div>
 <table>
   <tr valign="top"><th><?php echo $list_header; ?></th></tr>
 <?php 

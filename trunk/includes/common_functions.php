@@ -1278,7 +1278,8 @@ function gen_db_date($raw_date = '', $separator = '/') {
     return $output;
   }
 
-  function add_tab_list($name, $text, $active = false) {
+  function add_tab_list($name, $text, $active = false) {//@remove release 3.7
+  	trigger_error("function add_tab_list is out of use. $name, $text ", E_USER_DEPRECATED);
 	return '<li><a href="#' . $name . '">' . $text . '</a></li>' . chr(10);
   }
 

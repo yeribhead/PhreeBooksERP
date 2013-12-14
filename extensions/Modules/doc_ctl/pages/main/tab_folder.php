@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -56,8 +55,8 @@ if ($query_result->RecordCount() > 0) {
 }
 if ($found_one) {
   $fieldset_content .= '</table>' . chr(10);
-  $fieldset_content .= '<div style="float:right">' . $query_split->display_links($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['list']) . '</div>' . chr(10);
-  $fieldset_content .= '<div>' . $query_split->display_count($query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['list'], TEXT_DISPLAY_NUMBER . DOC_CTL_ITEMS) . '</div>' . chr(10);
+  $fieldset_content .= '<div style="float:right">' . $query_split->display_links() . '</div>' . chr(10);
+  $fieldset_content .= '<div>' . $query_split->display_count(TEXT_DISPLAY_NUMBER . DOC_CTL_ITEMS) . '</div>' . chr(10);
 } else {
   $fieldset_content .= '  <tr>' . chr(10);
   $fieldset_content .= '	<td colspan="3">' . DOC_CTL_EMPTY_FOLDER . '</td>' . chr(10);

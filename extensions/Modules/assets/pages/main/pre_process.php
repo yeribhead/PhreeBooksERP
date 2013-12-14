@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,32 +21,32 @@ $security_level = validate_user(SECURITY_ASSETS_MGT);
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_MODULES . 'inventory/functions/inventory.php');
 require_once(DIR_FS_WORKING . 'defaults.php');
+require_once(DIR_FS_WORKING . 'classes/assets_fields.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-$search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action      = isset($_GET['action']) ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
-$acquisition_date = ($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
-$maintenance_date = ($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
-$terminal_date    = ($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';
+$fields		 = new assets_fields();
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] != '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+$acquisition_date = isset($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
+$maintenance_date = isset($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
+$terminal_date    = isset($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';
 // load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_WO_ID);
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if(!isset($_REQUEST['sf']))   $_REQUEST['sf'] = TEXT_WO_ID; // the $_REQUEST varible will be called by the header function directly
+if(!isset($_REQUEST['so']))   $_REQUEST['so'] = 'desc';
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   hook for custom actions  ***************************/
-$custom_path = DIR_FS_WORKING . 'DIR_FS_WORKINGcustom/pages/main/extra_actions.php';
+$custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
 	$asset = '';
 	$cInfo = '';
 	break;
   case 'create':
 	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION, 'error');
+		$messageStack->add(ERROR_NO_PERMISSION, 'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -55,12 +54,12 @@ switch ($action) {
 	$asset_type = db_prepare_input($_POST['asset_type']);
 	if (!$asset_id) {
 		$messageStack->add(ASSETS_ERROR_SKU_BLANK, 'error');
-		$action = 'new';
+		$_REQUEST['action'] = 'new';
 		break;
 	}
 	if (gen_validate_sku($asset_id)) {
 		$messageStack->add(ASSETS_ERROR_DUPLICATE_SKU, 'error');
-		$action = 'new';
+		$_REQUEST['action'] = 'new';
 		break;
 	}
 	$sql_data_array = array(
@@ -68,24 +67,24 @@ switch ($action) {
 		'asset_type'       => $asset_type,
 		'acquisition_date' => 'now()');
 	switch ($asset_type) {
-	  case 'vh': $search_text = TEXT_VEHICLE;   break;
-	  case 'bd': $search_text = TEXT_BUILDING;  break;
-	  case 'fn': $search_text = TEXT_FURNITURE; break;
-	  case 'pc': $search_text = TEXT_COMPUTER;  break;
-	  case 'ld': $search_text = TEXT_LAND;      break;
-	  case 'sw': $search_text = TEXT_SOFTWARE;  break;
+	  case 'vh': $_REQUEST['search_text'] = TEXT_VEHICLE;   break;
+	  case 'bd': $_REQUEST['search_text'] = TEXT_BUILDING;  break;
+	  case 'fn': $_REQUEST['search_text'] = TEXT_FURNITURE; break;
+	  case 'pc': $_REQUEST['search_text'] = TEXT_COMPUTER;  break;
+	  case 'ld': $_REQUEST['search_text'] = TEXT_LAND;      break;
+	  case 'sw': $_REQUEST['search_text'] = TEXT_SOFTWARE;  break;
 	}
-	$sql_data_array['account_asset']        = ''; // best_acct_guess(8,$search_text,'');
-	$sql_data_array['account_depreciation'] = ''; // best_acct_guess(10,$search_text,'');
-	$sql_data_array['account_maintenance']  = ''; // best_acct_guess(34,$search_text,'');
+	$sql_data_array['account_asset']        = ''; // best_acct_guess(8,$_REQUEST['search_text'],'');
+	$sql_data_array['account_depreciation'] = ''; // best_acct_guess(10,$_REQUEST['search_text'],'');
+	$sql_data_array['account_maintenance']  = ''; // best_acct_guess(34,$_REQUEST['search_text'],'');
 	db_perform(TABLE_ASSETS, $sql_data_array, 'insert');
 	$id = db_insert_id();
 	gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_ADD, 'Type: ' . $asset_type . ' - ' . $asset_id);
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')) . 'cID=' . $id . '&action=edit', 'SSL'));
+	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')) . '&cID=' . $id . '&action=edit', 'SSL'));
 	break;
   case 'delete':
 	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -105,7 +104,7 @@ switch ($action) {
 	break;
   case 'save':
 	if ($security_level < 3) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -200,8 +199,6 @@ switch ($action) {
 		db_perform(TABLE_ASSETS, $sql_data_array, 'update', "id = " . $id);
 		gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_UPDATE, $asset_id . ' - ' . $sql_data_array['description_short']);
 	} else if ($error == true) {
-		$tab_list = $db->Execute("select id, tab_name, description 
-		  from " . TABLE_EXTRA_TABS . " where module_id='assets' order by sort_order");
 		$_POST['id'] = $id;
 		$cInfo = new objectInfo($_POST);
 		$processed = true;
@@ -209,20 +206,20 @@ switch ($action) {
 	break;
   case 'copy':
 	if ($security_level < 2) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
-	$id = db_prepare_input($_GET['cID']);
-	$asset_id = db_prepare_input($_GET['asset_id']);
+	$id 		  = db_prepare_input($_GET['cID']);
+	$new_asset_id = db_prepare_input($_GET['asset_id']);
 	// check for duplicate skus
-	$result = $db->Execute("select id from " . TABLE_ASSETS . " where asset_id = '" . $asset_id . "'");
+	$result = $db->Execute("select id from " . TABLE_ASSETS . " where asset_id = '" . $new_asset_id . "'");
 	if ($result->Recordcount() > 0) {	// error and reload
 		$messageStack->add(ASSETS_ERROR_DUPLICATE_SKU, 'error');
 		break;
 	}
 	$result = $db->Execute("select * from " . TABLE_ASSETS . " where id = " . $id);
-	$old_sku = $result->fields['asset_id'];
+	$old_asset_key = $result->fields['asset_id'];
 	// clean up the fields (especially the system fields, retain the custom fields)
 	$output_array = array();
 	foreach ($result->fields as $key => $value) {
@@ -232,7 +229,7 @@ switch ($action) {
 			case 'terminal_date':
 				break;
 			case 'asset_id': // set the new asset_id
-				$output_array[$key] = $asset_id;
+				$output_array[$key] = $new_asset_id;
 				break;
 			case 'acquisition_date':
 				$output_array[$key] = date('Y-m-d H:i:s');
@@ -245,26 +242,12 @@ switch ($action) {
 	$new_id = db_insert_id();
 	// Pictures are not copied over...
 	// now continue with newly copied item by editing it
-	gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_COPY, $old_sku . ' => ' . $asset_id);
-	$_POST['id'] = $new_id;	// set item pointer to new record
-	$action = 'edit'; // fall through to edit case
+	gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_COPY, $old_asset_key . ' => ' . $new_asset_id);
+	$_POST['rowSeq'] = $new_id;	// set item pointer to new record
+	$_REQUEST['action'] = 'edit'; // fall through to edit case
   case 'edit':
     $id = db_prepare_input(isset($_POST['rowSeq']) ? $_POST['rowSeq'] : $_GET['cID']);
-	$tab_list = $db->Execute("select id, tab_name, description 
-		from " . TABLE_EXTRA_TABS . " where module_id='assets' order by sort_order");
-	$field_list = $db->Execute("select field_name, description, tab_id, params 
-		from " . TABLE_EXTRA_FIELDS . " where module_id='assets' order by description");
-	if ($field_list->RecordCount() < 1) {
-	  require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
-	  xtra_field_sync_list('assets', TABLE_ASSETS);
-	}
-	$query = '';
-	while (!$field_list->EOF) {
-		$query .= $field_list->fields['field_name'] . ', ';
-		$field_list->MoveNext();
-	}
-	$full_inv_query = ($query == '') ? '*' : substr($query, 0, -2);
-	$sql = "select " . $full_inv_query . " from " . TABLE_ASSETS . " 
+	$sql = "select * from " . TABLE_ASSETS . " 
 		where id = " . (int)$id . " order by asset_id";
 	$asset = $db->Execute($sql);
 	// load attachments
@@ -273,7 +256,7 @@ switch ($action) {
 	break;
   case 'rename':
 	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 		break;
 	}
@@ -331,7 +314,7 @@ switch ($action) {
 	break;
 
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -349,8 +332,7 @@ $purch_cond_array = array(
 );
 $include_header   = true;
 $include_footer   = true;
-$include_calendar = true;
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'new':
     define('PAGE_TITLE', BOX_ASSET_MODULE);
     $include_template = 'template_id.php';
@@ -382,7 +364,6 @@ switch ($action) {
 	  'params'    => array('align' => 'left'),
 	);
     define('PAGE_TITLE', BOX_ASSET_MODULE);
-    $include_tabs     = true;
     $include_template = 'template_detail.php';
     break;
   default:
@@ -396,15 +377,15 @@ switch ($action) {
 	  'acquisition_date'  => TEXT_ACQ_DATE,
 	  'terminal_date'     => TEXT_RETIRE_DATE,
 	);
-	$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so']);
+	$result      = html_heading_bar($heading_array);
 	$list_header = $result['html_code'];
 	$disp_order  = $result['disp_order'];
 	// build the list for the page selected
-    if (isset($search_text) && $search_text <> '') {
+    if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
       $search_fields = array('asset_id', 'serial_number', 'description_short', 'description_long');
 	  // hook for inserting new search fields to the query criteria.
 	  if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
     } else {
 	  $search = '';
 	}

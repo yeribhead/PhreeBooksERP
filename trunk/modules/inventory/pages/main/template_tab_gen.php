@@ -17,7 +17,7 @@
 //  Path: /modules/inventory/pages/main/template_tab_gen.php
 //
 ?>
-<div id="tab_general">
+<div title="<?php echo TEXT_GENERAL;?>" id="tab_general">
 
   <div id="inv_image" title="<?php echo $cInfo->sku; ?>">
     <?php if (isset($cInfo->image_with_path)) {

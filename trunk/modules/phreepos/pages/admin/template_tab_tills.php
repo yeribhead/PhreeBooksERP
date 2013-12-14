@@ -24,7 +24,7 @@ $tills_toolbar->icon_list['save']['show']   = false;
 $tills_toolbar->icon_list['print']['show']  = false;
 if ($security_level > 1) $tills_toolbar->add_icon('new', 'onclick="loadPopUp(\'tills_new\', 0)"', $order = 10);
 ?>
-<div id="tab_tills">
+<div title="<?php echo TEXT_TILLS;?>" id="tab_tills">
   <?php echo $tills_toolbar->build_toolbar(); ?>
   <h1><?php echo $tills->title; ?></h1>
   <div id="tills_content"><?php echo $tills->build_main_html(); ?></div>

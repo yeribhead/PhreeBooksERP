@@ -25,7 +25,7 @@
 // Include translations here as well.
 
 function init() {
-<?php if ($action == 'save') echo '  self.close();' ?>
+<?php if ($_REQUEST['action'] == 'save') echo '  self.close();' ?>
 }
 
 function check_form() {

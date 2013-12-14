@@ -164,7 +164,7 @@ define('ORD_INV_STOCK_LOW','Niet voldoende voorraad van dit artikel.');
 define('ORD_INV_STOCK_BAL','Het aantal op voorraad is: ');
 define('ORD_INV_OPEN_POS','De volgende Inkooporders staan in het systeem:');
 define('ORD_INV_STOCK_STATUS','Vestiging: %s IO: %s Aantal: %s verschuldigd: %s');
-define('ORD_JS_SKU_NOT_UNIQUE','Geen resultaten voor dit Art. konden worden gevonden. Ofwel de Art.nr. zoekveld resulteerde in meerdere resultaten of er zijn geen resultaten gevonden.');
+define('ORD_JS_SKU_NOT_UNIQUE','Geen resultaten voor regel %s. konden worden gevonden. Ofwel de Art.nr. zoekveld resulteerde in meerdere resultaten of er zijn geen resultaten gevonden.');
 define('SRVCS_DUPLICATE_SHEET_NAME','Deze Prijs lijst naam bestaat al. Gebruik een andere naam.');
 define('INV_ERROR_DELETE_HISTORY_EXISTS','Kan dit voorraad item niet verwijderen omdat er een record in de inventory_history tabel aan is gekoppeld.');
 define('INV_ERROR_DELETE_ASSEMBLY_PART','Kan dit artikel niet verwijderen omdat onderdeel is van een assemblage artikel.');

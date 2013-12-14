@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -700,7 +699,7 @@ function BuildSeq($report, $delivery_method = 'D') { // for forms only - Sequent
 		  if ($report->special_class) {
 			$data = $special_form->load_table_data($field->boxfield);
 		  } else {
-			$tblField = array();
+			  $tblField = array();
 			  foreach ($field->boxfield as $key => $TableField) $tblField[] = prefixTables($TableField->fieldname) . ' as r' . $key;
 			  $tblField = implode(', ', $tblField);
 			  $result = $db->Execute("select " . $tblField . $TrailingSQL);
@@ -720,7 +719,6 @@ function BuildSeq($report, $delivery_method = 'D') { // for forms only - Sequent
 			}
 			$oneline .= implode("", $temp). "\n";
 		  }
-		  $field->rowbreak = 1;
 		  break;
 		case 'TDup':
 		  if (!$StoredTable) return $messageStack->add(PHREEFORM_EMPTYTABLE . $field->description, 'error');

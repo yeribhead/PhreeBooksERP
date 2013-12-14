@@ -19,7 +19,7 @@
 //
 
 ?>
-<div id="tab_methods">
+<div title="<?php echo TEXT_METHODS;?>" id="tab_methods">
   <fieldset>
 	<table class="ui-widget" style="border-collapse:collapse;width:100%;">
 	 <thead class="ui-widget-header">

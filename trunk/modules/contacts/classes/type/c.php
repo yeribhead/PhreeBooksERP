@@ -21,15 +21,15 @@ require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
 class c extends contacts{	
 	public $terms_type     = 'AR';
 	public $security_token = SECURITY_ID_MAINTAIN_CUSTOMERS;
-	public $page_title_new = BOX_CONTACTS_NEW_CUSTOMER;
 	public $auto_type      = AUTO_INC_CUST_ID;
 	public $auto_field     = 'next_cust_id_num';
 	public $journals	   = '12,13,19';
 	public $help		   = '07.03.02.02';
-	public $address_types  = array('cm', 'cs', 'cb', 'im');
+	public $address_types  = array('cm', 'cs', 'cb');
 	public $type           = 'c';
 	
 	public function __construct(){
+		$this->page_title_new = sprintf(BOX_TEXT_NEW_TITLE, TEXT_CUSTOMER);
 		$this->tab_list[] = array('file'=>'template_payment',	'tag'=>'payment',  'order'=>30, 'text'=>TEXT_PAYMENT);
 		$this->tab_list[] = array('file'=>'template_addbook',	'tag'=>'addbook',  'order'=>20, 'text'=>TEXT_ADDRESS_BOOK);
 		$this->tab_list[] = array('file'=>'template_contacts',	'tag'=>'contacts', 'order'=> 5, 'text'=>TEXT_CONTACTS);

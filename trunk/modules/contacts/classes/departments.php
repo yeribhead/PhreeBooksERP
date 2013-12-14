@@ -26,7 +26,7 @@ class departments {
     public $error         = false;
 
     public function __construct(){
-    	foreach ($_POST as $key => $value) $this->$key = $value;
+    	foreach ($_POST as $key => $value) $this->$key = db_prepare_input($value);
     	$this->id = isset($_POST['sID'])? $_POST['sID'] : $_GET['sID'];
         $this->security_id = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
     }
@@ -34,7 +34,7 @@ class departments {
   function btn_save($id = '') {
   	global $db, $messageStack;
 	if ($this->security_id < 2) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  return false;
 	}
     if ( $_POST['subdepartment'] && !$_POST['primary_dept_id']) $_POST['subdepartment'] = '0';
@@ -66,7 +66,7 @@ class departments {
   function btn_delete($id = 0) {
   	global $db, $messageStack;
 	if ($this->security_id < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
+		$messageStack->add(ERROR_NO_PERMISSION,'error');
 		return false;
 	}
 	// error check

@@ -19,7 +19,7 @@
 //
 echo html_form('label_mgr', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
 $toolbar->icon_list['open']['show']     = false;
@@ -34,8 +34,9 @@ echo $toolbar->build_toolbar();
 ?>
 <h1><?php echo PAGE_TITLE; ?></h1>
 <?php if ($auto_print) { ?>
-  <applet name="jZebra" code="jzebra.RawPrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" width="16" height="16">
-    <param name="printer" value="<?php echo MODULE_SHIPPING_ENDICIA_PRINTER_NAME; ?>">
+  <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
+	<param name="permissions" value="all-permissions" />
+	<param name="printer" value="<?php echo MODULE_SHIPPING_FEDEX_V7_PRINTER_NAME; ?>">
   </applet>
   <?php echo html_button_field('print_label', TEXT_PRINT, 'onclick="labelPrint()"'); ?>
 <?php } else { ?>

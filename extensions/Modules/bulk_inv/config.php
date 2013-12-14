@@ -20,17 +20,22 @@
 // Release History
 // 1.0 => 2012-10-10 - Initial release
 // Module software version information
+gen_pull_language('bulk_inv', 'admin');
 define('MODULE_BULK_INV_VERSION', '1.0');
 // Menu Sort Positions
 // Security id's
+define('SECURITY_ID_MAINTAIN_INVENTORY', 151);
 // New Database Tables
 // Menu Locations
-$menu[] = array(
-  'text'        => 'Bulk Inventory', 
-  'heading'     => MENU_HEADING_INVENTORY, 
-  'rank'        => 99, 
-  'security_id' => SECURITY_ID_MAINTAIN_INVENTORY, 
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=bulk_inv&amp;page=bulk_inv', 'SSL'),
+
+$mainmenu["inventory"]["submenu"]["bulk_inventory"] = array(
+  	'order'		  => 95,
+    'text'        => MODULE_BULK_INV_TITLE,
+    'security_id' => SECURITY_ID_MAINTAIN_INVENTORY,
+    'link'        => html_href_link(FILENAME_DEFAULT, 'module=bulk_inv&amp;page=bulk_inv', 'SSL'),
+	'show_in_users_settings' => false,
+	'params'	  => '',
 );
+
 
 ?>

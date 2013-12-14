@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,14 +18,14 @@
 //
 echo html_form('contacts', FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'post', 'enctype="multipart/form-data"', true) . chr(10);
 // include hidden fields
-echo html_hidden_field('todo',        '') . chr(10);
+echo html_hidden_field('action',        '') . chr(10);
 echo html_hidden_field('f0',         $f0) . chr(10);
 echo html_hidden_field('id',  $cInfo->id) . chr(10);
 echo html_hidden_field('rowSeq',      '') . chr(10);
 echo html_hidden_field('del_crm_note','') . chr(10);
 echo html_hidden_field('payment_id',  '') . chr(10);
 // customize the toolbar actions
-if ($action == 'properties') {
+if ($_REQUEST['action'] == 'properties') {
   $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
   $toolbar->icon_list['save']['show']     = false;
 } else {
@@ -48,33 +47,15 @@ if (count($extra_toolbar_buttons) > 0) {
 
 // add the help file index and build the toolbar
 if( !$cInfo->help == '' ) $toolbar->add_help($cInfo->help);
-if ($search_text) $toolbar->search_text = $search_text;
 echo $toolbar->build_toolbar(); 
 $fields->set_fields_to_display($type);
 // Build the page
 
 $custom_path = DIR_FS_MODULES . 'contacts/custom/pages/main/extra_tabs.php';
 if (file_exists($custom_path)) { include($custom_path); }
-
-function tab_sort($a, $b) {
-  if ($a['order'] == $b['order']) return 0;
-  return ($a['order'] > $b['order']) ? 1 : -1;
-}
-usort($cInfo->tab_list, 'tab_sort');
-
 ?>
 <h1><?php echo PAGE_TITLE; ?></h1>
-<div id="detailtabs">
-<ul>
-<?php // build the tab list's
-  $set_default = false;
-  foreach ($cInfo->tab_list as $value) {
-  	echo add_tab_list('tab_'.$value['tag'],  $value['text']);
-	$set_default = true;
-  }
-  echo $fields->extra_tab_li . chr(10); // user added extra tabs
-?>
-</ul>
+<div class="easyui-tabs" id="detailtabs">
 <?php
 foreach ($cInfo->tab_list as $value) {
   if (file_exists(DIR_FS_WORKING . 'custom/pages/main/' . $value['file'] . '.php')) {

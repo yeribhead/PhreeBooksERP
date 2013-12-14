@@ -16,11 +16,12 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/config.php
 //
-
+gen_pull_language('phreedom', 'menu');
 // Release History
 // 1 16-10-2012 created.
+// 1.3 added xsd validation
 // Module software version information
-define('MODULE_AUDIT_VERSION',  '1');
+define('MODULE_AUDIT_VERSION',  1.3);
 // Menu Sort Positions
 
 // Menu Security id's
@@ -29,13 +30,26 @@ define('SECURITY_ID_AUDIT',      500);
 
 // Set the menus
 if (defined('MODULE_AUDIT_STATUS')) {
-  $menu[] = array(
-    'text'        => BOX_AUDIT_MODULE,
-    'heading'     => MENU_HEADING_GL,
-    'rank'        => 80,
-    'security_id' => SECURITY_ID_AUDIT,
-    'link'        => html_href_link(FILENAME_DEFAULT, 'module=audit&amp;page=main', 'SSL'),
-  );
+	$mainmenu["gl"]['submenu']["audit"] = array(
+	  	'order'		  => 80,
+		'text'        => BOX_AUDIT_MODULE,  
+		'show_in_users_settings' => true,
+	    'security_id' => SECURITY_ID_AUDIT, 
+	    'link'        => html_href_link(FILENAME_DEFAULT, 'module=audit&amp;page=main', 'SSL'),
+		'params'	  => '',
+	);
+	if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+  		gen_pull_language('audit', 'admin');
+  		$mainmenu["company"]['submenu']["configuration"]['submenu']["audit"] = array(
+			'order'	      => MODULE_AUDIT_TITLE,
+			'text'        => MODULE_AUDIT_TITLE,
+			'security_id' => SECURITY_ID_CONFIGURATION, 
+			'link'        => html_href_link(FILENAME_DEFAULT, 'module=audit&amp;page=admin', 'SSL'),
+    		'show_in_users_settings' => false,
+			'params'      => '',
+  		);
+	}
+	
 }
 
 ?>

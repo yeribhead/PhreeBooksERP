@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -23,21 +22,20 @@ gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_WORKING . 'classes/install.php');
-require_once(DIR_FS_WORKING . 'classes/tabs.php');
-require_once(DIR_FS_WORKING . 'classes/fields.php');
+require_once(DIR_FS_WORKING . 'classes/assets_tabs.php');
+require_once(DIR_FS_WORKING . 'classes/assets_fields.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install= new assets_admin();
-$tabs   = new tabs();
-$fields = new fields();
+$tabs   = new assets_tabs();
+$fields = new assets_fields();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'insert':      $subject_module->btn_insert(); break;
   case 'save':        $subject_module->btn_save();   break;
   case 'delete':
 	if ($security_level < 4) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
+	  $messageStack->add(ERROR_NO_PERMISSION,'error');
 	  break;
 	}
     $subject = $_POST['subject'];
@@ -47,7 +45,7 @@ switch ($action) {
 	break;
   case 'update':      $subject_module->btn_update(); break;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -65,8 +63,6 @@ $sel_yes_no = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_ASSETS_ADMIN);
 

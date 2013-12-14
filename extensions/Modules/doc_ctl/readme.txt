@@ -18,6 +18,6 @@ Installation Procedure:
 3. Don't forget to set permissions for access.
 
 NOTE: This module will be automatically installed if loaded
-when Phreedom is installed. If the module is added later, install
+when Phreebooks is installed. If the module is added later, install
 the module, the installer will not overwrite the database tables
 if they are already there (from a prior release).

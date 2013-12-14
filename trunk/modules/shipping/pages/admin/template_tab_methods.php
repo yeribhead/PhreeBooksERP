@@ -18,7 +18,7 @@
 //  Path: /modules/shipping/pages/admin/template_tab_methods.php
 //
 ?>
-<div id="tab_methods">
+<div title="<?php echo TEXT_METHODS;?>" id="tab_methods">
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
 	  <tr>

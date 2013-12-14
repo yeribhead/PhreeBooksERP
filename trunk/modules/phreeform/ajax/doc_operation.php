@@ -25,11 +25,10 @@ require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
 
 /**************   page specific initialization  *************************/
 $id     = (int)$_GET['id'];
-$action = $_GET['action'];
 
 if (!isset($_GET['id'])) die;
 $doc_details = $db->Execute("select * from " . TABLE_PHREEFORM . " where id = '" . $id . "'");
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'bookmark':
 	$sql_array = array(
 	  'admin_id' => $_SESSION['admin_id'],

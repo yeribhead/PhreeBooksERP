@@ -39,7 +39,7 @@ $cal_j_gen2 = array(
 <?php echo js_calendar_init($cal_j_gen2); ?>
 </script>
 
-<div id="tab_general">
+<div title="<?php echo TEXT_GENERAL;?>" id="tab_general">
   <fieldset>
     <legend><?php echo ACT_CATEGORY_CONTACT; ?></legend>
     <table>
@@ -59,7 +59,7 @@ $cal_j_gen2 = array(
         <td align="right"><?php echo constant('ACT_' . strtoupper($type) . '_REP_ID'); ?></td>
         <td>
 		  <?php
-			$default_selection = ($action == 'new' ? AR_DEF_GL_SALES_ACCT : $cInfo->dept_rep_id);
+			$default_selection = ($_REQUEST['action'] == 'new' ? AR_DEF_GL_SALES_ACCT : $cInfo->dept_rep_id);
 			$selection_array = gen_get_rep_ids('c');
 			echo html_pull_down_menu('dept_rep_id', $selection_array, $default_selection);
 		  ?>

@@ -38,8 +38,8 @@ var text_search          = '<?php echo TEXT_SEARCH;?>';
 var text_enter_new       = '<?php echo TEXT_ENTER_NEW; ?>';
 var text_properties      = '<?php echo TEXT_PROPERTIES; ?>';
 var post_error           = <?php echo $error ? "true" : "false"; ?>;
-var default_sales_tax    = '-1';
-var contact_sales_tax    = '-1';
+var default_sales_tax    = -1;
+var contact_sales_tax    = -1;
 var image_delete_text    = '<?php echo TEXT_DELETE; ?>';
 var image_delete_msg     = '<?php echo TEXT_DELETE_ENTRY; ?>';
 var store_country_code   = '<?php echo COMPANY_COUNTRY; ?>';
@@ -72,6 +72,8 @@ var newthousands_point   = '';
 function init() {
   document.getElementById('disc_gl_acct_id').value    = default_disc_acct;
   // change color of the bill address fields if they are the default values
+  default_sales_tax    = -1;
+  contact_sales_tax    = -1;
   clearAddress('bill');
   setImage('');
   refreshOrderClock(); 
@@ -84,7 +86,7 @@ function check_form() {
   var error = 0;
   var i, stock, qty, inactive, message;
   var error_message = "<?php echo JS_ERROR; ?>";
-  var todo    = document.getElementById('todo').value;
+  var todo    = document.getElementById('action').value;
   if (error == 1) {
     alert(error_message);
     return false;
@@ -149,7 +151,7 @@ function currencyType(id, text, value, decimal_point, thousands_point, decimal_p
 	  this.decimal_precise = decimal_precise;
 }
 
-function till (id, restrictCurrency, currenciesCode, printer, startingLine, closingLine, openDrawer, defaultTax) {
+function till (id, restrictCurrency, currenciesCode, printer, startingLine, closingLine, openDrawer, defaultTax, storeID) {
 	  this.id   		    = id;
 	  this.restrictCurrency = restrictCurrency;
 	  this.currenciesCode 	= currenciesCode;
@@ -158,6 +160,7 @@ function till (id, restrictCurrency, currenciesCode, printer, startingLine, clos
 	  this.closingLine		= closingLine;	
 	  this.openDrawer		= openDrawer;
 	  this.defaultTax		= defaultTax;
+	  this.storeID			= storeID;
 }
 
 function ot_option (till_id, id, type, use_tax, taxable, description) {
@@ -278,7 +281,7 @@ function orderFillAddress(xml, type, fill_address) {
 		  document.getElementById('tax_'+rowCnt).value = $(this).find("tax_id").text();
 		  rowCnt++;
 		}
-		if (show_status == '1') {
+		if (show_status == 1) {
 		  window.open("index.php?module=phreebooks&page=popup_status&id="+id,"contact_status","width=500px,height=300px,resizable=0,scrollbars=1,top=150,left=200");
 		}
 		break;
@@ -335,7 +338,7 @@ function fillOrder(xml) {
     // fix some special cases, checkboxes, and active fields
     document.getElementById('display_currency').value = $(this).find("currencies_code").text();
     // disable the purchase_invoice_id field since it cannot change, except purchase/receive
-    if ($(this).find("id").first().text() && journalID != '6' && journalID != '7' && journalID != '21') {
+    if ($(this).find("id").first().text() && journalID != 6 && journalID != 7 && journalID != 21) {
 	  document.getElementById('purchase_invoice_id').readOnly = true;
     }
     if ($(this).find("id").first().text() && securityLevel < 3) { // turn off some icons
@@ -383,8 +386,8 @@ function fillOrder(xml) {
 
 function accountGuess(force) {
   if (!force) {
-	  AccountList();
-	  return;
+	AccountList();
+	return;
   } 
   var warn = true;
   var firstguess  = document.getElementById('copy_search').value; 
@@ -393,6 +396,7 @@ function accountGuess(force) {
 	  guess = firstguess;
   }
   // test for data already in the form
+  if (guess == '') return alert('Please enter a guess to search for the contact!');
   if (guess != text_search && guess != '') {
     if (document.getElementById('bill_acct_id').value ||
         document.getElementById('bill_primary_name').value != default_array[0]) {
@@ -431,14 +435,15 @@ function AccountList(currObj) {
 	if( firstguess != secondguess && firstguess != text_search && firstguess != ''){
 		  guess = firstguess;
 	}
-  window.open("index.php?module=contacts&page=popup_accts&type="+account_type+"&form=orders&fill=bill&jID=19&search_text="+guess,"accounts","width=850px,height=550px,resizable=1,scrollbars=1,top=150,left=100");
+	window.open("index.php?module=contacts&page=popup_accts&type="+account_type+"&form=orders&fill=bill&jID=19&search_text="+guess,"accounts","width=850px,height=550px,resizable=1,scrollbars=1,top=150,left=100");
 }
 
 function InventoryList(rowCnt) {
-	var storeID = document.getElementById('store_id').value;
-	var sku     = document.getElementById('sku').value;
-	var cID     = document.getElementById('bill_acct_id').value;
-	window.open("index.php?module=inventory&page=popup_inv&type="+account_type+"&rowID="+rowCnt+"&storeID="+storeID+"&cID="+cID+"&search_text="+sku,"inventory","width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
+	var url     = "index.php?module=inventory&page=popup_inv&type="+account_type+"&rowID="+rowCnt;
+	if ($("#bill_acct_id").val()) url += "&cID="+$("#bill_acct_id").val();
+	if ($("#sku").val())          url += "&search_text="+$("#sku").val();
+	if ($("#store_id").val())     url += "&storeID="+$("#store_id").val();
+	window.open(url, "inventory", "width=700px,height=550px,resizable=1,scrollbars=1,top=150,left=200");
 }
 
 function serialList(rowID) {
@@ -625,10 +630,10 @@ function removePmtRow(index) {
 } 
 
 function rowWithTax(rowCnt){
-	tax_index = document.getElementById('tax_'+rowCnt).value;
+	var tax_index = document.getElementById('tax_'+rowCnt).value;
 	var price = document.getElementById('wtprice_'+rowCnt).value;
 	document.getElementById('wtprice_'+rowCnt).value = formatCurrency(cleanCurrency(price));
-	text = formatCurrency(cleanCurrency(price )/ (1+(tax_rates[tax_index].rate / 100)));
+	var text = formatCurrency(cleanCurrency(price )/ (1+(tax_rates[tax_index].rate / 100)));
 	document.getElementById('price_'+rowCnt).value = text;
 	updateRowTotal(rowCnt, false);
 }
@@ -637,7 +642,7 @@ function updateRowTotal(rowCnt, useAjax) {
 	var unit_price   = cleanCurrency(document.getElementById('price_'+rowCnt).value);
 	var full_price   = cleanCurrency(document.getElementById('full_' +rowCnt).value);
 	var tax_index    = document.getElementById('tax_'+rowCnt).value;
-	if(tax_index == '-1' || tax_index == '') tax_index = 0;
+	if (tax_index == -1 || tax_index == '') tax_index = 0;
 	var wtunit_price = unit_price * (1 +(tax_rates[tax_index].rate / 100));
 	var qty          = parseFloat(document.getElementById('pstd_'+rowCnt).value);
 	if (isNaN(qty)) qty = 1; // if blank or a non-numeric value is in the pstd field, assume one
@@ -741,7 +746,7 @@ function updateTotalPrices() {
   for (var i=1; i<=numRows; i++) {
 	var tax_index    = document.getElementById('tax_'+i).value;
     lineTotal  = parseFloat(cleanCurrency(document.getElementById('total_'+i).value));
-  	if (tax_index != '0') {
+  	if (tax_index != 0) {
 	  if (tax_index == -1 || tax_index == '') { // if the rate array index is not defined
 		tax_index = 0;
 		document.getElementById('tax_'+i).value = tax_index;
@@ -948,7 +953,7 @@ function fillInventory(sXml) {
 	  return;
   }
   var qty    = parseFloat($(xml).find("qty").first().text());
-  var negate = <?php echo $action=='pos_return' ? 'true' : 'false'; ?>;
+  var negate = <?php echo $_REQUEST['action']=='pos_return' ? 'true' : 'false'; ?>;
   if (negate) qty = -qty;
   var rowCnt = $(xml).find("rID").text();
   if (!rowCnt) {
@@ -968,7 +973,7 @@ function fillInventory(sXml) {
   		$('#serial_' +rowCnt).show();
   }
   document.getElementById('product_tax_'+rowCnt).value    = $(xml).find("item_taxable").text();
-  if(default_sales_tax == '-1'){
+  if(default_sales_tax == -1){
 	document.getElementById('tax_'   +rowCnt).value       = $(xml).find("item_taxable").text();
   }else{
 	document.getElementById('tax_'   +rowCnt).value       = default_sales_tax;
@@ -990,8 +995,8 @@ function fillInventory(sXml) {
 
 function changeOfTill(){
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
-	if( tills[tillId].restrictCurrency == '1'){
+	var qz = document.getElementById('qz');
+	if( tills[tillId].restrictCurrency == 1){
 		$('#display_currency').attr("disabled", true);
 	}else{
 		$('#display_currency').attr("disabled", false);
@@ -1007,11 +1012,11 @@ function changeOfTill(){
 	}
 	var old_tax = default_sales_tax;
 	default_sales_tax = tills[tillId].defaultTax;
-	if(contact_sales_tax == '-1'){
+	if(contact_sales_tax == -1){
 		var rowCnt = 1;
 		while(true) {
 	  		if (!document.getElementById('tax_'+rowCnt)) break;
-	  		if(old_tax != '-1' && tills[tillId].defaultTax == '-1'){
+	  		if(old_tax != -1 && tills[tillId].defaultTax == -1){
 	  			document.getElementById('tax_'+rowCnt).value = document.getElementById('product_tax_'+rowCnt).value;
 	  		}else{
 	  			document.getElementById('tax_'+rowCnt).value = tills[tillId].defaultTax;
@@ -1020,21 +1025,22 @@ function changeOfTill(){
 	  		rowCnt++;
 		}
 	}
-	applet.findPrinter(tills[tillId].printer);
-	if (applet.getVersion() != '1.4.9' ) alert('update jzebra');
+	if (qz != null) qz.findPrinter(tills[tillId].printer);
+	//if (qz.getVersion() <= '1.4.9' ) alert('update jzebra');
 	set_ot_options();
 	document.getElementById('ot_till_id').value = tillId ;
+	$("#store_id").val(tills[tillId].storeID);
 }
 
 function monitorPrinting() {
-  var applet = document.jZebra;
-  if (applet != null) {
-    if (!applet.isDonePrinting()) {
+  var qz = document.getElementById('qz');
+  if (qz != null) {
+    if (!qz.isDonePrinting()) {
       window.setTimeout('monitorPrinting()', 1000);
     } else {
-      var e = applet.getException();
+      var e = qz.getException();
       if (e != null) {
-	    alert("Exception occured: " + e.getLocalizedMessage());
+	    alert("printing exception occured: " + e.getLocalizedMessage());
 	  }
     }
   } else {
@@ -1045,29 +1051,10 @@ function monitorPrinting() {
 function InventoryProp(elementID) {
   var sku = document.getElementById('sku_'+elementID).value;
   if (sku != text_search && sku != '') {
-    $.ajax({
-      type: "GET",
-	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuValid&strict=1&sku='+sku,
-      dataType: ($.browser.msie) ? "text" : "xml",
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
-      },
-	  success: processSkuProp
-    });
+	  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
   }
 }
 
-function processSkuProp(sXml) {
-  var xml = parseXml(sXml);
-  if (!xml) return;
-  if ($(xml).find("id").first().text() != 0) {
-	var id = $(xml).find("id").first().text();
-	window.open("index.php?module=inventory&page=main&action=properties&cID="+id,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
-  }
-}
-// -->
-</script>
-<script type="text/javascript">
 // this part is for the payment div and the ajax saving.
 // pass any php variables generated during pre-process that are used in the javascript functions.
 // Include translations here as well.
@@ -1129,18 +1116,29 @@ function parseCard() {
 }
 
 function SavePayment(PrintOrSave) { // request function
+  var error_message = '';
   var amount = cleanCurrency(document.getElementById('amount').value);
   var index  = document.getElementById('payment_method').selectedIndex;
-  var method = document.getElementById('payment_method').options[index].value;
-  var f0 = document.getElementById(method+'_field_0') ? document.getElementById(method+'_field_0').value : '';
-  var f1 = document.getElementById(method+'_field_1') ? document.getElementById(method+'_field_1').value : '';
-  var f2 = document.getElementById(method+'_field_2') ? document.getElementById(method+'_field_2').value : '';
-  var f3 = document.getElementById(method+'_field_3') ? document.getElementById(method+'_field_3').value : '';
-  var f4 = document.getElementById(method+'_field_4') ? document.getElementById(method+'_field_4').value : '';
+  var payment_method = document.getElementById('payment_method').options[index].value;
+  var f0 = document.getElementById(payment_method+'_field_0') ? document.getElementById(payment_method+'_field_0').value : '';
+  var f1 = document.getElementById(payment_method+'_field_1') ? document.getElementById(payment_method+'_field_1').value : '';
+  var f2 = document.getElementById(payment_method+'_field_2') ? document.getElementById(payment_method+'_field_2').value : '';
+  var f3 = document.getElementById(payment_method+'_field_3') ? document.getElementById(payment_method+'_field_3').value : '';
+  var f4 = document.getElementById(payment_method+'_field_4') ? document.getElementById(payment_method+'_field_4').value : '';
+<?php
+  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
+	$value = $pmt_class['id'];
+	echo $$value->javascript_validation();
+  }
+?>
+  if ( error_message != ''){
+	  alert(error_message);
+	  return false;
+  }
   addPmtRow();
   var numRows = document.getElementById('payment_table_body').rows.length;
-  document.getElementById('pdes_'+numRows).value = pmt_types[method];
-  document.getElementById('meth_'+numRows).value = method;
+  document.getElementById('pdes_'+numRows).value = pmt_types[payment_method];
+  document.getElementById('meth_'+numRows).value = payment_method;
   document.getElementById('pmt_'+numRows).value  = formatCurrency(amount);
   document.getElementById('f0_'+numRows).value   = f0;
   document.getElementById('f1_'+numRows).value   = f1;
@@ -1155,7 +1153,7 @@ function SavePayment(PrintOrSave) { // request function
 }
 
 function ajaxSave(PrintOrSave){
-	refreshOrderClock(); 
+	refreshOrderClock();
 	if (!save_allowed) return;
 	save_allowed = false;
 	showLoading();
@@ -1177,34 +1175,34 @@ function ajaxSave(PrintOrSave){
 function ajaxPrintAndClean(sXml) { // call back function
 	save_allowed = true;
     var xml = parseXml(sXml);
-    var applet = document.jZebra;
+    var qz = document.getElementById('qz');
     if (!xml) return;
   	var massage 	= $(xml).find("massage").text();
   	if ( massage ) 	  alert( massage );
   	var action 		= $(xml).find("action").text();
   	var print 		= action.substring(0,5) == 'print';
   	var tillId 		= document.getElementById('till_id').value;
-  	if ( print && applet != null && tills[tillId].printer != '') {	
+  	if ( print && qz != null && tills[tillId].printer != '') {	
   	  	//print receipt and open drawer.
-  	  	//applet.setEncoding(tills[tillId].printerEncoding);
+  	  	//qz.setEncoding(tills[tillId].printerEncoding);
 		for(var i in tills[tillId].startingLine){
-			applet.append(tills[tillId].startingLine[i]);
+			qz.append(tills[tillId].startingLine[i]);
 		}
 	    $(xml).find("receipt_data").each(function() {
-	    	applet.append($(this).find("line").text() + "\n");
+	    	qz.append($(this).find("line").text() + "\n");
 	    });
 		if ($(xml).find("open_cash_drawer").text() == 1){
 			for(var i in tills[tillId].openDrawer){
-				applet.append(tills[tillId].openDrawer[i]);
+				qz.append(tills[tillId].openDrawer[i]);
 			}
 		}
         for(var i in tills[tillId].closingLine){
-			applet.append(tills[tillId].closingLine[i]);
+			qz.append(tills[tillId].closingLine[i]);
 		}
-        applet.setEndOfDocument("\n");
+        qz.setEndOfDocument("\n");
         jzebraDoneAppending();
 	}else if($(xml).find("open_cash_drawer").text() == 1 ){
-  		  	OpenDrawer();
+  		OpenDrawer();
     }else if( print ){
 		var order_id = $(xml).find("order_id").text();
 		var printWin = window.open("index.php?module=phreeform&page=popup_gen&gID=<?php echo POPUP_FORM_TYPE;?>&date=a&xfld=journal_main.id&xcr=EQUAL&xmin=" + order_id ,"popup_gen","width=700px,height=550px,resizable=1,scrollbars=1,top=150px,left=200px");
@@ -1215,16 +1213,17 @@ function ajaxPrintAndClean(sXml) { // call back function
 
 function jzebraReady(){
 //	alert('POS is now ready');
+	//qz = document.getElementById('qz');
 }
 
 //Automatically gets called when applet is done appending a file
 function jzebraDoneAppending(){
-	var applet = document.jZebra;
-	if (applet != null) {
-	   if (!applet.isDoneAppending()) {
-	      window.setTimeout('monitorAppending()', 100);
+	var qz = document.getElementById('qz');
+	if (qz != null) {
+	   if (!qz.isDoneAppending()) {
+	      window.setTimeout('jzebraDoneAppending()', 50);
 	   } else {
-	      applet.print(); 
+	      qz.print(); 
 	      // Don't print until all of the data has been appended
           // *Note:  monitorPrinting() still works but is too complicated and
               // outdated.  Instead create a JavaScript  function called 
@@ -1237,21 +1236,26 @@ function jzebraDoneAppending(){
 }
 
 //Automatically gets called when applet is done finding
-function jzebraDoneFinding() {
+function jzebraDoneFindingPrinters() {
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
-   	if (applet.getPrinter() == null) {
-    	return alert('Error: Can not find Printer ' + tills[tillId].printer); 
+	var qz = document.getElementById('qz');
+	if (qz != null) {
+		if (qz.getPrinter() == null) {
+    		return alert('Error: Can not find Printer ' + tills[tillId].printer);
+		} 
    	}
 }
 
 // Automatically gets called when the applet is done printing
 function jzebraDonePrinting() {
-	var applet = document.jZebra;
-   	if (applet.getException() != null) {
-    	return alert('Error:' + applet.getExceptionMessage());
+	var qz = document.getElementById('qz');
+	if (qz != null){
+   		if (qz.getException() != null) {
+    		return alert('printing error:' + qz.getExceptionMessage());
+   		}
    	}
 }
+
 
 /*
  *printing previous reciept by this admin user 
@@ -1271,24 +1275,23 @@ function GetPrintPreviousReceipt() {
 
 function PrintPreviousReceipt(sXml) { // call back function
 	  var xml = parseXml(sXml);
-	  var applet = document.jZebra;
+	  var qz = document.getElementById('qz');
 	  if (!xml) return;
 	  var massage = $(xml).find("massage").text();
 	  if ( massage ) alert( massage );
 	  var tillId = document.getElementById('till_id').value;
-	  var applet = document.jZebra;
-	  if (applet != null && tills[tillId].printer != '') {
-		  //applet.setEncoding(tills[tillId].printerEncoding);
+	  if (qz != null && tills[tillId].printer != '') {
+		  //qz.setEncoding(tills[tillId].printerEncoding);
 			for(var i in tills[tillId].startingLine){
-				applet.append(tills[tillId].startingLine[i]);
+				qz.append(tills[tillId].startingLine[i]);
 			}
 	        $(xml).find("receipt_data").each(function() {
-	        	applet.append($(this).find("line").text() + "\n");
+	        	qz.append($(this).find("line").text() + "\n");
 	        });
 	        for(var i in tills[tillId].closingLine){
-				applet.append(tills[tillId].closingLine[i]);
+				qz.append(tills[tillId].closingLine[i]);
 			}
-	        applet.setEndOfDocument("\n");
+	        qz.setEndOfDocument("\n");
 	        jzebraDoneAppending();
 	  } else {
 	        var order_id = $(xml).find("order_id").text();
@@ -1300,14 +1303,18 @@ function PrintPreviousReceipt(sXml) { // call back function
 
 function OpenDrawer(){
 	var tillId = document.getElementById('till_id').value;
-	var applet = document.jZebra;
-	if ( applet != null && tills[tillId].printer != '') {
-		//applet.setEncoding("UTF-8");
-		for(var i in tills[tillId].openDrawer){
-			applet.append(tills[tillId].openDrawer[i] + "\n");
+	var qz = document.getElementById('qz');
+	if ( qz != null && tills[tillId].printer != '') {
+		if (!qz.isDonePrinting()) {
+			window.setTimeout('OpenDrawer()', 50);
+		} else {
+			//qz.setEncoding("UTF-8");
+			for(var i in tills[tillId].openDrawer){
+				qz.append(tills[tillId].openDrawer[i] + "\n");
+			}
+			qz.setEndOfDocument("\n");
+			jzebraDoneAppending();
 		}
-		applet.setEndOfDocument("\n");
-		jzebraDoneAppending();
 	}
 	document.getElementById('sku').focus();
 }
@@ -1327,7 +1334,7 @@ function changeOfType(){
 				//show description amount and tax if aplicable.
 				$('.ot_desc').show();
 				$('.ot_amount').show();
-				if(ot_options[i].use_tax == '1'){
+				if(ot_options[i].use_tax == 1){
 					$('.ot_rate').show();
 					$('.ot_tax').show();
 					document.getElementById('ot_rate').value = ot_options[i].taxable;
@@ -1523,6 +1530,7 @@ function disablePopup(){
 function setImage(src){
 	if (src == ''){
 		$('#curr_image').hide();
+		$('#curr_image').attr('src', '');
 	}else{
 		$('#curr_image').show();
 		$('#curr_image').attr('src', src);
@@ -1560,7 +1568,7 @@ $(document).keydown(function(event){
 		event.preventDefault();
 		// if alt + r then redirect to template return
 		if (location.search === '?module=phreepos&page=main'){
-			submitToDo('pos_return');
+			window.location.assign('?module=phreepos&page=main&action=pos_return');
 		}else{
 			window.location.assign('?module=phreepos&page=main');
 		}

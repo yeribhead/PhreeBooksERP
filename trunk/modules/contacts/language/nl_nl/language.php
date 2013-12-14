@@ -52,7 +52,7 @@ define('ACT_B_HEADING_TITLE','Branche');
 define('ACT_B_SHORT_NAME','Branche ID');
 define('ACT_B_FIRST_DATE','Datum Gemaakt: ');
 define('ACT_B_PAGE_TITLE_EDIT','Bewerk Branche');
-define('ACT_C_TYPE_NAME','Klanten');
+define('ACT_C_TYPE_NAME','Klant');
 define('ACT_C_HEADING_TITLE','Klanten');
 define('ACT_C_SHORT_NAME','Klant ID');
 define('ACT_C_GL_ACCOUNT_TYPE','Verkoop Grootboekrekening');
@@ -157,5 +157,4 @@ define('ACT_NO_KEY_EXISTS','Omdat er geen versleuteling is. is het factuuradres 
 define('ACT_ERROR_DUPLICATE_CONTACT','De Contact-ID bestaat al in het systeem, geef dan een nieuwe Contact-ID.');
 define('CRM_ROW_DELETE_ALERT','Weet u zeker dat u deze CRM notitie wil verwijderen?');
 define('ACT_JS_SHORT_NAME','* Het \'ID\' veld mag niet leeg zijn.');
-
 ?>

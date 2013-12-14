@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -24,16 +23,13 @@ require(DIR_FS_WORKING . 'functions/doc_ctl.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-$search_text = ($_POST['search_text']) ? db_input($_POST['search_text']) : db_input($_GET['search_text']);
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action = isset($_GET['action'])  ? $_GET['action'] : $_POST['todo'];
-if (!$action && $search_text <> '') $action = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $tab    = isset($_GET['tab'])     ? $_GET['tab']                       : 'home';
 $doc_id = isset($_POST['rowSeq']) ? db_prepare_input($_POST['rowSeq']) : db_prepare_input($_GET['docID']);
-$list   = isset($_GET['list'])    ? $_GET['list']                      : $_POST['page'];
-
+if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save_doc':
 	$id          = db_prepare_input($_POST['id']);
 	$title       = db_prepare_input($_POST['title']);
@@ -110,33 +106,33 @@ switch ($action) {
 	echo $contents;
 	exit();
 
-  case 'go_first':    $_REQUEST['list'] = 1;       $action = 'search'; break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); $action = 'search'; break;
-  case 'go_next':     $_REQUEST['list']++;         $action = 'search'; break;
-  case 'go_last':     $_REQUEST['list'] = 99999;   $action = 'search'; break;
+  case 'go_first':    $_REQUEST['list'] = 1;      					   $_REQUEST['action'] = 'search'; break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); $_REQUEST['action'] = 'search'; break;
+  case 'go_next':     $_REQUEST['list']++;         					   $_REQUEST['action'] = 'search'; break;
+  case 'go_last':     $_REQUEST['list'] = 99999;  					   $_REQUEST['action'] = 'search'; break;
   case 'search':
   case 'search_reset':
-  case 'go_page':                            $action = 'search'; break;
+  case 'go_page':                            $_REQUEST['action'] = 'search'; break;
   default:
 }
 
 /*****************   prepare to display templates  *************************/
-switch ($action) { // figure which detail page to load
+switch ($_REQUEST['action']) { // figure which detail page to load
   case 'search':
   case 'view':
-	$result      = html_heading_bar(array(), $_GET['list_order'], array(' ', TEXT_DOCUMENT_TITLE, TEXT_ACTION));
+	$result      = html_heading_bar(array(), array(' ', TEXT_DOCUMENT_TITLE, TEXT_ACTION));
 	$list_header = $result['html_code'];
 	// build the list for the page selected
-	if (isset($search_text) && $search_text <> '') {
+	if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
 	  $search_fields = array('title', 'type');
-	  $search = ' where ' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\'';
+	  $search = ' where ' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\'';
 	} else {
 	  $search = '';
 	}
 	$field_list = array('id', 'title', 'type');
-	$query_raw = "select " . implode(', ', $field_list)  . " from " . TABLE_DC_DOCUMENT . $search;
-	$query_split = new splitPageResults($_GET['list'], MAX_DISPLAY_SEARCH_RESULTS, $query_raw, $query_numrows);
-	$query_result = $db->Execute($query_raw);
+	$query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . " from " . TABLE_DC_DOCUMENT . $search;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
 	$div_template = DIR_FS_WORKING . 'pages/main/' . ($id ? 'tab_document.php' : 'tab_folder.php');
 	break;
   case 'home':
@@ -146,8 +142,6 @@ switch ($action) { // figure which detail page to load
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = false;
 $include_template = 'template_main.php'; // include display template (required)
 define('PAGE_TITLE', BOX_DOC_CTL_MODULE);
 

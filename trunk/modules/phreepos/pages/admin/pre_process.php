@@ -25,25 +25,26 @@ require_once(DIR_FS_WORKING . 'classes/tills.php');
 require_once(DIR_FS_WORKING . 'classes/other_transactions.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install = new phreepos_admin();
 $tills   = new tills();
 $trans	 = new other_transactions();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save': 
-	if ($security_level < 3) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL')); 
+  	validate_security($security_level, 3); // security check
+	if(AR_TAX_BEFORE_DISCOUNT == false && PHREEPOS_DISCOUNT_OF == true && $_POST['phreepos_discount_of'] == 1 ){ // tax after discount
+		$messageStack->add('your setting tax before discount and discount over total don\'t work together, <br/>This has circulair logic. one can\'t preceed the other', 'error');
+		break;
+	}else{
+		// save general tab
+		foreach ($install->keys as $key => $default) {
+		  $field = strtolower($key);
+	      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
+	    }
+		$messageStack->add(GENERAL_CONFIG_SAVED, 'success');
+		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
+	    break;
 	}
-	// save general tab
-	foreach ($install->keys as $key => $default) {
-	  $field = strtolower($key);
-      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
-    }
-	$messageStack->add(GENERAL_CONFIG_SAVED, 'success');
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-    break;
   case 'delete':
 	validate_security($security_level, 4); // security check
     $subject = $_POST['subject'];
@@ -53,7 +54,6 @@ switch ($action) {
 	break;
   default:
 }
-
 /*****************   prepare to display templates  *************************/
 // build some general pull down arrays
 $sel_yes_no = array(
@@ -70,8 +70,6 @@ $sel_rounding = array(
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_PHREEPOS_ADMIN);
 

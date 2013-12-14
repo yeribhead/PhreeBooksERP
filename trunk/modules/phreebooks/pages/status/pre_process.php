@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -41,19 +40,17 @@ require(DIR_FS_WORKING . 'functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
 // load the sort fields
-$_GET['sf'] = $_POST['sort_field'] ? $_POST['sort_field'] : ($_GET['sf'] ? $_GET['sf'] : TEXT_DATE);
-$_GET['so'] = $_POST['sort_order'] ? $_POST['sort_order'] : ($_GET['so'] ? $_GET['so'] : 'desc');
+if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_DATE;
+if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
 $acct_period = isset($_REQUEST['search_period']) ? $_REQUEST['search_period'] : CURRENT_ACCOUNTING_PERIOD;
-$search_text = db_input($_REQUEST['search_text']); 
-if ($search_text == TEXT_SEARCH) $search_text = '';
-$action      = isset($_GET['action'])     ? $_GET['action']                : $_POST['todo'];
-if (!$action && $search_text <> '') $action      = 'search'; // if enter key pressed and search not blank
+if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action']      = 'search'; // if enter key pressed and search not blank
 $date_today = date('Y-m-d');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/status/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'toggle':
     $id     = db_prepare_input($_POST['rowSeq']);
 	$result = $db->Execute("select waiting from " . TABLE_JOURNAL_MAIN . " where id = '" . $id . "'");
@@ -69,7 +66,7 @@ switch ($action) {
 	}
 	die;
   case 'go_first':    $_REQUEST['list'] = 1;       break;
-  case 'go_previous': max($_REQUEST['list']-1, 1); break;
+  case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;
   case 'go_last':     $_REQUEST['list'] = 99999;   break;
   case 'search':
@@ -150,20 +147,19 @@ switch (JOURNAL_ID) {
   default:
 }
 
-$result      = html_heading_bar($heading_array, $_GET['sf'], $_GET['so'], $extras);
+$result      = html_heading_bar($heading_array, $extras);
 $list_header = $result['html_code'];
 $disp_order  = $result['disp_order'];
 
 // build the list for the page selected
-$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
-if (isset($search_text) && $search_text <> '') {
+$period_filter = ($acct_period == 'all') ? '' : (" and period = $acct_period ");
+if (isset($_REQUEST['search_text']) && $_REQUEST['search_text'] <> '') {
   // hook for inserting new search fields to the query criteria.
   if (is_array($extra_search_fields)) $search_fields = array_merge($search_fields, $extra_search_fields);
-  $search = ' and (' . implode(' like \'%' . $search_text . '%\' or ', $search_fields) . ' like \'%' . $search_text . '%\')';
+  $search = ' and (' . implode(' like \'%' . $_REQUEST['search_text'] . '%\' or ', $search_fields) . ' like \'%' . $_REQUEST['search_text'] . '%\')';
 } else {
   $search = '';
 }
-
 // hook to add new fields to the query return results
 if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 
@@ -175,8 +171,6 @@ $query_split  = new splitPageResults($_REQUEST['list'], '');
 
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', sprintf(BOX_STATUS_MGR, $page_title));
 

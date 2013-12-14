@@ -19,11 +19,17 @@
 // Inventory Direct Purchase Journal (POP)
 require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 class journal_21 extends journal {
+	public $id					= '';
+	public $save_payment        = false;
     public $closed 				= '0';
     public $journal_id          = 21;
     public $gl_type             = GL_TYPE;
     public $currencies_code     = DEFAULT_CURRENCY;
     public $currencies_value    = '1.0';
+    public $gl_disc_acct_id     = AR_DISCOUNT_SALES_ACCOUNT;
+    public $bill_acct_id		= '';
+    public $bill_address_id		= '';
+    public $bill_add_update		= false;
     public $bill_primary_name   = GEN_PRIMARY_NAME;
     public $bill_contact        = GEN_CONTACT;
     public $bill_address1       = GEN_ADDRESS1;
@@ -32,8 +38,26 @@ class journal_21 extends journal {
     public $bill_state_province = GEN_STATE_PROVINCE;
     public $bill_postal_code    = GEN_POSTAL_CODE;
     public $bill_country_code   = COMPANY_COUNTRY;
+    public $bill_telephone1		= '';
+    public $bill_email			= '';
     public $journal_rows        = array();	// initialize ledger row(s) array
-
+	public $opendrawer			= false;
+	public $printed				= false;
+	public $post_date			= '';
+	public $store_id			= 0;
+	public $till_id				= 0;
+	public $rep_id				= 0;
+	public $subtotal			= 0;
+	public $disc_percent		= 0;
+	public $discount			= 0;
+	public $sales_tax			= 0;
+	public $rounded_of			= 0;
+	public $total_amount		= 0;
+	public $pmt_recvd			= 0;
+	public $bal_due				= 0;
+	public $shipper_code		= '';
+	public $so_po_ref_id		= '';
+    
     public function __construct($id = '') {
     	global $db;
         $result = $db->Execute("select next_check_num from " . TABLE_CURRENT_STATUS);
@@ -41,7 +65,7 @@ class journal_21 extends journal {
         $this->gl_acct_id          = $_SESSION['admin_prefs']['def_cash_acct'] ? $_SESSION['admin_prefs']['def_cash_acct'] : AP_PURCHASE_INVOICE_ACCOUNT;
 		parent::__construct($id);    
 	}
- 	
+
 	function post_ordr($action) {
 		global $db, $messageStack;
 		$debit_total  = 0;
@@ -60,19 +84,34 @@ class journal_21 extends journal {
 		// *************  Pre-POST processing *************
 		// add/update address book
 		if ($this->bill_add_update) { // billing address
-		  $this->bill_acct_id = $this->add_account($this->account_type . 'b', $this->bill_acct_id, $this->bill_address_id);
-		  if (!$this->bill_acct_id) return false;
+			$this->bill_acct_id = $this->add_account($this->account_type . 'b', $this->bill_acct_id, $this->bill_address_id);
+			if (!$this->bill_acct_id){
+				$messageStack->add('no customer was selected', 'error');
+				$db->transRollback();
+				return false;
+			} 
 		}
 		// ************* POST journal entry *************
-		if (!$this->validate_purchase_invoice_id())      return false;
-		if (!$this->Post($this->id ? 'edit' : 'insert')) return false;
+		if (!$this->validate_purchase_invoice_id()) {
+			$messageStack->add('invoice number is being used in a other post', 'error');
+			$db->transRollback();
+			return false;
+		}
+		if (!$this->Post($this->id ? 'edit' : 'insert',true)){
+			$messageStack->add('it was not posible to post the sale', 'error');
+			$db->transRollback();
+			return false;
+		}
 		// ************* post-POST processing *************
-		$prior = $this->purchase_invoice_id;
-	    if (!$this->increment_purchase_invoice_id($force = true)) return false;
+		if (!$this->increment_purchase_invoice_id()){
+			$messageStack->add('invoice number can not be incrementedt', 'error');
+			$db->transRollback();
+			return false;
+		}
 		$messageStack->debug("\n  committed order post purchase_invoice_id = " . $this->purchase_invoice_id . " and id = " . $this->id . "\n\n");
 		$db->transCommit();
 		// ***************************** END TRANSACTION *******************************
-		$messageStack->add_session('Successfully posted ' . MENU_HEADING_PHREEPOS . ' Ref # ' . $this->purchase_invoice_id, 'success');
+		$messageStack->add('Successfully posted ' . MENU_HEADING_PHREEPOS . ' Ref # ' . $this->purchase_invoice_id, 'success');
 		return true;
 	}
 
@@ -176,7 +215,7 @@ class journal_21 extends journal {
 			    if (ENABLE_ORDER_DISCOUNT && $tax_discount == '0') {
 				  $line_total = $line_total * (1 - $this->disc_percent);
 			    }
-			    $auth_array[$auth] += ($tax_auths[$auth]['tax_rate'] / 100) * $line_total;
+				$auth_array[$auth] += ($tax_auths[$auth]['tax_rate'] / 100) * $line_total;
 			  }
 		    }
 		  }
@@ -185,7 +224,7 @@ class journal_21 extends journal {
 	  // calculate each tax total by authority and put into journal row array
 	  foreach ($auth_array as $auth => $auth_tax_collected) {
 		if ($auth_tax_collected == '' && $tax_auths[$auth]['account_id'] == '') continue;
-		if( ROUND_TAX_BY_AUTH == true ){
+	  	if( ROUND_TAX_BY_AUTH == true ){
 			$amount = number_format($auth_tax_collected, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places'], '.', '');
 		}else {
 			$amount = $auth_tax_collected;

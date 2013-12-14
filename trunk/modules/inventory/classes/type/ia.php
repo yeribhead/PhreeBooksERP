@@ -30,12 +30,14 @@ class ia extends inventory { //Master Build Sub Item. child of mb (master assemb
 		parent::get_item_by_id($id);
 		$this->get_ms_list();
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_item_by_sku($sku){
 		parent::get_item_by_sku($sku);
 		$this->get_ms_list();
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 
 	function get_bom_list(){
@@ -53,7 +55,6 @@ class ia extends inventory { //Master Build Sub Item. child of mb (master assemb
 	  		$x++;
 	  		$result->MoveNext();
 		}
-		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '') && ($result->fields['quantity_on_hand'] == 0|| $result->fields['quantity_on_hand'] == '')) ? true : false;
 	}
 	
 	function copy($id, $newSku) {
@@ -64,7 +65,7 @@ class ia extends inventory { //Master Build Sub Item. child of mb (master assemb
 	
 	function check_remove($id){ // this is disabled in the form but just in case, error here as well
 		global $messageStack;
-		$messageStack->add_session('Master Stock Sub Items are not allowed to be deleted separately!','error');
+		$messageStack->add('Master Stock Sub Items are not allowed to be deleted separately!','error');
 		return false;
 	}
 	

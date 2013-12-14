@@ -23,11 +23,10 @@ $security_level = validate_ajax_user(SECURITY_ID_PHREEFORM);
 /**************  include page specific files    *********************/
 /**************   page specific initialization  *************************/
 $id        = $_GET['id'];
-$action    = $_GET['action'];
 $ajax_text = '';
 if (!isset($_GET['id'])) die;
 $dir_details = $db->Execute("select * from " . TABLE_PHREEFORM . " where id = '" . $id . "'");
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'go_up':
 	$id = $dir_details->fields['parent_id']; // set the id to the parent to display refreshed page
     break;

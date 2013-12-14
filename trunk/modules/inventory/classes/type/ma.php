@@ -20,12 +20,14 @@ class ma extends inventory { //Item Assembly formerly know as 'as' but this resu
 		$this->bom 			= null;
 		parent::get_item_by_id($id);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 	
 	function get_item_by_sku($sku){
 		$this->bom 			= null;
 		parent::get_item_by_sku($sku);
 		$this->get_bom_list();
+		$this->allow_edit_bom = (($this->last_journal_date == '0000-00-00 00:00:00' || $this->last_journal_date == '') && ($this->quantity_on_hand == 0|| $this->quantity_on_hand == '')) ? true : false;
 	}
 
 	function get_bom_list(){
@@ -43,7 +45,6 @@ class ma extends inventory { //Item Assembly formerly know as 'as' but this resu
 	  		$x++;
 	  		$result->MoveNext();
 		}
-		$this->allow_edit_bom = (($result->fields['last_journal_date'] == '0000-00-00 00:00:00' || $result->fields['last_journal_date'] == '') && ($result->fields['quantity_on_hand'] == 0|| $result->fields['quantity_on_hand'] == '')) ? true : false;
 	}
 	
 	function remove(){

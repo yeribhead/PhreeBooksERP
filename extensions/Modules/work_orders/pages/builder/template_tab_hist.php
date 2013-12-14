@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,7 +21,7 @@ $result = $db->Execute("select wo_num, qty, post_date, close_date from " . TABLE
   where wo_id = " . $id . " order by post_date desc limit 20");
 }
 ?>
-<div id="tab_history">
+<div title="<?php echo TEXT_HISTORY;?>" id="tab_history">
   <fieldset>
     <legend><?php echo TEXT_HISTORY; ?></legend>
 	<table class="ui-widget" style="border-collapse:collapse;width:400px;margin-left:auto;margin-right:auto">

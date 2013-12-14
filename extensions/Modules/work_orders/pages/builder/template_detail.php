@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 echo html_form('work_orders', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'id')), 'post', '');
 // include hidden fields
-echo html_hidden_field('todo',   '')      . chr(10);
+echo html_hidden_field('action',   '')      . chr(10);
 echo html_hidden_field('id',     $id)     . chr(10);
 echo html_hidden_field('sku_id', $sku_id) . chr(10);
 // customize the toolbar actions
@@ -36,16 +35,7 @@ $toolbar->add_help('07.04.WO.03');
 echo $toolbar->build_toolbar(); 
 ?>
 <h1><?php echo BOX_WORK_ORDERS_BUILDER . ' - ' . $wo_title; ?></h1>
-<div id="buildertabs">
-<ul>
-<?php 
-  echo add_tab_list('tab_general', TEXT_GENERAL);
-  echo add_tab_list('tab_history', TEXT_HISTORY);
-  if (isset($extra_wo_tabs) && is_array($extra_wo_tabs)) {
-	foreach ($extra_wo_tabs as $tabs) echo add_tab_list('tab_'.$tabs['tab_id'], $tabs['tab_title']);
-  }
-?>
-</ul>
+<div class="easyui-tabs" id="buildertabs">
 <?php
   require (DIR_FS_WORKING . 'pages/builder/template_tab_gen.php');
   require (DIR_FS_WORKING . 'pages/builder/template_tab_hist.php');

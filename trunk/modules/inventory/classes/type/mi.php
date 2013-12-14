@@ -40,7 +40,7 @@ class mi extends inventory { //Master Stock Sub Item. child of ma (master assemb
 	
 	function check_remove($id){ // this is disabled in the form but just in case, error here as well
 		global $messageStack;
-		$messageStack->add_session('Master Stock Sub Items are not allowed to be deleted separately!','error');
+		$messageStack->add('Master Stock Sub Items are not allowed to be deleted separately!','error');
 		return false;
 	}
 	

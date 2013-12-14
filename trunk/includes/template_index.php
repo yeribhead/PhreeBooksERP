@@ -25,7 +25,7 @@ if ($custom_html) { // load the template only as the rest of the html will be ge
  <head>
   <script type="text/javascript">
     window.onerror = function(msg, url, linenumber) {
-        alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
+    	$.messager.alert("Javascript Error",'Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber,"error");
         return true;
     }
   </script>

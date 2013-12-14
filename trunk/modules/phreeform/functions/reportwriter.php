@@ -330,6 +330,7 @@ function convertTemp($temp, $sql_array) {
   unset($temp['ReportID']);
   unset($temp['ReportName']);
   unset($temp['todo']);
+  unset($temp['action']);
   switch ($temp['type']) {
 	case 'Img':
       unset($temp['ImgFileName']);

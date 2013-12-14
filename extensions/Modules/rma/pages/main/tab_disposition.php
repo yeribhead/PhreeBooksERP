@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 ?>
 
-<div id="tab_disposition">
+<div title="<?php echo TEXT_DISPOSITION;?>" id="tab_disposition">
 
 <fieldset>
   <legend><?php echo TEXT_DETAILS; ?></legend>
@@ -53,7 +52,7 @@ if (sizeof($close_details) > 0) {
 		  <?php echo '&nbsp;' . html_icon('status/folder-open.png', TEXT_SEARCH, 'small', 'align="top" style="cursor:pointer" onclick="ItemList(\'dis_\','.($i+1).')"'); ?>
 		  </td>
 		  <td><?php echo html_input_field("dis_notes[".($i+1)."]", $close_details[$i]['notes'], 'size="48"'); ?></td>
-		  <td><?php echo html_pull_down_menu('action[]', gen_build_pull_down($action_codes), $close_details[$i]['action']); ?></td>
+		  <td><?php echo html_pull_down_menu("dis_action[".($i+1)."]", gen_build_pull_down($action_codes), $close_details[$i]['action']); ?></td>
 		</tr>
 <?php
 	}

@@ -27,7 +27,12 @@
 // Module software version information
 define('MODULE_PHREEDOM_VERSION',  3.6);
 // Menu Sort Positions
-define('MENU_HEADING_COMPANY_ORDER',  90);
+define('MENU_HEADING_INVENTORY_ORDER',  30);
+define('MENU_HEADING_BANKING_ORDER',    40);
+define('MENU_HEADING_GL_ORDER',         50);
+define('MENU_HEADING_TOOLS_ORDER',      70);
+define('MENU_HEADING_QUALITY_ORDER', 	75);
+define('MENU_HEADING_COMPANY_ORDER', 	90);
 // Menu Security id's (refer to master doc to avoid security setting overlap)
 define('SECURITY_ID_USERS',            1);
 define('SECURITY_ID_IMPORT_EXPORT',    2);
@@ -53,100 +58,127 @@ define('TABLE_REPORTS',        DB_PREFIX . 'reports');
 define('TABLE_REPORT_FIELDS',  DB_PREFIX . 'report_fields');
 define('TABLE_PROJECT_VERSION',DB_PREFIX . 'project_version');
 // Set the title menu
-$pb_headings[0] = array(
-  'text' => TEXT_HOME,
-  'link' => html_href_link(FILENAME_DEFAULT),
-  'icon' => html_icon('actions/go-home.png', TEXT_HOME, 'small'),
+$mainmenu["home"] = array(
+  'order' => 0,
+  'text'  => TEXT_HOME,
+  'link'  => html_href_link(FILENAME_DEFAULT),
+  'icon'  => html_icon('actions/go-home.png', TEXT_HOME, 'small'),
 );
-$pb_headings[MENU_HEADING_COMPANY_ORDER] = array(
-  'text' => MENU_HEADING_COMPANY,
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_company', 'SSL'),
+
+// @todo BEWARE OF THIS SETTING! this config must be loaded before any other menu as the heading settings will erase prior set submenus for these headings. Especially modules alphabetically before phreedom.
+$mainmenu["inventory"] = array(
+  'order' 		=> MENU_HEADING_INVENTORY_ORDER,
+  'text' 		=> MENU_HEADING_INVENTORY,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_inv', 'SSL'),
+  'params'      => '',
 );
-$pb_headings[999] = array(
-  'text' => TEXT_LOGOUT,
-  'link' => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=logout', 'SSL'),
-  'icon' => html_icon('actions/system-log-out.png', TEXT_LOGOUT, 'small'),
+$mainmenu["banking"] = array(
+  'order'			=> MENU_HEADING_BANKING_ORDER,
+  'text' 			=> MENU_HEADING_BANKING, 
+  'security_id' 	=> '',
+  'link' 			=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_bnk', 'SSL'),
+  'params'      	=> '',
+);
+$mainmenu["gl"] = array(
+  'order'			=> MENU_HEADING_GL_ORDER,
+  'text' 			=> MENU_HEADING_GL, 
+  'security_id' 	=> '',
+  'link' 			=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_gl', 'SSL'),
+  'params'      	=> '',
+);
+$mainmenu["tools"] = array(
+  'order'			=> MENU_HEADING_TOOLS_ORDER,
+  'text' 			=> MENU_HEADING_TOOLS, 
+  'security_id' 	=> '',
+  'link' 			=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_tools', 'SSL'),
+  'params'      	=> '',
+);
+$mainmenu["company"] = array(
+  'order' 		=> MENU_HEADING_COMPANY_ORDER,
+  'text' 		=> MENU_HEADING_COMPANY,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_company', 'SSL'),
+  'params'      => '',
+);
+if (defined('MODULE_CP_ACTION_STATUS') || defined('MODULE_DOC_CTL_STATUS')) $mainmenu["quality"] = array(
+  'order' 		=> MENU_HEADING_QUALITY_ORDER,
+  'text'  		=> MENU_HEADING_QUALITY,
+  'security_id' => '',
+  'link' 		=> html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;mID=cat_qa', 'SSL'),
+  'params'      => '',
+);
+$mainmenu["logout"] = array(
+  'order' => 999,
+  'text'  => TEXT_LOGOUT,
+  'link'  => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=logout', 'SSL'),
+  'icon'  => html_icon('actions/system-log-out.png', TEXT_LOGOUT, 'small'),
 );
 // Set the menus
-$menu[] = array(
-  'text'        => TEXT_HELP,
-  'heading'     => MENU_HEADING_COMPANY,
-  'rank'        => 1,
-  'security_id' => SECURITY_ID_HELP,
-  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreehelp&amp;page=main', 'SSL'),
-  'hidden'      => false,
-  'params'      => 'target="_blank"',
-);
-$menu[] = array(
+$mainmenu["company"]['submenu']["profile"] = array(
+  'order' 		=> 5,
   'text'        => BOX_HEADING_PROFILE,
-  'heading'     => MENU_HEADING_COMPANY,
-  'rank'        => 5,
   'security_id' => SECURITY_ID_MY_PROFILE,
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=profile', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+
+$mainmenu["company"]['submenu']["configuration"] = array(
+  'order' 		=> 10,
   'text'        => BOX_HEADING_CONFIGURATION,
-  'heading'     => MENU_HEADING_COMPANY,
-  'rank'        => 10,
   'security_id' => SECURITY_ID_CONFIGURATION, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0) ? false : true,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=admin', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-if (DEBUG) $menu[] = array(
+
+if (defined('DEBUG') && DEBUG == true) $mainmenu["tools"]['submenu']["debug"] = array(
+  'order' 		=> 0,
   'text'        => BOX_HEADING_DEBUG_DL,
-  'heading'     => MENU_HEADING_TOOLS,
-  'rank'        => 0,
   'security_id' => SECURITY_ID_CONFIGURATION,
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=debug', 'SSL'),
+  'show_in_users_settings' => false,
   'params'      => '',
 );
-if (ENABLE_ENCRYPTION) $menu[] = array(
+if (defined('ENABLE_ENCRYPTION') && ENABLE_ENCRYPTION == true) $mainmenu["tools"]['submenu']["encryption"] = array(
+  'order' 		=> 1,
   'text'        => BOX_HEADING_ENCRYPTION,
-  'heading'     => MENU_HEADING_TOOLS,
-  'rank'        => 1,
   'security_id' => SECURITY_ID_ENCRYPTION,
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=encryption', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["tools"]['submenu']["import_export"] = array(
+  'order' 		=> 50,
   'text'        => BOX_IMPORT_EXPORT, 
-  'heading'     => MENU_HEADING_TOOLS, 
-  'rank'        => 50, 
   'security_id' => SECURITY_ID_IMPORT_EXPORT, 
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=import_export', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["tools"]['submenu']["backup"] = array(
+  'order' 		=> 95,
   'text'        => BOX_HEADING_BACKUP,
-  'heading'     => MENU_HEADING_TOOLS,
-  'rank'        => 95,
   'security_id' => SECURITY_ID_BACKUP, 
-  'hidden'      => (isset($_SESSION['admin_security'][SECURITY_ID_BACKUP]) && $_SESSION['admin_security'][SECURITY_ID_BACKUP] > 3) ? false : true,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=backup', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["company"]['submenu']["users"] = array(
+  'order' 		=> 90,
   'text'        => BOX_HEADING_USERS,
-  'heading'     => MENU_HEADING_COMPANY,
-  'rank'        => 90,
   'security_id' => SECURITY_ID_USERS, 
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=users&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
-$menu[] = array(
+$mainmenu["company"]['submenu']["roles"] = array(
+  'order' 		=> 85,
   'text'        => BOX_HEADING_ROLES,
-  'heading'     => MENU_HEADING_COMPANY,
-  'rank'        => 85,
   'security_id' => SECURITY_ID_ROLES, 
-  'hidden'      => false,
   'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=roles&amp;list=1', 'SSL'),
+  'show_in_users_settings' => true,
   'params'      => '',
 );
 

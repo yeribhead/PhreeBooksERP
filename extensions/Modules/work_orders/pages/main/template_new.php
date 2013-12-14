@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,7 +18,7 @@
 //
 echo html_form('work_orders', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'id')), 'post', '');
 // include hidden fields
-echo html_hidden_field('todo', '')                . chr(10);
+echo html_hidden_field('action', '')                . chr(10);
 echo html_hidden_field('id', $id)                 . chr(10);
 echo html_hidden_field('wo_id', $wo_id)           . chr(10);
 echo html_hidden_field('sku_id', $sku_id)         . chr(10);
@@ -79,7 +78,7 @@ echo $toolbar->build_toolbar();
  <tbody id="table_tasks" class="ui-widget-content">
 <?php
   $odd = true;
-  if ($action == 'edit') {
+  if ($_REQUEST['action'] == 'edit') {
     foreach ($step_list as $value) {
 	  $mfg_id = ($value['mfg'] == '1') ? get_user_name($value['mfg_id']) : '-';
 	  $qa_id  = ($value['qa'] == '1')  ? get_user_name($value['qa_id'])  : '-';

@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -32,11 +31,10 @@ require_once(DIR_FS_WORKING . 'classes/install.php');
 require_once(DIR_FS_WORKING . 'classes/known_transactions.php');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$action  = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 $install = new import_bank_admin();
 $kt      = new known_transactions();
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 4);
   	// save general tab
@@ -88,8 +86,6 @@ switch ($action) {
 $all_chart = gen_coa_pull_down(2, false, true, false);    
 $include_header   = true;
 $include_footer   = true;
-$include_tabs     = true;
-$include_calendar = false;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', BOX_BANK_IMPORT_ADMIN);
 

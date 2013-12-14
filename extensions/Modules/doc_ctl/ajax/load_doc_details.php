@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -31,7 +30,7 @@ if ($id == -1) { // home page
 	include (DIR_FS_MODULES . 'doc_ctl/pages/main/tab_home.php');
 } elseif ($id == 0 || $doc_details->fields['type'] == 'drive' || $doc_details->fields['type'] == 'folder') { // folder
 	$dir_path     = TEXT_DOCUMENT_TITLE . '/' . build_dir_path($id);
-	$result       = html_heading_bar(array(), $_GET['list_order'], array(' ', $dir_path, TEXT_ACTION));
+	$result       = html_heading_bar(array(), array(' ', $dir_path, TEXT_ACTION));
 	$list_header  = $result['html_code'];
 	$field_list   = array('id', 'file_name', 'title', 'type', 'doc_ext', 'description', 'security');
 	$query_raw    = "select " . implode(', ', $field_list)  . " from " . TABLE_DC_DOCUMENT . " where parent_id = '" . $id . "' order by position";

@@ -36,75 +36,78 @@ define('TABLE_PHREEFORM', DB_PREFIX . 'phreeform');
 if (defined('MODULE_PHREEFORM_STATUS')) {
   // Set the title menu
   // Set the menus
-  $menu[] = array(
-    'text'        => TEXT_REPORTS, 
-    'heading'     => MENU_HEADING_TOOLS, 
-    'rank'        => 25, 
+  $mainmenu["tools"]['submenu']['reports'] = array(
+  	'text'        => TEXT_REPORTS,  
+  	'order'       => 25, 
     'security_id' => SECURITY_ID_PHREEFORM,
-    'hidden'      => false, 
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main', 'SSL'),
     'params'      => '',
   );
   if (defined('MODULE_CONTACTS_STATUS')) { // add reports menus
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_CUSTOMERS, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=cust', 'SSL'),
-	  'params'      => '',
+  	$mainmenu["customers"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM,
+	  	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=cust', 'SSL'),
+  	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_EMPLOYEES, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=hr', 'SSL'),
-	  'params'      => '',
+	$mainmenu["employees"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM,
+	  	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=hr', 'SSL'),
+	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_VENDORS, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=vend', 'SSL'),
-	  'params'      => '',
+	$mainmenu["vendors"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM, 
+	  	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=vend', 'SSL'),
+	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
   }
   if (defined('MODULE_INVENTORY_STATUS')) {
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_INVENTORY, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=inv', 'SSL'),
-	  'params'      => '',
+  	$mainmenu["inventory"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM,
+	  	'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=inv', 'SSL'),
+  	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
   }
   if (defined('MODULE_PHREEBOOKS_STATUS')) {
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_BANKING, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=bnk', 'SSL'),
-	  'params'      => '',
+  	$mainmenu["banking"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM,
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=bnk', 'SSL'),
+  	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
-	$menu[] = array(
-	  'text'        => TEXT_REPORTS, 
-	  'heading'     => MENU_HEADING_GL, 
-	  'rank'        => 99, 
-	  'security_id' => SECURITY_ID_PHREEFORM,
-	  'hidden'      => false, 
-	  'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=gl', 'SSL'),
-	  'params'      => '',
+	$mainmenu["gl"]['submenu']['reports'] = array(
+  		'text'        => TEXT_REPORTS,  
+  		'order'       => 99,
+  	  	'security_id' => SECURITY_ID_PHREEFORM,
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main&amp;tab=gl', 'SSL'),
+	  	'show_in_users_settings' => false,
+	  	'params'      => '',
 	);
   }
+  if(defined('MODULE_CP_ACTION_STATUS') ||defined('MODULE_DOC_CTL_STATUS')){
+  	$mainmenu["quality"]['submenu']["reports"] = array(
+ 		'order' 	  => 99,
+  		'text'        => TEXT_REPORTS,
+  		'security_id' => SECURITY_ID_PHREEFORM,
+  		'link'        => html_href_link(FILENAME_DEFAULT, 'module=phreeform&amp;page=main', 'SSL'),
+  	  	'show_in_users_settings' => false,
+  		'params'      => '',
+	);
+  }
+  
 }
 
 ?>

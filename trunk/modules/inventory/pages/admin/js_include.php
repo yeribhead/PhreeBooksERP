@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2007-2008 PhreeSoft, LLC                          |
-
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -26,7 +25,6 @@
 
 function init() {
   $(function() { // initialize tables
-	$('#admintabs').tabs();
     $('#tab_table').dataTable( dataTables_i18n );
     $('#field_table').dataTable( dataTables_i18n );
   });

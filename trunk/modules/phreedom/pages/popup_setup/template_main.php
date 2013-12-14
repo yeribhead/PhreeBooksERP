@@ -18,7 +18,7 @@
 //
 echo html_form('popup_setup', FILENAME_DEFAULT, gen_get_all_get_params(array('action')));
 // include hidden fields
-echo html_hidden_field('todo', '') . chr(10);
+echo html_hidden_field('action', '') . chr(10);
 echo html_hidden_field('rowSeq', $sID) . chr(10);
 // customize the toolbar actions
 $toolbar->icon_list['cancel']['params'] = 'onclick="self.close()"';
@@ -32,5 +32,5 @@ echo $toolbar->build_toolbar();
 // Build the page
 ?>
 <h1><?php echo $subject_module->title; ?></h1>
-<?php echo $subject_module->build_form_html($action, $sID); ?>
+<?php echo $subject_module->build_form_html($_REQUEST['action'], $sID); ?>
 </form>

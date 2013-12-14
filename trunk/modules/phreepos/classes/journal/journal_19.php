@@ -44,7 +44,6 @@ class journal_19 extends journal {
 	public $opendrawer			= false;
 	public $printed				= false;
 	public $post_date			= '';
-	public $store_id			= 0;
 	public $till_id				= 0;
 	public $rep_id				= 0;
 	public $subtotal			= 0;
@@ -60,8 +59,9 @@ class journal_19 extends journal {
     
     public function __construct($id = '') {
         $this->purchase_invoice_id = 'DP' . date('Ymd');
-        $this->gl_acct_id          = $_SESSION['admin_prefs']['def_cash_acct'] ? $_SESSION['admin_prefs']['def_cash_acct'] : AR_SALES_RECEIPTS_ACCOUNT;
-		parent::__construct($id);  
+        $this->gl_acct_id = $_SESSION['admin_prefs']['def_cash_acct'] ? $_SESSION['admin_prefs']['def_cash_acct'] : AR_SALES_RECEIPTS_ACCOUNT;
+		$this->store_id	  = isset($_SESSION['admin_prefs']['def_store_id']) ? $_SESSION['admin_prefs']['def_store_id'] : 0;
+        parent::__construct($id);  
 	}
 
 	function post_ordr($action) {

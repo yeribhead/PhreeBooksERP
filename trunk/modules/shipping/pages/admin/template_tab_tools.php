@@ -18,7 +18,7 @@
 //  Path: /modules/shipping/pages/admin/template_tab_tools.php
 //
 ?>
-<div id="tab_tools">
+<div title="<?php echo TEXT_TOOLS;?>" id="tab_tools">
 <table class="ui-widget" style="border-style:none;margin-left:auto;margin-right:auto;">
  <thead class="ui-widget-header">
     <tr><th colspan="2"><?php echo SHIPPING_TOOLS_TITLE; ?></th></tr>

@@ -39,14 +39,12 @@ switch ($account_type) {
 	$num_days_due     = AP_NUM_DAYS_DUE;
 }
 
-$action = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
-
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_terms/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   default:
 }
 
@@ -62,8 +60,6 @@ $cal_terms = array(
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', ACT_POPUP_TERMS_WINDOW_TITLE);
 

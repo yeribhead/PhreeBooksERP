@@ -28,7 +28,6 @@ $methods     = load_all_methods('shipping');
 $sID         = $_GET['sID']    ? $_GET['sID']    : '';
 $method      = $_GET['method'] ? $_GET['method'] : '';
 $ship_date   = date('Y-m-d');
-$action      = (isset($_GET['action']) ? $_GET['action'] : $_POST['todo']);
 if ($method) $subject_module = new $method();
 
 /***************   hook for custom actions  ***************************/
@@ -36,7 +35,7 @@ $custom_path = DIR_FS_MODULES . 'shipping/custom/pages/popup_tracking/extra_acti
 if (file_exists($custom_path)) { include($custom_path); }
 
 /***************   Act on the action request   *************************/
-switch ($action) {
+switch ($_REQUEST['action']) {
   case 'save':
     if (!$method) break;
 	$sql_data_array = array(
@@ -109,8 +108,6 @@ $cal_del = array(
 
 $include_header   = false;
 $include_footer   = false;
-$include_tabs     = false;
-$include_calendar = true;
 $include_template = 'template_main.php';
 define('PAGE_TITLE', $subject_module->title);
 
