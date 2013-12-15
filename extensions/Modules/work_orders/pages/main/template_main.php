@@ -31,8 +31,9 @@ $toolbar->add_help('07.04.WO');
 echo $toolbar->build_toolbar(true); 
 ?>
 <h1><?php echo BOX_WORK_ORDERS_MODULE; ?></h1>
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_WORK_ORDERS); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header"><tr><?php echo $list_header; ?></tr></thead>
  <tbody class="ui-widget-content">
