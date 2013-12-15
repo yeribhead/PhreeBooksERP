@@ -33,7 +33,6 @@
 /**************************************************************************************************************/
 // Redirect to another page or site
   function gen_redirect($url) {
-    global $messageStack;
 	// clean up URL before executing it
     while (strstr($url, '&&'))    $url = str_replace('&&', '&', $url);
     // header locates should not have the &amp; in the address it breaks things
@@ -189,7 +188,7 @@
   }
 
   function gen_calculate_period($post_date, $hide_error = false) {
-	global $db, $messageStack;
+	global $db;
 	$post_time_stamp = strtotime($post_date);
 	$period_start_time_stamp = strtotime(CURRENT_ACCOUNTING_PERIOD_START);
 	$period_end_time_stamp = strtotime(CURRENT_ACCOUNTING_PERIOD_END);
@@ -200,10 +199,9 @@
 		$result = $db->Execute("select period from " . TABLE_ACCOUNTING_PERIODS . " 
 			where start_date <= '" . $post_date . "' and end_date >= '" . $post_date . "'");
 		if ($result->RecordCount() <> 1) { // post_date is out of range of defined accounting periods
-			if (!$hide_error) $messageStack->add(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR,'error');
-			return false;
+			if (!$hide_error) throw new Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR, 'error');
 		}
-		if (!$hide_error) $messageStack->add(ERROR_MSG_BAD_POST_DATE,'caution');
+		if (!$hide_error) throw new Exception(ERROR_MSG_BAD_POST_DATE,'caution');
 		return $result->fields['period'];
 	}
   }
@@ -776,12 +774,11 @@ function gen_db_date($raw_date = '', $separator = '/') {
   }
 
   function gen_calculate_fiscal_dates($period) {
-	global $db, $messageStack;
+	global $db;
 	$result = $db->Execute("select fiscal_year, start_date, end_date from " . TABLE_ACCOUNTING_PERIODS . " 
 	  where period = " . $period);
 	if ($result->RecordCount() <> 1) { // post_date is out of range of defined accounting periods
-	  $messageStack->add(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR,'error');
-	  return false;
+	  throw new Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR,'error');
 	}
 	return $result->fields;
   }
@@ -905,7 +902,6 @@ function gen_db_date($raw_date = '', $separator = '/') {
   }
 
   function install_blank_webpage($filename) {
-    global $messageStack;
   	$blank_web = '<html>
   <head>
     <title></title>
@@ -915,8 +911,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
   <body>&nbsp;</body>
 </html>';
 	if (!$handle = @fopen($filename, 'w')) {
-	  $messageStack->add('Cannot open file (' . $filename . ') for writing check your permissions.', 'error');
-	  return false;
+	  throw new Exception('Cannot open file (' . $filename . ') for writing check your permissions.', 'error');
 	}
 	fwrite($handle, $blank_web);
 	fclose($handle);
@@ -1214,6 +1209,39 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	return $field;
   }
 
+  function history_filter($key=false, $defaults = array()) {
+  	if (!$key) $key = $_GET['module'];
+  	if (!isset($_REQUEST['sf']))   $_REQUEST['sf']   = isset($_SESSION[$key]['sf'])   ? $_SESSION[$key]['sf']   : $defaults['sf'];
+  	if (!isset($_REQUEST['so']))   $_REQUEST['so']   = isset($_SESSION[$key]['so'])   ? $_SESSION[$key]['so']   : $defaults['so'];
+  	if (!isset($_REQUEST['list'])) $_REQUEST['list'] = isset($_SESSION[$key]['list']) ? $_SESSION[$key]['list'] : 1;
+  	$_REQUEST['list'] = max(1, $_REQUEST['list']);
+  	if (!isset($_REQUEST['search_text'])) $_REQUEST['search_text'] = isset($_SESSION[$key]['search']) ? $_SESSION[$key]['search'] : '';
+  	if ( $_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+  	if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+  	if ( $_REQUEST['search_text'] <> '' && $_REQUEST['search_text'] <> $_SESSION[$key]['search']) $_REQUEST['list'] = 1;
+  	if (!isset($_REQUEST['search_period'])) $_REQUEST['search_period']= isset($_SESSION[$key]['period'])? $_SESSION[$key]['period']: CURRENT_ACCOUNTING_PERIOD;
+  	if (!isset($_REQUEST['search_date']))   $_REQUEST['search_date']  = isset($_SESSION[$key]['date'])  ? $_SESSION[$key]['date']  : '';
+  	if ($_REQUEST['reset']) {
+  		$_REQUEST['sf']    = $defaults['sf'];
+  		$_REQUEST['so']    = $defaults['so'];
+  		$_REQUEST['list']  = 1;
+  		$_REQUEST['search_text']  = '';
+  		$_REQUEST['search_period']= CURRENT_ACCOUNTING_PERIOD;
+  		$_REQUEST['search_date']  = '';
+  		unset($_GET['reset']);
+  	}
+  }
+
+  function history_save($key=false) {
+  	if (!$key) $key = $_GET['module'];
+  	$_SESSION[$key]['sf']    = $_REQUEST['sf'];
+  	$_SESSION[$key]['so']    = $_REQUEST['so'];
+    $_SESSION[$key]['list']  = $_REQUEST['list'];
+    $_SESSION[$key]['search']= $_REQUEST['search_text'];
+    $_SESSION[$key]['period']= $_REQUEST['search_period'];
+    $_SESSION[$key]['date']  = $_REQUEST['search_date'];
+  }
+
 /**
  * this function creates a heading for a table that will be able to sort 
  * @param array $heading_array the fields of the table
@@ -1278,8 +1306,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
     return $output;
   }
 
-  function add_tab_list($name, $text, $active = false) {//@remove release 3.7
-  	trigger_error("function add_tab_list is out of use. $name, $text ", E_USER_DEPRECATED);
+  function add_tab_list($name, $text, $active = false) {
 	return '<li><a href="#' . $name . '">' . $text . '</a></li>' . chr(10);
   }
 
@@ -1481,20 +1508,18 @@ function charConv($string, $in, $out) {
 // Section 6. Validation Functions
 /**************************************************************************************************************/
 function validate_user($token = 0, $user_active = false) {
-  global $messageStack;
   $security_level = $_SESSION['admin_security'][$token];
   if (!in_array($security_level, array(1,2,3,4)) && !$user_active) { // not suppose to be here, bail
-    $messageStack->add(ERROR_NO_PERMISSION, 'error');
-    gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
+    throw new Exception(ERROR_NO_PERMISSION, 'error');
+    //gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
   }
   return $user_active ? 1 : $security_level;
 }
 
 function validate_security($security_level = 0, $required_level = 1) {
-  global $messageStack;
   if ($security_level < $required_level) {
-	$messageStack->add(ERROR_NO_PERMISSION, 'error');
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
+	throw new Exception(ERROR_NO_PERMISSION, 'error');
+	//gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
   }
   return true;
 }
@@ -1502,8 +1527,9 @@ function validate_security($security_level = 0, $required_level = 1) {
 function validate_ajax_user($token = 0) {
   $security_level = $token ? $_SESSION['admin_security'][$token] : (int)$_SESSION['admin_id'];
   if (!$security_level) { // not suppose to be here
-    echo createXmlHeader() . xmlEntry('error', ERROR_NO_PERMISSION) . createXmlFooter();
-    die;
+  	throw new Exception(ERROR_NO_PERMISSION, 'error');
+    /*echo createXmlHeader() . xmlEntry('error', ERROR_NO_PERMISSION) . createXmlFooter();
+    die;*/
   }
   return $token ? $security_level : 1;
 }
@@ -1539,22 +1565,18 @@ function validate_ajax_user($token = 0) {
   }
 
   function validate_upload($filename, $file_type = 'text', $extension = 'txt') {
-  	global $messageStack;
 	if ($_FILES[$filename]['error']) { // php error uploading file
 		switch ($_FILES[$filename]['error']) {
-			case '1': $messageStack->add(TEXT_IMP_ERMSG1, 'error'); break;
-			case '2': $messageStack->add(TEXT_IMP_ERMSG2, 'error'); break;
-			case '3': $messageStack->add(TEXT_IMP_ERMSG3, 'error'); break;
-			case '4': $messageStack->add(TEXT_IMP_ERMSG4, 'error'); break;
-			default:  $messageStack->add(TEXT_IMP_ERMSG5 . $_FILES[$filename]['error'] . '.', 'error');
+			case '1': throw new Exception(TEXT_IMP_ERMSG1, 'error');
+			case '2': throw new Exception(TEXT_IMP_ERMSG2, 'error');
+			case '3': throw new Exception(TEXT_IMP_ERMSG3, 'error');
+			case '4': throw new Exception(TEXT_IMP_ERMSG4, 'error');
+			default:  throw new Exception(TEXT_IMP_ERMSG5 . $_FILES[$filename]['error'] . '.', 'error');
 		}
-		return false;
 	} elseif (!is_uploaded_file($_FILES[$filename]['tmp_name'])) { // file uploaded
-		$messageStack->add(TEXT_IMP_ERMSG13, 'error');
-		return false;
+		throw new Exception(TEXT_IMP_ERMSG13, 'error');
 	} elseif ($_FILES[$filename]['size'] == 0) { // report contains no data, error
-		$messageStack->add(TEXT_IMP_ERMSG7, 'error');
-		return false;
+		throw new Exception(TEXT_IMP_ERMSG7, 'error');
 	}
 	$ext = strtolower(substr($_FILES[$filename]['name'], -3, 3));
 	$textfile = (strpos($_FILES[$filename]['type'], $file_type) === false) ? false : true;
@@ -1562,8 +1584,7 @@ function validate_ajax_user($token = 0) {
 	if ((!$textfile && in_array($ext, $extension)) || $textfile) { // allow file_type and extensions
 		return true;
 	}
-	$messageStack->add(TEXT_IMP_ERMSG6, 'error');
-	return false;
+	throw new Exception(TEXT_IMP_ERMSG6, 'error');
   }
 
   function validate_path($file_path) {
@@ -1581,139 +1602,140 @@ function validate_ajax_user($token = 0) {
 	return true;
   }
 
-  function validate_send_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block = array(), $attachments_list = '' ) {
-    global $db, $messageStack;
-    // check for injection attempts. If new-line characters found in header fields, simply fail to send the message
-    foreach(array($from_email_address, $to_address, $from_email_name, $to_name, $email_subject) as $key => $value) {
-      if (!$value) continue;
-	  if (strpos("\r", $value) !== false || strpos("\n", $value) !== false) return false;
-    }
-    // if no text or html-msg supplied, exit
-    if (!gen_not_null($email_text) && !gen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;
-    // if email name is same as email address, use the Store Name as the senders 'Name'
-    if ($from_email_name == $from_email_address) $from_email_name = COMPANY_NAME;
-    // loop thru multiple email recipients if more than one listed  --- (esp for the admin's "Extra" emails)...
-    foreach(explode(',', $to_address) as $key => $to_email_address) {
-      //define some additional html message blocks available to templates, then build the html portion.
-      if ($block['EMAIL_TO_NAME'] == '')      $block['EMAIL_TO_NAME']      = $to_name;
-      if ($block['EMAIL_TO_ADDRESS'] == '')   $block['EMAIL_TO_ADDRESS']   = $to_email_address;
-      if ($block['EMAIL_SUBJECT'] == '')      $block['EMAIL_SUBJECT']      = $email_subject;
-      if ($block['EMAIL_FROM_NAME'] == '')    $block['EMAIL_FROM_NAME']    = $from_email_name;
-      if ($block['EMAIL_FROM_ADDRESS'] == '') $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
-      $email_html = $email_text;
-      //  if ($attachments_list == '') $attachments_list= array();
-      // clean up &amp; and && from email text
-      while (strstr($email_text, '&amp;&amp;')) $email_text = str_replace('&amp;&amp;', '&amp;', $email_text);
-      while (strstr($email_text, '&amp;'))      $email_text = str_replace('&amp;', '&', $email_text);
-      while (strstr($email_text, '&&'))         $email_text = str_replace('&&', '&', $email_text);
-      // clean up currencies for text emails
-      $fix_currencies = explode(":", CURRENCIES_TRANSLATIONS);
-      $size = sizeof($fix_currencies);
-      for ($i=0, $n=$size; $i<$n; $i+=2) {
-        $fix_current = $fix_currencies[$i];
-        $fix_replace = $fix_currencies[$i+1];
-        if (strlen($fix_current)>0) {
-          while (strpos($email_text, $fix_current)) $email_text = str_replace($fix_current, $fix_replace, $email_text);
-        }
-      }
-      // fix double quotes
-      while (strstr($email_text, '&quot;')) $email_text = str_replace('&quot;', '"', $email_text);
-      // fix slashes
-      $email_text = stripslashes($email_text);
-      $email_html = stripslashes($email_html);
-      // Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
-      if (!gen_not_null($email_text)) {
-        $text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "\n", $block['EMAIL_MESSAGE_HTML']);
-        $text = str_replace('</p>', "</p>\n", $text);
-        $text = htmlspecialchars(stripslashes(strip_tags($text)));
-      } else {
-        $text = strip_tags($email_text);
-      }
-      // now lets build the mail object with the phpmailer class
-	  require_once(DIR_FS_MODULES . 'phreedom/includes/PHPMailer/class.phpmailer.php');
-      $mail = new PHPMailer();
-      $mail->SetLanguage();
-      $mail->CharSet =  (defined('CHARSET')) ? CHARSET : "iso-8859-1";
-      if ($debug_mode=='on') $mail->SMTPDebug = true;
-      if (EMAIL_TRANSPORT=='smtp' || EMAIL_TRANSPORT=='smtpauth') {
-        $mail->IsSMTP();                           // set mailer to use SMTP
-        $mail->Host = EMAIL_SMTPAUTH_MAIL_SERVER;
-        if (EMAIL_SMTPAUTH_MAIL_SERVER_PORT != '25' && EMAIL_SMTPAUTH_MAIL_SERVER_PORT != '') $mail->Port = EMAIL_SMTPAUTH_MAIL_SERVER_PORT;
-        if (EMAIL_TRANSPORT=='smtpauth') {
-          $mail->SMTPAuth = true;     // turn on SMTP authentication
-          $mail->Username = (gen_not_null(EMAIL_SMTPAUTH_MAILBOX)) ? EMAIL_SMTPAUTH_MAILBOX : EMAIL_FROM;  // SMTP username
-          $mail->Password = EMAIL_SMTPAUTH_PASSWORD; // SMTP password
-        }
-      }
-      $mail->Subject  = $email_subject;
-      $mail->From     = $from_email_address;
-      $mail->FromName = $from_email_name;
-      $mail->AddAddress($to_email_address, $to_name);
-      $mail->AddReplyTo($from_email_address, $from_email_name);
-	  if (isset($block['EMAIL_CC_ADDRESS'])) $mail->AddCC($block['EMAIL_CC_ADDRESS'], $block['EMAIL_CC_NAME']);
-      // set proper line-endings based on switch ... important for windows vs linux hosts:
-      $mail->LE = (EMAIL_LINEFEED == 'CRLF') ? "\r\n" : "\n";
-      $mail->WordWrap = 76;    // set word wrap to 76 characters
-      // if mailserver requires that all outgoing mail must go "from" an email address matching domain on server, set it to store address
-      if (EMAIL_TRANSPORT=='sendmail-f' || EMAIL_TRANSPORT=='sendmail') {
-	    $mail->Mailer = 'sendmail';
-        $mail->Sender = $mail->From;
-      }
-      // process attachments
-      // Note: $attachments_list array requires that the 'file' portion contains the full path to the file to be attached
-      if (EMAIL_ATTACHMENTS_ENABLED && gen_not_null($attachments_list) ) {
-        $mail->AddAttachment($attachments_list['file']);          // add attachments
-      } //endif attachments
-      if (EMAIL_USE_HTML && trim($email_html) != '' && ADMIN_EXTRA_EMAIL_FORMAT == 'HTML') {
-        $mail->IsHTML(true);           // set email format to HTML
-        $mail->Body    = $email_html;  // HTML-content of message
-        $mail->AltBody = $text;        // text-only content of message
-      }  else {                        // use only text portion if not HTML-formatted
-        $mail->Body    = $text;        // text-only content of message
-      }
-      if (!$mail->Send()) {
-        $messageStack->add(sprintf(EMAIL_SEND_FAILED . '&nbsp;'. $mail->ErrorInfo, $to_name, $to_email_address, $email_subject),'error');
-        return false;
-	  }else{
-	  	$temp = $db->Execute("select address_id, ref_id from " . TABLE_ADDRESS_BOOK . " where email ='".$to_email_address."' and ref_id <> 0");
-		$sql_data_array['address_id_from'] 	= $temp->fields['address_id'];
-		$ref_id = $temp->fields['ref_id'];
-		$temp = $db->Execute("select address_id, ref_id from " . TABLE_ADDRESS_BOOK . " where email ='".$from_email_address."'");
-		$sql_data_array['address_id_to'] 	= $temp->fields['address_id'];
-		$sql_data_array['Message'] 		= $text;
-		$sql_data_array['Message_html']	= $email_html;
-		//$sql_data_array['IDEmail'] 		= $email['message_id'];?? Rene Unknown
-		$sql_data_array['EmailFrom']	= $from_email_address;
-		$sql_data_array['EmailFromP']	= $from_email_name;
-		$sql_data_array['EmailTo']		= $to_name;
-		$sql_data_array['Account']		= $from_email_address;
-		$sql_data_array['DateE']		= date("Y-m-d H:i:s");
-		$sql_data_array['DateDb'] 		= date("Y-m-d H:i:s");
-		$sql_data_array['Subject']		= $email_subject;
-		//$sql_data_array['MsgSize'] 		= $email["SIZE"];?? Rene Unknown
-  		if(db_table_exists(TABLE_PHREEMAIL)) db_perform(TABLE_PHREEMAIL, $sql_data_array, 'insert');  		
-  		// save in crm_notes
-		$temp = $db->Execute("select account_id from " . TABLE_USERS . " where admin_email = '" . $from_email_address . "'");
-		$sql_array['contact_id'] = $ref_id;
-		$sql_array['log_date']   = $sql_data_array['DateE'];
-		$sql_array['entered_by'] = $temp->fields['account_id'];
-		$sql_array['action']     = 'mail_out';
-		$sql_array['notes']      = $email_subject;
-		db_perform(TABLE_CONTACTS_LOG, $sql_array, 'insert');
-	  }
-    } // end foreach loop thru possible multiple email addresses
-    return true;
-  }  // end function
+	function validate_send_mail($to_name, $to_address, $email_subject, $email_text, $from_email_name, $from_email_address, $block = array(), $attachments_list = '' ) {
+    	global $db, $messageStack;
+    	try{
+	    	// 	check for injection attempts. If new-line characters found in header fields, simply fail to send the message
+    		foreach(array($from_email_address, $to_address, $from_email_name, $to_name, $email_subject) as $key => $value) {
+      			if (!$value) continue;
+	  			if (strpos("\r", $value) !== false || strpos("\n", $value) !== false) return false;
+	    	}
+		    // if no text or html-msg supplied, exit
+	    	if (!gen_not_null($email_text) && !gen_not_null($block['EMAIL_MESSAGE_HTML'])) return false;
+	    	// if email name is same as email address, use the Store Name as the senders 'Name'
+	    	if ($from_email_name == $from_email_address) $from_email_name = COMPANY_NAME;
+		    // loop thru multiple email recipients if more than one listed  --- (esp for the admin's "Extra" emails)...
+	    	foreach(explode(',', $to_address) as $key => $to_email_address) {
+		    	//define some additional html message blocks available to templates, then build the html portion.
+	      		if ($block['EMAIL_TO_NAME'] == '')      $block['EMAIL_TO_NAME']      = $to_name;
+	      		if ($block['EMAIL_TO_ADDRESS'] == '')   $block['EMAIL_TO_ADDRESS']   = $to_email_address;
+	      		if ($block['EMAIL_SUBJECT'] == '')      $block['EMAIL_SUBJECT']      = $email_subject;
+	      		if ($block['EMAIL_FROM_NAME'] == '')    $block['EMAIL_FROM_NAME']    = $from_email_name;
+	      		if ($block['EMAIL_FROM_ADDRESS'] == '') $block['EMAIL_FROM_ADDRESS'] = $from_email_address;
+	      		$email_html = $email_text;
+	      		//  if ($attachments_list == '') $attachments_list= array();
+	      		// clean up &amp; and && from email text
+	      		while (strstr($email_text, '&amp;&amp;')) $email_text = str_replace('&amp;&amp;', '&amp;', $email_text);
+	      		while (strstr($email_text, '&amp;'))      $email_text = str_replace('&amp;', '&', $email_text);
+	      		while (strstr($email_text, '&&'))         $email_text = str_replace('&&', '&', $email_text);
+	      		// clean up currencies for text emails
+	      		$fix_currencies = explode(":", CURRENCIES_TRANSLATIONS);
+	      		$size = sizeof($fix_currencies);
+	      		for ($i=0, $n=$size; $i<$n; $i+=2) {
+	        		$fix_current = $fix_currencies[$i];
+	        		$fix_replace = $fix_currencies[$i+1];
+	        		if (strlen($fix_current)>0) {
+	          			while (strpos($email_text, $fix_current)) $email_text = str_replace($fix_current, $fix_replace, $email_text);
+	        		}
+	      		}
+	      		// fix double quotes
+	      		while (strstr($email_text, '&quot;')) $email_text = str_replace('&quot;', '"', $email_text);
+	      		// fix slashes
+	      		$email_text = stripslashes($email_text);
+	      		$email_html = stripslashes($email_html);
+	      		// Build the email based on whether customer has selected HTML or TEXT, and whether we have supplied HTML or TEXT-only components
+	      		if (!gen_not_null($email_text)) {
+	        		$text = str_replace('<br[[:space:]]*/?[[:space:]]*>', "\n", $block['EMAIL_MESSAGE_HTML']);
+	        		$text = str_replace('</p>', "</p>\n", $text);
+	        		$text = htmlspecialchars(stripslashes(strip_tags($text)));
+	      		} else {
+	        		$text = strip_tags($email_text);
+	      		}    
+		      	// now lets build the mail object with the phpmailer class
+			  	require_once(DIR_FS_MODULES . 'phreedom/includes/PHPMailer/class.phpmailer.php');
+		      	$mail = new PHPMailer(true);
+		      	$mail->SetLanguage();
+		      	$mail->CharSet =  (defined('CHARSET')) ? CHARSET : "iso-8859-1";
+		      	if ($debug_mode=='on') $mail->SMTPDebug = true;
+		      	if (EMAIL_TRANSPORT=='smtp' || EMAIL_TRANSPORT=='smtpauth') {
+	        		$mail->IsSMTP();                           // set mailer to use SMTP
+	        		$mail->Host = EMAIL_SMTPAUTH_MAIL_SERVER;
+	        		if (EMAIL_SMTPAUTH_MAIL_SERVER_PORT != '25' && EMAIL_SMTPAUTH_MAIL_SERVER_PORT != '') $mail->Port = EMAIL_SMTPAUTH_MAIL_SERVER_PORT;
+	        		if (EMAIL_TRANSPORT=='smtpauth') {
+	          			$mail->SMTPAuth = true;     // turn on SMTP authentication
+	          			$mail->Username = (gen_not_null(EMAIL_SMTPAUTH_MAILBOX)) ? EMAIL_SMTPAUTH_MAILBOX : EMAIL_FROM;  // SMTP username
+	          			$mail->Password = EMAIL_SMTPAUTH_PASSWORD; // SMTP password
+	        		}
+	      		}
+	      		$mail->Subject  = $email_subject;
+	      		$mail->From     = $from_email_address;
+	      		$mail->FromName = $from_email_name;
+	      		$mail->AddAddress($to_email_address, $to_name);
+	      		$mail->AddReplyTo($from_email_address, $from_email_name);
+		  		if (isset($block['EMAIL_CC_ADDRESS'])) $mail->AddCC($block['EMAIL_CC_ADDRESS'], $block['EMAIL_CC_NAME']);
+	      		// 	set proper line-endings based on switch ... important for windows vs linux hosts:
+	      		$mail->LE = (EMAIL_LINEFEED == 'CRLF') ? "\r\n" : "\n";
+	      		$mail->WordWrap = 76;    // set word wrap to 76 characters
+	      		// if mailserver requires that all outgoing mail must go "from" an email address matching domain on server, set it to store address
+	      		if (EMAIL_TRANSPORT=='sendmail-f' || EMAIL_TRANSPORT=='sendmail') {
+		    		$mail->Mailer = 'sendmail';
+	        		$mail->Sender = $mail->From;
+	      		}
+	      		// process attachments
+	      		// Note: $attachments_list array requires that the 'file' portion contains the full path to the file to be attached
+	      		if (EMAIL_ATTACHMENTS_ENABLED && gen_not_null($attachments_list) ) {
+	        		$mail->AddAttachment($attachments_list['file']);          // add attachments
+	      		} //endif attachments
+	      		if (EMAIL_USE_HTML && trim($email_html) != '' && ADMIN_EXTRA_EMAIL_FORMAT == 'HTML') {
+	        		$mail->IsHTML(true);           // set email format to HTML
+	        		$mail->Body    = $email_html;  // HTML-content of message
+	        		$mail->AltBody = $text;        // text-only content of message
+	      		}  else {                        // use only text portion if not HTML-formatted
+	        		$mail->Body    = $text;        // text-only content of message
+	      		}
+	      		$mail->Send();
+	      		$temp = $db->Execute("select address_id, ref_id from " . TABLE_ADDRESS_BOOK . " where email ='".$to_email_address."' and ref_id <> 0");
+				$sql_data_array['address_id_from'] 	= $temp->fields['address_id'];
+				$ref_id = $temp->fields['ref_id'];
+				$temp = $db->Execute("select address_id, ref_id from " . TABLE_ADDRESS_BOOK . " where email ='".$from_email_address."'");
+				$sql_data_array['address_id_to'] 	= $temp->fields['address_id'];
+				$sql_data_array['Message'] 		= $text;
+				$sql_data_array['Message_html']	= $email_html;
+				//$sql_data_array['IDEmail'] 		= $email['message_id'];?? Rene Unknown
+				$sql_data_array['EmailFrom']	= $from_email_address;
+				$sql_data_array['EmailFromP']	= $from_email_name;
+				$sql_data_array['EmailTo']		= $to_name;
+				$sql_data_array['Account']		= $from_email_address;
+				$sql_data_array['DateE']		= date("Y-m-d H:i:s");
+				$sql_data_array['DateDb'] 		= date("Y-m-d H:i:s");
+				$sql_data_array['Subject']		= $email_subject;
+				//$sql_data_array['MsgSize'] 		= $email["SIZE"];?? Rene Unknown
+		  		if(db_table_exists(TABLE_PHREEMAIL)) db_perform(TABLE_PHREEMAIL, $sql_data_array, 'insert');  		
+		  		// save in crm_notes
+				$temp = $db->Execute("select account_id from " . TABLE_USERS . " where admin_email = '" . $from_email_address . "'");
+				$sql_array['contact_id'] = $ref_id;
+				$sql_array['log_date']   = $sql_data_array['DateE'];
+				$sql_array['entered_by'] = $temp->fields['account_id'];
+				$sql_array['action']     = 'mail_out';
+				$sql_array['notes']      = $email_subject;
+				db_perform(TABLE_CONTACTS_LOG, $sql_array, 'insert');
+    		} // end foreach loop thru possible multiple email addresses
+    		return true;
+         }catch(Exception $e) {
+      		$messageStack->add(sprintf(EMAIL_SEND_FAILED . '&nbsp;'. $mail->ErrorInfo, $to_name, $to_email_address, $email_subject),'error');
+	  		$messageStack->add($e->getMessage(), $e->getCode());
+		}
+    
+	}  // end function
 
   function web_connected($silent = true) {
-    global $messageStack;
     $web_enabled = false; 
     $connected = @fsockopen('www.google.com', 80, $errno, $errstr, 20);
     if ($connected) { 
       $web_enabled = true; 
       fclose($connected); 
     } else {
-	  if (!$silent) $messageStack->add('You are not connected to the internet. Error:' . $errno . ' - ' . $errstr, 'error');
+	  if (!$silent) throw new Exception('You are not connected to the internet. Error:' . $errno . ' - ' . $errstr, 'error');
 	}
     return $web_enabled;   
   }
@@ -1799,7 +1821,6 @@ function xmlEntry($key, $data, $ignore = NULL) {
 }
 
 function xml_to_object($xml = '') {
-  global $messageStack;
   $xml     = trim($xml);
   if ($xml == '') return '';
   $output  = new objectInfo();
@@ -1912,7 +1933,6 @@ function csv_string_to_array($str = '') {
 /**************************************************************************************************************/
 
 function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext) {
-	global $messageStack;
     if (!(error_reporting() & $errno)) {
         // This error code is not included in error_reporting
         return;
@@ -1931,8 +1951,10 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
                 die();
                 break;  
             }
+            ob_clean();
     		header('HTTP/1.1 500 Internal Server Error'); 
-    		die("<h1>Sorry! 1 FATAL RUN-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		echo("<h1>Sorry! 1 FATAL RUN-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		die();
 	        break;
     	case E_WARNING: //2
     		$text  = date('Y-m-d H:i:s') . $temp;
@@ -1947,15 +1969,17 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
         case E_NOTICE: //8
         	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " RUN-TIME NOTICE:  '$errstr' line $errline in file $errfile";
-    		if(!defined('DEBUG') || DEBUG == true) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
         	break;
         case E_CORE_ERROR: //16
         	$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		ob_clean();
     		header('HTTP/1.1 500 Internal Server Error');
-    		die("<h1>Sorry! 16 FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		echo("<h1>Sorry! 16 FATAL ERROR THAT OCCURED DURING PHP's INITIAL STARTUP</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		die();
 	        break;
         case E_CORE_WARNING: //32
         	$text  = date('Y-m-d H:i:s') . $temp;
@@ -1967,13 +1991,15 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		$text .= " FATAL COMPILE-TIME ERROR: '$errstr' Fatal error on line $errline in file $errfile, PHP " . PHP_VERSION . " (" . PHP_OS . ") Aborting...";
     		//error_log($text, 1, "operator@example.com");
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		ob_clean();
     		if ($_POST['page'] == 'ajax' || $_GET['page'] == 'ajax'){
                 echo createXmlHeader() . xmlEntry('error', "Sorry! FATAL COMPILE-TIME ERROR. We encounterd the following error: $errstr.  and had to cancel the script") . createXmlFooter();
                 die();
                 break;  
             }
     		header('HTTP/1.1 500 Internal Server Error');
-    		die("<h1>Sorry! 64 FATAL COMPILE-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		echo("<h1>Sorry! 64 FATAL COMPILE-TIME ERROR</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		die();
 	        break;
         case E_COMPILE_WARNING: //128
         	$text  = date('Y-m-d H:i:s') . $temp;
@@ -1986,23 +2012,28 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
     		//error_log($text, 1, "operator@example.com");
     		if ($_POST['page'] == 'ajax' || $_GET['page'] == 'ajax'){
+    			ob_clean();
                 echo createXmlHeader() . xmlEntry('error', "Sorry! User Error. We encounterd the following error: $errstr.  and had to cancel the script") . createXmlFooter();
                 die();
                 break;  
             }
-    		$messageStack->add($errstr, 'error');
-    		//header('HTTP/1.1 500 Internal Server Error');
-    		//die("<h1>Sorry! 256 User Error</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>");
+    		ob_clean();
+    		header('HTTP/1.1 500 Internal Server Error');
+    		echo "<h1>Sorry! 256 User Error</h1> <p>We encounterd the following error:<br/> $errstr. <br/><br/> and had to cancel the script.</p>";
+    		$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => $errstr, 'message' => $errstr);
+    		die();
 	        break;
     	case E_USER_WARNING: //512
     		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER WARNING: '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-highlight"', 'text' => $errstr, 'message' => $errstr);
         	break;
     	case E_USER_NOTICE: //1024
     		$text  = date('Y-m-d H:i:s') . $temp;
     		$text .= " USER NOTICE:  '$errstr' line $errline in file $errfile";
     		error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    		$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-highlight"', 'text' => $errstr, 'message' => $errstr);
         	break;
     	case E_RECOVERABLE_ERROR : //4096
     		$text  = date('Y-m-d H:i:s') . $temp;
@@ -2031,10 +2062,6 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
 
 function PhreebooksExceptionHandler($exception) {
 	global $messageStack;
-	if ($_POST['page'] == 'ajax' || $_GET['page'] == 'ajax'){
-    	echo createXmlHeader() . xmlEntry('MessageStack error', "Exception: " . $exception->getMessage()) . createXmlFooter();
-        die();
-    }
     $messageStack->add($exception->getMessage(), 'error');
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     $text .= " Exception: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
@@ -2046,12 +2073,11 @@ function PhreebooksExceptionHandler($exception) {
 }
 
 function Phreebooks_autoloader($class){
-	if(class_exists($class)) print("class is geladen $class");
 	$class = str_replace("\\", "/", $class);
 	$path = explode("/", $class, 2);
 	if($path[0] == 'core'){
 		print(DIR_FS_ADMIN."includes/classes/$path[1].php<br/>");
-		if (file_exists(DIR_FS_ADMIN."includes/classes/$path[1].php"))
+		if (file_exists(DIR_FS_ADMIN."includes/classes/$path[1].php"))//@todo remove if and print lines
 		require_once DIR_FS_ADMIN."includes/classes/$path[1].php";	
 	}else{
 		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){

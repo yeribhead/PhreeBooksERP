@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -14,16 +15,25 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/inventory/classes/assets_tabs.php
+//  Path: /modules/bulk_inv/classes/admin.php
 //
-require_once(DIR_FS_MODULES . 'phreedom/classes/tabs.php');
+namespace bulk_inv;
+class admin extends \core\admin {
+  function __construct() {
+	$this->prerequisites = array( // modules required and rev level for this module to work properly
+	  'phreedom'  => '3.3',
+	  'inventory' => '3.3',
+	);
+  }
 
-class assets_tabs extends tabs{
-    public  $help_path   = '07.04.04';
-    public  $module      = 'assets';
-    public  $title       = '';
-    public  $extra_buttons = '';
-
+  function update($module) {
+    global $db, $messageStack;
+	$error = false;
+	if (!$error) {
+	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	}
+	return $error;
+  }
 }
-
 ?>

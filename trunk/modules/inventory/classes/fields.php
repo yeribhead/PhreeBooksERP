@@ -14,11 +14,11 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/inventory/classes/inventory_fields.php
+//  Path: /modules/inventory/classes/fields.php
 //
-require_once(DIR_FS_MODULES . 'phreedom/classes/fields.php');
 
-class inventory_fields extends fields{
+namespace inventory;
+class fields extends \core\fields{
 	public  $help_path   = '07.04.05';
 	public  $title       = TEXT_EXTRA_FIELDS;
 	public  $module      = 'inventory';

@@ -14,23 +14,15 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/assets/classes/install.php
+//  Path: /modules/assets/classes/admin.php
 //
+namespace assets; 
+class admin extends \core\admin {
 
-class assets_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.6,
-	  'phreebooks' => 3.6,
-	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array(
+	  'phreedom'   => 3.5,
+	  'phreebooks' => 3.3,
 	);
 	// add new directories to store images and data
 	$this->dirlist = array(
@@ -122,18 +114,11 @@ class assets_admin {
   }
 
   function remove($module) {
-    global $db, $messageStack;
+    global $db;
 	$error = false;
 	$db->Execute("delete from " . TABLE_EXTRA_FIELDS . " where module_id = 'assets'");
 	$db->Execute("delete from " . TABLE_EXTRA_TABS   . " where module_id = 'assets'");
 	return $error;
   }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
-  }
-
 }
 ?>

@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/departments.php
 //
-
+namespace contacts;
 class departments {
 	public $extra_buttons = '';
     public $db_table      = TABLE_DEPARTMENTS;

@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -14,39 +15,15 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/sku_pricer/classes/install.php
+//  Path: /modules/xml_builder/classes/admin.php
 //
-
-class sku_pricer_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace xml_builder;
+class admin extends \core\admin{
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.0,
-	  'phreebooks' => 3.0,
+	  'phreedom'   => '3.3',
+	  'phreebooks' => '3.3',
 	);
-  }
-
-  function install($module) {
-  }
-
-  function initialize($module) {
-  }
-
-  function update($module) {
-  }
-
-  function remove($module) {
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

@@ -14,9 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreebooks/classes/install.php
+//  Path: /modules/phreebooks/classes/admin.php
 //
-class phreebooks_admin {
+namespace phreebooks;
+class admin extends \core\admin {
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
@@ -65,7 +66,7 @@ class phreebooks_admin {
 	  'AR_ADD_SALES_TAX_TO_SHIPPING'   => '0',
 	  'AUTO_INC_CUST_ID'               => '0',
 	  'AR_SHOW_CONTACT_STATUS'         => '0',
-	  'AR_TAX_BEFORE_DISCOUNT'         => '0',
+	  'AR_TAX_BEFORE_DISCOUNT'         => '1',
 	  'AP_DEFAULT_INVENTORY_ACCOUNT'   => '1200',
 	  'AP_DEFAULT_PURCHASE_ACCOUNT'    => '2000',
 	  'AP_PURCHASE_INVOICE_ACCOUNT'    => '1020',
@@ -89,7 +90,7 @@ class phreebooks_admin {
 	  'AP_ADD_SALES_TAX_TO_SHIPPING'   => '0',
 	  'AUTO_INC_VEND_ID'               => '0',
 	  'AP_SHOW_CONTACT_STATUS'         => '0',
-	  'AP_TAX_BEFORE_DISCOUNT'         => '0',
+	  'AP_TAX_BEFORE_DISCOUNT'         => '1',
 	);
 	// add new directories to store images and data
 	$this->dirlist = array(
@@ -343,7 +344,7 @@ class phreebooks_admin {
 		$result = $db->Execute("SELECT id, so_po_ref_id FROM ".TABLE_JOURNAL_MAIN." WHERE journal_id = 16 AND so_po_ref_id > 0");
 		while(!$result->EOF) { // to fix transfers to store 0 from any other store
 			if ($result->fields['so_po_ref_id'] > $result->fields['id']) {
-				$db->Execute("UPDATE ".TABLE_JOURNAL_MAIN." SET so_po_ref_id = -1 WHERE id=".$result->fields['id']);
+				$db->Execute("UPDATE ".TABLE_JORNAL_MAIN." SET so_po_ref_id = -1 WHERE id=".$result->fields['id']);
 			}
 			$result->MoveNext();
 		}

@@ -16,9 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/contacts.php
 //
-
-require_once(DIR_FS_MODULES . 'contacts/classes/contact_fields.php');
-
+namespace contacts;
 class contacts {
 	public  $terms_type         = 'AP'; 
 	public  $page_title_new     = '';
@@ -219,7 +217,7 @@ class contacts {
   
   public function save_contact(){
   	global $db;
-  	$fields = new contact_fields(false);
+  	$fields = new contacts\fields(false);
   	$sql_data_array = $fields->what_to_save();
     $sql_data_array['type']            = $this->type;
     $sql_data_array['short_name']      = $this->short_name;

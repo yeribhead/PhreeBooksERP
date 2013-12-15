@@ -17,9 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/b.php
 //  branches
-require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
-
-class b extends contacts{	
+namespace contacts;
+class b extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_BRANCH;
 	public $help		       = '07.08.04';
 	public $address_types  = array('bm', 'bs', 'bb', 'im');

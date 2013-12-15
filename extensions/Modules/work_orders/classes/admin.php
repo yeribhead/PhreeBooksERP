@@ -14,22 +14,17 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/work_orders/classes/install.php
+//  Path: /modules/work_orders/classes/admin.php
 //
-class work_orders_admin {
+namespace work_orders;
+class admin extends \core\admin {
   function __construct() {
-	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.6,
-	  'inventory'  => 3.6,
-	  'phreebooks' => 3.6,
+	  'phreedom'   => '3.3',
+	  'inventory'  => '3.3',
+	  'phreebooks' => '3.3',
 	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array(
-	);
-	// add new directories to store images and data
-	$this->dirlist = array(
-	);
+	
 	// Load tables
 	$this->tables = array(
 	  TABLE_WO_MAIN => "CREATE TABLE " . TABLE_WO_MAIN  . " (
@@ -113,9 +108,6 @@ class work_orders_admin {
 	write_configure('PHREEHELP_FORCE_RELOAD', '1');
   }
 
-  function initialize($module) {
-  }
-
   function update($module) {
     global $db, $messageStack;
 	$error = false;
@@ -155,9 +147,6 @@ class work_orders_admin {
 	$result = $db->Execute("select id from " . TABLE_PHREEFORM . " where doc_group = 'inv' and doc_ext = '0'");
 	if (admin_add_report_folder($result->fields['id'], TEXT_WORK_ORDER_FORMS, 'inv:wo', 'ff')) $error = true;
 	return $error;
-  }
-
-  function load_demo() {
   }
 
 }

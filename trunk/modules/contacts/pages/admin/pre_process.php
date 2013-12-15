@@ -22,22 +22,15 @@ gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-require_once(DIR_FS_WORKING . 'classes/departments.php');
-require_once(DIR_FS_WORKING . 'classes/dept_types.php');
-require_once(DIR_FS_WORKING . 'classes/project_costs.php');
-require_once(DIR_FS_WORKING . 'classes/project_phases.php');
-require_once(DIR_FS_WORKING . 'classes/contact_tabs.php');
-require_once(DIR_FS_WORKING . 'classes/contact_fields.php');
 /**************   page specific initialization  *************************/
 $error          = false; 
-$install        = new contacts_admin();
-$departments    = new departments();
-$dept_types     = new dept_types();
-$project_costs  = new project_costs();
-$project_phases = new project_phases();
-$tabs           = new contact_tabs();
-$fields         = new contact_fields();
+$install        = new contacts\admin();
+$departments    = new contacts\departments();
+$dept_types     = new contacts\dept_types();
+$project_costs  = new contacts\project_costs();
+$project_phases = new contacts\project_phases();
+$tabs           = new contacts\tabs();
+$fields         = new contacts\fields();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':

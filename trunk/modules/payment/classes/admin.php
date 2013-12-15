@@ -14,16 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/payment/classes/install.php
+//  Path: /modules/payment/classes/admin.php
 //
-
-class payment_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace payment;
+class admin extends \core\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'   => 3.71,
@@ -43,9 +37,6 @@ class payment_admin {
 	  if (method_exists($properties, 'install')) $properties->install();
 	}
     return $error;
-  }
-
-  function initialize($module) {
   }
 
   function update($module) {
@@ -97,12 +88,6 @@ class payment_admin {
 	  }
 	}
 	return $error;
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

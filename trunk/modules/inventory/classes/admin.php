@@ -14,15 +14,11 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/inventory/classes/install.php
+//  Path: /modules/inventory/classes/admin.php
 //
-class inventory_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace inventory;
+class admin extends \core\admin {
+
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'   => 3.71,
@@ -265,7 +261,7 @@ class inventory_admin {
 	}
 	// set the fields to view in the inventory field filters 
 	$haystack = array('attachments', 'account_sales_income', 'item_taxable', 'purch_taxable', 'image_with_path', 'account_inventory_wage', 'account_cost_of_sales', 'cost_method', 'lead_time');
-	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type='check_box' where field_name='inactive'");
+	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type` = 'check_box' where field_name = 'inactive'");
 	$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'");
 	while (!$result->EOF) {
 		$use_in_inventory_filter = '1';
@@ -275,9 +271,6 @@ class inventory_admin {
 	}
 	
     return $error;
-  }
-
-  function initialize($module) {
   }
 
   function update($module) {
@@ -504,9 +497,7 @@ class inventory_admin {
 	// copy the demo images
 	require(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 	$backups = new backup;
-	if (!is_dir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) {
-		if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
-	}
+	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
 	$dir_source = DIR_FS_MODULES  . 'inventory/images/demo/';
 	$dir_dest   = DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo/';
 	$backups->copy_dir($dir_source, $dir_dest);

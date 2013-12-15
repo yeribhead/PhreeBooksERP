@@ -14,15 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreeform/classes/install.php
+//  Path: /modules/phreeform/classes/admin.php
 //
-
-class phreeform_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
+namespace phreeform;
+class admin extends \core\admin {
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -67,16 +62,12 @@ class phreeform_admin {
     // load all the active modules and load directory structure, reports
 	global $loaded_modules;
 	if (is_array($loaded_modules)) foreach ($loaded_modules as $method) {
-	  require_once(DIR_FS_MODULES . $method . '/classes/install.php');
 	  gen_pull_language($method, 'admin');
-	  $cName    = $method . '_admin';
+	  $cName    = $method . '\admin';
 	  $mInstall = new $cName();
 	  $mInstall->load_reports($method);
 	}
 	return $error;
-  }
-
-  function initialize($module) {
   }
 
   function update($module) {
@@ -96,18 +87,12 @@ class phreeform_admin {
 	return $error;
   }
 
-  function remove($module) {
-  }
-
   function load_reports($module) {
 	$error = false;
 	$id = admin_add_report_heading(TEXT_MISC, 'misc');
 	if (admin_add_report_folder($id, TEXT_REPORTS, 'misc',      'fr')) $error = true;
 	if (admin_add_report_folder($id, TEXT_FORMS,   'misc:misc', 'ff')) $error = true;
 	return $error;
-  }
-
-  function load_demo() {
   }
 
 }

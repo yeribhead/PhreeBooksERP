@@ -15,10 +15,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/cp_action/classes/install.php
+//  Path: /modules/cp_action/classes/admin.php
 //
-
-class cp_action_admin {
+namespace cp_action;
+class admin extends \core\admin {
   function __construct() {
 	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly

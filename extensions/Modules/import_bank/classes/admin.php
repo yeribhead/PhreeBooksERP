@@ -18,16 +18,10 @@
 // | file: /doc/manual/ch01-Introduction/license.html.               |
 // | If not, see http://www.gnu.org/licenses/                        |
 // +-----------------------------------------------------------------+
-//  Path: /modules/import_bank/classes/install.php
+//  Path: /modules/import_bank/classes/admin.php
 //
-
-class import_bank_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace import_bank;
+class admin extends \core\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.0,
@@ -82,10 +76,7 @@ class import_bank_admin {
 	}
     return $error;
   }
-
-  function initialize($module) {
-  }
-
+  
   function update($module) {
   	global $db;
   	foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
@@ -106,15 +97,6 @@ class import_bank_admin {
 	}
 	
 	write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-  }
-
-  function remove($module) {
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

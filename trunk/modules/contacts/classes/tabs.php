@@ -3,6 +3,7 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -14,15 +15,15 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/inventory/classes/inventory_tabs.php
+//  Path: /modules/contacts/classes/tabs.php
 //
-require_once(DIR_FS_MODULES . 'phreedom/classes/tabs.php');
-
-class inventory_tabs extends tabs{
-    public  $help_path   = '07.04.04';
-    public  $module      = 'inventory';
-    public  $title       = '';
-    public  $extra_buttons = '';
+namespace contacts;
+class tabs extends \core\tabs{
+	public  $help_path   = '';
+	public  $module      = 'contacts';
+	public  $title       = '';
+	public  $extra_buttons = '';
+   
 }
 
 ?>

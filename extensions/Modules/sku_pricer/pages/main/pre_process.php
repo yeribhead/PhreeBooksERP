@@ -24,10 +24,7 @@ $upload_name = 'file_name';
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
-	if ($security_level < 1) {
-	  $messageStack->add(ERROR_NO_PERMISSION, 'error');
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	}
+	validate_security($security_level, 1); // security check
 	// first verify the file was uploaded ok
 	if (!validate_upload($upload_name, 'text', 'csv')) {
 	  $messageStack->add(TEXT_IMP_ERMSG10,'error');

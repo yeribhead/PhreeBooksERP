@@ -15,16 +15,25 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/contacts/classes/contact_tabs.php
+//  Path: /modules/contacts/classes/fields.php
 //
-require_once(DIR_FS_MODULES . 'phreedom/classes/tabs.php');
-
-class contact_tabs extends tabs{
+namespace contacts;
+class fields extends \core\fields{
 	public  $help_path   = '';
-	public  $module      = 'contacts';
 	public  $title       = '';
+	public  $module      = 'contacts';
+	public  $db_table    = TABLE_CONTACTS;
+    public  $type_desc   = TEXT_CONTACT_TYPE;
+	public  $type_params = 'contact_type';
 	public  $extra_buttons = '';
-   
-}
+  
+  public function __construct(){
+	$this->type_array[] = array('id' => 'c', 'text' => TEXT_CUSTOMER);
+    $this->type_array[] = array('id' => 'v', 'text' => TEXT_VENDOR);
+    $this->type_array[] = array('id' => 'e', 'text' => TEXT_EMPLOYEE);
+    $this->type_array[] = array('id' => 'b', 'text' => TEXT_BRANCH);
+    parent::__construct();    
+  }
 
+}
 ?>

@@ -14,20 +14,16 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/rma/classes/install.php
+//  Path: /modules/rma/classes/admin.php
 //
-class rma_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
+namespace rma;
+class admin extends \core\admin {
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.6,
-	  'inventory'  => 3.6,
-	  'phreebooks' => 3.6,
+	  'phreedom'   => 3.3,
+	  'inventory'  => 3.3,
+	  'phreebooks' => 3.3,
 	);
 	// add new directories to store images and data
 	$this->dirlist = array(
@@ -77,9 +73,6 @@ class rma_admin {
     return $error;
   }
 
-  function initialize($module) {
-  }
-
   function update($module) {
     global $db, $messageStack;
     $error = false;
@@ -123,12 +116,6 @@ class rma_admin {
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_rma_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_rma_num");
     return $error;
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

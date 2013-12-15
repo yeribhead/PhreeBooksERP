@@ -26,23 +26,25 @@ $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 /**************  include page specific files    *********************/
 gen_pull_language($module);
 gen_pull_language($module, 'admin');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install = new audit_admin();
+$install= new audit\admin();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
-	validate_security($security_level, 3);
-	// save general tab
-	foreach ($install->keys as $key => $default) {
-	  $field = strtolower($key);
-      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
-    }
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	$messageStack->add(ZENCART_CONFIG_SAVED, 'success');
-    break;
+  	try{
+		validate_security($security_level, 3);
+		// save general tab
+		foreach ($install->keys as $key => $default) {
+		  $field = strtolower($key);
+	      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
+	    }
+		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
+		$messageStack->add(ZENCART_CONFIG_SAVED, 'success');
+	    break;
+  	}catch(Exception $e) {
+	  	$messageStack->add($e->getMessage(), $e->getCode());
+	}
   case 'go_first':    $_REQUEST['list'] = 1;       break;
   case 'go_previous': $_REQUEST['list'] = max($_REQUEST['list']-1, 1); break;
   case 'go_next':     $_REQUEST['list']++;         break;

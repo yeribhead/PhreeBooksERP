@@ -17,9 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/j.php
 //  jobs/projects
-require_once(DIR_FS_MODULES . 'contacts/classes/contacts.php');
-
-class j extends contacts{	
+namespace contacts;
+class j extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_PROJECTS;
 	public $address_types  = array('jm', 'js', 'jb', 'im');
 	public $type            = 'j';

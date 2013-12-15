@@ -14,16 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/shipping/classes/install.php
+//  Path: /modules/shipping/classes/admin.php
 //
-
-class shipping_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace shipping;
+class admin extends \core\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.6,
@@ -116,9 +110,6 @@ class shipping_admin {
     return $error;
   }
 
-  function initialize($module) {
-  }
-
   function update($module) {
     global $db, $messageStack;
 	$error = false;
@@ -157,12 +148,6 @@ class shipping_admin {
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_num");
 	if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_desc");
 	return $error;
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

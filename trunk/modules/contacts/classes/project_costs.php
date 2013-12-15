@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/project_costs.php
 //
-
+namespace contacts;
 require_once(DIR_FS_MODULES . 'contacts/defaults.php');
 
 class project_costs {

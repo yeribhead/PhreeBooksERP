@@ -29,23 +29,14 @@ $creation_date = isset($_POST['creation_date']) ? gen_db_date($_POST['creation_d
 $receive_date  = isset($_POST['receive_date'])  ? gen_db_date($_POST['receive_date'])  : '';
 $closed_date   = isset($_POST['closed_date'])   ? gen_db_date($_POST['closed_date'])   : '';
 $invoice_date  = isset($_POST['invoice_date'])  ? gen_db_date($_POST['invoice_date'])  : '';
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
-// load the sort fields
-if (!isset($_REQUEST['sf'])) $_REQUEST['sf'] = TEXT_RMA_ID;
-if (!isset($_REQUEST['so'])) $_REQUEST['so'] = 'desc';
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+history_filter();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
-	if ($security_level < 2) {
-	  $messageStack->add_session(ERROR_NO_PERMISSION,'error');
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	  break;
-	}
+  	validate_security($security_level, 2); // security check
 	$id                  = db_prepare_input($_POST['id']);
 	$rma_num             = db_prepare_input($_POST['rma_num']);
 	$caller_name         = db_prepare_input($_POST['caller_name']);
@@ -169,11 +160,7 @@ switch ($_REQUEST['action']) {
 	break;
 
   case 'delete':
-	if ($security_level < 4) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 4); // security check
 	$id     = db_prepare_input($_GET['cID']);
 	$result = $db->Execute("select rma_num from " . TABLE_RMA . " where id = " . $id);
 	if ($result->RecordCount() > 0) {
@@ -310,9 +297,14 @@ switch ($_REQUEST['action']) {
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
     $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list)  . " from " . TABLE_RMA . $search . " order by $disp_order, rma_num";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     $query_split  = new splitPageResults($_REQUEST['list'], '');
-	define('PAGE_TITLE', BOX_RMA_MAINTAIN);
+	if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	   	$_REQUEST['list'] = $query_split->current_page_number;
+		$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+		$query_split      = new splitPageResults($_REQUEST['list'], '');
+	   }
+	history_save();
+    define('PAGE_TITLE', BOX_RMA_MAINTAIN);
     $include_template = 'template_main.php';
 	break;
 }

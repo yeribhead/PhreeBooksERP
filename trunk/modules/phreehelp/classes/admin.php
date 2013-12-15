@@ -14,16 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreehelp/classes/install.php
+//  Path: /modules/phreehelp/classes/admin.php
 //
-
-class phreehelp_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace phreehelp;
+class admin extends \core\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom' => 3.6,
@@ -50,12 +44,6 @@ class phreehelp_admin {
     );
   }
 
-  function install($module) {
-  }
-
-  function initialize($module) {
-  }
-
   function update($module) {
     global $db, $messageStack;
     $error = false;
@@ -71,15 +59,5 @@ class phreehelp_admin {
 	}
 	return $error;
   }
-
-  function remove($module) {
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
-  }
-
 }
 ?>

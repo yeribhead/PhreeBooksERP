@@ -14,29 +14,16 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/inventory/classes/assets_fields.php
+//  Path: /modules/sku_pricer/classes/admin.php
 //
-require_once(DIR_FS_MODULES . 'phreedom/classes/fields.php');
-
-class assets_fields extends fields{
-	public  $help_path   = '07.04.05';
-	public  $title       = '';
-	public  $module      = 'assets';
-	public  $db_table    = TABLE_ASSETS;
-	public  $type_params = 'asset_type';
-	public  $extra_buttons = '';
-  
-	public function __construct(){
-  		gen_pull_language('assets');
-  		$this->type_array[] = array('id' =>'vh', 'text' => TEXT_VEHICLE);
-  		$this->type_array[] = array('id' =>'bd', 'text' => TEXT_BUILDING);
-  		$this->type_array[] = array('id' =>'fn', 'text' => TEXT_FURNITURE);
-  		$this->type_array[] = array('id' =>'pc', 'text' => TEXT_COMPUTER);
-  		$this->type_array[] = array('id' =>'te', 'text' => TEXT_EQUIP);
-  		$this->type_array[] = array('id' =>'ld', 'text' => TEXT_LAND);
-  		$this->type_array[] = array('id' =>'sw', 'text' => TEXT_SOFTWARE);
-	 	$this->type_desc    = ASSETS_ENTRY_ASSETS_TYPE;
-    	parent::__construct();    
-	}
+namespace sku_pricer;
+class admin extends \core\admin {
+	
+  function __construct() {
+	$this->prerequisites = array( // modules required and rev level for this module to work properly
+	  'phreedom'   => 3.0,
+	  'phreebooks' => 3.0,
+	);
+  }
 }
 ?>

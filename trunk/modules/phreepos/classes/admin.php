@@ -14,15 +14,10 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreepos/classes/install.php
+//  Path: /modules/phreepos/classes/admin.php
 //
-class phreepos_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	
+namespace phreepos;
+class admin extends \core\admin {
 	
   function phreepos_admin() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -85,9 +80,6 @@ class phreepos_admin {
 	$error = false;
 //	$this->notes[] = MODULE_PHREEPOS_NOTES_1;
     return $error;
-  }
-
-  function initialize($module) {
   }
 
   function update($module) {
@@ -158,13 +150,6 @@ class phreepos_admin {
 	$id = admin_add_report_heading(MENU_HEADING_PHREEPOS, 'pos');
 	if (admin_add_report_folder($id, TEXT_REPORTS,        'pos',      'fr')) $error = true;
 	if (admin_add_report_folder($id, TEXT_RECEIPTS,       'pos:rcpt', 'ff')) $error = true;
-	return $error;
-  }
-
-  function load_demo() {
-    global $db;
-	$error = false;
-
 	return $error;
   }
   

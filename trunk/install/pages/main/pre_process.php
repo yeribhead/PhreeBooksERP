@@ -217,7 +217,7 @@ switch ($_REQUEST['action']) {
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  				$error = false;
-	  				require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
+	  				require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
 	  				$classname   = $entry . '_admin';
 	  				$install_mod = new $classname;
 			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
@@ -256,7 +256,7 @@ switch ($_REQUEST['action']) {
 		  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
 		  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 				    	$error = false;
-				    	require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
+				    	require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
 			    		$classname   = $entry . '_admin';
 			    		$install_mod = new $classname;
 			    		if (admin_check_versions($entry, $install_mod->prerequisites)) {

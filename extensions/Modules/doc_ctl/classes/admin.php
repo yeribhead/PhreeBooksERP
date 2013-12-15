@@ -14,17 +14,14 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/doc_ctl/classes/install.php
+//  Path: /modules/doc_ctl/classes/admin.php
 //
-
-class doc_ctl_admin {
-  function doc_ctl_admin() {
-	$this->notes = array(); // placeholder for any operational notes
+namespace doc_ctl;
+class admin extends \core\admin {
+  function _construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.6,
+	  'phreedom'   => '3.3',
 	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array();
 	// add new directories to store images and data
 	$this->dirlist = array(
 	  'doc_ctl',
@@ -77,9 +74,6 @@ class doc_ctl_admin {
 	}
   }
 
-  function initialize($module) {
-  }
-
   function update($module) {
     global $db, $messageStack;
 	$error = false;
@@ -89,15 +83,5 @@ class doc_ctl_admin {
 	}
 	return $error;
   }
-
-  function remove($module) {
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
-  }
-
 }
 ?>

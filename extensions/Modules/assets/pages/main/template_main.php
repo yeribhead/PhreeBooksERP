@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/assets/pages/main/template_main.php
 //
-echo html_form('assets', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
+echo html_form('assets', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'list'))) . chr(10);
 echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
 // customize the toolbar actions
@@ -30,7 +30,7 @@ if (count($extra_toolbar_buttons) > 0) foreach ($extra_toolbar_buttons as $key =
 $toolbar->add_help('');
 echo $toolbar->build_toolbar($add_search = true); 
 ?>
-<h1><?php echo BOX_ASSET_MODULE; ?></h1>
+<h1><?php echo sprintf(BOX_STATUS_MGR, BOX_ASSET_MODULE); ?></h1>
 <div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_ASSETS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
 </div>

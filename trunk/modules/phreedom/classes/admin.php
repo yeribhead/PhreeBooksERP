@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/classes/install.php
 //
-
-class phreedom_admin {
+namespace phreedom;
+class admin extends core\admin {
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
@@ -196,8 +196,7 @@ class phreedom_admin {
     // load the latest currency exchange rates
     if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
 	  gen_pull_language('phreedom', 'admin');
-	  require_once(DIR_FS_MODULES . 'phreedom/classes/currency.php');
-	  $currency = new currency();
+	  $currency = new \phreedom\currency();
 	  $currency->btn_update();
 	}
 	// Fix for change to audit log for upgrade to R3.6 causes perpertual crashing when writing audit log
@@ -205,8 +204,8 @@ class phreedom_admin {
 	// load installed modules and initialize them
 	if (is_array($loaded_modules)) foreach ($loaded_modules as $module) {
 	  if ($module == 'phreedom') continue; // skip this module
-	  require_once(DIR_FS_MODULES . $module . '/classes/install.php');
-	  $install_class = $module . '_admin';
+	  //require_once(DIR_FS_MODULES . $module . '/classes/install.php');
+	  $install_class = $module . '\admin';
 	  $mod_init = new $install_class;
 	  if (constant('MODULE_' . strtoupper($module) . '_STATUS') <> constant('MODULE_' . strtoupper($module) . '_VERSION')) {
 		// add any new constants
@@ -224,17 +223,17 @@ class phreedom_admin {
 	    $versions = xml_to_object($revisions);
 		$latest  = $versions->Revisions->Phreedom->Current;
 		$current = MODULE_PHREEDOM_VERSION;
-		if ($latest > $current) $messageStack->add_session(sprintf(TEXT_VERSION_CHECK_NEW_VER, $current, $latest), 'caution'); 
+		if ($latest > $current) $messageStack->add(sprintf(TEXT_VERSION_CHECK_NEW_VER, $current, $latest), 'caution'); 
 		foreach ($loaded_modules as $mod) { // check rest of modules
 		  if ($mod == 'phreedom') continue; // skip this module
 		  $latest  = $versions->Revisions->Modules->$mod->Current;
 		  $current = constant('MODULE_' . strtoupper($mod) . '_VERSION');
-		  if ($latest > $current) $messageStack->add_session(sprintf(TEXT_VERSION_CHECK_NEW_MOD_VER, $mod, $current, $latest), 'caution'); 
+		  if ($latest > $current) $messageStack->add(sprintf(TEXT_VERSION_CHECK_NEW_MOD_VER, $mod, $current, $latest), 'caution'); 
 		}
 	  }
     }
 	// Make sure the install directory has been moved/removed
-	if (is_dir(DIR_FS_ADMIN . 'install')) $messageStack->add_session(TEXT_INSTALL_DIR_PRESENT, 'caution'); 
+	if (is_dir(DIR_FS_ADMIN . 'install')) $messageStack->add(TEXT_INSTALL_DIR_PRESENT, 'caution'); 
   }
 
   function update($module) {

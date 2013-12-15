@@ -21,20 +21,14 @@ $security_level = validate_user(SECURITY_ASSETS_MGT);
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_MODULES . 'inventory/functions/inventory.php');
 require_once(DIR_FS_WORKING . 'defaults.php');
-require_once(DIR_FS_WORKING . 'classes/assets_fields.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-$fields		 = new assets_fields();
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] != '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+$fields		 = new assets\fields();
 $acquisition_date = isset($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
 $maintenance_date = isset($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
 $terminal_date    = isset($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';
-// load the sort fields
-if(!isset($_REQUEST['sf']))   $_REQUEST['sf'] = TEXT_WO_ID; // the $_REQUEST varible will be called by the header function directly
-if(!isset($_REQUEST['so']))   $_REQUEST['so'] = 'desc';
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
+history_filter('assets');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -45,11 +39,7 @@ switch ($_REQUEST['action']) {
 	$cInfo = '';
 	break;
   case 'create':
-	if ($security_level < 2) {
-		$messageStack->add(ERROR_NO_PERMISSION, 'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 2); // security check
 	$asset_id   = db_prepare_input($_POST['asset_id']);
 	$asset_type = db_prepare_input($_POST['asset_type']);
 	if (!$asset_id) {
@@ -83,11 +73,7 @@ switch ($_REQUEST['action']) {
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')) . '&cID=' . $id . '&action=edit', 'SSL'));
 	break;
   case 'delete':
-	if ($security_level < 4) {
-		$messageStack->add(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 4); // security check
 	$id         = db_prepare_input($_GET['cID']);
 	$result     = $db->Execute("select asset_id, asset_type, image_with_path from " . TABLE_ASSETS . " where id = " . $id);
 	$asset_id   = $result->fields['asset_id'];
@@ -103,11 +89,7 @@ switch ($_REQUEST['action']) {
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('cID', 'action')), 'SSL'));
 	break;
   case 'save':
-	if ($security_level < 3) {
-		$messageStack->add(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 3); // security check
 	$id              = db_prepare_input($_POST['id']);
 	$asset_id        = db_prepare_input($_POST['asset_id']);
 	$image_with_path = db_prepare_input($_POST['image_with_path']); // the current image name with path relative from my_files/company_db/asset/images directory
@@ -205,11 +187,7 @@ switch ($_REQUEST['action']) {
 	}
 	break;
   case 'copy':
-	if ($security_level < 2) {
-		$messageStack->add(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 2); // security check
 	$id 		  = db_prepare_input($_GET['cID']);
 	$new_asset_id = db_prepare_input($_GET['asset_id']);
 	// check for duplicate skus
@@ -255,11 +233,7 @@ switch ($_REQUEST['action']) {
 	$cInfo = new objectInfo($asset->fields);
 	break;
   case 'rename':
-	if ($security_level < 4) {
-		$messageStack->add(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-		break;
-	}
+  	validate_security($security_level, 4); // security check
 	$id = db_prepare_input($_GET['cID']);
 	$asset_id = db_prepare_input($_GET['asset_id']);
 	// check for duplicate skus
@@ -397,6 +371,13 @@ switch ($_REQUEST['action']) {
     $query_raw    = "select SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." from ".TABLE_ASSETS." $search order by $disp_order, asset_id";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     $query_split  = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+	    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    }
+    history_save('assets');
+    
 	define('PAGE_TITLE', BOX_ASSET_MODULE);
     $include_template = 'template_main.php';
 	break;

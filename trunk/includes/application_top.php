@@ -51,10 +51,13 @@ $_REQUEST = array_merge($_GET, $_POST);
 session_start();
 $session_started = true;
 // set the language
-if   (isset($_GET['language'])) { $_SESSION['language'] = $_GET['language']; } 
-elseif (!$_SESSION['language']) { $_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us'; }
+if ( !isset($_SESSION['language']) && isset($_GET['language'])) {
+	$_SESSION['language'] = $_GET['language']; 
+}elseif (!isset($_SESSION['language'])) { 
+	$_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us'; 
+}
 // see if the user is logged in
-$user_validated = isset($_SESSION['admin_id']) ? true : false;
+//$user_validated = isset($_SESSION['admin_id']) ? true : false;
 // load general language translation, Check for global define overrides first
 $path = DIR_FS_MODULES . 'phreedom/custom/language/' . $_SESSION['language'] . '/language.php';
 if (file_exists($path)) { require_once($path); }
@@ -67,6 +70,7 @@ require_once(DIR_FS_INCLUDES . 'common_functions.php');
 require_once(DIR_FS_INCLUDES . 'common_classes.php');
 set_error_handler("PhreebooksErrorHandler");
 set_exception_handler('PhreebooksExceptionHandler');
+spl_autoload_register('Phreebooks_autoloader', true, false);
 // pull in the custom language over-rides for this module/page
 $custom_path = DIR_FS_MODULES . $module . '/custom/pages/' . $page . '/extra_defines.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -80,22 +84,28 @@ else { define('DIR_WS_ICONS', 'themes/default/icons/'); } // use default
 $messageStack = new messageStack;
 $toolbar      = new toolbar;
 // determine what company to connect to
-$db_company = (isset($_SESSION['company'])) ? $_SESSION['company'] : $_SESSION['companies'][$_POST['company']];
+if (isset($_POST['company']) && !isset($_SESSION['company'])) $_SESSION['company'] = $_SESSION['companies'][$_POST['company']];
+$db_company = isset($_SESSION['company']) ? $_SESSION['company'] : false;
 if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
-  define('DB_DATABASE', $db_company);
-  require_once(DIR_FS_MY_FILES . $db_company . '/config.php');
-  define('DB_SERVER_HOST',DB_SERVER); // for old PhreeBooks installs
-  // Load queryFactory db classes
-  require_once(DIR_FS_INCLUDES . 'db/' . DB_TYPE . '/query_factory.php');
-  $db = new queryFactory();
-  $db->connect(DB_SERVER_HOST, DB_SERVER_USERNAME, DB_SERVER_PASSWORD, DB_DATABASE);
-  // set application wide parameters for phreebooks module
-  $result = $db->Execute_return_error("select configuration_key, configuration_value from " . DB_PREFIX . "configuration");
-  if ($db->error_number != '' || $result->RecordCount() == 0) trigger_error(LOAD_CONFIG_ERROR, E_USER_ERROR);
-  while (!$result->EOF) {
-	define($result->fields['configuration_key'], $result->fields['configuration_value']);
-	$result->MoveNext();
-  }
+	require_once(DIR_FS_MY_FILES . $db_company . '/config.php');
+  	define('DB_SERVER_HOST',DB_SERVER); // for old PhreeBooks installs
+	//registry::storeCoreObjects();
+	// Load queryFactory db classes
+	$dsn = DB_TYPE.":dbname=".$db_company.";host=".DB_SERVER_HOST;
+	try {
+		$db = new PDO($dsn, DB_SERVER_USERNAME, DB_SERVER_PASSWORD);
+	} catch (PDOException $e) {
+		trigger_error('database connection failed: ' . $e->getMessage() , E_USER_ERROR);
+	}
+	try{
+	 	$db->repare("select configuration_key, configuration_value from " . DB_PREFIX . "configuration");
+	    $db->execute();
+	    foreach($db->fetch(PDO::FETCH_LAZY) as $row){
+	  		define($row['configuration_key'],$row['configuration_value']);
+	  	}
+    }catch (PDOException $e) {
+    	trigger_error(LOAD_CONFIG_ERROR . $e->getMessage(), E_USER_ERROR);
+    }
   // search the list modules and load configuration files and language files
   gen_pull_language('phreedom', 'menu');
   gen_pull_language('phreebooks', 'menu');
@@ -107,6 +117,8 @@ if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
     if ($dir == '.' || $dir == '..') continue;
 	if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu');
   	if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
+  		$admin = $dir.'\admin';
+  		registry::storeObject($admin, $admin);
 	  $loaded_modules[] = $dir;
       require_once(DIR_FS_MODULES . $dir . '/config.php');
     } 
@@ -118,6 +130,6 @@ if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
 }
 $prefered_type = ENABLE_SSL_ADMIN == 'true' ? 'SSL' : 'NONSSL';
 if ($request_type <> $prefered_type) gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL')); // re-direct if SSL request not matching actual request
-if ($user_validated && !defined('DEFAULT_CURRENCY')) $messageStack->add(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error'); // check for default currency defined
+if (core\user::is_validated() && !defined('DEFAULT_CURRENCY')) throw new Exception(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error'); // check for default currency defined
 
 ?>

@@ -17,6 +17,7 @@
 // Path: /index.php
 //
 ob_start();
+ini_set('log_errors','1'); 
 ini_set('display_errors', '1');
 error_reporting(E_ALL ^ E_NOTICE);
 if (isset($_POST['module']))    $module = $_POST['module'];
@@ -25,9 +26,9 @@ else                            $module = 'phreedom';
 if (isset($_POST['page']))      $page = $_POST['page'];
 elseif (isset($_GET['page']))   $page = $_GET['page'];
 else                     		$page = 'main';
-$user_validated = false;
+
 require_once('includes/application_top.php');
-if (!$user_validated) {
+if (!core\user::is_validated()) {
   if ($page == 'ajax'){
 	echo createXmlHeader() . xmlEntry('error', SORRY_YOU_ARE_LOGGED_OUT) . createXmlFooter();
 	die;

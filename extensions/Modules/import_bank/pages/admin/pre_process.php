@@ -27,11 +27,10 @@ $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 /**************  include page specific files    *********************/
 gen_pull_language($module);
 gen_pull_language($module, 'admin');
-require_once(DIR_FS_WORKING . 'classes/install.php');
 require_once(DIR_FS_WORKING . 'classes/known_transactions.php');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install = new import_bank_admin();
+$install = new import_bank\admin();
 $kt      = new known_transactions();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
