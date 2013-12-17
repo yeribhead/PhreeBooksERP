@@ -20,10 +20,9 @@
 // PayPal Payment Pro Module
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace payment;
 define('MODULE_PAYMENT_PAYPAL_NVP_VERSION','3.2');
-require_once(DIR_FS_MODULES . 'payment/classes/payment.php');
-
-class paypal_nvp extends payment {
+class paypal_nvp extends payment\payment {
   public $code              = 'paypal_nvp'; // needs to match class name
   public $title 	        = MODULE_PAYMENT_CC_TEXT_CATALOG_TITLE;
   public $description       = MODULE_PAYMENT_PAYPAL_NVP_TEXT_DESCRIPTION;

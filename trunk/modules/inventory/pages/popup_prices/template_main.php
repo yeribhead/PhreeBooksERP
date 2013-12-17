@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/pages/popup_prices/template_main.php
 //
-echo html_form('prices', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
+echo html_form('prices', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'list'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);

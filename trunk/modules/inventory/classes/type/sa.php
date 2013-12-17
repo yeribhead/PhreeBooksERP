@@ -1,6 +1,6 @@
 <?php
-require_once(DIR_FS_MODULES . 'inventory/classes/inventory.php');
-class sa extends inventory {//Serialized Assembly
+namespace inventory;
+class sa extends \inventory\inventory {//Serialized Assembly
 	public $inventory_type			= 'sa';
 	public $title 					= INV_TYPES_SA;
 	public $serialize 				= 1;

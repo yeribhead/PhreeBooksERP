@@ -18,10 +18,6 @@
 //
 /******************************* overwrite General js Functions ****************************************/
 
-function alert(msg){
-	$.messager.alert('Warning!!',msg);
-}
-
 function confirm(msg){
 	$.messager.confirm('Please Confirm',msg,function(r){
 		if (r){
@@ -271,7 +267,7 @@ function phreedomChart() {
 	url: 'index.php?module=phreedom&page=ajax&op=phreedom&action=chart&modID='+modID+'&fID='+func+'&d0='+d0,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: phreedomChartResp
   });
@@ -543,7 +539,7 @@ function tabPage(subject, action, rID) {
 	  url: 'index.php?module=phreedom&page=ajax&op=tab_details&mod='+module+'&subject='+subject+'&action='+action+'&rID='+rID,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error: ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: processTabPage
     });

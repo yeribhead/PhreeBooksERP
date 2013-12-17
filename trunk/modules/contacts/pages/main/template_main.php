@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/main/template_main.php
 //
-echo html_form('contacts', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
+echo html_form('contacts', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'list'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action', '')   . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);

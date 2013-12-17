@@ -1,6 +1,6 @@
 <?php
-require_once(DIR_FS_MODULES . 'inventory/classes/inventory.php');
-class ms extends inventory {//Master Stock Item parent of mi
+namespace inventory;
+class ms extends \inventory\inventory {//Master Stock Item parent of mi
 	public $inventory_type			= 'ms';
 	public $title       			= INV_TYPES_MS;
 	public $account_sales_income	= INV_MASTER_STOCK_DEFAULT_SALES;

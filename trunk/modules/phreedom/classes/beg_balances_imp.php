@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/beg_balances_imp.php
 //
-
+namespace phreedom;
 class beg_bal_import {
   function __construct() {
   }

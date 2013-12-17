@@ -79,7 +79,7 @@ function fetchEmailMsg() {
 	  url: 'index.php?module=phreeform&page=ajax&op=load_email_msg&rID='+rID,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-        alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: fillEmailMsg
     });

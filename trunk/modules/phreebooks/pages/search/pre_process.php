@@ -20,6 +20,7 @@ $security_level = validate_user(SECURITY_ID_SEARCH);
 /**************  include page specific files    *********************/
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
 /**************   page specific initialization  *************************/
+history_filter('pb_search');
 $sort_by = array(
   'date' => TEXT_DATE,
   'id'   => TEXT_JOURNAL_TYPE,
@@ -39,7 +40,6 @@ for ($i = 1; $i < 30; $i++) {
 	$journal_choices[$i] = sprintf(TEXT_JID_ENTRY, constant('GEN_ADM_TOOLS_J' . $j_constant));
   }
 }
-if(!isset($_REQUEST['list']) || isset($_POST['search_main_id'])) $_REQUEST['list'] = 1;
 $_SESSION['search_date_id']      = $_REQUEST['search_date_id']     ? $_REQUEST['search_date_id']     : (isset($_SESSION['search_date_id'])     ? $_SESSION['search_date_id']     : 'l'); // default to current period
 $_SESSION['search_date_from']    = $_REQUEST['search_date_from']   ? $_REQUEST['search_date_from']   : (isset($_SESSION['search_date_from'])   ? $_SESSION['search_date_from']   : gen_locale_date(CURRENT_ACCOUNTING_PERIOD_START));
 $_SESSION['search_date_to']      = $_REQUEST['search_date_to']     ? $_REQUEST['search_date_to']     : (isset($_SESSION['search_date_to'])     ? $_SESSION['search_date_to']     : gen_locale_date(CURRENT_ACCOUNTING_PERIOD_END));
@@ -62,7 +62,6 @@ $_SESSION['search_gl_acct_to']   = $_REQUEST['search_gl_acct_to']  ? $_REQUEST['
 $_SESSION['search_main_id']      = $_REQUEST['search_main_id']     ? $_REQUEST['search_main_id']     : (isset($_SESSION['search_main_id'])     ? $_SESSION['search_main_id']     : 'all');
 $_SESSION['search_main_from']    = $_REQUEST['search_main_from']   ? $_REQUEST['search_main_from']   : (isset($_SESSION['search_main_from'])   ? $_SESSION['search_main_from']   : '');
 $_SESSION['search_main_to']      = $_REQUEST['search_main_to']     ? $_REQUEST['search_main_to']     : (isset($_SESSION['search_main_to'])     ? $_SESSION['search_main_to']     : '');
-
 
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/search/extra_actions.php';
@@ -179,8 +178,13 @@ $query_raw = "select SQL_CALC_FOUND_ROWS distinct m.id, m.journal_id, m.post_dat
 	on m.id = i.ref_id " . $crit . " order by $disp_order";
 //echo 'sql = '; print_r($query_raw); echo '<br>';
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-// the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('pb_search');
 
 $include_header   = true;
 $include_footer   = true;

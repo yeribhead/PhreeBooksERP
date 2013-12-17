@@ -17,6 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/classes/backup.php
 //
+namespace phreedom;
 define('lnbr', "\n");
 
 class backup {

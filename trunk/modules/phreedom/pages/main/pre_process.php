@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/pages/main/pre_process.php
 //
+namespace phreedom;
 /**************   Check user security   *****************************/
 // Not here because may not be logged in
 /**************  include page specific files    *********************/

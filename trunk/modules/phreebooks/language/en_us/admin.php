@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -178,7 +177,7 @@ define('CD_02_24_DESC', 'Determines whether or not to calculate finance charges 
 define('CD_02_30_DESC', 'If enabled, shipping charges will be added to the calculation of sales tax. If not enabled, shipping will not be taxed.');
 define('CD_02_35_DESC', 'If set to Yes, this option will automatically assign an ID to new customer/vendor when they are created.');
 define('CD_02_40_DESC', 'This feature displays a customer status popup on the order screens when a customer is selected from the contact search popup. It displays balances, account aging as well as the active status of the account.');
-define('CD_02_50_DESC', 'If order level discounts are enabled, this switch determines whether the sales tax is calculated before or after the discount is applied to Sales Orders, Sales/Invoices, and Customer Quotes.');
+define('CD_02_50_DESC', 'If order level discounts are enabled (in PhreeBooks Module > General), this switch determines whether the sales tax is calculated before, Yes, (or after, No) the discount is applied to Sales Orders, Sales/Invoices, and Customer Quotes. (Default is NO)');
 /************************** (Vendor Defaults) ***********************************************/
 define('CD_03_01_DESC', 'Default account to use for received items. This account can be over written through the individual item record. Typically an Inventory or Expense type account.');
 define('CD_03_02_DESC', 'Default account to use for all purchases unless specified in the individual vendor record. Typically a Accounts Payable type account.');

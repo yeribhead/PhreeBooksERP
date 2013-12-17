@@ -20,14 +20,11 @@ $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-require_once(DIR_FS_WORKING . 'classes/tills.php');
-require_once(DIR_FS_WORKING . 'classes/other_transactions.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$install = new phreepos_admin();
-$tills   = new tills();
-$trans	 = new other_transactions();
+$install = new phreepos\admin();
+$tills   = new phreepos\tills();
+$trans	 = new phreepos\other_transactions();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save': 

@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/pages/status/template_main.php
 //
-echo html_form('status', FILENAME_DEFAULT, gen_get_all_get_params(array('action'))) . chr(10);
+echo html_form('status', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'list'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action',   '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);
@@ -52,7 +52,7 @@ switch (JOURNAL_ID) {
   	$toolbar->add_help('');
   	break;
 }
-$toolbar->search_period = $acct_period;
+$toolbar->search_period = $_REQUEST['search_period'];
 echo $toolbar->build_toolbar($add_search = true, $add_periods = true); 
 // Build the page
 ?>

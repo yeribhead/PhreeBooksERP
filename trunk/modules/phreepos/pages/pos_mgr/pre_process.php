@@ -29,13 +29,11 @@ $class = 'journal_'.JOURNAL_ID;
 /**************   page specific initialization  *************************/
 define('POPUP_FORM_TYPE','pos:rcpt');
 $error      = false;
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
+history_filter('pos_mgr');
 /***************   hook for custom actions  ***************************/
-$date           = isset($_POST['search_date'])    ? gen_db_date($_POST['search_date']) 	: false;
-$acct_period 	= isset($_GET['search_period'])   ? $_GET['search_period']         		: false;
-$oid		 	= isset($_GET['oID'])   		  ? $_GET['oID']		         		: false;
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+$date        = $_REQUEST['search_date'];
+$acct_period = $_REQUEST['search_period'];
+$oid		 = isset($_GET['oID']) ? $_GET['oID'] : false;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/pos_mgr/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -150,7 +148,13 @@ $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " from
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
-    
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('pos_mgr');
+
 $cal_date = array(
   'name'      => 'searchdate',
   'form'      => 'pos_mgr',

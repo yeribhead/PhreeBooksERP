@@ -32,7 +32,7 @@ function getAddress(id, type) {
 	url: 'index.php?module=contacts&page=ajax&op=contacts&action=get_address&type='+type+'&aID='+id,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: fillAddress
   });
@@ -101,7 +101,7 @@ function deleteAddress(id) {
 	url: 'index.php?module=contacts&page=ajax&op=contacts&action=rm_address&aID='+id,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: deleteAddressResp
   });
@@ -128,7 +128,7 @@ function getPayment(id) {
 	url: 'index.php?module=contacts&page=ajax&op=contacts&action=get_payment&pID='+id,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: fillPayment
   });
@@ -164,7 +164,7 @@ function deletePayment(id) {
 	url: 'index.php?module=contacts&page=ajax&op=contacts&action=rm_payment&pID='+id,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: deletePaymentResp
   });
@@ -185,7 +185,7 @@ function deleteCRM(id) {
 	url: 'index.php?module=contacts&page=ajax&op=contacts&action=rm_crm&nID='+id,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: deleteCRMResp
   });
@@ -210,7 +210,7 @@ function downloadAttachment(filename) {
 	url: 'index.php?module=phreedom&page=ajax&op=phreedom&action=download&file='+file_name,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: downloadResponse
   });

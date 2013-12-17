@@ -242,16 +242,16 @@ function masterStockBuildList(action, id) {
   switch (action) {
     case 'add':
 	  if (document.getElementById('attr_id_'+id).value == '' || document.getElementById('attr_id_'+id).value == '') {
-		$.messager.alert("Error","<?php echo JS_MS_INVALID_ENTRY; ?>","error");
+		  $.messager.alert('error','<?php echo JS_MS_INVALID_ENTRY; ?>','error');
 		return;
 	  }
 	  var str = document.getElementById('attr_desc_'+id).value ;
 	  if(str.search(",") == true){
-		  $.messager.alert("Error","<?php echo JS_MS_COMMA_NOT_ALLOWED; ?>","error");
+		  $.messager.alert('error','<?php echo JS_MS_COMMA_NOT_ALLOWED; ?>','error');
 		  return;
 	  } 
 	  if(str.search(":") == true){
-		  $.messager.alert("Error","<?php echo JS_MS_COLON_NOT_ALLOWED; ?>","error");
+		  $.messager.alert('error','<?php echo JS_MS_COLON_NOT_ALLOWED; ?>','error');
 		  return;
 	  } 
 	  var newOpt = document.createElement("option");
@@ -452,7 +452,7 @@ function loadSkuDetails(iID, rID) {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&iID='+iID+'&rID='+rID,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: processSkuDetails
     });
@@ -494,7 +494,7 @@ function ajaxAssyCost() {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=bomCost&iID='+id,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: showBOMCost
     });
@@ -505,7 +505,7 @@ function showBOMCost(sXml) {
   var xml = parseXml(sXml);
   if (!xml) return;
   if ($(xml).find("assy_cost").text()) {
-	  $.messager.alert("Bom Cost",'<?php echo JS_INV_TEXT_ASSY_COST; ?>'+formatPrecise($(xml).find("assy_cost").text()),"info");
+	  $.messager.alert('Current Costs','<?php echo JS_INV_TEXT_ASSY_COST; ?>'+formatPrecise($(xml).find("assy_cost").text()),'info');
   }
 }
 // ******* EOF - AJAX BOM Cost function pair *********/
@@ -518,7 +518,7 @@ function bom_guess(rID){
 		  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&sku='+sku+'&strict=1&rID='+rID,
 	      dataType: ($.browser.msie) ? "text" : "xml",
 	      error: function(XMLHttpRequest, textStatus, errorThrown) {
-		  $.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
+	    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	      },
 		  success: processSkuDetails
 	    });
@@ -552,7 +552,7 @@ function ajaxWhereUsed() {
 	  url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=whereUsed&iID='+id,
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
 	  success: showWhereUsed
     });

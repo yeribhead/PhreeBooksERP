@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/pages/popup_inv/template_main.php
 //
-echo html_form('search_form', FILENAME_DEFAULT, gen_get_all_get_params(array('action', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5'))) . chr(10);
+echo html_form('search_form', FILENAME_DEFAULT, gen_get_all_get_params(array('action','list', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5'))) . chr(10);
 // include hidden fields
 echo html_hidden_field('action',   '') . chr(10);
 echo html_hidden_field('rowSeq', '') . chr(10);

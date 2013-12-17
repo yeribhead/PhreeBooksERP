@@ -1,6 +1,6 @@
 <?php
-require_once(DIR_FS_MODULES . 'inventory/classes/inventory.php');
-class mi extends inventory { //Master Stock Sub Item. child of ma (master assembly)
+namespace inventory;
+class mi extends \inventory\inventory { //Master Stock Sub Item. child of ma (master assembly)
 	public $inventory_type			= 'mi';
 	public $title 					= INV_TYPES_MI;
 	public $master					= '';

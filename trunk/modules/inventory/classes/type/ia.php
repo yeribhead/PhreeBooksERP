@@ -1,6 +1,6 @@
 <?php
-require_once(DIR_FS_MODULES . 'inventory/classes/type/mb.php');
-class ia extends inventory { //Master Build Sub Item. child of mb (master assembly) combination of mi and ma
+namespace inventory;
+class ia extends \inventory\inventory { //Master Build Sub Item. child of mb (master assembly) combination of mi and ma
 	public $inventory_type			= 'ia';
 	public $title 					= INV_TYPES_IA;
 	public $edit_ms_list			= false;

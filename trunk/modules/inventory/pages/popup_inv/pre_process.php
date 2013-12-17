@@ -34,10 +34,7 @@ $f2 = isset($_REQUEST['f2']) ? $_REQUEST['f2'] : ''; // limit to preferred_vendo
 $_GET['f0'] = $f0;
 $_GET['f1'] = $f1;
 $_GET['f2'] = $f2;
-if (!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
-
+history_filter('inv_popup');
 switch ($account_type) {
   default:
   case 'c': $terms_type = 'AR'; break;
@@ -111,6 +108,12 @@ $query_raw = "select SQL_CALC_FOUND_ROWS DISTINCT " . implode(', ', $field_list)
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split      = new splitPageResults($_REQUEST['list'], '');
+}
+history_save('inv_popup');
 
 // check for auto close (if auto fill is turned on and only one result is found, the data will already be there)
 $auto_close = (INVENTORY_AUTO_FILL && $query_result->RecordCount() == 1 && $_REQUEST['list'] == 1) ? true : false;

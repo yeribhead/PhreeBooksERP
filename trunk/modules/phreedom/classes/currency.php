@@ -18,7 +18,7 @@
 //
 // define how do we update currency exchange rates. Possible values are 'oanda' 'yahoo'
 // xe no longer works as of 2012-02-01
-
+namespace phreedom;
 define('CURRENCY_SERVER_PRIMARY', 'oanda');
 define('CURRENCY_SERVER_BACKUP',  'yahoo');
 

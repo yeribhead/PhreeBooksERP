@@ -64,7 +64,7 @@ function getDialog(method, template) {
     url: 'index.php?module=shipping&page=ajax&op=shipping&action=form&method='+method+'&template='+template,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: fillDialog
   });
@@ -90,7 +90,7 @@ function trackPackage(method, tID) {
     url: 'index.php?module=shipping&page=ajax&op=shipping&action=tracking&method='+method+'&tID='+tID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: "+XMLHttpRequest.responseText+"\nTextStatus: "+textStatus+"\nErrorThrown: "+errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: fillTracking
   });

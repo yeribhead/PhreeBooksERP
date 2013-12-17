@@ -17,6 +17,7 @@
 //  Path: /modules/phreepos/classes/journal/journal_21.php
 //
 // Inventory Direct Purchase Journal (POP)
+namespace phreepos;
 require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 class journal_21 extends journal {
 	public $id					= '';

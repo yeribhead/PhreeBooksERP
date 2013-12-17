@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/classes/inventory.php
 //
-
+namespace inventory;
 class inventory {
 	public $inventory_type			= '';
 	public $help_path   			= '07.04.01.02';

@@ -18,10 +18,10 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace payment;
 define('MODULE_PAYMENT_NOVA_XML_VERSION','3.3');
-require_once(DIR_FS_MODULES . 'payment/classes/payment.php');
 // Elevon Payment Module
-class nova_xml extends payment {
+class nova_xml extends payment\payment {
   public $code        = 'nova_xml'; // needs to match class name
   public $title 	  = MODULE_PAYMENT_NOVA_XML_TEXT_TITLE;
   public $description = MODULE_PAYMENT_NOVA_XML_TEXT_DESCRIPTION;

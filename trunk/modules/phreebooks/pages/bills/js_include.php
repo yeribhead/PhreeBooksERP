@@ -88,7 +88,7 @@ function check_form() {
   }
 
   if (error == 1) {
-    alert(error_message);
+	$.messager.alert('error',error_message,'error');
     return false;
   }
   return true;
@@ -104,7 +104,7 @@ function loadNewPayment() { // request funtion
     url: 'index.php?module=phreebooks&page=ajax&op=stored_payments&contact_id='+contact_id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: showNewPayment
   });

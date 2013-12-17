@@ -16,15 +16,14 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/payment/pages/admin/pre_process.php
 //
+namespace payment;
 $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-
 /**************   page specific initialization  *************************/
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new payment_admin();
+$install    = new payment\admin();
 
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {

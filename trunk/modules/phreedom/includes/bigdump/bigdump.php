@@ -1136,7 +1136,7 @@ function create_ajax_script()
 	  if (http_request.readyState != 4)
 			return;
 	  if (http_request.status != 200) {
-	    alert("Page unavailable, or wrong url!")
+		$.messager.alert('error',"Page unavailable, or wrong url!",'error');
 			return;
 		}
 		

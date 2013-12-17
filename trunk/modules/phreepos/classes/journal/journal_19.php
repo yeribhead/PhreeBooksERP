@@ -17,6 +17,7 @@
 //  Path: /modules/phreepos/classes/journal/journal_19.php
 //
 // POS Journal
+namespace phreepos;
 require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 class journal_19 extends journal {
 	public $id					= '';
@@ -44,6 +45,7 @@ class journal_19 extends journal {
 	public $opendrawer			= false;
 	public $printed				= false;
 	public $post_date			= '';
+	public $store_id			= 0;
 	public $till_id				= 0;
 	public $rep_id				= 0;
 	public $subtotal			= 0;
@@ -84,7 +86,7 @@ class journal_19 extends journal {
 		// add/update address book
 		if ($this->bill_add_update) { // billing address
 			$this->bill_acct_id = $this->add_account($this->account_type . 'b', $this->bill_acct_id, $this->bill_address_id);
-		  	if (!$this->bill_acct_id){
+			if (!$this->bill_acct_id){
 				$messageStack->add('no customer was selected', 'error');
 				$db->transRollback();
 				return false;
@@ -111,8 +113,9 @@ class journal_19 extends journal {
 		foreach ($this->pmt_rows as $pay_method) {
 	        $pay_meth  = $pay_method['meth'];
 	        $processor = new $pay_meth;
+	        $messageStack->debug("\n encryption =".ENABLE_ENCRYPTION." save_payment =$this->save_payment enable_encryption=$processor->enable_encryption");
 	        if (ENABLE_ENCRYPTION && $this->save_payment && $processor->enable_encryption !== false) {
-	            if (!$this->encrypt_payment($pay_method, $processor->enable_encryption)){
+	            if (!$this->encrypt_payment($pay_method)){
 					$messageStack->add('unable to encrypt payment', 'error');
 					$db->transRollback();
 					return false;

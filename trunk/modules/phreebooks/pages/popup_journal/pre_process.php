@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -21,9 +20,7 @@ $security_level = validate_user(0, true);
 /**************  include page specific files  *********************/
 require(DIR_FS_WORKING . 'functions/phreebooks.php');
 /**************   page specific initialization  *************************/
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-// load the sort fields
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+history_filter('pb_pop_journal');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_journal/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -75,8 +72,13 @@ if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_lis
 $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " from " . TABLE_JOURNAL_MAIN . " 
 	where journal_id = 2" . $period_filter . $search . " order by $disp_order, id";
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-// the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+   	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
+   }
+history_save('pb_pop_journal');
 $include_header   = false;
 $include_footer   = true;
 $include_template = 'template_main.php';

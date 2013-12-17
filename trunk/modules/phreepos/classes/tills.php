@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/classes/tills.php
 //
-
+namespace phreepos;
 class tills {
 	public $code                    = 'tills';
     public $db_table     			= TABLE_PHREEPOS_TILLS;

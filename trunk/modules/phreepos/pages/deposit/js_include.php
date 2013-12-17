@@ -75,7 +75,7 @@ function check_form() {
   }
 
   if (error == 1) {
-    alert(error_message);
+	$.messager.alert('error',error_message,'error');
     return false;
   }
   return true;
@@ -141,7 +141,7 @@ function loadNewBalance() { // request funtion
     url: 'index.php?module=phreebooks&page=ajax&op=acct_balance&gl_acct_id='+gl_acct+'&post_date='+post_date,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: showNewBalance
   });
@@ -166,7 +166,7 @@ function ajaxOrderData(cID, oID, jID, open_order, ship_only) {
     url: 'index.php?module=contacts&page=ajax&op=load_contact&cID='+cID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: fillOrderData
   });
@@ -221,7 +221,7 @@ function loadNewPayment() { // request funtion
     url: 'index.php?module=phreebooks&page=ajax&op=stored_payments&contact_id='+contact_id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: showNewPayment
   });

@@ -66,7 +66,7 @@ function loadSkuDetails(iID, rowCnt, strict) {
 	url: 'index.php?module=inventory&page=ajax&op=inv_details&iID='+iID+'&sku='+sku+'&bID='+bID+'&rID='+rowCnt+'&strict='+strict,
 	dataType: ($.browser.msie) ? "text" : "xml",
 	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	},
 	success: processSkuStock
   });
@@ -194,7 +194,7 @@ function EditAdjustment(rID) {
     url: 'index.php?module=phreebooks&page=ajax&op=load_record&rID='+rID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: processEditAdjustment
   });

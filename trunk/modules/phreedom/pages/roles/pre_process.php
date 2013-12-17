@@ -24,8 +24,7 @@ gen_pull_language($module, 'admin');
 //require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************  page specific initialization  *************************/
 $error  = false;
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
+history_filter('roles');
 /***************   hook for custom actions   ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/roles/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -197,6 +196,13 @@ switch ($_REQUEST['action']) {
 	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     $query_split  = new splitPageResults($_REQUEST['list'], '');
+    if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    	$_REQUEST['list'] = $query_split->current_page_number;
+    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    }
+    history_save('roles');
+    
 	$include_template = 'template_main.php';
 	define('PAGE_TITLE', BOX_HEADING_ROLES);
 }

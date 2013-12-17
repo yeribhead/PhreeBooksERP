@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -37,9 +36,7 @@ switch (JOURNAL_ID) {
 		break;
 	default: die ('Bad Journal id in modules/phreebooks/popup.php');
 }
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1;
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
+history_filter('pb_pop_contacts');
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_bills_accts/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -87,8 +84,13 @@ $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . "
 	group by m.bill_acct_id order by $disp_order";
 
 $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-// the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
 $query_split  = new splitPageResults($_REQUEST['list'], '');
+if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+   	$_REQUEST['list'] = $query_split->current_page_number;
+	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+	$query_split  = new splitPageResults($_REQUEST['list'], '');
+   }
+history_save('pb_pop_contacts');
 $include_header   = false;
 $include_footer   = true;
 $include_template = 'template_main.php';

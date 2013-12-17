@@ -383,6 +383,7 @@ define('ERROR_CANNOT_DELETE_DEFAULT_CURRENCY','Error - The default currency cann
 define('ERROR_CURRENCY_DELETE_IN_USE','Error - The currency cannot be deleted because there are journal entries using this currency.');
 define('ERROR_ACCESSING_FILE','Cannot open file (%s) for reading/writing check your permissions.');
 define('TEXT_INSTALL_DIR_PRESENT','The /install directory is present. This directory should be removed or renamed to avoid re-installing the application.');
+define('INSTALL_ERROR_SAFE_MODE','Your php configuration is set to run in safe mode. Safe mode needs to be turned off to install PhreeBooks.');
 // Error messages for file operations
 define('TEXT_SELECT_FILE_TO_ATTACH','Select file to attach:');
 define('MSG_ERROR_CANNOT_WRITE','Cannot open file (%s) for reading/writing check your permissions.');

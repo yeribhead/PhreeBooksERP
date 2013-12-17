@@ -66,7 +66,7 @@ function loadContacts() {
     url: 'index.php?module=contacts&page=ajax&op=load_contact_info&guess='+guess,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-	  $.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: fillContacts
   });

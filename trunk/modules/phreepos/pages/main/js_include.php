@@ -88,7 +88,7 @@ function check_form() {
   var error_message = "<?php echo JS_ERROR; ?>";
   var todo    = document.getElementById('action').value;
   if (error == 1) {
-    alert(error_message);
+	$.messager.alert('error',error_message,'error');
     return false;
   }
   return true;
@@ -119,7 +119,7 @@ function refreshOrderClock() {
 		url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&cID='+acct+'&qty='+qty+'&upc='+upc+'&rID='+rowCnt+'&jID='+journalID,
 		dataType: ($.browser.msie) ? "text" : "xml",
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		  alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+			$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 		},
 		success: fillInventory
 	  });
@@ -227,7 +227,7 @@ function ajaxOrderData(cID, oID, jID, open_order, ship_only) {
 	    	url: 'index.php?module=phreebooks&page=ajax&op=load_order&cID='+cID+'&oID='+oID+'&jID='+jID+'&so_po=0&ship_only=0',
 	    	dataType: ($.browser.msie) ? "text" : "xml",
 	    	error: function(XMLHttpRequest, textStatus, errorThrown) {
-	      		alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+	    		$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	    	},
 			success: fillOrderData
 	  	});
@@ -237,7 +237,7 @@ function ajaxOrderData(cID, oID, jID, open_order, ship_only) {
 			url: 'index.php?module=phreepos&page=ajax&op=print_previous&oID='+oID,
 			dataType: ($.browser.msie) ? "text" : "xml",
 			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+				$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 			},
 			success: PrintPreviousReceipt
 		});
@@ -396,7 +396,7 @@ function accountGuess(force) {
 	  guess = firstguess;
   }
   // test for data already in the form
-  if (guess == '') return alert('Please enter a guess to search for the contact!');
+  if (guess == '') return $.messager.alert('info','Please enter a guess to search for the contact!','info');
   if (guess != text_search && guess != '') {
     if (document.getElementById('bill_acct_id').value ||
         document.getElementById('bill_primary_name').value != default_array[0]) {
@@ -408,7 +408,7 @@ function accountGuess(force) {
 		url: 'index.php?module=phreebooks&page=ajax&op=load_searches&jID='+journalID+'&type=c&guess='+guess,
 		dataType: ($.browser.msie) ? "text" : "xml",
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		  alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+			$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 		},
 		success: processAccountGuess
 	  });
@@ -670,7 +670,7 @@ function updateRowTotal(rowCnt, useAjax) {
 	      url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuPrice&cID='+cID+'&sku='+sku+'&qty='+qty+'&rID='+rowCnt+'&strict=1',
 	      dataType: ($.browser.msie) ? "text" : "xml",
 	      error: function(XMLHttpRequest, textStatus, errorThrown) {
-		    alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+	    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 	      },
 	      success: processSkuPrice
 	    });
@@ -936,7 +936,7 @@ function loadSkuDetails(iID, rowCnt) {
 	url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&bID='+bID+'&cID='+cID+'&qty='+qty+'&iID='+iID+'&strict=1&sku='+sku+'&rID='+rowCnt+'&jID='+journalID,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-      alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
     success: fillInventory
   });
@@ -1040,7 +1040,7 @@ function monitorPrinting() {
     } else {
       var e = qz.getException();
       if (e != null) {
-	    alert("printing exception occured: " + e.getLocalizedMessage());
+    	$.messager.alert("printing exception occured ", e.getLocalizedMessage(),'error');
 	  }
     }
   } else {
@@ -1132,7 +1132,7 @@ function SavePayment(PrintOrSave) { // request function
   }
 ?>
   if ( error_message != ''){
-	  alert(error_message);
+	  $.messager.alert('error',error_message,'error');
 	  return false;
   }
   addPmtRow();
@@ -1163,7 +1163,7 @@ function ajaxSave(PrintOrSave){
 		dataType: ($.browser.msie) ? "text" : "xml",
 		data: $("form").serialize(),
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		      alert ("Ajax ErrorThrown: " + errorThrown + "\nTextStatus: " + textStatus + "\nError: " + XMLHttpRequest.responseText);
+			$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 		      save_allowed = true;
 			},
 		success: ajaxPrintAndClean
@@ -1178,7 +1178,7 @@ function ajaxPrintAndClean(sXml) { // call back function
     var qz = document.getElementById('qz');
     if (!xml) return;
   	var massage 	= $(xml).find("massage").text();
-  	if ( massage ) 	  alert( massage );
+  	if ( massage ) 	 $.messager.alert('info', massage,'info');
   	var action 		= $(xml).find("action").text();
   	var print 		= action.substring(0,5) == 'print';
   	var tillId 		= document.getElementById('till_id').value;
@@ -1241,7 +1241,7 @@ function jzebraDoneFindingPrinters() {
 	var qz = document.getElementById('qz');
 	if (qz != null) {
 		if (qz.getPrinter() == null) {
-    		return alert('Error: Can not find Printer ' + tills[tillId].printer);
+    		return $.messager.alert('error','Can not find Printer ' + tills[tillId].printer,'error');
 		} 
    	}
 }
@@ -1251,7 +1251,7 @@ function jzebraDonePrinting() {
 	var qz = document.getElementById('qz');
 	if (qz != null){
    		if (qz.getException() != null) {
-    		return alert('printing error:' + qz.getExceptionMessage());
+    		return $.messager.alert('printing error', qz.getExceptionMessage(),'error');
    		}
    	}
 }
@@ -1267,7 +1267,7 @@ function GetPrintPreviousReceipt() {
       url: 'index.php?module=phreepos&page=ajax&op=print_previous',
       dataType: ($.browser.msie) ? "text" : "xml",
       error: function(XMLHttpRequest, textStatus, errorThrown) {
-      	alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+    	  $.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
       },
       success: PrintPreviousReceipt
      });
@@ -1278,7 +1278,7 @@ function PrintPreviousReceipt(sXml) { // call back function
 	  var qz = document.getElementById('qz');
 	  if (!xml) return;
 	  var massage = $(xml).find("massage").text();
-	  if ( massage ) alert( massage );
+	  if ( massage ) $.messager.alert('info', massage,'info');
 	  var tillId = document.getElementById('till_id').value;
 	  if (qz != null && tills[tillId].printer != '') {
 		  //qz.setEncoding(tills[tillId].printerEncoding);
@@ -1386,7 +1386,7 @@ function SaveOt(){
 		dataType: ($.browser.msie) ? "text" : "xml",
 		data: $("form [name=popupOtherTrans]").serialize(),
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		      alert ("Ajax ErrorThrown: " + errorThrown + "\nTextStatus: " + textStatus + "\nError: " + XMLHttpRequest.responseText);
+			$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 			},
 		success: cleanOt
 	  });

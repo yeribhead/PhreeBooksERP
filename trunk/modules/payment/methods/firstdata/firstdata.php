@@ -18,13 +18,13 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace payment;
 define('MODULE_PAYMENT_FIRSTDATA_VERSION','3.3');
-require_once(DIR_FS_MODULES . 'payment/classes/payment.php');
 /*
  * FirstData Global Gateway Module
  * You must have SSL active on your server to be compliant with merchant TOS
  */
-class firstdata extends payment {
+class firstdata extends payment\payment {
   public $code              = 'firstdata'; // needs to match class name
   public $title             = MODULE_PAYMENT_FIRSTDATA_TEXT_TITLE;
   public $description       = MODULE_PAYMENT_FIRSTDATA_TEXT_DESCRIPTION;

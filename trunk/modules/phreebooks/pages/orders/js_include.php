@@ -232,7 +232,7 @@ function check_form() {
   }
 
   if (error == 1) {
-    alert(error_message);
+	$.messager.alert('error',error_message,'error');
     return false;
   }
   return true;
@@ -283,7 +283,7 @@ function refreshOrderClock() {
 		url: 'index.php?module=inventory&page=ajax&op=inv_details&fID=skuDetails&cID='+acct+'&qty='+qty+'&upc='+upc+'&rID='+setId+'&jID='+journalID,
 		dataType: ($.browser.msie) ? "text" : "xml",
 		error: function(XMLHttpRequest, textStatus, errorThrown) {
-		  alert ("Ajax Error: " + XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown);
+			$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
 		},
 		success: fillInventory
 	  });

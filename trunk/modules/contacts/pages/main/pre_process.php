@@ -22,27 +22,18 @@ $contact_js  = '';
 $js_pmt_array= '';
 $js_actions  = '';
 $criteria    = array();
+$tab_list    = array();
 if ($_POST['crm_date']) $_POST['crm_date'] = gen_db_date($_POST['crm_date']);
 if ($_POST['due_date']) $_POST['due_date'] = gen_db_date($_POST['due_date']);
-if ($_REQUEST['search_text'] == TEXT_SEARCH) $_REQUEST['search_text'] = '';
-if (!$_REQUEST['action'] && $_REQUEST['search_text'] <> '') $_REQUEST['action'] = 'search'; // if enter key pressed and search not blank
 $type        = isset($_GET['type']) ? $_GET['type'] : 'c'; // default to customer
-// load the filters
+
+history_filter('contacts'.$type, $defaults = array('sf'=>'', 'so'=>'asc')); // load the filters
 $default_f0 = defined('CONTACTS_F0_'.strtoupper($type)) ? constant('CONTACTS_F0_'.strtoupper($type)) : DEFAULT_F0_SETTING;
 $_SESSION['f0'] = (isset($_SESSION['f0'])) ? $_SESSION['f0'] : $default_f0;
 if($_SERVER['REQUEST_METHOD'] == 'POST') $_SESSION['f0'] = (isset($_REQUEST['f0'])) ? $_REQUEST['f0'] : false; // show inactive checkbox
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-if (file_exists(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php')) { 
-	require_once(DIR_FS_WORKING . 'custom/classes/type/'.$type.'.php'); 
-}else{
-    require_once(DIR_FS_WORKING . 'classes/type/'.$type.'.php'); // is needed here for the defining of the class and retrieving the security_token
-}
-if ($type <>'i' && file_exists(DIR_FS_WORKING . 'custom/classes/type/i.php')) {
-	require_once(DIR_FS_WORKING . 'custom/classes/type/i.php');
-}elseif ($type <>'i'){
-	require_once(DIR_FS_WORKING . 'classes/type/i.php');
-}
-$cInfo = new $type();
+$temp = 'contacts\type\\'.$type;
+$cInfo = new $temp;
 /**************   Check user security   *****************************/
 
 /***************   hook for custom security  ***************************/
@@ -54,9 +45,7 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_WORKING . 'functions/contacts.php');
-require_once(DIR_FS_WORKING . 'classes/contacts.php');
-require_once(DIR_FS_WORKING . 'classes/contact_fields.php');
-$fields = new contact_fields();
+$fields = new \contact\fields();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -272,6 +261,12 @@ switch ($_REQUEST['action']) {
 	    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 	    // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
     	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    	if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
+    		$_REQUEST['list'] = $query_split->current_page_number;
+	    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
+    		$query_split  = new splitPageResults($_REQUEST['list'], '');
+    	}
+    	history_save('contacts'.$type);
 	    $include_template = 'template_main.php'; // include display template (required)
 	    switch ($type) {
 	    	default: define('PAGE_TITLE', constant('ACT_' . strtoupper($type) . '_HEADING_TITLE')); break;
