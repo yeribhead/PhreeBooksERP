@@ -29,7 +29,7 @@ var currencyCnt = <?php echo sizeof($currencies->currencies); ?>;
 <?php echo js_calendar_init($cal_gl); ?>
 
 function init() {
-	updateBalance();
+	<?php if (!empty($combined_list) ) echo 'updateBalance();';?>
 }
 
 function check_form() {
