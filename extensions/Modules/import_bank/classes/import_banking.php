@@ -312,8 +312,8 @@ class import_banking extends \phreebooks\journal {
 				'debit_amount'     		=> $this->_debitamount,	
 				'credit_amount'			=> $this->_creditamount,
 		  		'description'    		=> $this->_description,
-				'waiting'				=> 1,
 			);
+			$this->waiting = 1;
 			
 		}else{ 
 			for($i=0; $i < sizeof($found_invoices); $i++){
