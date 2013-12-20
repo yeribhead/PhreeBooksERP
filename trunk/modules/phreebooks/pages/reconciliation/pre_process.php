@@ -185,8 +185,9 @@ if ($result->RecordCount() <> 0) { // there are current cleared items in the pre
 $combined_list = array();
 if (is_array($bank_list)) foreach ($bank_list as $id => $value) {
 //	$index = ($value['payment'] ? 'p_' : 'd_') . $value['reference']; // this will separate deposits from payments with the same referenece 
-	$index = $value['reference'];
-	if (isset($combined_list[$index])) { // the reference already exists
+	if($value['reference'] == '') $index = $id;
+	else $index = $value['reference'];
+	if ($index != '' && isset($combined_list[$index])) { // the reference already exists
 		$combined_list[$index]['dep_amount'] += $value['dep_amount'];
 		$combined_list[$index]['pmt_amount'] += $value['pmt_amount'];
 		$combined_list[$index]['name']        = $value['payment'] ? TEXT_MULTIPLE_PAYMENTS : TEXT_MULTIPLE_DEPOSITS;

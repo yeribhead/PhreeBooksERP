@@ -307,8 +307,11 @@ $joinSyntax = array(
 );
 
 /***************************************************************************************************/
-// Include custom additions and overrrides for module specific enhancement
+// Include custom additions and overrides for module specific enhancement
 /***************************************************************************************************/
+if (file_exists(DIR_FS_MODULES."phreeform/custom/extra_phreeform.php")) { // user custom additions
+	require_once (DIR_FS_MODULES . "phreeform/custom/extra_phreeform.php");
+}
 if (is_array($loaded_modules)) foreach ($loaded_modules as $mod) {
   if (file_exists(DIR_FS_MODULES . "$mod/config_phreeform.php")) {
 	gen_pull_language($mod, 'admin');
@@ -343,6 +346,7 @@ function ProcessData($strData, $Process) {
     $mod_function = "pf_process_" . $mod;
     if (function_exists($mod_function)) $strData = $mod_function($strData, $Process);
   }
+  if (function_exists('pf_extra_process')) $strData = pf_extra_process($strData, $Process);
   return $strData;
 }
 

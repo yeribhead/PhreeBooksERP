@@ -22,7 +22,6 @@ $contact_js  = '';
 $js_pmt_array= '';
 $js_actions  = '';
 $criteria    = array();
-$tab_list    = array();
 if ($_POST['crm_date']) $_POST['crm_date'] = gen_db_date($_POST['crm_date']);
 if ($_POST['due_date']) $_POST['due_date'] = gen_db_date($_POST['due_date']);
 $type        = isset($_GET['type']) ? $_GET['type'] : 'c'; // default to customer
