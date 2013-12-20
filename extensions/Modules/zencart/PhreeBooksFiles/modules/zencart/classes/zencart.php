@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                    Phreedom Open Source ERP                     |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -23,44 +22,52 @@ class zencart {
   var $resParser;
   var $strXML;
 
-  function zencart() {
+  function __construct() {
   }
 
   function submitXML($id, $action = '', $hide_success = false, $inc_image = true) {
 	global $messageStack;
-	switch ($action) {
-	  case 'product_ul': 
-		if (!$this->buildProductUploadXML($id, $inc_image)) return false;
-		$url = 'products.php';
-		break;
-	  case 'product_sync':
-	  	if (!$this->buildProductSyncXML()) return false;
-		$url = 'sync.php';
-		break;
-	  case 'confirm':
-		if (!$this->buildConfirmXML()) return false;
-		$url = 'confirm.php';
-		break;
-	  default:
-		$messageStack->add(ZENCART_INVALID_ACTION, 'error');
-		return false;
-	}
-//echo 'Submit to ' . ZENCART_URL . '/soap/' . $url . ' and XML string = <pre>' . htmlspecialchars($this->strXML) . '</pre><br />';
-	$this->response = doCURLRequest('POST', ZENCART_URL . '/soap/' . $url, $this->strXML);
-//echo 'XML response (at the Phreedom side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
-	if (!$this->response) return false;
-	if (!$results = xml_to_object($this->response)) return false;
-//echo 'Parsed string = '; print_r($results); echo '<br />';
-	
-	$this->result = $results->Response->Result;
-	$this->code   = $results->Response->Code;
-	$this->text   = $results->Response->Text;
-	if ($this->code == 0) {
-	  if (!$hide_success) $messageStack->add($this->text, strtolower($this->result));
-	  return true;
-	} else {
-	  $messageStack->add(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text, strtolower($this->result));
-	  return false;
+	try{
+		switch ($action) {
+		  case 'product_ul': 
+			if (!$this->buildProductUploadXML($id, $inc_image)) return false;
+			$url = 'products.php';
+			break;
+		  case 'product_sync':
+		  	if (!$this->buildProductSyncXML()) return false;
+			$url = 'sync.php';
+			break;
+		  case 'confirm':
+			if (!$this->buildConfirmXML()) return false;
+			$url = 'confirm.php';
+			break;
+		  default:
+			$messageStack->add(ZENCART_INVALID_ACTION, 'error');
+			return false;
+		}
+		$temp = ZENCART_URL;
+		if(!defined('ZENCART_URL') || empty($temp) || $temp == 'http://') throw new Exception("the Zen Cart url is empty");
+//		echo 'Submit to ' . ZENCART_URL . '/soap/' . $url . ' and XML string = <pre>' . htmlspecialchars($this->strXML) . '</pre><br />';
+		$this->response = doCURLRequest('POST', ZENCART_URL . '/soap/' . $url, $this->strXML);
+//		echo 'XML response (at the Phreedom side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
+//		if (!$this->response) return false;
+		$results = xml_to_object($this->response);
+//		echo 'Parsed string = '; print_r($results); echo '<br />';
+		
+		$this->result = $results->Response->Result;
+		$this->code   = $results->Response->Code;
+		$this->text   = $results->Response->Text;
+		if ($this->code == 0) {
+		  if (!$hide_success) $messageStack->add($this->text, strtolower($this->result));
+		  return true;
+		} else {
+			throw new Exception(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text);
+		  //$messageStack->add(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text, strtolower($this->result));
+		  return false;
+		}
+	}catch(Exception $e) {
+  		$messageStack->add($e->getMessage());
+  		//throw new Exception("Error while uploading", $e->getCode(), $e);
 	}
   }
 
@@ -68,12 +75,9 @@ class zencart {
 //                           Product Upload XML string generation
 /*************************************************************************************/
   function buildProductUploadXML($id, $inc_image = true) {
-	global $db, $currencies, $messageStack;
+	global $db, $currencies;
 	$result = $db->Execute("select * from " . TABLE_INVENTORY . " where id = " . $id);
-	if ($result->RecordCount() <> 1) {
-	  $messageStack->add(ZENCART_INVALID_SKU,'error');
-	  return false;
-	}
+	if ($result->RecordCount() <> 1) throw new Exception(ZENCART_INVALID_SKU);
 	$this->sku = $result->fields['sku'];
 	if (ZENCART_USE_PRICE_SHEETS == '1') {
 	  $sql = "select id, default_levels from " . TABLE_PRICE_SHEETS . " 
@@ -81,8 +85,7 @@ class zencart {
 		and sheet_name = '" . ZENCART_PRICE_SHEET . "' and inactive = '0'";
 	  $default_levels = $db->Execute($sql);
 	  if ($default_levels->RecordCount() == 0) {
-		$messageStack->add(ZENCART_ERROR_NO_PRICE_SHEET . ZENCART_PRICE_SHEET, 'error');
-		return false;
+		throw new Exception(ZENCART_ERROR_NO_PRICE_SHEET . ZENCART_PRICE_SHEET);
 	  }
 	  $sql = "select price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " 
 		where inventory_id = " . $id . " and price_sheet_id = " . $default_levels->fields['id'];
@@ -133,7 +136,7 @@ class zencart {
 	$this->strXML .= xmlEntry('SKU', $result->fields['sku']);
 // Specific to Zencart
 	$this->strXML .= xmlEntry('ProductVirtual', '0');
-	$this->strXML .= xmlEntry('ProductStatus', ($result->fields['inactive'] ? '0' : '1'));
+//rene	$this->strXML .= xmlEntry('ProductStatus', ($result->fields['inactive'] == '0' ? '1' : '0'));
 	$this->strXML .= xmlEntry('ProductFreeShipping', '0');
 	$this->strXML .= xmlEntry('ProductHidePrice', '0');
 	$this->strXML .= xmlEntry('ProductCategory', $result->fields['category_id']);
@@ -142,9 +145,9 @@ class zencart {
 // TBD need to map ProductType
 	$this->strXML .= xmlEntry('ProductType', 'Product - General');
 	$this->strXML .= xmlEntry('ProductName', $result->fields['description_short']);
-	$this->strXML .= xmlEntry('ProductModel', $result->fields['description_short']);
 	$this->strXML .= xmlEntry('ProductDescription', $result->fields['description_sales']);
-	$this->strXML .= xmlEntry('ProductURL', $result->fields['spec_file']);
+	if(isset($result->fields['ProductURL']))  $this->strXML .= xmlEntry('ProductURL', $result->fields['ProductURL']);
+	if(isset($result->fields['ProductModel']))$this->strXML .= xmlEntry('ProductModel', $result->fields['ProductModel']);
 	if (isset($image_data)) {
 	  $this->strXML .= xmlEntry('ProductImageDirectory', $image_path);
 	  $this->strXML .= xmlEntry('ProductImageFileName', $image_filename);
@@ -177,7 +180,11 @@ class zencart {
 	$this->strXML .= '  </ProductPrice>' . chr(10);
 	$this->strXML .= xmlEntry('ProductWeight', $result->fields['item_weight']);
 	$this->strXML .= xmlEntry('DateAdded', $result->fields['creation_date']);
-	$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_update']);
+	if($result->fields['last_update'] < $result->fields['last_journal_date']){
+		$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_journal_date']);
+	}else{
+		$this->strXML .= xmlEntry('DateUpdated', $result->fields['last_update']);
+	}
 	$this->strXML .= xmlEntry('StockLevel', $result->fields['quantity_on_hand']);
 	$this->strXML .= xmlEntry('Manufacturer', $result->fields['manufacturer']);
 // Hook for including customiation of product attributes
@@ -195,11 +202,10 @@ if (file_exists(DIR_FS_MODULES . 'zencart/custom/extra_product_attrs.php')) {
 //                           Product Syncronizer string generation
 /*************************************************************************************/
   function buildProductSyncXML() { 
-	global $db, $messageStack;
+	global $db;
 	$result = $db->Execute("select sku from " . TABLE_INVENTORY . " where catalog = '1'");
 	if ($result->RecordCount() == 0) {
-	  $messageStack->add(ZENCART_ERROR_NO_ITEMS, 'error');
-	  return false;
+	  throw new Exception(ZENCART_ERROR_NO_ITEMS);
 	}
 	$this->strXML  = '<?xml version="1.0" encoding="UTF-8" ?>' . chr(10);
 	$this->strXML .= '<Request>' . chr(10);
@@ -225,7 +231,7 @@ if (file_exists(DIR_FS_MODULES . 'zencart/custom/extra_product_attrs.php')) {
 //                           Product Shipping Confirmation String Generation
 /*************************************************************************************/
   function buildConfirmXML() {
-    global $db, $messageStack;
+    global $db;
 	$methods = $this->loadShippingMethods();
 	$this->strXML  = '<?xml version="1.0" encoding="UTF-8" ?>' . chr(10);
 	$this->strXML .= '<Request>' . chr(10);
@@ -240,8 +246,7 @@ if (file_exists(DIR_FS_MODULES . 'zencart/custom/extra_product_attrs.php')) {
 	$result = $db->Execute("select ref_id, carrier, method, tracking_id from " . TABLE_SHIPPING_LOG . " 
 	  where ship_date like '" . $this->post_date . " %'");
 	if ($result->RecordCount() == 0) {
-	  $messageStack->add(ZENCART_ERROR_CONFRIM_NO_DATA, 'caution');
-	  return false;
+	  throw new Exception(ZENCART_ERROR_CONFRIM_NO_DATA);
 	}
 	// foreach shipment, fetch the PO Number (it is the ZenCart order number)
 	while (!$result->EOF) {

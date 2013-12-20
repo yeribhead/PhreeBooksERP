@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -25,7 +24,7 @@ class bulk_upload {
   function bulkUpload($inc_image = false) {
 	global $db, $messageStack;
 	$error  = false;
-	$result = $db->Execute("select id from " . TABLE_INVENTORY . " where catalog = '1' and inactive = '0'");
+	$result = $db->Execute("select id from " . TABLE_INVENTORY . " where catalog = '1' ");
 	$cnt    = 0;
 	while(!$result->EOF) {
 	  $prodXML = new zencart();
@@ -36,8 +35,9 @@ class bulk_upload {
 	  $cnt++;
 	  $result->MoveNext();
 	}
+	if ($error) return false;
 	$messageStack->add(sprintf(ZENCART_BULK_UPLOAD_SUCCESS, $cnt), 'success');
-	return ($error ? true : false);
+	return  true;
   }
 
 }

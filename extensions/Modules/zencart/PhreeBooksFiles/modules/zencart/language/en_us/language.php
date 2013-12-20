@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                    Phreedom Open Source ERP                     |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011, 2012 PhreeSoft, LLC       |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -52,5 +51,9 @@ define('ZENCART_UPLOAD_PRODUCT','ZenCart Product Upload');
 define('ZENCART_BULK_UPLOAD','ZenCart Bulk Upload');
 define('ZENCART_PRODUCT_SYNC','ZenCart Product Sync');
 define('ZENCART_SHIP_CONFIRM','ZenCart Ship Confirmation');
+define('ZENCART_INVENTORY_CATALOG_IS_EMPTY','The field webshop menu / catalog is empty. this field is required when you want to upload a product.');
+
+define('ZENCART_CATALOG_URL','ZenCart - product URL.');
+define('ZENCART_CATALOG_MODEL','ZenCart - product model.');
 
 ?>

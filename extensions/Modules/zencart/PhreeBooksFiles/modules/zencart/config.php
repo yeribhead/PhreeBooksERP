@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008, 2009, 2010, 2011 PhreeSoft, LLC             |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,9 +21,9 @@
 // 3.0 => 2011-01-25 - Converted from stand-alone PhreeBooks release
 // 3.1 => 2011-04-15 - Bug fixes
 // 3.2 => 2011-05-27 - Patch for shared field change in Phreedom 3.1
-
+// 3.5 => 2013-08-08 - added product fields 
 // Module software version information
-define('MODULE_ZENCART_VERSION',      '3.3');
+define('MODULE_ZENCART_VERSION',      3.5);
 // Set the menu order, if using ZenCart title menu option (after Customers and before Vendors)
 define('MENU_HEADING_ZENCART_ORDER',     15);
 // Security id's
@@ -38,12 +37,25 @@ if (defined('MODULE_ZENCART_STATUS')) {
   );
 */
   // Menu Locations
-  $menu[] = array(
+  $mainmenu["tools"]['submenu']['zencart'] = array(
     'text'        => BOX_ZENCART_MODULE, 
-    'heading'     => MENU_HEADING_TOOLS, // MENU_HEADING_ZENCART // Change if creating own title menu item
     'rank'        => 31, 
-    'security_id' => SECURITY_ID_ZENCART_INTERFACE, 
+    'security_id' => SECURITY_ID_ZENCART_INTERFACE,
     'link'        => html_href_link(FILENAME_DEFAULT, 'module=zencart&amp;page=main', 'SSL'),
+    'show_in_users_settings' => true,
+    'params'      => '',
   );
+  if(isset($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION]) && $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] > 0){
+	  gen_pull_language('zencart', 'admin');
+	  $mainmenu["company"]['submenu']["configuration"]['submenu']["zencart"] = array(
+		'order'	      => MODULE_ZENCART_TITLE,
+		'text'        => MODULE_ZENCART_TITLE,
+		'security_id' => SECURITY_ID_CONFIGURATION, 
+		'link'        => html_href_link(FILENAME_DEFAULT, 'module=zencart&amp;page=admin', 'SSL'),
+	    'show_in_users_settings' => false,
+		'params'      => '',
+	  );
+  }
+  
 }
 ?>
