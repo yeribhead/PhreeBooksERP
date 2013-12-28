@@ -263,31 +263,12 @@ class objectInfo {
       	} else {
         	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => $message, 'message' => $message);
       	}
-      	$this->debug("\n On screen displaying '$type' message = $message file = $file line = $line");
+      	$this->debug("\n On screen displaying '$type' message = $message");
 	  	return true;
     }
 
     function reset() {
       unset($_SESSION['messageToStack']);
-    }
-    
-    /**
-     * this function will be replaced by the add function.
-     * @todo = Remove 
-     */
-    
-    function add_session($message, $type = 'error') {
-    	trigger_error('messageStack->add_session will be removed', E_USER_DEPRECATED);
-      	if ($type == 'error') {
-        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => html_icon('emblems/emblem-unreadable.png', TEXT_ERROR) . '&nbsp;' . $message);
-      	} elseif ($type == 'success') {
-	    	if (!HIDE_SUCCESS_MESSAGES) $_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-active"', 'text' => html_icon('emotes/face-smile.png', TEXT_SUCCESS) . '&nbsp;' . $message);
-      	} elseif ($type == 'caution' || $type == 'warning') {
-        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-highlight"', 'text' => html_icon('emblems/emblem-important.png', TEXT_CAUTION) . '&nbsp;' . $message);
-      	} else {
-        	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => $message);
-      	}
-      	$this->debug("\n On screen displaying '$type' message = $message file = $file line = $line");
     }
 
     function output() {
@@ -378,6 +359,7 @@ class ctl_panel {
 	public $valid_user			= false;
 	public $size_params			= 0;
 	public $default_params 		= array();
+	public $row_started			= false;
 	
   	function __construct() {
   		if ($this->security_id <> '' ) $this->valid_user = ($_SESSION['admin_security'][$this->security_id] > 0)? true : false;
@@ -430,7 +412,7 @@ class ctl_panel {
 		$output .= '<div id="'.$this->dashboard_id.'_tt">' . chr(10);
 		if ($this->column_id > 1) 				$output .= '	<a href="javascript:void(0)" class="icon-go_previous"	onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_left\')"></a>' . chr(10);
 		if ($this->column_id < MAX_CP_COLUMNS)	$output .= '	<a href="javascript:void(0)" class="icon-go_next"		onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_right\')"></a>' . chr(10);
-		if ($this->row_id > 1)					$output .= '	<a href="javascript:void(0)" class="icon-go_up"    onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_up\')"></a>' . chr(10);
+		if ($this->row_started == false)		$output .= '	<a href="javascript:void(0)" class="icon-go_up"    onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_up\')"></a>' . chr(10);
 		if ($this->row_id < $this->get_next_row($this->column_id) - 1)
 												$output .= '	<a href="javascript:void(0)" class="icon-go_down"    onclick="return move_box(\'' . $this->dashboard_id . '\', \'move_down\')"></a>' . chr(10);
 		$output .= '	<a id="'.$this->dashboard_id.'_add" href="javascript:void(0)" class="icon-edit"    onclick="return box_edit(\''.$this->dashboard_id.'\')"></a>' . chr(10);
@@ -593,7 +575,7 @@ class encryption {
   	}
 
   	function encrypt_cc($params) {
-		if (strlen($_SESSION['admin_encrypt']) < 1) throw new Exception(ACT_NO_KEY_EXISTS);
+		if (strlen($_SESSION['admin_encrypt']) < 1) throw new \Exception(ACT_NO_KEY_EXISTS);
 		if ($params['number']) {
 	  		$params['number'] = preg_replace("/[^0-9]/", "", $params['number']);
 	  		$hint  = substr($params['number'], 0, 4);
@@ -608,7 +590,7 @@ class encryption {
 			if (isset($params['alt1'])) $payment[] = $params['alt1'];
 			if (isset($params['alt2'])) $payment[] = $params['alt2'];
 			$val = implode(':', $payment).':';
-			if (!$enc_value = $this->encrypt($_SESSION['admin_encrypt'], $val, 128)) throw new Exception('Encryption error - ' . implode('. ', $encrypt->errors));		
+			if (!$enc_value = $this->encrypt($_SESSION['admin_encrypt'], $val, 128)) throw new \Exception('Encryption error - ' . implode('. ', $encrypt->errors));		
 		}
 		if (strlen($params['exp_year']) == 2) $params['exp_year'] = '20'.$params['exp_year'];
 		$exp_date = $params['exp_year'].'-'.$params['exp_mon'].'-01';
@@ -617,13 +599,13 @@ class encryption {
 
   	function decrypt ($key, $source) {
 		$fudgefactor = $this->_convertKey($key);
-		if (empty($source)) throw new Exception('No value has been supplied for decryption');
+		if (empty($source)) throw new \Exception('No value has been supplied for decryption');
 		$target  = null;
 		$factor2 = 0;
 		for ($i = 0; $i < strlen($source); $i++) {
 	  		$char2 = substr($source, $i, 1);
 	  		$num2 = strpos($this->scramble2, $char2);
-	  		if ($num2 === false) throw new Exception("Source string contains an invalid character ($char2)");
+	  		if ($num2 === false) throw new \Exception("Source string contains an invalid character ($char2)");
 			$adj     = $this->_applyFudgeFactor($fudgefactor);
 	  		$factor1 = $factor2 + $adj;
 	  		$num1    = $num2 - round($factor1);
@@ -639,14 +621,14 @@ class encryption {
   	function encrypt ($key, $source, $sourcelen = 0) {
 		$fudgefactor  = $this->_convertKey($key);
 		if ($this->errors) return;
-		if (empty($source)) throw new Exception('No value has been supplied for encryption');
+		if (empty($source)) throw new \Exception('No value has been supplied for encryption');
 	  	while (strlen($source) < $sourcelen) $source .= ' ';
 		$target = null;
 		$factor2 = 0;
 		for ($i = 0; $i < strlen($source); $i++) {
 	  		$char1 = substr($source, $i, 1);
 	  		$num1 = strpos($this->scramble1, $char1);
-	  		if ($num1 === false) throw new Exception("Source string contains an invalid character ($char1)");
+	  		if ($num1 === false) throw new \Exception("Source string contains an invalid character ($char1)");
 			$adj     = $this->_applyFudgeFactor($fudgefactor);
 	  		$factor1 = $factor2 + $adj;
 	  		$num2    = round($factor1) + $num1;
@@ -692,13 +674,13 @@ class encryption {
   	}
 
   	function _convertKey ($key) {
-		if (empty($key)) throw new Exception('No value has been supplied for the encryption key');
+		if (empty($key)) throw new \Exception('No value has been supplied for the encryption key');
 	  	$array[] = strlen($key);
 		$tot = 0;
 		for ($i = 0; $i < strlen($key); $i++) {
 	  		$char = substr($key, $i, 1);
 	  		$num = strpos($this->scramble1, $char);
-	  		if ($num === false) throw new Exception("Key contains an invalid character ($char)");
+	  		if ($num === false) throw new \Exception("Key contains an invalid character ($char)");
 			$array[] = $num;
 	  		$tot = $tot + $num;
 		}

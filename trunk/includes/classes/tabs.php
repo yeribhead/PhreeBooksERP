@@ -32,7 +32,7 @@ class tabs {
 
     public function btn_save($id = '') {
 	  	global $db;
-		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 2) throw new Exception(ERROR_NO_PERMISSION,'error');
+		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 2) throw new \Exception(ERROR_NO_PERMISSION,'error');
 		  
 		$sql_data_array = array(
 		  'module_id'   => $this->module,
@@ -46,7 +46,7 @@ class tabs {
 		} else {
 		  // Test for duplicates.
 		  $result = $db->Execute("select id from " . TABLE_EXTRA_TABS . " where module_id='" . $this->module . "' and tab_name='" . $this->tab_name . "'");
-		  if ($result->RecordCount() > 0) throw new Exception(EXTRA_TABS_DELETE_ERROR,'error');
+		  if ($result->RecordCount() > 0) throw new \Exception(EXTRA_TABS_DELETE_ERROR,'error');
 		  db_perform(TABLE_EXTRA_TABS, $sql_data_array);
 		  gen_add_audit_log(sprintf(EXTRA_TABS_LOG, TEXT_ADD), $this->tab_name);
 		}
@@ -55,9 +55,9 @@ class tabs {
 
     public function btn_delete($id = 0) {
 	  	global $db;
-		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 4) throw new Exception(ERROR_NO_PERMISSION,'error');
+		if ($_SESSION['admin_security'][SECURITY_ID_CONFIGURATION] < 4) throw new \Exception(ERROR_NO_PERMISSION,'error');
 		$result = $db->Execute("SELECT field_name FROM ".TABLE_EXTRA_FIELDS." WHERE tab_id='$id'");
-		if ($result->RecordCount() > 0) throw new Exception(INV_CATEGORY_CANNOT_DELETE . $result->fields['field_name'], 'error');
+		if ($result->RecordCount() > 0) throw new \Exception(INV_CATEGORY_CANNOT_DELETE . $result->fields['field_name'], 'error');
 		$result = $db->Execute("SELECT tab_name FROM ".TABLE_EXTRA_TABS." WHERE id='$id'");
 		$db->Execute("DELETE FROM ".TABLE_EXTRA_TABS." WHERE id=$id");
 		gen_add_audit_log(sprintf(EXTRA_TABS_LOG, TEXT_DELETE), $result->fields['tab_name']);

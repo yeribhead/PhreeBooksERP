@@ -199,9 +199,9 @@
 		$result = $db->Execute("select period from " . TABLE_ACCOUNTING_PERIODS . " 
 			where start_date <= '" . $post_date . "' and end_date >= '" . $post_date . "'");
 		if ($result->RecordCount() <> 1) { // post_date is out of range of defined accounting periods
-			if (!$hide_error) throw new Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR, 'error');
+			if (!$hide_error) throw new \Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR, 'error');
 		}
-		if (!$hide_error) throw new Exception(ERROR_MSG_BAD_POST_DATE,'caution');
+		if (!$hide_error) throw new \Exception(ERROR_MSG_BAD_POST_DATE,'caution');
 		return $result->fields['period'];
 	}
   }
@@ -494,7 +494,7 @@
 
 function saveUploadZip($file_field, $dest_dir, $dest_name) {
 	if ($_FILES[$file_field]['error']) { // php error uploading file
-		throw new Exception(TEXT_IMP_ERMSG5 . $_FILES[$file_field]['error']);
+		throw new \Exception(TEXT_IMP_ERMSG5 . $_FILES[$file_field]['error']);
 	} elseif ($_FILES[$file_field]['size'] > 0) {
 		require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
 		$backup              = new backup();
@@ -778,7 +778,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	$result = $db->Execute("select fiscal_year, start_date, end_date from " . TABLE_ACCOUNTING_PERIODS . " 
 	  where period = " . $period);
 	if ($result->RecordCount() <> 1) { // post_date is out of range of defined accounting periods
-	  throw new Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR,'error');
+	  throw new \Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR,'error');
 	}
 	return $result->fields;
   }
@@ -911,7 +911,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
   <body>&nbsp;</body>
 </html>';
 	if (!$handle = @fopen($filename, 'w')) {
-	  throw new Exception('Cannot open file (' . $filename . ') for writing check your permissions.', 'error');
+	  throw new \Exception('Cannot open file (' . $filename . ') for writing check your permissions.', 'error');
 	}
 	fwrite($handle, $blank_web);
 	fclose($handle);
@@ -1510,7 +1510,7 @@ function charConv($string, $in, $out) {
 function validate_user($token = 0, $user_active = false) {
   $security_level = $_SESSION['admin_security'][$token];
   if (!in_array($security_level, array(1,2,3,4)) && !$user_active) { // not suppose to be here, bail
-    throw new Exception(ERROR_NO_PERMISSION, 'error');
+    throw new \Exception(ERROR_NO_PERMISSION, 10, $e);
     //gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
   }
   return $user_active ? 1 : $security_level;
@@ -1518,7 +1518,7 @@ function validate_user($token = 0, $user_active = false) {
 
 function validate_security($security_level = 0, $required_level = 1) {
   if ($security_level < $required_level) {
-	throw new Exception(ERROR_NO_PERMISSION, 'error');
+	throw new \Exception(ERROR_NO_PERMISSION, 10, $e);
 	//gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
   }
   return true;
@@ -1527,14 +1527,14 @@ function validate_security($security_level = 0, $required_level = 1) {
 function validate_ajax_user($token = 0) {
   $security_level = $token ? $_SESSION['admin_security'][$token] : (int)$_SESSION['admin_id'];
   if (!$security_level) { // not suppose to be here
-  	throw new Exception(ERROR_NO_PERMISSION, 'error');
+  	throw new \Exception(ERROR_NO_PERMISSION, 10, $e);
     /*echo createXmlHeader() . xmlEntry('error', ERROR_NO_PERMISSION) . createXmlFooter();
     die;*/
   }
   return $token ? $security_level : 1;
 }
 
-  function validate_email($email) {
+function validate_email($email) {
     $isValid = true;
     $atIndex = strrpos($email, "@");
     if (is_bool($atIndex) && !$atIndex) {
@@ -1567,16 +1567,16 @@ function validate_ajax_user($token = 0) {
   function validate_upload($filename, $file_type = 'text', $extension = 'txt') {
 	if ($_FILES[$filename]['error']) { // php error uploading file
 		switch ($_FILES[$filename]['error']) {
-			case '1': throw new Exception(TEXT_IMP_ERMSG1, 'error');
-			case '2': throw new Exception(TEXT_IMP_ERMSG2, 'error');
-			case '3': throw new Exception(TEXT_IMP_ERMSG3, 'error');
-			case '4': throw new Exception(TEXT_IMP_ERMSG4, 'error');
-			default:  throw new Exception(TEXT_IMP_ERMSG5 . $_FILES[$filename]['error'] . '.', 'error');
+			case '1': throw new \Exception(TEXT_IMP_ERMSG1, 'error');
+			case '2': throw new \Exception(TEXT_IMP_ERMSG2, 'error');
+			case '3': throw new \Exception(TEXT_IMP_ERMSG3, 'error');
+			case '4': throw new \Exception(TEXT_IMP_ERMSG4, 'error');
+			default:  throw new \Exception(TEXT_IMP_ERMSG5 . $_FILES[$filename]['error'] . '.', 'error');
 		}
 	} elseif (!is_uploaded_file($_FILES[$filename]['tmp_name'])) { // file uploaded
-		throw new Exception(TEXT_IMP_ERMSG13, 'error');
+		throw new \Exception(TEXT_IMP_ERMSG13, 'error');
 	} elseif ($_FILES[$filename]['size'] == 0) { // report contains no data, error
-		throw new Exception(TEXT_IMP_ERMSG7, 'error');
+		throw new \Exception(TEXT_IMP_ERMSG7, 'error');
 	}
 	$ext = strtolower(substr($_FILES[$filename]['name'], -3, 3));
 	$textfile = (strpos($_FILES[$filename]['type'], $file_type) === false) ? false : true;
@@ -1584,7 +1584,7 @@ function validate_ajax_user($token = 0) {
 	if ((!$textfile && in_array($ext, $extension)) || $textfile) { // allow file_type and extensions
 		return true;
 	}
-	throw new Exception(TEXT_IMP_ERMSG6, 'error');
+	throw new \Exception(TEXT_IMP_ERMSG6, 'error');
   }
 
   function validate_path($file_path) {
@@ -1735,7 +1735,7 @@ function validate_ajax_user($token = 0) {
       $web_enabled = true; 
       fclose($connected); 
     } else {
-	  if (!$silent) throw new Exception('You are not connected to the internet. Error:' . $errno . ' - ' . $errstr, 'error');
+	  if (!$silent) throw new \Exception('You are not connected to the internet. Error:' . $errno . ' - ' . $errstr, 'error');
 	}
     return $web_enabled;   
   }
@@ -1825,7 +1825,7 @@ function xml_to_object($xml = '') {
   if ($xml == '') return '';
   $output  = new objectInfo();
   $runaway = 0;
-  if( strlen(substr($xml, 0,strpos($xml, '<?xml'))) != 0) throw new Exception("There is a unforseen error on the other side: " . substr($xml, 0,strpos($xml, '<?xml')));
+  if( strlen(substr($xml, 0,strpos($xml, '<?xml'))) != 0) throw new \Exception("There is a unforseen error on the other side: " . substr($xml, 0,strpos($xml, '<?xml')));
   while (strlen($xml) > 0) {
 	if (strpos($xml, '<?xml') === 0) { // header xml, ignore
 	  $xml = trim(substr($xml, strpos($xml, '>') + 1));
@@ -1862,11 +1862,11 @@ function xml_to_object($xml = '') {
 	  }
 	  // TBD, the attr array is set but how to add to output?
 	  if (!$selfclose && strpos($xml, $end_tag) === false) {
-	  	throw new Exception('PhreeBooks XML parse error looking for end tag: ' . $tag . ' but could not find it!');
+	  	throw new \Exception('PhreeBooks XML parse error looking for end tag: ' . $tag . ' but could not find it!');
 	  }
 	  while(true) {
 		$runaway++;
-		if ($runaway > 10000) throw new Exception('PhreeBooks Runaway counter 1 reached. There is an error in the xml entry!');	
+		if ($runaway > 10000) throw new \Exception('PhreeBooks Runaway counter 1 reached. There is an error in the xml entry!');	
 		$data = $selfclose ? '' : trim(substr($xml, $taglen, strpos($xml, $end_tag) - $taglen));
 		if (isset($output->$tag)) {
 		  if (!is_array($output->$tag)) $output->$tag = array($output->$tag);
@@ -1882,7 +1882,7 @@ function xml_to_object($xml = '') {
 	  return $xml;
 	}
 	$runaway++;
-	if ($runaway > 10000) throw new Exception('Phreebooks Runaway counter 2 reached. There is an error in the xml entry!');	
+	if ($runaway > 10000) throw new \Exception('Phreebooks Runaway counter 2 reached. There is an error in the xml entry!');	
   }
   return $output;
 }
@@ -1938,6 +1938,7 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
         return;
     }
     $temp = '';
+    $type = 'error';
 	if(isset($_SESSION['admin_id'])) $temp = " User: " . $_SESSION['admin_id'];
 	if(isset($_SESSION['company'])) $temp .= " Company: " . $_SESSION['company'];
     switch ($errno) {
@@ -2072,23 +2073,28 @@ function PhreebooksExceptionHandler($exception) {
     }
 }
 
-function Phreebooks_autoloader($class){
-	$class = str_replace("\\", "/", $class);
+function Phreebooks_autoloader($temp){ 
+	if (class_exists($temp, false)){
+		print("class $temp loaded");
+		return;
+	}
+	if (stristr($temp,'objectInfo')) return;
+	$class = str_replace("\\", "/", $temp);
 	$path = explode("/", $class, 2);
-	if($path[0] == 'core'){
-		print(DIR_FS_ADMIN."includes/classes/$path[1].php<br/>");
-		if (file_exists(DIR_FS_ADMIN."includes/classes/$path[1].php"))//@todo remove if and print lines
-		require_once DIR_FS_ADMIN."includes/classes/$path[1].php";	
+	//print("class = $class     called = $temp      path[0]= $path[0]");
+	if($path[0] == 'core'){//@todo change require_once to include_once
+		include_once(DIR_FS_ADMIN."includes/classes/$path[1].php");
 	}else{
 		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){
-			print((DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php<br/>"));
-			require_once DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php";
+			include_once(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php");
 		}else{
-			print("$class<br/>");
-			print((DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php<br/>"));
-			require_once DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php";
+			include_once(DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php");
 		}
 	}
-	
+	if (!class_exists($temp, false)) {
+		//print(' not loaded ');
+        trigger_error("Unable to load module = $path[0] class = $path[1] called = $temp<br/>", E_USER_ERROR);
+    }
+    //print("<br/>");
 }
 ?>

@@ -481,7 +481,7 @@ function processSkuDetails(sXml) { // call back function
 function InventoryProp(rID) {
 	var sku = document.getElementById('sku_'+rID).value;
 	if (sku != text_search && sku != '') {
-		  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+elementID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
+		  window.open("index.php?module=inventory&page=main&action=properties&sku="+sku+'&rowID='+rID,"inventory","width=800px,height=600px,resizable=1,scrollbars=1,top=50,left=50");
 	}
 }
 // ******* EOF - AJAX BOM item Properties pair *********/

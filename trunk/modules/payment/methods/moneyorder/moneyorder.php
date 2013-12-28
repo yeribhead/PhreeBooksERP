@@ -21,7 +21,7 @@
 // 2011-07-01 - Added version number for revision control
 namespace payment;
 define('MODULE_PAYMENT_MONEYORDER_VERSION','3.3');
-class moneyorder extends payment\payment {
+class moneyorder extends \payment\payment {
   public $code        = 'moneyorder'; // needs to match class name
   public $title 	  = MODULE_PAYMENT_MONEYORDER_TEXT_TITLE;
   public $description = MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION;

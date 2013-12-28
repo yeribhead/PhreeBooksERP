@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/b.php
 //  branches
-namespace contacts;
+namespace contacts\type;
 class b extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_BRANCH;
 	public $help		       = '07.08.04';

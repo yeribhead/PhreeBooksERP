@@ -469,6 +469,7 @@ function jumpToPage(get_params) {
 }
 
 function checkEnter(e) {
+  var keycode;
   if(window.event) { // IE
     keycode = event.keyCode;
   } else if (e.which) { // Netscape/Firefox/Opera

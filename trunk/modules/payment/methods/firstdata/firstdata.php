@@ -24,7 +24,7 @@ define('MODULE_PAYMENT_FIRSTDATA_VERSION','3.3');
  * FirstData Global Gateway Module
  * You must have SSL active on your server to be compliant with merchant TOS
  */
-class firstdata extends payment\payment {
+class firstdata extends \payment\payment {
   public $code              = 'firstdata'; // needs to match class name
   public $title             = MODULE_PAYMENT_FIRSTDATA_TEXT_TITLE;
   public $description       = MODULE_PAYMENT_FIRSTDATA_TEXT_DESCRIPTION;

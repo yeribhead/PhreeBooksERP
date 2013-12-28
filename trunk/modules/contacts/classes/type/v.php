@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/v.php
 //
-namespace contacts;
+namespace contacts\type;
 class v extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_VENDORS;
 	public $auto_type      = AUTO_INC_VEND_ID;

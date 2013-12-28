@@ -40,18 +40,18 @@ class fields {
 
   function btn_save($id = '') {
   	global $db, $currencies;
-	if ($this->security_id < 2) throw new Exception(ERROR_NO_PERMISSION,'error');
+	if ($this->security_id < 2) throw new \Exception(ERROR_NO_PERMISSION,'error');
     // clean out all non-allowed values and then check if we have a empty string 
 	$this->field_name   = preg_replace("[^A-Za-z0-9_]", "", $this->field_name); 
-	if ($this->field_name == '') throw new Exception(ASSETS_ERROR_FIELD_BLANK,'error');
+	if ($this->field_name == '') throw new \Exception(ASSETS_ERROR_FIELD_BLANK,'error');
 	// check if the field name belongs to one of the mysql reserved names
 	$reserved_names = array('select', 'delete', 'insert', 'update', 'to', 'from', 'where', 'and', 'or',
 		'alter', 'table', 'add', 'change', 'in', 'order', 'set', 'inner');
-	if (in_array($this->field_name, $reserved_names)) throw new Exception(ASSETS_FIELD_RESERVED_WORD,'error');
+	if (in_array($this->field_name, $reserved_names)) throw new \Exception(ASSETS_FIELD_RESERVED_WORD,'error');
 	// if the id is empty then check for duplicate field names
 	if($this->id == ''){
 	   $result = $db->Execute("SELECT id FROM ".TABLE_EXTRA_FIELDS." WHERE module_id='$this->module' AND field_name='$this->field_name'");
-	   if ($result->RecordCount() > 0 && $this->id =='') throw new Exception(ASSETS_ERROR_FIELD_DUPLICATE,'error');
+	   if ($result->RecordCount() > 0 && $this->id =='') throw new \Exception(ASSETS_ERROR_FIELD_DUPLICATE,'error');
 	}
 	// condense the type array to a single string.
     while ($type = array_shift($this->type_array)){
@@ -189,10 +189,10 @@ class fields {
 
   function btn_delete($id = 0) {
   	global $db;
-	if ($this->security_id < 4) throw new Exception (ERROR_NO_PERMISSION,'error');
+	if ($this->security_id < 4) throw new \Exception (ERROR_NO_PERMISSION,'error');
 	$result = $db->Execute("SELECT * FROM ".TABLE_EXTRA_FIELDS." WHERE id=$id");
 	foreach ($result->fields as $key => $value) $this->$key = $value;
-	if ($this->tab_id == '0') throw new Exception (INV_CANNOT_DELETE_SYSTEM,'error'); // don't allow deletion of system fields
+	if ($this->tab_id == '0') throw new \Exception (INV_CANNOT_DELETE_SYSTEM,'error'); // don't allow deletion of system fields
 	$db->Execute("DELETE FROM ".TABLE_EXTRA_FIELDS." WHERE id=$this->id");
 	$db->Execute("ALTER TABLE $this->db_table DROP COLUMN $this->field_name");
 	gen_add_audit_log ($this->module.' '.sprintf(EXTRA_FIELDS_LOG, TEXT_DELETE), "$id - $this->field_name");
@@ -278,7 +278,7 @@ class fields {
 	// build the tab list
 	$tab_list = gen_build_pull_down(xtra_field_get_tabs($this->module));
 	array_shift($tab_list);
-	if ($action == 'new' && sizeof($tab_list) < 1) throw new Exception(EXTRA_FIELDS_ERROR_NO_TABS, 'error');
+	if ($action == 'new' && sizeof($tab_list) < 1) throw new \Exception(EXTRA_FIELDS_ERROR_NO_TABS, 'error');
     $choices  =  explode(':',$params[$this->type_params]);
 	$disabled = ($this->tab_id !== '0') ? '' : 'disabled="disabled" ';
 	$readonly = ($this->tab_id !== '0') ? '' : 'readonly="readonly" ';

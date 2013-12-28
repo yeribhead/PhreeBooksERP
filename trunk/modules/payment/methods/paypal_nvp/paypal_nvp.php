@@ -22,7 +22,7 @@
 // 2011-07-01 - Added version number for revision control
 namespace payment;
 define('MODULE_PAYMENT_PAYPAL_NVP_VERSION','3.2');
-class paypal_nvp extends payment\payment {
+class paypal_nvp extends \payment\payment {
   public $code              = 'paypal_nvp'; // needs to match class name
   public $title 	        = MODULE_PAYMENT_CC_TEXT_CATALOG_TITLE;
   public $description       = MODULE_PAYMENT_PAYPAL_NVP_TEXT_DESCRIPTION;

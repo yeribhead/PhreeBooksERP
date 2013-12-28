@@ -26,7 +26,7 @@ gen_pull_language('inventory','filter');
 $error       = false;
 $processed   = false;
 $criteria    = array();
-$fields		 = new inventory\fields();
+$fields		 = new \inventory\fields();
 $type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : null; // default to stock item
 history_filter('inventory');
 $first_entry = isset($_GET['add']) ? true : false;
@@ -41,7 +41,7 @@ if (is_null($type)){
 	if ($result->RecordCount()>0) $type = $result->fields['inventory_type'];
 	else $type ='si';
 } 
-$temp = 'inventory\type\\'. $type;
+$temp = '\inventory\type\\'. $type;
 $cInfo = new $temp;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';

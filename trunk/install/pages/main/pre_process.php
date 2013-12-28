@@ -217,8 +217,7 @@ switch ($_REQUEST['action']) {
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  				$error = false;
-	  				require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
-	  				$classname   = $entry . '_admin';
+	  				$classname   = "\\$entry\admin";;
 	  				$install_mod = new $classname;
 			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
 			    		// Check for version levels
@@ -244,7 +243,7 @@ switch ($_REQUEST['action']) {
 	  	}
 		// load phreedom reports now since table exists
 	  	if (DEBUG) $messageStack->debug("\n  installing phreedom.");
-	  	$install_mod = new phreedom_admin;
+	  	$install_mod = new \phreedom\admin;
 	  	$install_mod->load_reports('phreedom');
 	  	if ($error) {
 	  		$messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $module), 'error');

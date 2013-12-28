@@ -194,7 +194,6 @@ define('TEXT_SALES_PRICE_SHEETS','Verkoop Prijs Lijsten');
 define('TEXT_SHEET_NAME','Lijst naam');
 define('TEXT_REVISION','Revisie nummer');
 define('TEXT_EFFECTIVE_DATE','Start Datum');
-define('TEXT_EXPIRATION_DATE','Eind Datum');
 define('TEXT_BULK_EDIT','Laad product prijzen');
 define('TEXT_SPECIAL_PRICING','Speciale Prijzen');
 define('PRICE_SHEET_MSG_DELETE','Weet u zeker dat u deze prijslijst wil verwijderen');

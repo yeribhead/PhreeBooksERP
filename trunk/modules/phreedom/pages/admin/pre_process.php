@@ -27,7 +27,6 @@ if (defined('MODULE_PHREEFORM_STATUS')) {
 }
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 require_once(DIR_FS_WORKING . 'classes/backup.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
 require_once(DIR_FS_WORKING . 'classes/currency.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
@@ -40,7 +39,7 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 7);
   $_REQUEST['action'] = 'remove';
 }
-$install   = new phreedom_admin();
+$install   = new \phreedom\admin();
 $currency  = new currency();
 // load other module admin information
 $page_list = array();

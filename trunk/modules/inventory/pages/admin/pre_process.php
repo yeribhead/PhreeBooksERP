@@ -31,9 +31,9 @@ require_once(DIR_FS_WORKING . 'classes/inventory_fields.php');
 /**************   page specific initialization  *************************/
 $error    = false; 
 $cog_type = explode(',', COG_ITEM_TYPES);
-$install  = new inventory\admin();
-$tabs     = new inventory\tabs();
-$fields   = new inventory\fields();
+$install  = new \inventory\admin();
+$tabs     = new \inventory\tabs();
+$fields   = new \inventory\fields();
 
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {

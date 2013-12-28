@@ -21,7 +21,7 @@
 // 2011-07-01 - Added version number for revision control
 namespace payment;
 define('MODULE_PAYMENT_FREECHARGER_VERSION','3.3');
-class freecharger extends payment\payment {
+class freecharger extends \payment\payment {
   public $code        = 'freecharger'; // needs to match class name
   public $title       = MODULE_PAYMENT_FREECHARGER_TEXT_TITLE;
   public $description = MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION;

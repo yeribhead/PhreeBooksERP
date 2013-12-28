@@ -24,7 +24,7 @@ define('MODULE_PAYMENT_AUTHORIZENET_VERSION','3.3');
 // authorize.net AIM payment method class
 // Portions copyright Copyright 2003-2010 Zen Cart Development Team
 
-class authorizenet extends payment\payment {
+class authorizenet extends \payment\payment {
   public $code        = 'authorizenet'; // needs to match class name
   public $title       = MODULE_PAYMENT_AUTHORIZENET_TEXT_TITLE;
   public $description = MODULE_PAYMENT_AUTHORIZENET_TEXT_DESCRIPTION;

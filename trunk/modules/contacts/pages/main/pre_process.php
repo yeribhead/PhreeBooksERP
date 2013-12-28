@@ -31,7 +31,7 @@ $default_f0 = defined('CONTACTS_F0_'.strtoupper($type)) ? constant('CONTACTS_F0_
 $_SESSION['f0'] = (isset($_SESSION['f0'])) ? $_SESSION['f0'] : $default_f0;
 if($_SERVER['REQUEST_METHOD'] == 'POST') $_SESSION['f0'] = (isset($_REQUEST['f0'])) ? $_REQUEST['f0'] : false; // show inactive checkbox
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-$temp = 'contacts\type\\'.$type;
+$temp = '\contacts\type\\'.$type;
 $cInfo = new $temp;
 /**************   Check user security   *****************************/
 
@@ -44,7 +44,7 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_WORKING . 'functions/contacts.php');
-$fields = new \contact\fields();
+$fields = new \contacts\fields();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -64,7 +64,7 @@ switch ($_REQUEST['action']) {
 		  $cInfo->save_contact(); 
 		  $cInfo->save_addres();
 		  if ($type <> 'i' && ($_POST['i_short_name'] || $_POST['address']['im']['primary_name'])) { // is null
-		  	$crmInfo = new i;
+		  	$crmInfo = new \contacts\type\i;
 	        $crmInfo->auto_field  = $cInfo->type=='v' ? 'next_vend_id_num' : 'next_cust_id_num';
 	        $crmInfo->dept_rep_id = $cInfo->id;
 		  	// error check contact

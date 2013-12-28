@@ -21,7 +21,7 @@
 namespace payment;
 define('MODULE_PAYMENT_NOVA_XML_VERSION','3.3');
 // Elevon Payment Module
-class nova_xml extends payment\payment {
+class nova_xml extends \payment\payment {
   public $code        = 'nova_xml'; // needs to match class name
   public $title 	  = MODULE_PAYMENT_NOVA_XML_TEXT_TITLE;
   public $description = MODULE_PAYMENT_NOVA_XML_TEXT_DESCRIPTION;

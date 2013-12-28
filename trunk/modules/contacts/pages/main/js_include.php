@@ -27,8 +27,6 @@ var default_country = '<?php echo COMPANY_COUNTRY; ?>';
 var account_type    = '<?php echo $type; ?>';
 
 function init() {
-  $('#contact_chart').dialog({ autoOpen:false });
-
 <?php if ($include_template == 'template_main.php') {
  	echo '  document.getElementById("search_text").focus();'  . chr(10); 
   	echo '  document.getElementById("search_text").select();' . chr(10); 

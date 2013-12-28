@@ -23,7 +23,6 @@ class admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
-	
 
 	function install($module) {
 		$error = false;

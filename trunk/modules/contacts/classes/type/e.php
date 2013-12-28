@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/e.php
 //  employees
-namespace contacts;
+namespace contacts\type;
 class e extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_EMPLOYEES;
 	public $help		   = '07.07.01.02';

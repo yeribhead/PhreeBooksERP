@@ -19,7 +19,7 @@
 namespace phreepos;
 class admin extends \core\admin {
 	
-  function phreepos_admin() {
+  function __construct(){
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'  => 3.71,
 	  'inventory' => 3.6,

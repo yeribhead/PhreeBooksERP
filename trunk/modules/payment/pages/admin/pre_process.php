@@ -23,7 +23,7 @@ gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new payment\admin();
+$install    = new \payment\admin();
 
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {

@@ -220,7 +220,6 @@ define('TEXT_SALES_PRICE_SHEETS','Sales Price Sheets');
 define('TEXT_SHEET_NAME','Sheet Name');
 define('TEXT_REVISION','Rev. Level');
 define('TEXT_EFFECTIVE_DATE','Effective Date');
-define('TEXT_EXPIRATION_DATE','Expiration Date');
 define('TEXT_BULK_EDIT','Load Item Pricing');
 define('TEXT_SPECIAL_PRICING','Special Pricing');
 define('PRICE_SHEET_MSG_DELETE','Are you sure you want to delete this price sheet?');

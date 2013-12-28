@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/j.php
 //  jobs/projects
-namespace contacts;
+namespace contacts\type;
 class j extends \contacts\contacts{	
 	public $security_token = SECURITY_ID_MAINTAIN_PROJECTS;
 	public $address_types  = array('jm', 'js', 'jb', 'im');

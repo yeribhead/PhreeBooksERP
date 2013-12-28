@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/c.php
 //  customers
-namespace contacts;
+namespace contacts\type;
 class c extends \contacts\contacts{	
 	public $terms_type     = 'AR';
 	public $security_token = SECURITY_ID_MAINTAIN_CUSTOMERS;
