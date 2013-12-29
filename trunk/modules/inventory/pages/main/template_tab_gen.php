@@ -19,7 +19,7 @@
 ?>
 <div title="<?php echo TEXT_GENERAL;?>" id="tab_general">
 
-  <div id="inv_image" title="<?php echo $cInfo->sku; ?>">
+  <div class="easyui-window" id="inv_image" title="<?php echo $cInfo->sku; ?>" data-options="modal:true,closed:true" >
     <?php if (isset($cInfo->image_with_path)) {
     	echo html_image(DIR_WS_MY_FILES . $_SESSION['company'] . '/inventory/images/' . $cInfo->image_with_path, '', 600) . chr(10);
     } else {

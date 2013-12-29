@@ -112,7 +112,6 @@ function init() {
   document.getElementById('ship_to_select').style.visibility = 'hidden';
   document.getElementById('bill_to_select').style.visibility = 'hidden';
   document.getElementById('ship_to_search').innerHTML = '&nbsp;'; // turn off ship to id search
-  $('#override_order').dialog({ autoOpen:false, width:600 });
 <?php 
   if ($error && isset($order->shipper_code)) {
     $values = explode(':', $order->shipper_code);

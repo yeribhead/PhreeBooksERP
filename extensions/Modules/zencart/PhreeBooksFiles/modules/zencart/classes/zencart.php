@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/zencart/classes/zencart.php
 //
-
+namespace zencart;
 class zencart {
   var $arrOutput = array();
   var $resParser;
@@ -27,48 +27,42 @@ class zencart {
 
   function submitXML($id, $action = '', $hide_success = false, $inc_image = true) {
 	global $messageStack;
-	try{
-		switch ($action) {
-		  case 'product_ul': 
+	switch ($action) {
+		case 'product_ul': 
 			if (!$this->buildProductUploadXML($id, $inc_image)) return false;
 			$url = 'products.php';
 			break;
-		  case 'product_sync':
+		case 'product_sync':
 		  	if (!$this->buildProductSyncXML()) return false;
 			$url = 'sync.php';
 			break;
-		  case 'confirm':
+		case 'confirm':
 			if (!$this->buildConfirmXML()) return false;
 			$url = 'confirm.php';
 			break;
-		  default:
+		default:
 			$messageStack->add(ZENCART_INVALID_ACTION, 'error');
 			return false;
-		}
-		$temp = ZENCART_URL;
-		if(!defined('ZENCART_URL') || empty($temp) || $temp == 'http://') throw new Exception("the Zen Cart url is empty");
-//		echo 'Submit to ' . ZENCART_URL . '/soap/' . $url . ' and XML string = <pre>' . htmlspecialchars($this->strXML) . '</pre><br />';
-		$this->response = doCURLRequest('POST', ZENCART_URL . '/soap/' . $url, $this->strXML);
-//		echo 'XML response (at the Phreedom side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
-//		if (!$this->response) return false;
-		$results = xml_to_object($this->response);
-//		echo 'Parsed string = '; print_r($results); echo '<br />';
-		
-		$this->result = $results->Response->Result;
-		$this->code   = $results->Response->Code;
-		$this->text   = $results->Response->Text;
-		if ($this->code == 0) {
-		  if (!$hide_success) $messageStack->add($this->text, strtolower($this->result));
-		  return true;
-		} else {
-			throw new Exception(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text);
-		  //$messageStack->add(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text, strtolower($this->result));
-		  return false;
-		}
-	}catch(Exception $e) {
-  		$messageStack->add($e->getMessage());
-  		//throw new Exception("Error while uploading", $e->getCode(), $e);
 	}
+	$temp = ZENCART_URL;
+	if(!defined('ZENCART_URL') || empty($temp) || $temp == 'http://') throw new \Exception("the Zen Cart url is empty");
+//	echo 'Submit to ' . ZENCART_URL . '/soap/' . $url . ' and XML string = <pre>' . htmlspecialchars($this->strXML) . '</pre><br />';
+	$this->response = doCURLRequest('POST', ZENCART_URL . '/soap/' . $url, $this->strXML);
+//	echo 'XML response (at the Phreedom side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
+//	if (!$this->response) return false;
+	$results = xml_to_object($this->response);
+//	echo 'Parsed string = '; print_r($results); echo '<br />';
+		
+	$this->result = $results->Response->Result;
+	$this->code   = $results->Response->Code;
+	$this->text   = $results->Response->Text;
+	if ($this->code == 0) {
+		if (!$hide_success) $messageStack->add($this->text, strtolower($this->result));
+	} else {
+		throw new \Exception(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text);
+	  //$messageStack->add(ZENCART_TEXT_ERROR . $this->code . ' - ' . $this->text, strtolower($this->result));
+	}
+	return true;
   }
 
 /*************************************************************************************/
@@ -77,7 +71,7 @@ class zencart {
   function buildProductUploadXML($id, $inc_image = true) {
 	global $db, $currencies;
 	$result = $db->Execute("select * from " . TABLE_INVENTORY . " where id = " . $id);
-	if ($result->RecordCount() <> 1) throw new Exception(ZENCART_INVALID_SKU);
+	if ($result->RecordCount() <> 1) throw new \Exception(ZENCART_INVALID_SKU);
 	$this->sku = $result->fields['sku'];
 	if (ZENCART_USE_PRICE_SHEETS == '1') {
 	  $sql = "select id, default_levels from " . TABLE_PRICE_SHEETS . " 
@@ -85,7 +79,7 @@ class zencart {
 		and sheet_name = '" . ZENCART_PRICE_SHEET . "' and inactive = '0'";
 	  $default_levels = $db->Execute($sql);
 	  if ($default_levels->RecordCount() == 0) {
-		throw new Exception(ZENCART_ERROR_NO_PRICE_SHEET . ZENCART_PRICE_SHEET);
+		throw new \Exception(ZENCART_ERROR_NO_PRICE_SHEET . ZENCART_PRICE_SHEET);
 	  }
 	  $sql = "select price_levels from " . TABLE_INVENTORY_SPECIAL_PRICES . " 
 		where inventory_id = " . $id . " and price_sheet_id = " . $default_levels->fields['id'];
@@ -205,7 +199,7 @@ if (file_exists(DIR_FS_MODULES . 'zencart/custom/extra_product_attrs.php')) {
 	global $db;
 	$result = $db->Execute("select sku from " . TABLE_INVENTORY . " where catalog = '1'");
 	if ($result->RecordCount() == 0) {
-	  throw new Exception(ZENCART_ERROR_NO_ITEMS);
+	  throw new \Exception(ZENCART_ERROR_NO_ITEMS);
 	}
 	$this->strXML  = '<?xml version="1.0" encoding="UTF-8" ?>' . chr(10);
 	$this->strXML .= '<Request>' . chr(10);
@@ -246,7 +240,7 @@ if (file_exists(DIR_FS_MODULES . 'zencart/custom/extra_product_attrs.php')) {
 	$result = $db->Execute("select ref_id, carrier, method, tracking_id from " . TABLE_SHIPPING_LOG . " 
 	  where ship_date like '" . $this->post_date . " %'");
 	if ($result->RecordCount() == 0) {
-	  throw new Exception(ZENCART_ERROR_CONFRIM_NO_DATA);
+	  throw new \Exception(ZENCART_ERROR_CONFRIM_NO_DATA);
 	}
 	// foreach shipment, fetch the PO Number (it is the ZenCart order number)
 	while (!$result->EOF) {

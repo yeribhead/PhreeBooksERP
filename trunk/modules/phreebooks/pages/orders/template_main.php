@@ -119,7 +119,7 @@ switch(JOURNAL_ID) {
 echo $toolbar->build_toolbar();
 // Build the page
 ?>
-<div id="override_order" title="<?php echo TEXT_CREDIT_LIMIT_TITLE; ?>">
+<div class="easyui-window" id="override_order" title="<?php echo TEXT_CREDIT_LIMIT_TITLE; ?>" data-options="modal:true,closed:true,iconCls:'icon-save'">
 	<p><?php echo TEXT_CREDIT_LIMIT_DESC; ?></p>
 	<p>
 	  <?php echo TEXT_ADMIN_USER . '&nbsp;' . html_input_field('override_user', '', 'onblur="document.getElementById(\'override_user\').value = this.value;"', true); ?><br />

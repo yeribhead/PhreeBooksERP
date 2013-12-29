@@ -233,7 +233,7 @@ function fetch_doc(id) {
 	url: 'index.php?module=doc_ctl&page=ajax&op=load_doc_details&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: fillDocDetails
   });
@@ -256,7 +256,7 @@ function docAction(action) {
 	url: 'index.php?module=doc_ctl&page=ajax&op=doc_operation&action='+action+'&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
 	success: docActionResp
   });
@@ -277,7 +277,7 @@ function deleteBookmark(id) {
     url: 'index.php?module=doc_ctl&page=ajax&op=doc_operation&fID=rcvBkMkDel&action=del_bookmark&id='+id,
     dataType: ($.browser.msie) ? "text" : "xml",
     error: function(XMLHttpRequest, textStatus, errorThrown) {
-    	$.messager.alert("Ajax Error ", errorThrown + '-' + XMLHttpRequest.responseText + "\nStatus: " + textStatus, "error");
+    	$.messager.alert("Ajax Error ", XMLHttpRequest.responseText + "\nTextStatus: " + textStatus + "\nErrorThrown: " + errorThrown, "error");
     },
     success: respDelBookmark
   });

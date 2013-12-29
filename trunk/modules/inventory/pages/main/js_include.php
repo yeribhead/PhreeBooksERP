@@ -45,7 +45,6 @@ var text_properties     = '<?php echo TEXT_PROPERTIES;?>';
 <?php if(isset($SecondFieldId)) 	echo $SecondFieldId; ?>;
 // required function called with every page load
 function init() {
-	$('#inv_image').dialog({ autoOpen:false, width:800 });
 	<?php 
 	$action_array = array('edit','properties','create');
   	if(in_array($_REQUEST['action'], $action_array)&& empty($cInfo->purchase_array)) {
@@ -109,7 +108,7 @@ function deleteItem(id) {
 }
 
 function showImage() {
-	$('#inv_image').dialog('open');	
+	$('#inv_image').window('open');	
 }
 
 function copyItem(id) {

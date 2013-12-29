@@ -69,17 +69,17 @@ switch ($_REQUEST['action']) {
 			    if (isset($_SESSION['pb_jID']) && $_SESSION['pb_jID'])  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
 			    if (isset($_SESSION['pb_type']) && $_SESSION['pb_type']) $get_params .= '&amp;type=' . $_SESSION['pb_type'];
 			}
-			// check safe mode
-			if (get_cfg_var('safe_mode')) $messageStack->add_session(SAFE_MODE_ERROR, 'error');
-		    gen_redirect(html_href_link(FILENAME_DEFAULT, $get_params, 'SSL'));
+			// check safe mode is allowed to log in.
+			if (get_cfg_var('safe_mode')) $messageStack->add(SAFE_MODE_ERROR, 'error');
+		    	//gen_redirect(html_href_link(FILENAME_DEFAULT, $get_params, 'SSL'));
 		    $_REQUEST['action'] = '';
 		    break;
-		} catch(Exception $e){
+		}catch(Exception $e) {
 			$messageStack->add($e->getMessage());
-		 	// Note: This is assigned to admin id = 1 since the user is not logged in.
-		 	gen_add_audit_log(GEN_LOG_LOGIN_FAILED . $admin_name);   	
-		   	$_REQUEST['action'] = 'login';
-		   	break;
+			// Note: This is assigned to admin id = 1 since the user is not logged in.
+			gen_add_audit_log(sprintf(GEN_LOG_LOGIN_FAILED, $e->getMessage(), $admin_name));
+			$_REQUEST['action'] = 'login';
+		  	break;
 		}
   	case 'pw_lost_sub':
 	    $admin_email = db_prepare_input($_POST['admin_email']);
@@ -245,8 +245,8 @@ switch ($_REQUEST['action']) {
 	break;
   default: // prepare to display templates
 	if (!class_exists('queryFactory')) { // Errors will happen here if there was a problem logging in, logout and restart
-	  session_destroy();
-	  gen_redirect(html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=login', 'SSL'));	
+		session_destroy();
+		trigger_error("class queryFactory doesn't exist", E_USER_ERROR);	
 	}
 	$cp_boxes = $db->Execute("select * from ".TABLE_USERS_PROFILES." 
 	  where user_id = '".$_SESSION['admin_id']."' and menu_id = '$menu_id' order by column_id, row_id");

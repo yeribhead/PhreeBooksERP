@@ -100,12 +100,12 @@ switch (JOURNAL_ID) {
 	break;
   case  6:	// Purchase Journal
 	define('POPUP_FORM_TYPE','');
-	$heading_array['closed'] = ORD_WAITING;
+	$heading_array['closed'] = TEXT_PAID;
 	$page_title = ORD_TEXT_6_WINDOW_TITLE;
 	break;
   case  7:	// Vendor Credit Memo Journal
 	define('POPUP_FORM_TYPE','vend:cm');
-	$heading_array['closed'] = ORD_WAITING;
+	$heading_array['closed'] = TEXT_PAID;
 	$page_title = ORD_TEXT_7_WINDOW_TITLE;
 	break;
   case  9:	// Sales Quote Journal

@@ -304,7 +304,7 @@ define('INV_IMAGE_FILE_WRITE_ERROR','There was a problem writing the image file 
 define('INV_FIELD_RESERVED_WORD','The field name entered is a reserved word. Please choose a new field name.');
 // Audit Log Messages
 define('GEN_LOG_LOGIN','User Login -> ');
-define('GEN_LOG_LOGIN_FAILED','Failed User Login - id -> ');
+define('GEN_LOG_LOGIN_FAILED','Failed User Login - reason : %s id -> %s ');
 define('GEN_LOG_LOGOFF','User Logoff -> ');
 define('GEN_LOG_RESEND_PW','Re-sent Password to email -> ');
 

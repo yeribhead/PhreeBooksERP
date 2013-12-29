@@ -10,7 +10,7 @@
 
 define('GEN_LOG_RESEND_PW','Herstuur Wachtwoord naar email -> ');
 define('GEN_LOG_LOGIN','Inloggen Gebruiker -> ');
-define('GEN_LOG_LOGIN_FAILED','Inloggen van gebruiker mislukt - id -> ');
+define('GEN_LOG_LOGIN_FAILED','Inloggen van gebruiker mislukt - reden: %s id -> %s');
 define('GEN_LOG_LOGOFF','Gebruikker Uitgelogd -> ');
 define('INV_FIELD_RESERVED_WORD','De ingevoerde naam is een gereserveerd woord. Kies alstublieft een andere naam.');
 define('INV_IMAGE_FILE_WRITE_ERROR','Er was een probleem met het opslaan van het bestand in de directory.');

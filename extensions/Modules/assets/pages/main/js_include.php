@@ -29,7 +29,6 @@ echo js_calendar_init($cal_date3);
 
 // required function called with every page load
 function init() {
-	$('#inv_image').dialog({ autoOpen:false, width:800 });
   <?php if ($_REQUEST['action'] <> 'new' && $_REQUEST['action'] <> 'edit') { // set focus for main window
 	echo "  document.getElementById('search_text').focus();";
 	echo "  document.getElementById('search_text').select();";
@@ -73,5 +72,8 @@ function renameItem(id) {
 	}
 }
 
+function showImage() {
+	$('#inv_image').window('open');	
+}
 // -->
 </script>

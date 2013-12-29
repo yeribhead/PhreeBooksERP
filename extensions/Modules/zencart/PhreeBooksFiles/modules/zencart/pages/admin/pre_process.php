@@ -32,10 +32,7 @@ if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
-	if ($security_level < 3) {
-		$messageStack->add_session(ERROR_NO_PERMISSION,'error');
-		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL')); 
-	}
+  	validate_security($security_level, 3); // security check
 	// save general tab
 	foreach ($install->keys as $key => $default) {
 	  $field = strtolower($key);

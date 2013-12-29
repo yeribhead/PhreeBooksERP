@@ -990,7 +990,7 @@ function showOverride() {
   if (document.getElementById('tb_icon_print'))         document.getElementById('tb_icon_print').style.visibility         = "hidden";
   if (document.getElementById('tb_icon_post_previous')) document.getElementById('tb_icon_post_previous').style.visibility = "hidden";
   if (document.getElementById('tb_icon_post_next'))     document.getElementById('tb_icon_post_next').style.visibility     = "hidden";
-  $('#override_order').dialog('open');
+  $('#override_order').window('open');
 }
 
 function checkOverride () {
@@ -1012,7 +1012,7 @@ function clearOverride(sXml) {
   if (!xml) return;
   var result = $(xml).find("result").text();
   if (result == 'validated') {
-	$('#override_order').dialog('close');
+	$('#override_order').window('close');
     if (document.getElementById('tb_icon_save'))          document.getElementById('tb_icon_save').style.visibility          = "";
     if (document.getElementById('tb_icon_print'))         document.getElementById('tb_icon_print').style.visibility         = "";
     if (document.getElementById('tb_icon_post_previous')) document.getElementById('tb_icon_post_previous').style.visibility = "";

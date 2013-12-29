@@ -37,7 +37,7 @@ function doCURLRequest($method = 'GET', $url, $vars) {
   	if ($error_nr == 0) {
 		return $data;
   	} else {
-  		 throw new Exception('cURL error nr:'. curl_errno($ch).' cURL error: ' . curl_error($ch)); 
+  		 throw new \Exception('cURL error nr:'. curl_errno($ch).' cURL error: ' . curl_error($ch)); 
   	}
 }
 
