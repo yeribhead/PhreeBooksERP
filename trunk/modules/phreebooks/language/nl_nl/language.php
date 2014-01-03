@@ -228,7 +228,7 @@ define('ORD_JS_RECUR_NO_INVOICE','Voor een eenmalige transactie, een beginnend f
 define('ORD_JS_RECUR_ROLL_REQD','Dit is een terugkerend item. Wilt u toekomstige boekingen ook bijwerken? (Druk op Annuleren om alleen dit item updaten)');
 define('ORD_JS_RECUR_DEL_ROLL_REQD','Dit is een terugkerend item. Wilt u toekomstige boekingen verwijderen? (Druk op Annuleren om alleen dit bericht te wissen)');
 define('ORD_JS_WAITING_FOR_PAYMENT','Of Wachten op factuur moet worden aangevinkt of een factuur nummer moet worden ingevoerd.');
-define('ORD_JS_SERIAL_NUM_PROMPT','Voer het serienummer in voor deze boeking. OPMERKING: Het aantal moet 1 zijn voor serie items.');
+define('ORD_JS_SERIAL_NUM_PROMPT','Voer het serienummer in voor deze boeking.<br/> OPMERKING: Het aantal moet 1 zijn voor serie items.');
 define('ORD_JS_NO_STOCK_A','Voorzichtig ! Er is niet voldoende van dit Artikel ');
 define('ORD_JS_NO_STOCK_B',' In voorraad om de order te vullen.\\nHet aantal op voorraad is: ');
 define('ORD_JS_NO_STOCK_C','\\n\\nKlik OK om door te gaan of Annuleren om terug te gaan naar het order formulier.');

@@ -52,9 +52,14 @@ function InventoryList(rowCnt) {
 }
 
 function serialList(rowID) {
-  var choice    = document.getElementById('serial_'+rowID).value;
-  var newChoice = prompt('<?php echo 'Enter Serial Number:'; ?>', choice);
-  if (newChoice) document.getElementById('serial_'+rowID).value = newChoice;
+  	var choice    = document.getElementById('serial_'+rowID).value;
+  	$.messager.prompt('<?php echo TEXT_SERIAL_NUMBER?>', "<?php echo ORD_JS_SERIAL_NUM_PROMPT; ?>", function(newChoice){
+		if (newChoice){
+			document.getElementById('serial_'+rowID).value = newChoice;
+		}
+		return false;
+	});
+	$('.messager-input').val(choice).focus();
 }
 
 function loadSkuDetails(iID, rowCnt, strict) {

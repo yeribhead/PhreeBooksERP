@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class ai extends \inventory\inventory {//Activity Item
 	//cost_methods 'f' =( First-in, First-out),  'l' =( Last-in, First-out) , 'a' =( Average Costing )
 	public $inventory_type			= 'ai';

@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class ns extends \inventory\inventory {//Non-stock Item
 	public $title       			= INV_TYPES_NS;
     public $account_sales_income	= INV_NON_STOCK_DEFAULT_SALES;

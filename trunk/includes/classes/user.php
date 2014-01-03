@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -15,32 +14,30 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreedom/pages/users/js_include.php
+//  Path: /includes/classes/user.php
 //
-
-?>
-<script type="text/javascript">
-<!--
-// pass any php variables generated during pre-process that are used in the javascript functions.
-// Include translations here as well.
-var delete_pushed = false;
-
-function init() {
-}
-
-function check_form() {
-  return true;
-}
-
-// Insert other page specific functions here.
-function copyItem(id) {
-	$.messager.prompt('<?php echo TEXT_COPY;?>', '<?php echo TEXT_COPY_TO; ?>', function(adminName){
-		if (adminName){
-			location.href = 'index.php?module=phreedom&page=users&action=copy&cID='+id+'&name='+adminName;
+namespace includes\classes;
+class user {
+	private $language  = 'en_us';
+	
+	function __construct(){
+	}
+	
+	static public function is_validated(){
+		if(isset($_SESSION['admin_id'])){
+			return true;
+		}else {
+			return false;	
 		}
-		return false;
-	});
+	}
+	
+	static public function get_language(){
+		if   (isset($_GET['language'])) {
+			 $_SESSION['language'] = $_GET['language']; 
+		} elseif (!isset($_SESSION['language'])) { 
+			$_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : $this->language; 
+		}
+		return $_SESSION['language'];
+	}
+	
 }
-
-// -->
-</script>

@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class sr extends \inventory\inventory {//Serialized Item
 	public $inventory_type			= 'sr';
 	public $title       			= INV_TYPES_SR;

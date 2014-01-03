@@ -75,7 +75,7 @@ switch ($_REQUEST['action']) {
 		    $_REQUEST['action'] = '';
 		    break;
 		}catch(Exception $e) {
-			$messageStack->add($e->getMessage());
+			$messageStack->add($e->getMessage(), $e->getCode);
 			// Note: This is assigned to admin id = 1 since the user is not logged in.
 			gen_add_audit_log(sprintf(GEN_LOG_LOGIN_FAILED, $e->getMessage(), $admin_name));
 			$_REQUEST['action'] = 'login';
@@ -196,7 +196,7 @@ switch ($_REQUEST['action']) {
 			header('Last-Modified: ' . date('r', time()));
 			print $contents;
   		}catch(Exception $e){
-  			$messageStack->add($e->getMessage());
+  			$messageStack->add($e->getMessage(), $e->getCode);
   			gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
   		}
   		exit();

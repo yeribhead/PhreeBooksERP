@@ -37,13 +37,13 @@ function check_form() {
 
 // Insert other page specific functions here.
 function fetchPeriod() {
-  var acctPeriod = prompt('<?php echo GL_WARN_CHANGE_ACCT_PERIOD; ?>', '');
-  if (acctPeriod) {
-	document.getElementById('period').value = acctPeriod;
-    return true;
-  } else {
-    return false;
-  }
+ 	$.messager.prompt('<?php echo TEXT_ACCOUNTING_PERIOD?>', "<?php echo GL_WARN_CHANGE_ACCT_PERIOD; ?>", function(acctPeriod){
+		if (acctPeriod){
+			document.getElementById('period').value = acctPeriod;
+			submitToDo('change');
+		}
+		return false;
+	});
 }
 
 function updateEnd(index) {

@@ -24,7 +24,7 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-$fields		 = new assets\fields();
+$fields		 = new \assets\fields();
 $acquisition_date = isset($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
 $maintenance_date = isset($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
 $terminal_date    = isset($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';

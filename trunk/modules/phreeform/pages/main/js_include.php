@@ -40,18 +40,27 @@ function ReportPopup(action, rID) {
   if (!action) return false;
   switch (action) {
     case 'copy':
+    	$.messager.prompt('<?php echo TEXT_COPY;?>', '<?php echo TEXT_COPY_TO; ?>', function(name){
+    		if (name){
+    			document.getElementById('newName').value = name;
+    			document.getElementById('rowSeq').value  = rID;
+    			submitToDo(action, true);
+    			break;
+    		}
+    		$.messager.alert('error','<?php echo PHREEFORM_JS_RPT_BLANK; ?>','error');
+    		return false;  
+    	});
     case 'rename':
-	  if (action == 'rename') {
-	    message = '<?php echo PHREEFORM_JS_RPT_RENAME; ?>';
-	  } else {
-	    message = '<?php echo PHREEFORM_JS_RPT_COPY; ?>';
-	  }
-	  var name = prompt(message, '');
-	  if (!name) {
-		$.messager.alert('error','<?php echo PHREEFORM_JS_RPT_BLANK; ?>','error');
-		break;
-	  }
-	  document.getElementById('newName').value = name;
+    	$.messager.prompt('<?php echo TEXT_RENAME;?>', '<?php echo TEXT_RENAME_TO; ?>', function(name){
+    		if (name){
+    			document.getElementById('newName').value = name;
+    			document.getElementById('rowSeq').value  = rID;
+    			submitToDo(action, true);
+    			break;
+    		}
+    		$.messager.alert('error','<?php echo PHREEFORM_JS_RPT_BLANK; ?>','error');
+    		return false;  
+    	});
 	case 'export':
 	  document.getElementById('rowSeq').value  = rID;
 	  submitToDo(action, true);

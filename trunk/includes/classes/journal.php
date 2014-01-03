@@ -14,11 +14,11 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreebooks/classes/gen_ledger.php
+//  Path: /includes/classes/journal.php
 //
-
+namespace includes\classes;
 class journal {
-  function __contstuct($id = 0) {
+  public function __construct($id = 0) {
 	global $db, $messageStack;
 	$this->affected_accounts = array();
 	$this->repost_ids        = array();

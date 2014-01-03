@@ -34,13 +34,13 @@ class payment {
   public function __construct(){
   	define('FILENAME_POPUP_CVV_HELP', 'popup_cvv_help'); // TBD
 	$this->open_pos_drawer  = defined('MODULE_PAYMENT_'.strtoupper($this->code).'_OPEN_POS_DRAWER')  ? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_OPEN_POS_DRAWER')  : $this->open_pos_drawer;
-	$this->sort_order  		= defined('MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER')  		? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER')  	 : $this->sort_order;
-	$this->pos_gl_acct 		= defined('MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT') 		? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT') 	 : $this->pos_gl_acct;
+	$this->sort_order  		= defined('MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER')  	 ? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER')  	   : $this->sort_order;
+	$this->pos_gl_acct 		= defined('MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT') 	 ? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT') 	   : $this->pos_gl_acct;
 	$this->show_in_pos      = defined('MODULE_PAYMENT_'.strtoupper($this->code).'_SHOW_IN_POS')      ? constant('MODULE_PAYMENT_'.strtoupper($this->code).'_SHOW_IN_POS')      : $this->show_in_pos;
 	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_OPEN_POS_DRAWER', 'default' => $this->open_pos_drawer, 'text' => OPEN_POS_DRAWER_DESC );
-	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER', 	   'default' => $this->sort_order,      'text' => SORT_ORDER_DESC);
-	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT', 	   'default' => $this->pos_gl_acct,     'text' => POS_GL_ACCT_DESC);
-	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_SHOW_IN_POS', 	   'default' => $this->show_in_pos,     'text' => SHOW_IN_POS_DESC);
+	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_SORT_ORDER', 	    'default' => $this->sort_order,      'text' => SORT_ORDER_DESC);
+	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_POS_GL_ACCT', 	'default' => $this->pos_gl_acct,     'text' => POS_GL_ACCT_DESC);
+	$this->key[] = array('key' => 'MODULE_PAYMENT_'.strtoupper($this->code).'_SHOW_IN_POS', 	'default' => $this->show_in_pos,     'text' => SHOW_IN_POS_DESC);
 	$this->field_0 = isset($_POST[$this->code.'_field_0']) ? $_POST[$this->code.'_field_0'] : '';//$this->cc_card_owner_last
 	$this->field_1 = isset($_POST[$this->code.'_field_1']) ? $_POST[$this->code.'_field_1'] : '';//$this->cc_card_number
 	$this->field_2 = isset($_POST[$this->code.'_field_2']) ? $_POST[$this->code.'_field_2'] : '';//$this->cc_expiry_month

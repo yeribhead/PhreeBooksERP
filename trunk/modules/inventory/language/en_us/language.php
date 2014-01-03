@@ -164,9 +164,6 @@ define('TEXT_TRANSFER_ACCT','Transfer Account');
 define('TEXT_AVERAGE_USAGE','Average Usage (not including this month)');
 define('TEXT_PACKAGE_QUANTITY','Package Quantity');
 define('INV_MSG_DELETE_VENDOR_ROW','Are you sure you want to delete this vendor.');
-
-define('INV_MSG_COPY_INTRO', 'Please enter a new SKU ID to copy to:');
-define('INV_MSG_RENAME_INTRO', 'Please enter a new SKU ID to rename this SKU to:');
 define('INV_ERROR_DUPLICATE_SKU','The new inventory item cannot be created because the sku is already in use.');
 define('INV_ERROR_CANNOT_DELETE','The inventory item cannot be deleted because there are journal entries in the system matching the sku');
 define('INV_ERROR_BAD_SKU','There was an error with the item assembly list, please validate sku values and check quantities. Failing sku was: ');

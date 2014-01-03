@@ -34,12 +34,12 @@ function check_form() {
 
 // Insert other page specific functions here.
 function copyItem(id) {
-  var adminName = prompt('<?php echo GEN_MSG_COPY_INTRO; ?>', '');
-  if (adminName) {
-	location.href = 'index.php?module=phreedom&page=roles&action=copy&cID='+id+'&name='+adminName;
-  } else {
-	return false;
-  }
+	$.messager.prompt('<?php echo TEXT_COPY;?>', '<?php echo TEXT_COPY_TO; ?>', function(adminName){
+		if (adminName){
+			return location.href = 'index.php?module=phreedom&page=roles&action=copy&cID='+id+'&name='+adminName;
+		}
+		return false;
+	});
 }
 
 // -->

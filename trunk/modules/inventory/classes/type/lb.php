@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class lb extends \inventory\inventory {//Labor
 	public $inventory_type			= 'lb';
 	public $title					= INV_TYPES_LB;

@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class mb extends \inventory\inventory {//Master Build (combination of Master Stock Item and assembly) parent of ia
 	public $inventory_type			= 'mb';
 	public $title       			= INV_TYPES_MB;

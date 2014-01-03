@@ -18,7 +18,7 @@
 //
 namespace doc_ctl;
 class admin extends \core\admin {
-  function _construct() {
+  function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',
 	);

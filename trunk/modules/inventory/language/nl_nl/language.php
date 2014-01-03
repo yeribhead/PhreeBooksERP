@@ -145,8 +145,6 @@ define('TEXT_FROM_BRANCH','Van Vestiging');
 define('TEXT_DEST_BRANCH','Naar Vestiging');
 define('TEXT_TRANSFER_REASON','Reden voor Verplaatsing');
 define('TEXT_TRANSFER_ACCT','Verplaatsing Rekening');
-define('INV_MSG_COPY_INTRO','Voer een nieuw Art.nr. om de gegevens naar te kopieren:');
-define('INV_MSG_RENAME_INTRO','Voer een nieuw Art.nr. om de Art. te hernoemen:');
 define('INV_ERROR_DUPLICATE_SKU','Het nieuwe voorraad item kan niet gemaakt worden omdat het Art.nr. al in gebruik is.');
 define('INV_ERROR_CANNOT_DELETE','Dit Voorraad item kan niet worden verwijderd omdat er journaal posten op geboekt zijn');
 define('INV_ERROR_BAD_SKU','Er was een fout met het item assemblage lijst, kunt u artikel waarden te valideren en te controleren. Fout bij Art.nr: ');

@@ -225,6 +225,7 @@ define('TEXT_RECUR','Recur');
 define('TEXT_REFERENCE','Reference');
 define('TEXT_REMOVE','Remove');
 define('TEXT_RENAME','Rename');
+define('TEXT_RENAME_TO','Rename to:');
 define('TEXT_REPLACE','Replace');
 define('TEXT_REPORT','Report');
 define('TEXT_REPORTS','Reports');
@@ -358,7 +359,6 @@ define('ERROR_MODULE_VERSION_TOO_LOW','The module you are trying to install (%s)
 define('ERROR_CANNOT_CREATE_DIR','Backup directory could not be created in /my_files. Check permissions.');
 define('ERROR_COMPRESSION_FAILED','Backup compression failed: ');
 define('TEXT_ENCRYPTION_ENABLED','Encryption Key is Set');
-define('GEN_MSG_COPY_INTRO','Please enter the new user name.');
 define('GEN_ERROR_DUPLICATE_ID','The username is already in use. Please select a different name.');
 define('GEN_MSG_COPY_SUCCESS','The user was copied. Please set the password and any other properties for this new user.');
 define('EMAIL_SEND_FAILED','The email message was not sent.');

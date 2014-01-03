@@ -37,7 +37,7 @@ $fields->set_fields_to_display($asset_type);
 ?>
 <h1><?php echo MENU_HEADING_ASSETS . ' - ' . TEXT_ASSET_ID . '# ' . $cInfo->asset_id; ?></h1>
 
-  <div class="easyui-dialog" data-options="closed: true," id="inv_image" title="<?php echo TEXT_IMAGE; ?>">
+  <div class="easyui-dialog" data-options="closed: true," id="inv_image" title="<?php echo TEXT_IMAGE; ?>" style="width:800px;padding:10px">
     <?php if ($cInfo->image_with_path) echo html_image(DIR_WS_FULL_PATH . 'my_files/' . $_SESSION['company'] . '/assets/images/' . $cInfo->image_with_path, '', 600) . chr(10);
 			else echo TEXT_NO_IMAGE; ?>
     <div>

@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class sa extends \inventory\inventory {//Serialized Assembly
 	public $inventory_type			= 'sa';
 	public $title 					= INV_TYPES_SA;

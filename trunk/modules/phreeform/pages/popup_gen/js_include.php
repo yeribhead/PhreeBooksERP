@@ -94,11 +94,13 @@ function fillEmailMsg(sXml) {
 }
 
 function querySaveAs() {
-  var title = prompt('Enter the new report name:', '');
-  if (title) {
-    document.getElementById('title').value = title;
-    submitToDo('save_as');
-  }
+ 	$.messager.prompt('<?php echo TEXT_REPORT?>', "<?php echo PHREEFORM_RPTENTER; ?>", function(title){
+		if (title){
+			document.getElementById('title').value = title;
+		    submitToDo('save_as');
+		}
+		return false;
+	});
 }
 
 function hideEmail() {

@@ -2081,8 +2081,7 @@ function Phreebooks_autoloader($temp){
 	if (stristr($temp,'objectInfo')) return;
 	$class = str_replace("\\", "/", $temp);
 	$path = explode("/", $class, 2);
-	//print("class = $class     called = $temp      path[0]= $path[0]");
-	if($path[0] == 'core'){//@todo change require_once to include_once
+	if($path[0] == 'core'){
 		include_once(DIR_FS_ADMIN."includes/classes/$path[1].php");
 	}else{
 		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){

@@ -46,6 +46,7 @@ var store_country_code   = '<?php echo COMPANY_COUNTRY; ?>';
 var delete_icon_HTML     = '<?php echo substr(html_icon("emblems/emblem-unreadable.png", TEXT_DELETE, "small", "onclick=\"if (confirm(\'" . TEXT_DELETE_ENTRY . "\')) removeInvRow("), 0, -2); ?>';
 var delete_icon_HTML_PMT = '<?php echo substr(html_icon("emblems/emblem-unreadable.png", TEXT_DELETE, "small", "onclick=\"if (confirm(\'" . TEXT_DELETE_ENTRY . "\')) removePmtRow("), 0, -2); ?>';
 var serial_num_prompt    = '<?php echo ORD_JS_SERIAL_NUM_PROMPT; ?>';
+var text_serial_number	 = '<?php echo TEXT_SERIAL_NUMBER; ?>';
 var show_status          = '<?php echo ($account_type == "v") ? AP_SHOW_CONTACT_STATUS : AR_SHOW_CONTACT_STATUS; ?>';
 var warn_form_modified   = '<?php echo ORD_WARN_FORM_MODIFIED; ?>';
 var default_inv_acct     = '<?php echo DEF_INV_GL_ACCT; ?>';
@@ -447,9 +448,14 @@ function InventoryList(rowCnt) {
 }
 
 function serialList(rowID) {
-   var choice    = document.getElementById(rowID).value;
-   var newChoice = prompt(serial_num_prompt, choice);
-   if (newChoice) document.getElementById(rowID).value = newChoice;
+	var choice    = document.getElementById(rowID).value;
+  	$.messager.prompt(text_serial_number, serial_num_prompt, function(newChoice){
+		if (newChoice){
+			insertValue(rowID, newChoice);
+		}
+		return false;
+	});
+	$('.messager-input').val(choice).focus();
 }
 
 function fillAddress(type) {

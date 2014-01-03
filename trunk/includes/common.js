@@ -26,17 +26,6 @@ function confirm(msg){
 	});
 	return false;
 }
-
-function prompt(msg, defaultText){
-	$.messager.prompt('Question', msg, function(r){
-		if (r){
-			return r;
-		}
-	});
-	$('.messager-input').val(defaultText).focus();
-	return false;
-}
-
 /******************************* General Functions ****************************************/
 function addLoadEvent(func) { 
   var oldonload = window.onload; 

@@ -24,11 +24,11 @@ if (!$subject || !$topic) die('The popup_setup script require a topic name and a
 gen_pull_language($topic, 'admin');
 gen_pull_language('phreedom','admin');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
-require_once(DIR_FS_MODULES . $topic . '/classes/' . $subject . '.php');
 /**************   page specific initialization  *************************/
 $close_popup    = false;
 $sID            = $_GET['sID'];
-$subject_module = new $subject();
+$classname 		= "\\$topic\\$subject"; 
+$subject_module = new $classname;
 /**************   Check user security   *****************************/
 $security_level = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];
 if ($security_level == 0) { // not supposed to be here
@@ -39,7 +39,11 @@ if ($security_level == 0) { // not supposed to be here
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
-    if ($subject_module->btn_save($sID)) $close_popup = true;
+  	try{
+    	if ($subject_module->btn_save($sID)) $close_popup = true;
+  	}catch(Exception $e){
+  		$messageStack->add($e->getMessage(), $e->getCode);
+  	}
 	break;
   default:
 }

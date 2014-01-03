@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class si extends \inventory\inventory {//Stock Item
 	public $inventory_type			= 'si';
 	public $title					= INV_TYPES_SI;

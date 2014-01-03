@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class sf extends \inventory\inventory {//Flat Rate - Service
 	public $inventory_type			= 'sf';
 	public $title			       	= INV_TYPES_SF;

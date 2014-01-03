@@ -1,5 +1,5 @@
 <?php
-namespace inventory;
+namespace inventory\type;
 class ma extends \inventory\inventory { //Item Assembly formerly know as 'as' but this resulted in problems with the php function as.
 	public $inventory_type			= 'ma'; 
 	public $title 					= INV_TYPES_AS;

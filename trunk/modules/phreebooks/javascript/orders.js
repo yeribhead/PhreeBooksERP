@@ -450,9 +450,14 @@ function convertSO() {
 }
 
 function serialList(rowID) {
-   var choice    = document.getElementById(rowID).value;
-   var newChoice = prompt(serial_num_prompt, choice);
-   if (newChoice) document.getElementById(rowID).value = newChoice;
+	var choice    = document.getElementById(rowID).value;
+  	$.messager.prompt(text_serial_number, serial_num_prompt, function(newChoice){
+		if (newChoice){
+			insertValue(rowID, newChoice);
+		}
+		return false;
+	});
+	$('.messager-input').val(choice).focus();
 }
 
 function openBarCode() {

@@ -27,7 +27,6 @@ class fields {
     public  $type_params    = '';
     public  $error          = false;
     public  $extra_buttons  = '';
-    public  $extra_tab_li   = '';
 	public  $extra_tab_html = ''; 
     
   public function __construct($sync = true){ 
@@ -40,18 +39,18 @@ class fields {
 
   function btn_save($id = '') {
   	global $db, $currencies;
-	if ($this->security_id < 2) throw new \Exception(ERROR_NO_PERMISSION,'error');
+	if ($this->security_id < 2) throw new \Exception(ERROR_NO_PERMISSION);
     // clean out all non-allowed values and then check if we have a empty string 
 	$this->field_name   = preg_replace("[^A-Za-z0-9_]", "", $this->field_name); 
-	if ($this->field_name == '') throw new \Exception(ASSETS_ERROR_FIELD_BLANK,'error');
+	if ($this->field_name == '') throw new \Exception(ASSETS_ERROR_FIELD_BLANK);
 	// check if the field name belongs to one of the mysql reserved names
 	$reserved_names = array('select', 'delete', 'insert', 'update', 'to', 'from', 'where', 'and', 'or',
 		'alter', 'table', 'add', 'change', 'in', 'order', 'set', 'inner');
-	if (in_array($this->field_name, $reserved_names)) throw new \Exception(ASSETS_FIELD_RESERVED_WORD,'error');
+	if (in_array($this->field_name, $reserved_names)) throw new \Exception(ASSETS_FIELD_RESERVED_WORD);
 	// if the id is empty then check for duplicate field names
 	if($this->id == ''){
 	   $result = $db->Execute("SELECT id FROM ".TABLE_EXTRA_FIELDS." WHERE module_id='$this->module' AND field_name='$this->field_name'");
-	   if ($result->RecordCount() > 0 && $this->id =='') throw new \Exception(ASSETS_ERROR_FIELD_DUPLICATE,'error');
+	   if ($result->RecordCount() > 0 && $this->id =='') throw new \Exception(ASSETS_ERROR_FIELD_DUPLICATE);
 	}
 	// condense the type array to a single string.
     while ($type = array_shift($this->type_array)){
@@ -189,10 +188,10 @@ class fields {
 
   function btn_delete($id = 0) {
   	global $db;
-	if ($this->security_id < 4) throw new \Exception (ERROR_NO_PERMISSION,'error');
+	if ($this->security_id < 4) throw new \Exception (ERROR_NO_PERMISSION);
 	$result = $db->Execute("SELECT * FROM ".TABLE_EXTRA_FIELDS." WHERE id=$id");
 	foreach ($result->fields as $key => $value) $this->$key = $value;
-	if ($this->tab_id == '0') throw new \Exception (INV_CANNOT_DELETE_SYSTEM,'error'); // don't allow deletion of system fields
+	if ($this->tab_id == '0') throw new \Exception (INV_CANNOT_DELETE_SYSTEM); // don't allow deletion of system fields
 	$db->Execute("DELETE FROM ".TABLE_EXTRA_FIELDS." WHERE id=$this->id");
 	$db->Execute("ALTER TABLE $this->db_table DROP COLUMN $this->field_name");
 	gen_add_audit_log ($this->module.' '.sprintf(EXTRA_FIELDS_LOG, TEXT_DELETE), "$id - $this->field_name");
@@ -201,7 +200,7 @@ class fields {
 
   function build_main_html() {
   	global $db;
-	$tab_array = xtra_field_get_tabs($this->module);
+	$tab_array = $this->xtra_field_get_tabs($this->module);
     $content = array();
 	$content['thead'] = array(
 	  'value' => array(TEXT_DESCRIPTION, TEXT_FLDNAME, TEXT_TAB_NAME, TEXT_TYPE, $this->type_desc, TEXT_SORT_ORDER, TEXT_GROUP, TEXT_ACTION),
@@ -276,9 +275,9 @@ class fields {
 	   }
 	}
 	// build the tab list
-	$tab_list = gen_build_pull_down(xtra_field_get_tabs($this->module));
+	$tab_list = gen_build_pull_down($this->xtra_field_get_tabs($this->module));
 	array_shift($tab_list);
-	if ($action == 'new' && sizeof($tab_list) < 1) throw new \Exception(EXTRA_FIELDS_ERROR_NO_TABS, 'error');
+	if ($action == 'new' && sizeof($tab_list) < 1) throw new \Exception(EXTRA_FIELDS_ERROR_NO_TABS);
     $choices  =  explode(':',$params[$this->type_params]);
 	$disabled = ($this->tab_id !== '0') ? '' : 'disabled="disabled" ';
 	$readonly = ($this->tab_id !== '0') ? '' : 'readonly="readonly" ';
@@ -448,8 +447,7 @@ class fields {
 	  			$this->extra_tab_html .= '</div>' . chr(10);
   			}
   			$tab_array[] = $tab_id;
-  			$this->extra_tab_li    .= '  <li><a href="#tab_' . $tab_id . '">' . $result->fields['tab_name'] . '</a></li>' . chr(10);
-  			$this->extra_tab_html .= '<div id="tab_' . $tab_id . '">' . chr(10);
+  			$this->extra_tab_html .= '<div title="'. $result->fields['tab_name'] .'" id="tab_' . $tab_id . '">' . chr(10);
 	  		$this->extra_tab_html .= '  <table>' . chr(10);
   		}else if($previous_group <> $result->fields['group_by']){
   			$this->extra_tab_html .= '<tr class="ui-widget-header" height="5px"><td colspan="2"></td></tr>' . chr(10);
@@ -484,6 +482,18 @@ class fields {
   		$result->MoveNext();
 	}
 	return $values;
+  }
+  
+  function xtra_field_get_tabs($module = '') {
+    global $db;
+    $tab_array = array(0 => TEXT_SYSTEM);
+	if (!$module) return $tab_array;
+    $result = $db->Execute("select id, tab_name from " . TABLE_EXTRA_TABS . " where module_id = '" . $module . "' order by tab_name");
+    while (!$result->EOF) {
+      $tab_array[$result->fields['id']] = $result->fields['tab_name'];
+      $result->MoveNext();
+    }
+    return $tab_array;
   }
 }
 ?>

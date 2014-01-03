@@ -28,14 +28,6 @@ require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-require_once(DIR_FS_WORKING . 'classes/tills.php');
-require_once(DIR_FS_WORKING . 'classes/other_transactions.php');
-if (file_exists(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php')) { 
-	require_once(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php') ; 
-}else{
-    require_once(DIR_FS_MODULES . 'phreepos/classes/journal/journal_'.JOURNAL_ID.'.php'); // is needed here for the defining of the class and retriving the security_token
-}
 /**************   page specific initialization  *************************/
 define('ORD_ACCT_ID',		GEN_CUSTOMER_ID);
 define('GL_TYPE',			'sos');
@@ -44,9 +36,9 @@ define('DEF_GL_ACCT',		AR_DEFAULT_GL_ACCT);
 define('DEF_GL_ACCT_TITLE',	ORD_AR_ACCOUNT);
 define('POPUP_FORM_TYPE',	'pos:rcpt');
 $account_type = 'c';
-$order        = new journal_19();
-$tills        = new tills();
-$trans	 	  = new other_transactions();
+$order        = new \phreepos\journal\journal_19();
+$tills        = new \phreepos\tills();
+$trans	 	  = new \phreepos\other_transactions();
 $payment_modules = load_all_methods('payment');
 $extra_ThirdToolbar_buttons = null;
 $extra_toolbar_buttons		= null;
