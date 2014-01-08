@@ -284,7 +284,7 @@ while(!$result->EOF) {
 $cal_repost_start = array(
     'name'      => 'repostStartDate',
     'form'      => 'admin_tools',
-    'fieldname' => 'start_dat',
+    'fieldname' => 'start_date',
     'imagename' => 'btn_date_2',
     'default'   => gen_locale_date($start_date),
     'params'    => array('align' => 'left'),
