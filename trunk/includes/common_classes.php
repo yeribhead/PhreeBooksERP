@@ -48,7 +48,7 @@ class toolbar {
 	$this->icon_list['print']  = array('show' => true, 'icon' => 'phreebooks/pdficon_large.gif', 'params' => '', 'text' => TEXT_PRINT,  'order' => 5);
   }
 
-  function add_icon($name, $params = '', $order = 98) { // adds some common icons, per request
+  function add_icon($name, $params = '', $order = 98) { // adds some common icons, per request @todo rework for new system
 	switch ($name) {
 	  case 'back':
 	  case 'previous':   $image = 'actions/go-previous.png';            $text = TEXT_BACK;       break;

@@ -252,7 +252,7 @@ switch ($_REQUEST['action']) {
 	$default_tab_id = 'manager';
 	break;
   case 'delete_co':
-	$db_name = $_SESSION['companies'][$_POST['del_company']];
+	$db_name = $_POST['del_company'];
 	// Failsafe to prevent current company from being deleted accidently
 	$backup = new backup;
 	if ($db_name == 'none') {

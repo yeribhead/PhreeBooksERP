@@ -46,7 +46,7 @@ if ($single_language) echo html_hidden_field('language', $languages[0]['id']) . 
 <?php if (!$single_company) { ?>
               <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo TEXT_LOGIN_COMPANY; ?></td>
-                <td><?php echo html_pull_down_menu('company', $companies, $company_index); ?></td>
+                <td><?php echo html_pull_down_menu('company', $_SESSION['companies'], $company_index); ?></td>
               </tr>
 <?php } ?>
 <?php if (!$single_language) { ?>

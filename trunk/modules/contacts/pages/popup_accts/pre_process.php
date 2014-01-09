@@ -30,7 +30,7 @@ switch ($account_type) {
 }
 $fill = isset($_GET['fill']) ? $_GET['fill'] : 'bill';
 history_filter('contacts_popup');
-$temp = "\contacts\type\\".$account_type;
+$temp = '\contacts\classes\type\\'.$account_type;
 $cInfo = new $temp;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_accts/extra_actions.php';

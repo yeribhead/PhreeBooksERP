@@ -18,7 +18,8 @@
 //
 
 function load_company_dropdown($include_select = false) {
-  $output = array();
+  $the_list = array();
+  if ($include_select) $the_list[0] = array('text' => TEXT_NONE, 'file' => 'none');
   $i = 1;
   $contents = scandir(DIR_FS_MY_FILES);
   foreach ($contents as $file) {
@@ -26,19 +27,18 @@ function load_company_dropdown($include_select = false) {
 	  if (file_exists(DIR_FS_MY_FILES . $file . '/config.txt')) convert_cfg($file);
 	  if (file_exists(DIR_FS_MY_FILES . $file . '/config.php')) {
 		require_once (DIR_FS_MY_FILES . $file . '/config.php');
-		$output[$i] = array(
+		$_SESSION['companies'][$file] = array(
+		  'id'   => $file,
+		  'text' => constant($file . '_TITLE'), 
+		  'file' => $file,
+		);
+		$the_list[$i] = array(
 		  'text' => constant($file . '_TITLE'), 
 		  'file' => $file,
 		);
 		$i++;
 	  }
 	}
-  }
-  if ($include_select) $output[0] = array('text' => TEXT_NONE, 'file' => 'none');
-  $the_list = array();
-  foreach ($output as $key => $value) {
-    $_SESSION['companies'][$key] = $value['file'];
-    $the_list[] = array('id' => $key, 'text' => $value['text']);
   }
   return $the_list;
 }

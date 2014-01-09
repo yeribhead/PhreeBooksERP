@@ -17,9 +17,8 @@
 //  Path: /modules/phreepos/classes/journal/journal_19.php
 //
 // POS Journal
-namespace phreepos\journal;
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-class journal_19 extends \core\journal {
+namespace phreepos\classes\journal;
+class journal_19 extends \core\classes\journal {
 	public $id					= '';
 	public $save_payment        = false;
     public $closed 				= '0';

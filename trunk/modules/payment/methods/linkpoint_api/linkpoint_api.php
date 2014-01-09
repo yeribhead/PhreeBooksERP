@@ -21,12 +21,12 @@
 // 2009-08-01 - Author: Harry Lu
 // 2010-08-17 - Modified by PhreeSoft
 // 2011-07-01 - Added version number for revision control
-namespace payment;
+namespace payment\methods\linkpoint_api;
 define('MODULE_PAYMENT_LINKPOINT_API_VERSION','3.3');
 require_once(DIR_FS_MODULES . 'payment/classes/payment.php');
 @define('MODULE_PAYMENT_LINKPOINT_API_CODE_DEBUG', 'off'); // debug for programmer use only
 
-class linkpoint_api extends \payment\payment {
+class linkpoint_api extends \payment\classes\payment {
   public $code        = 'linkpoint_api'; // needs to match class name
   public $title       = MODULE_PAYMENT_LINKPOINT_API_TEXT_TITLE;
   public $description = MODULE_PAYMENT_LINKPOINT_API_TEXT_DESCRIPTION;

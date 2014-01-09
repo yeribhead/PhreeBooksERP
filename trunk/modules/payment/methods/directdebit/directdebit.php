@@ -19,9 +19,9 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-namespace payment;
+namespace payment\methods\directdebit;
 define('MODULE_PAYMENT_DIRECTDEBIT_VERSION','3.3');
-class directdebit extends \payment\payment {
+class directdebit extends \payment\classes\payment {
   public $code        = 'directdebit'; // needs to match class name
   public $title       = MODULE_PAYMENT_DIRECTDEBIT_TEXT_TITLE;
   public $description = MODULE_PAYMENT_DIRECTDEBIT_TEXT_DESCRIPTION;

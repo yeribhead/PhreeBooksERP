@@ -1419,63 +1419,21 @@ function popupContact(){
 	}
 	//loads popup only if it is disabled
 	if(popupStatus==0){  
-		$("#backgroundPopup").fadeIn("slow");  
-		$("#customer_div").fadeIn("slow");  
+		$('#customer_div').window('open');
 		popupStatus = 1;
 	}
-	var windowWidth = document.documentElement.clientWidth;  
-	var windowHeight = document.documentElement.clientHeight;  
-	var popupHeight = $("#customer_div").height();  
-	var popupWidth = $("#customer_div").width();  
-	//centering  
-	$("#customer_div").css({  
-		"position": "absolute",
-		"top": windowHeight/2-popupHeight/2,  
-		"left": windowWidth/2-popupWidth/2  
-	});  
-	$("#backgroundPopup").css({
-		"position": "absolute",
-		"opacity": "0.7",
-		"background":"#000000",  
-		"top": "0px",  
-		"left": "0px",
-		"height": windowHeight,  
-		"width":  windowWidth	  
-	});
 }  
 
 //loading popup with jQuery magic!  
 function popupPayment(){  
 	//loads popup only if it is disabled
 	if(popupStatus==0){  
-		$("#backgroundPopup").fadeIn("slow");  
-		$("#popupPayment").fadeIn("slow");  
+		$('#popupPayment').window('open');
 		popupStatus = 1;
 		document.getElementById('amount').value = document.getElementById('bal_due').value;
 		activateFields();
 		document.getElementById('amount').select();
-	}
-	//request data for centering  
-	var windowWidth = document.documentElement.clientWidth;  
-	var windowHeight = document.documentElement.clientHeight;  
-	var popupHeight = $("#popupPayment").height();  
-	var popupWidth = $("#popupPayment").width();  
-	//centering  
-	$("#popupPayment").css({  
-		"position": "absolute",
-		"top": windowHeight/2-popupHeight/2,  
-		"left": windowWidth/2-popupWidth/2  
-	});  
-	$("#backgroundPopup").css({
-		"position": "absolute",
-		"opacity": "0.7",
-		"background":"#000000",  
-		"top": "0px",  
-		"left": "0px",
-		"height": windowHeight,  
-		"width":windowWidth	  
-	});
-	
+	}	
 }  
 
 function open_other_options(){
@@ -1493,39 +1451,17 @@ function open_other_options(){
 function ShowOtherTrans(){
 	// start by fadinng out the other options menu bar then show background and 
 	$("#other_options").fadeOut("slow"); 
-	$("#backgroundPopup").fadeIn("slow");  
-	$("#popupOtherTrans").fadeIn("slow");  
+	$('#popupOtherTrans').window('open');  
 	popupStatus = 1;
-	//request data for centering  
-	var windowWidth = document.documentElement.clientWidth;  
-	var windowHeight = document.documentElement.clientHeight;  
-	var popupHeight = $("#popupOtherTrans").height();  
-	var popupWidth = $("#popupOtherTrans").width();  
-	//centering  
-	$("#popupOtherTrans").css({  
-		"position": "absolute",
-		"top": windowHeight/2-popupHeight/2,  
-		"left": windowWidth/2-popupWidth/2  
-	});  
-	$("#backgroundPopup").css({
-		"position": "absolute",
-		"opacity": "0.7",
-		"background":"#000000",  
-		"top": "0px",  
-		"left": "0px",
-		"height": windowHeight,  
-		"width":windowWidth	  
-	});
 }
 
 //disabling popup with jQuery magic!  
 function disablePopup(){  
 	//disables popup only if it is enabled  
 	if(popupStatus==1){  
-		$("#popupOtherTrans").fadeOut("slow");
-		$("#backgroundPopup").fadeOut("slow");  
-		$("#popupPayment").fadeOut("slow"); 
-		$("#customer_div").fadeOut("slow");
+		$("#popupOtherTrans").window('close');
+		$("#popupPayment").window('close'); 
+		$("#customer_div").window('close');
 		popupStatus = 0;  
 		document.getElementById('sku').focus();
 	}  
@@ -1545,10 +1481,6 @@ function setImage(src){
 }
 
 $(document).ready(function(){ 
-	$("#backgroundPopup").click(function(){
-		disablePopup();  
-	});
-
 	$("#disc_percent").keydown(function(event) {
 		$("#discount").val('');
 	});
@@ -1560,7 +1492,6 @@ $(document).ready(function(){
 	$("#amount").keydown(function(event) {
 		if (event.keyCode == 13) SavePayment('save');
 	});
-
 	$("#open_other_options").click(function(){
 		open_other_options();  
 	});
@@ -1569,7 +1500,6 @@ $(document).ready(function(){
 
 //Press Escape event!  
 $(document).keydown(function(event){
-	
 	if (event.altKey && event.keyCode == 82) {
 		event.preventDefault();
 		// if alt + r then redirect to template return

@@ -19,7 +19,7 @@
 //
 // Revision history
 // 2012-05-11 - Created
-namespace payment;
+namespace payment\classes;
 gen_pull_language('payment');
 class payment {
   public $payment_fields;

@@ -75,7 +75,7 @@
 	  load_method_language($method_dir, $method);
 	  include_once($method_dir . $method . '/' . $method . '.php');
 	  $choices[constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_SORT_ORDER')] = array(
-	    'id'   => $method, 
+	    'id'   => "\\$module\methods\\$method\\$method", 
 		'text' => constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_TEXT_TITLE'),
 	  );
     }
@@ -1092,7 +1092,65 @@ function gen_db_date($raw_date = '', $separator = '/') {
   function html_hidden_field($name, $value = '', $parameters = '') {
     return html_input_field($name, $value, $parameters, false, 'hidden', false);
   }
+  
+  	function html_currency_field($name, $value, $parameters, $currency_code = DEFAULT_CURRENCY){//@todo test and implement
+  		global $currencies;
+  		if (strpos($name, '[]')) { // don't show id attribute if generic array
+	  		$id = false;
+		} else {
+	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
+	  		$id = str_replace(']', '',  $id);
+    	}
+    	$field = "<input name='$name' ";
+		if ($id)						$field .= " id='$id' ";
+    	if (gen_not_null($value))		$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
+    	if (gen_not_null($parameters))	$field .= " $parameters ";
+    	if ($required)					$field .= " required='required' ";
+    	$field .= " class='easyui-numberbox' data-options=\"precision:$currencies[$currency_code]->decimal_places,groupSeparator:'$currencies[$currency_code]->thousands_point',decimalSeparator:'$currencies[$currency_code]->decimal_point',prefix:'$currencies[$currency_code]->symbol_left'\" $temp />";
+  		return $field;
+  }
 
+  	function html_number_field($name, $value, $parameters, $required = false){//@todo test and implement
+	  	global $currencies;
+  		if (strpos($name, '[]')) { // don't show id attribute if generic array
+	  		$id = false;
+		} else {
+	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
+	  		$id = str_replace(']', '',  $id);
+    	}
+    	$field = "<input name='$name' ";
+		if ($id)						$field .= " id='$id' ";
+    	if (gen_not_null($value))		$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
+    	if (gen_not_null($parameters))	$field .= " $parameters ";
+    	if ($required)					$field .= " required='required' ";
+    	$field .=  "class='easyui-numberbox' data-options=\"precision:$currencies[DEFAULT_CURRENCY]->decimal_places,groupSeparator:'$currencies[DEFAULT_CURRENCY]->thousands_point',decimalSeparator:'$currencies[DEFAULT_CURRENCY]->decimal_point'\" />";
+  		return $field;
+  	}
+  	
+  	/**
+  	 * 
+  	 * new function to create a date field
+  	 * @param $name
+  	 * @param $value
+  	 * @param $required bool
+  	 */
+  	
+  	function html_date_field($name, $value, $required = false){//@todo test and implement date format needs to be right
+  		if($required) $temp = ",required:true";
+  		if (strpos($name, '[]')) { // don't show id attribute if generic array
+	  		$id = false;
+		} else {
+	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
+	  		$id = str_replace(']', '',  $id);
+    	}
+    	$field = "<input name='$name' ";
+		if ($id)					$field .= " id='$id'";
+    	if (gen_not_null($value))	$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
+    	if ($required)				$field .= " required='required' ";
+    	$field .= " class='easyui-datebox' />";
+    	return $field;
+  	}
+  
   function html_password_field($name, $value = '', $required = false, $parameters = '') {
     return html_input_field($name, $value, 'maxlength="40" ' . $parameters, $required, 'password', false);
   }
@@ -2074,26 +2132,20 @@ function PhreebooksExceptionHandler($exception) {
 }
 
 function Phreebooks_autoloader($temp){ 
-	if (class_exists($temp, false)){
-		print("class $temp loaded");
-		return;
-	}
 	if (stristr($temp,'objectInfo')) return;
 	$class = str_replace("\\", "/", $temp);
-	$path = explode("/", $class, 2);
+	$path = explode("/", $class, 3);
 	if($path[0] == 'core'){
-		include_once(DIR_FS_ADMIN."includes/classes/$path[1].php");
+		include_once(DIR_FS_ADMIN."includes/$path[1]/$path[2].php");
 	}else{
-		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php")){
-			include_once(DIR_FS_ADMIN."modules/$path[0]/custom/classes/$path[1].php");
+		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php")){
+			include_once(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php");
 		}else{
-			include_once(DIR_FS_ADMIN."modules/$path[0]/classes/$path[1].php");
+			include_once(DIR_FS_ADMIN."modules/$path[0]/$path[1]/$path[2].php");
 		}
 	}
 	if (!class_exists($temp, false)) {
-		//print(' not loaded ');
-        trigger_error("Unable to load module = $path[0] class = $path[1] called = $temp<br/>", E_USER_ERROR);
+        trigger_error("Unable to load module = $path[0] $path[1] = $path[2] called = $temp<br/>", E_USER_ERROR);
     }
-    //print("<br/>");
 }
 ?>

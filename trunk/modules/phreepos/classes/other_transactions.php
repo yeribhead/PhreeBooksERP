@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/classes/other_transactions.php
 //
-namespace phreepos;
+namespace phreepos\classes;
 class other_transactions {
 	public $code        	= 'other_transactions'; // needs to match class name
     public $db_table     	= TABLE_PHREEPOS_OTHER_TRANSACTIONS;
@@ -99,7 +99,6 @@ class other_transactions {
 
 	function build_form_html($action, $id = '') {
     	global $db, $currencies;
-    	require_once(DIR_FS_MODULES . 'phreepos/classes/tills.php');
     	require_once(DIR_FS_MODULES . 'phreepos/defaults.php');
     	if ($action <> 'new' && $this->error == false) {
         	$sql = "select * from " . $this->db_table . " where ot_id = " . $id;

@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/contacts.php
 //
-namespace contacts;
+namespace contacts\classes;
 class contacts {
 	public  $terms_type         = 'AP'; 
 	public  $page_title_new     = '';

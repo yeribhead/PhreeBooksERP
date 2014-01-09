@@ -30,9 +30,12 @@ if (isset($_GET['req']) && $_GET['req'] == 'pw_lost_sub') $_REQUEST['action'] = 
 switch ($_REQUEST['action']) {
   	case 'validate':
 	  	try{
+	 	 	if (!is_object($db)) { // Errors will happen here if there was a problem logging in, logout and restart
+				trigger_error("Database isn't created", E_USER_ERROR);	
+			}
 		    $admin_name     = db_prepare_input($_POST['admin_name']);
 		    $admin_pass     = db_prepare_input($_POST['admin_pass']);
-		    $admin_company  = $_SESSION['companies'][$_POST['company']];
+		    $admin_company  = db_prepare_input($_POST['company']);
 		    $admin_language = db_prepare_input($_POST['language']);
 		    $sql = "select admin_id, admin_name, inactive, display_name, admin_email, admin_pass, account_id, admin_prefs, admin_security 
 				from " . TABLE_USERS . " where admin_name = '" . db_input($admin_name) . "'";
@@ -71,7 +74,6 @@ switch ($_REQUEST['action']) {
 			}
 			// check safe mode is allowed to log in.
 			if (get_cfg_var('safe_mode')) $messageStack->add(SAFE_MODE_ERROR, 'error');
-		    	//gen_redirect(html_href_link(FILENAME_DEFAULT, $get_params, 'SSL'));
 		    $_REQUEST['action'] = '';
 		    break;
 		}catch(Exception $e) {
@@ -82,24 +84,26 @@ switch ($_REQUEST['action']) {
 		  	break;
 		}
   	case 'pw_lost_sub':
-	    $admin_email = db_prepare_input($_POST['admin_email']);
-	    $result = $db->Execute("select admin_id, admin_name, admin_email 
-		  from " . TABLE_USERS . " where admin_email = '" . db_input($admin_email) . "'");
-	    if (!$admin_email || $admin_email <> $result->fields['admin_email']) {
-	      $error = true;
-	      $messageStack->add(ERROR_WRONG_EMAIL, 'error');
-	    }
-	    $_SESSION['company'] = $_SESSION['companies'][$_POST['company']];
-	    if (!$error) {
-	      $new_password = pw_create_random_value(ENTRY_PASSWORD_MIN_LENGTH);
-	      $admin_pass   = pw_encrypt_password($new_password);
-	      $db->Execute("update " . TABLE_USERS . " set admin_pass = '" . db_input($admin_pass) . "' where admin_id = " . $result->fields['admin_id']);
-	      $html_msg['EMAIL_CUSTOMERS_NAME'] = $result->fields['admin_name'];
-	      $html_msg['EMAIL_MESSAGE_HTML']   = sprintf(TEXT_EMAIL_MESSAGE, COMPANY_NAME, $new_password);
-	      validate_send_mail($result->fields['admin_name'], $result->fields['admin_email'], TEXT_EMAIL_SUBJECT, $html_msg['EMAIL_MESSAGE_HTML'], COMPANY_NAME, EMAIL_FROM, $html_msg);
-	      $messageStack->add(SUCCESS_PASSWORD_SENT, 'success');
-		  gen_add_audit_log(GEN_LOG_RESEND_PW . $admin_email);
-	    }
+  		try{
+	    	$admin_email = db_prepare_input($_POST['admin_email']);
+	    	$result = $db->Execute("select admin_id, admin_name, admin_email 
+			  from " . TABLE_USERS . " where admin_email = '" . db_input($admin_email) . "'");
+	    	if (!$admin_email || $admin_email <> $result->fields['admin_email']) throw new Exception(ERROR_WRONG_EMAIL);
+	    	$_SESSION['company'] = $_POST['company'];
+	       	$new_password = pw_create_random_value(ENTRY_PASSWORD_MIN_LENGTH);
+	      	$admin_pass   = pw_encrypt_password($new_password);
+	      	$db->Execute("update " . TABLE_USERS . " set admin_pass = '" . db_input($admin_pass) . "' where admin_id = " . $result->fields['admin_id']);
+	      	$html_msg['EMAIL_CUSTOMERS_NAME'] = $result->fields['admin_name'];
+	      	$html_msg['EMAIL_MESSAGE_HTML']   = sprintf(TEXT_EMAIL_MESSAGE, COMPANY_NAME, $new_password);
+	      	validate_send_mail($result->fields['admin_name'], $result->fields['admin_email'], TEXT_EMAIL_SUBJECT, $html_msg['EMAIL_MESSAGE_HTML'], COMPANY_NAME, EMAIL_FROM, $html_msg);
+	      	$messageStack->add(SUCCESS_PASSWORD_SENT, 'success');
+		  	gen_add_audit_log(GEN_LOG_RESEND_PW . $admin_email);
+	    }catch(Exception $e) {
+			$messageStack->add($e->getMessage());
+			// Note: This is assigned to admin id = 1 since the user is not logged in.
+			gen_add_audit_log(sprintf(GEN_LOG_LOGIN_FAILED, $e->getMessage(), $admin_name));
+			$_REQUEST['action'] = 'login';
+		}
 	    break;
 	case 'logout':
 		$result = $db->Execute("select admin_name from " . TABLE_USERS . " where admin_id = " . $_SESSION['admin_id']);
@@ -213,26 +217,20 @@ switch ($_REQUEST['action']) {
   case 'pw_lost_sub':
   case 'pw_lost_req':
   	$companies       = load_company_dropdown();
-  	$single_company  = sizeof($companies)==1 ? true : false;
+  	$single_company  = sizeof($companies) == 1 ? true : false;
   	$languages       = load_language_dropdown();
-	$single_language = sizeof($languages)==1 ? true : false;
+	$single_language = sizeof($languages) == 1 ? true : false;
 	if (isset($_POST['company'])) { // find default company
 	  $company_index = $_POST['company'];
 	} else {
-	  $default_company = defined('DEFAULT_COMPANY') ? DEFAULT_COMPANY : '';
-	  if (isset($_COOKIE['pb_company'])) $default_company = $_COOKIE['pb_company'];
-	  foreach ($_SESSION['companies'] as $key => $value) {
-		if ($value == $default_company) $company_index = $key;
-	  }
+	  $company_index = defined('DEFAULT_COMPANY') ? DEFAULT_COMPANY : '';
+	  if (isset($_COOKIE['pb_company'])) $company_index = $_COOKIE['pb_company'];
 	}
 	if (isset($_POST['language'])) { // find default language
 	  $language_index = $_POST['language'];
 	} else {
-	  $default_language = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us';
-	  if (isset($_COOKIE['pb_language'])) $default_language = $_COOKIE['pb_language'];
-	  foreach ($languages as $value) {
-		if ($value['id'] == $default_language) $language_index = $value['id'];
-	  }
+	  $language_index = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us';
+	  if (isset($_COOKIE['pb_language'])) $language_index = $_COOKIE['pb_language'];
 	}
 	$include_template = $_REQUEST['action'] == 'pw_lost_req' ? 'template_pw_lost.php' : 'template_login.php';
   	$include_header   = false;

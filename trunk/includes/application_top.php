@@ -26,7 +26,7 @@ $force_reset_cache = false;
 if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
 // Check for application configuration parameters
 if     (file_exists('includes/configure.php')) { require('includes/configure.php'); } 
-elseif (file_exists('install/index.php')) { header('Location: install/index.php'); exit(); }
+elseif (file_exists('install/index.php')) { header('Location: install/index.php'); exit(); ob_end_flush(); }
 else   die('Phreedom cannot find the configuration file. Aborting!');
 // Load some path constants
 $path = (ENABLE_SSL_ADMIN == 'true' ? HTTPS_SERVER : HTTP_SERVER) . DIR_WS_ADMIN;
@@ -84,10 +84,10 @@ else { define('DIR_WS_ICONS', 'themes/default/icons/'); } // use default
 $messageStack = new messageStack;
 $toolbar      = new toolbar;
 // determine what company to connect to
-if (isset($_POST['company']) && !isset($_SESSION['company'])) $_SESSION['company'] = $_SESSION['companies'][$_POST['company']];
-$db_company = isset($_SESSION['company']) ? $_SESSION['company'] : false;
-if ($db_company && file_exists(DIR_FS_MY_FILES . $db_company . '/config.php')) {
-	require_once(DIR_FS_MY_FILES . $db_company . '/config.php');
+if ($_REQUEST['action']=="validate") $_SESSION['company'] = $_POST['company'];
+if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR_FS_MY_FILES . $_SESSION['company'] . '/config.php')) {
+	define('DB_DATABASE', $_SESSION['company']);
+	require_once(DIR_FS_MY_FILES . $_SESSION['company'] . '/config.php');
   	define('DB_SERVER_HOST',DB_SERVER); // for old PhreeBooks installs
 	//registry::storeCoreObjects();
 	// Load queryFactory db classes
