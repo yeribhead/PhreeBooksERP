@@ -17,8 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/bulk_inv/classes/admin.php
 //
-namespace bulk_inv;
-class admin extends \core\admin {
+namespace bulk_inv\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'  => '3.3',

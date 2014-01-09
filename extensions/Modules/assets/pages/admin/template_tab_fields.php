@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/assets/pages/admin/template_tab_fields.php
 //
-$field_toolbar = new toolbar();
+$field_toolbar = new \core\classes\toolbar();
 $field_toolbar->icon_list['cancel']['show'] = false;
 $field_toolbar->icon_list['open']['show']   = false;
 $field_toolbar->icon_list['delete']['show'] = false;

@@ -38,40 +38,39 @@ if (file_exists($custom_path)) { include($custom_path); }
 switch ($_REQUEST['action']) {
   	case 'upload':
 	  	try{
-	    	$upXML = new zencart();
+	    	$upXML = new \zencart\classes\zencart();
 			$id    = db_prepare_input($_POST['rowSeq']);
 			if ($upXML->submitXML($id, 'product_ul')) gen_add_audit_log(ZENCART_UPLOAD_PRODUCT, $upXML->sku);
 	  	}catch(Exception $e) {
-	  		$messageStack->add($e->getMessage());
+	  		$messageStack->add($e->getMessage(), $e->getCode);
 		}
 		break;
   	case 'bulkupload':
 	  	try{
-	    	$upXML = new bulk_upload();
-	    	$inc_image = isset($_POST['include_images']) ? true : false;
-			if ($upXML->bulkUpload($inc_image)) {
+	  		$inc_image = isset($_POST['include_images']) ? true : false;
+	    	if (\zencart\classes\bulk_upload($inc_image) == true) {
 				gen_add_audit_log(ZENCART_BULK_UPLOAD);
 				write_configure('MODULE_ZENCART_LAST_UPDATE', date('Y-m-d H:i:s'));
 			}
 	  	}catch(Exception $e) {
-	  		$messageStack->add($e->getMessage());
+	  		$messageStack->add($e->getMessage(), $e->getCode);
 		}
 	    break;
   	case 'sync':
 	  	try{
-	    	$upXML = new zencart();
+	    	$upXML = new \zencart\classes\zencart();
 			if ($upXML->submitXML(0, 'product_sync')) gen_add_audit_log(ZENCART_PRODUCT_SYNC);
 		}catch(Exception $e) {
-	  		$messageStack->add($e->getMessage());
+	  		$messageStack->add($e->getMessage(), $e->getCode);
 		}
 		break;
   	case 'confirm':
 	  	try{
-		    $upXML = new zencart();
+		    $upXML = new \zencart\classes\zencart();
 			$upXML->post_date = $ship_date;
 			if ($upXML->submitXML(0, 'confirm')) gen_add_audit_log(ZENCART_SHIP_CONFIRM, $ship_date);
 		}catch(Exception $e) {
-	  		$messageStack->add($e->getMessage());
+	  		$messageStack->add($e->getMessage(), $e->getCode);
 		}
 	    break;
   	default:

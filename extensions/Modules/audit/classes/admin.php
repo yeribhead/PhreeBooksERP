@@ -20,8 +20,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/classes/admin.php
 //
-namespace audit;
-class admin extends \core\admin {
+namespace audit\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.0,

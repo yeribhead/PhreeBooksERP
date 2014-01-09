@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/doc_ctl/classes/admin.php
 //
-namespace doc_ctl;
-class admin extends \core\admin {
+namespace doc_ctl\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',

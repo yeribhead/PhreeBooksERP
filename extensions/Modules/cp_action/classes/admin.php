@@ -17,8 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/cp_action/classes/admin.php
 //
-namespace cp_action;
-class admin extends \core\admin {
+namespace cp_action\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly

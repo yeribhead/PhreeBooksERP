@@ -24,7 +24,7 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $processed   = false;
-$fields		 = new \assets\fields();
+$fields		 = new \assets\classes\fields();
 $acquisition_date = isset($_POST['acquisition_date']) ? gen_db_date($_POST['acquisition_date']) : '';
 $maintenance_date = isset($_POST['maintenance_date']) ? gen_db_date($_POST['maintenance_date']) : '';
 $terminal_date    = isset($_POST['terminal_date'])    ? gen_db_date($_POST['terminal_date'])    : '';
@@ -182,7 +182,7 @@ switch ($_REQUEST['action']) {
 		gen_add_audit_log(AESSETS_LOG_ASSETS . TEXT_UPDATE, $asset_id . ' - ' . $sql_data_array['description_short']);
 	} else if ($error == true) {
 		$_POST['id'] = $id;
-		$cInfo = new objectInfo($_POST);
+		$cInfo = new \core\classes\objectInfo($_POST);
 		$processed = true;
 	}
 	break;
@@ -230,7 +230,7 @@ switch ($_REQUEST['action']) {
 	$asset = $db->Execute($sql);
 	// load attachments
 	$attachments = $asset->fields['attachments'] ? unserialize($asset->fields['attachments']) : array();
-	$cInfo = new objectInfo($asset->fields);
+	$cInfo = new \core\classes\objectInfo($asset->fields);
 	break;
   case 'rename':
   	validate_security($security_level, 4); // security check
@@ -267,8 +267,7 @@ switch ($_REQUEST['action']) {
 	$imgID = db_prepare_input($_POST['rowSeq']);
 	$filename = 'assets_'.$cID.'_'.$imgID.'.zip';
 	if (file_exists(ASSETS_DIR_ATTACHMENTS . $filename)) {
-		require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-		$backup = new backup();
+		$backup = new \phreedom\classes\backup();
 		$backup->download(ASSETS_DIR_ATTACHMENTS, $filename, true);
 	}
 	die;
@@ -279,8 +278,7 @@ switch ($_REQUEST['action']) {
 	foreach ($attachments as $key => $value) {
 	  $filename = 'assets_'.$cID.'_'.$key.'.zip';
 	  if (file_exists(ASSETS_DIR_ATTACHMENTS . $filename)) {
-		require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-		$backup = new backup();
+		$backup = new \phreedom\classes\backup();
 		$backup->download(ASSETS_DIR_ATTACHMENTS, $filename, true);
 		die;
 	  }
@@ -370,11 +368,11 @@ switch ($_REQUEST['action']) {
 
     $query_raw    = "select SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." from ".TABLE_ASSETS." $search order by $disp_order, asset_id";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
     	$_REQUEST['list'] = $query_split->current_page_number;
 	    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-	    $query_split  = new splitPageResults($_REQUEST['list'], '');
+	    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     }
     history_save('assets');
     

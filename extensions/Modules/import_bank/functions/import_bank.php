@@ -18,8 +18,7 @@
 //
 function bank_import_csv($structure, $filename, $bank_gl_acct) {
   global $db, $messageStack;
-  include(DIR_FS_WORKING. 'classes/import_banking.php');
-  $bankimport = new impbanking();
+  $bankimport = new \import_bank\classes\import_banking();
   $data = file($_FILES[$filename]['tmp_name']);
   // read the header and build array
   if (sizeof($data) < 2) {

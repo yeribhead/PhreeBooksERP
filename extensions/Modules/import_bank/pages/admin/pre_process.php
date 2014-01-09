@@ -29,8 +29,8 @@ gen_pull_language($module);
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install = new \import_bank\admin();
-$kt      = new \import_bank\known_transactions();
+$install = new \import_bank\classes\admin();
+$kt      = new \import_bank\classes\known_transactions();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':

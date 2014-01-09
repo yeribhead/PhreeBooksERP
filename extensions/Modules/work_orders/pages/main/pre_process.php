@@ -213,7 +213,7 @@ switch ($_REQUEST['action']) {
 		require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 		define('JOURNAL_ID', 14); // Inventory Assemblies Journal
 		define('GL_TYPE', '');
-		$glEntry = new journal();
+		$glEntry = new \core\classes\journal();
 		$glEntry->id                  = '';
 		$glEntry->admin_id            = $_SESSION['admin_id'];
 		$glEntry->journal_id          = JOURNAL_ID;
@@ -391,11 +391,11 @@ switch ($_REQUEST['action']) {
     $query_raw = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " 
 	  from " . TABLE_WO_JOURNAL_MAIN . " m inner join " . TABLE_INVENTORY . " i on m.sku_id = i.id" . $search . " order by $disp_order, m.closed, m.id DESC";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
     	$_REQUEST['list'] = $query_split->current_page_number;
     	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    	$query_split      = new splitPageResults($_REQUEST['list'], '');
+    	$query_split      = new \core\classes\splitPageResults($_REQUEST['list'], '');
     }
     history_save('wo_main');
     

@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/translator/classes/admin.php
 //
-namespace translator;
-class admin extends \core\admin {
+namespace translator\classes;
+class admin extends \core\classes\admin {
 	
   function translator_admin() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly

@@ -21,7 +21,7 @@ $security_level = validate_user(SECURITY_CAPA_MGT);
 require_once(DIR_FS_WORKING . 'defaults.php');
 /**************   page specific initialization  *************************/
 $error         = false;
-$cInfo         = new objectInfo();
+$cInfo         = new \core\classes\objectInfo();
 $creation_date = $_POST['creation_date'] ? gen_db_date($_POST['creation_date']) : date('Y-m-d');
 history_filter();
 /***************   hook for custom actions  ***************************/
@@ -104,7 +104,7 @@ switch ($_REQUEST['action']) {
   case 'edit':
     $id = db_prepare_input($_POST['rowSeq']);
 	$result = $db->Execute("select * from " . TABLE_CAPA . " where id = " . $id);
-	$cInfo = new objectInfo($result->fields);
+	$cInfo = new \core\classes\objectInfo($result->fields);
 	break;
 
   case 'delete':
@@ -255,11 +255,11 @@ switch ($_REQUEST['action']) {
 
     $query_raw    = "select SQL_CALC_FOUND_ROWS ".implode(', ', $field_list)." from ".TABLE_CAPA." $search order by $disp_order, capa_num";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
 	if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
 	   	$_REQUEST['list'] = $query_split->current_page_number;
 		$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-		$query_split      = new splitPageResults($_REQUEST['list'], '');
+		$query_split      = new \core\classes\splitPageResults($_REQUEST['list'], '');
 	}
 	history_save();
     define('PAGE_TITLE', BOX_CAPA_MAINTAIN);

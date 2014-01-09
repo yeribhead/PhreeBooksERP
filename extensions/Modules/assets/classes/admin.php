@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/assets/classes/admin.php
 //
-namespace assets; 
-class admin extends \core\admin {
+namespace assets\classes; 
+class admin extends \core\classes\admin {
 
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly

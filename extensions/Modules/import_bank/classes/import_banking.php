@@ -16,11 +16,11 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/classes/import_bank.php
 //
-namespace import_bank;
+namespace import_bank\classes;
 gen_pull_language('phreebooks');
 require(DIR_FS_MODULES  . 'phreebooks/functions/phreebooks.php');
 
-class import_banking extends \phreebooks\journal {
+class import_banking extends \phreebooks\classes\journal {
 	protected $_questionposts = QUESTION_POSTS;
 	protected $_accounttype;
 	protected $_creditamount;

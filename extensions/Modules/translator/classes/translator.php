@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/classes/translator.php
 //
-
+namespace translator\classes;
 class translator {
 	function __construct() {
 		global $db;

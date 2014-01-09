@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/assets/classes/tabs.php
 //
-namespace assets;
-class tabs extends \core\tabs{
+namespace assets\classes;
+class tabs extends \core\classes\tabs{
     public  $help_path   = '07.04.04';
     public  $module      = 'assets';
     public  $title       = '';

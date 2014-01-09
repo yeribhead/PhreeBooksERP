@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/assets/classes/fields.php
 //
-namespace assets;
-class fields extends \core\fields{
+namespace assets\classes;
+class fields extends \core\classes\fields{
 	public  $help_path   = '07.04.05';
 	public  $title       = '';
 	public  $module      = 'assets';

@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/work_orders/classes/admin.php
 //
-namespace work_orders;
-class admin extends \core\admin {
+namespace work_orders\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',

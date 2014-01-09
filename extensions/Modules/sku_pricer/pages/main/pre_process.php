@@ -18,7 +18,6 @@
 //
 $security_level = validate_user(SECURITY_ID_SKU_PRICER);
 /**************  include page specific files    *********************/
-require_once(DIR_FS_WORKING . 'classes/sku_pricer.php');
 /**************   page specific initialization  *************************/
 $upload_name = 'file_name';
 /***************   Act on the action request   *************************/
@@ -31,7 +30,7 @@ switch ($_REQUEST['action']) {
 	  break;
 	} else {
 	  $lines_array = file($_FILES[$upload_name]['tmp_name']);
-	  $post_pay = new sku_pricer();
+	  $post_pay = new \sku_pricer\classes\sku_pricer();
 	  $post_pay->processCSV($lines_array);
     }
 	break;

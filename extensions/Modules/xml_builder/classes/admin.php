@@ -17,8 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/xml_builder/classes/admin.php
 //
-namespace xml_builder;
-class admin extends \core\admin{
+namespace xml_builder\classes;
+class admin extends \core\classes\admin{
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',

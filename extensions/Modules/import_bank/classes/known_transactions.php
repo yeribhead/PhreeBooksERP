@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/classes/known_transactions.php
 //
-namespace import_bank;
+namespace import_bank\classes;
 class known_transactions {
 	public $code                    = 'known_transactions';
     public $db_table     			= TABLE_IMPORT_BANK;

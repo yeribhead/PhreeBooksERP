@@ -49,7 +49,7 @@ switch ($_REQUEST['action']) {
 	  	}
 	  	libxml_use_internal_errors(true);
 	  	$dates = gen_get_dates($date_from);
-	  	$dom = new DOMDocument('1.0', 'UTF-8');
+	  	$dom = new \DOMDocument('1.0', 'UTF-8');
 	  	$dom->loadXML($output);
 	  	$temp = $dom->schemaValidate(DIR_FS_MODULES.'audit/AuditfileFinancieelVersie3.1.xsd');
 $temp = true;

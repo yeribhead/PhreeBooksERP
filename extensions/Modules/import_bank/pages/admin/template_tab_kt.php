@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/import_bank/pages/admin/template_tab_kt.php
 //
-$kt_toolbar = new toolbar();
+$kt_toolbar = new \core\classes\toolbar();
 $kt_toolbar->icon_list['cancel']['show'] = false;
 $kt_toolbar->icon_list['open']['show']   = false;
 $kt_toolbar->icon_list['delete']['show'] = false;

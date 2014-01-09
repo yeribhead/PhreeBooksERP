@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/zencart/classes/zencart.php
 //
-namespace zencart;
+namespace zencart\classes;
 class zencart {
   var $arrOutput = array();
   var $resParser;

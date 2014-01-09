@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/sku_pricer/classes/admin.php
 //
-namespace sku_pricer;
-class admin extends \core\admin {
+namespace sku_pricer\classes;
+class admin extends \core\classes\admin {
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
