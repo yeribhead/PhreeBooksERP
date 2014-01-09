@@ -72,7 +72,7 @@ set_error_handler("PhreebooksErrorHandler");
 set_exception_handler('PhreebooksExceptionHandler');
 spl_autoload_register('Phreebooks_autoloader', true, false);
 // pull in the custom language over-rides for this module/page
-$custom_path = DIR_FS_MODULES . $module . '/custom/pages/' . $page . '/extra_defines.php';
+$custom_path = DIR_FS_MODULES . "$module/custom/pages/$page/extra_defines.php";
 if (file_exists($custom_path)) { include($custom_path); }
 gen_pull_language($module);
 define('DIR_WS_THEMES', 'themes/' . (isset($_SESSION['admin_prefs']['theme']) ? $_SESSION['admin_prefs']['theme'] : DEFAULT_THEME) . '/');
@@ -81,8 +81,8 @@ define('MY_MENU',  isset($_SESSION['admin_prefs']['menu'])  ?$_SESSION['admin_pr
 define('DIR_WS_IMAGES', DIR_WS_THEMES . 'images/');
 if (file_exists(DIR_WS_THEMES . 'icons/')) { define('DIR_WS_ICONS',  DIR_WS_THEMES . 'icons/'); }
 else { define('DIR_WS_ICONS', 'themes/default/icons/'); } // use default
-$messageStack = new messageStack;
-$toolbar      = new toolbar;
+$messageStack = new \core\classes\messageStack;
+$toolbar      = new \core\classes\toolbar;
 // determine what company to connect to
 if ($_REQUEST['action']=="validate") $_SESSION['company'] = $_POST['company'];
 if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR_FS_MY_FILES . $_SESSION['company'] . '/config.php')) {
@@ -124,12 +124,12 @@ if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR
     } 
   }
   // pull in the custom language over-rides for this module (to pre-define the standard language)
-  $path = DIR_FS_MODULES . $module . '/custom/pages/' . $page . '/extra_menus.php';
+  $path = DIR_FS_MODULES . "$module/custom/pages/$page/extra_menus.php";
   if (file_exists($path)) { include($path); }
-  $currencies = new currencies();
+  $currencies = new \core\classes\currencies();
 }
 $prefered_type = ENABLE_SSL_ADMIN == 'true' ? 'SSL' : 'NONSSL';
 if ($request_type <> $prefered_type) gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL')); // re-direct if SSL request not matching actual request
-if (core\user::is_validated() && !defined('DEFAULT_CURRENCY')) throw new Exception(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error'); // check for default currency defined
+if (\core\classes\user::is_validated() && !defined('DEFAULT_CURRENCY')) throw new Exception(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error'); // check for default currency defined
 
 ?>

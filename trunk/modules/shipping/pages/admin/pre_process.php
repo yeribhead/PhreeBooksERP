@@ -23,12 +23,10 @@ gen_pull_language('phreedom', 'admin');
 gen_pull_language('contacts');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/shipping.php');
-require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
 /**************   page specific initialization  *************************/
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new shipping_admin();
+$install    = new shipping\classes\admin();
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 8);
@@ -53,8 +51,8 @@ foreach ($contents as $choice) {
 switch ($_REQUEST['action']) {
   case 'install':
   	validate_security($security_level, 4);
-	require_once($method_dir . $method . '/' . $method . '.php');
-	$properties = new $method();
+	$shipping_method = "\shipping\methods\\$method\\$method";
+	$properties = new $shipping_method();
 	write_configure('MODULE_SHIPPING_' . strtoupper($method) . '_STATUS', '1');
 	foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
 	if (method_exists($properties, 'install')) $properties->install(); // handle special case install, db, files, etc
@@ -62,8 +60,8 @@ switch ($_REQUEST['action']) {
 	break;
   case 'remove';
   	validate_security($security_level, 4);
-  	require_once($method_dir . $method . '/' . $method . '.php');
-	$properties = new $method();
+	$shipping_method = "\shipping\methods\\$method\\$method";
+	$properties = new $shipping_method();
 	if (method_exists($properties, 'remove')) $properties->remove(); // handle special case removal, db, files, etc
 	foreach ($properties->keys() as $key) { // remove all of the keys from the configuration table
       $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = '" . $key['key'] . "'");
@@ -75,11 +73,11 @@ switch ($_REQUEST['action']) {
   	validate_security($security_level, 3);
     // foreach method if enabled, save info
 	if (sizeof($methods) > 0) foreach ($methods as $shipper) {
-	  if (defined('MODULE_SHIPPING_' . strtoupper($shipper) . '_STATUS')) {
-	    require_once($method_dir . $shipper . '/' . $shipper . '.php');
-	    $properties = new $shipper;
-	    $properties->update();
-	  }
+	  	if (defined('MODULE_SHIPPING_' . strtoupper($shipper) . '_STATUS')) {
+	   		$shipping_method = "\shipping\methods\\$method\\$method";
+			$properties = new $shipping_method();
+			$properties->update();
+	  	}
 	}
 	// save general tab
 	foreach ($install->keys as $key => $default) {
@@ -90,8 +88,8 @@ switch ($_REQUEST['action']) {
     break;
   case 'signup':
   	validate_security($security_level, 4);
-	require_once($method_dir . $method.'/'.$method.'.php');
-	$properties = new $method();
+	$shipping_method = "\shipping\methods\\$method\\$method";
+	$properties = new $shipping_method();
 	if (method_exists($properties, 'signup')) $properties->signup();
 //	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
@@ -102,7 +100,7 @@ switch ($_REQUEST['action']) {
   	$conv_type = db_prepare_input($_POST['conv_type']);
 	// set execution time limit to a large number to allow extra time 
 	if (ini_get('max_execution_time') < 20000) set_time_limit(20000);
-	$backup              = new backup;
+	$backup              = new \phreedom\classes\backup;
 	$backup->source_dir  = DIR_FS_MY_FILES . $_SESSION['company'].'/shipping/labels/'.$carrier.'/'.$fy_year.'/'.$fy_month.'/';
 	$backup->dest_dir    = DIR_FS_MY_FILES . 'backups/';
 	switch ($conv_type) {
@@ -127,7 +125,7 @@ switch ($_REQUEST['action']) {
 	$fy_month  = db_prepare_input($_POST['fy_month']);
 	$fy_year   = db_prepare_input($_POST['fy_year']);
   	$conv_type = db_prepare_input($_POST['conv_type']);
-	$backup    = new backup;
+	$backup    = new \phreedom\classes\backup;
 	$backup->source_dir  = DIR_FS_MY_FILES . $_SESSION['company'] . '/shipping/labels/' . $carrier . '/' . $fy_year . '/' . $fy_month . '/';
     if ($backup->delete_dir($backup->source_dir, $recursive = true)) $error = true;
 	if (!$error) gen_add_audit_log(GEN_FILE_DATA_CLEAN);

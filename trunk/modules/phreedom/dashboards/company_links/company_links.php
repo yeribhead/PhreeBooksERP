@@ -18,8 +18,8 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-
-class company_links extends ctl_panel {
+namespace phreedom\dashboards\company_links;
+class company_links extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'company_links';
 	public $description	 		= CP_COMPANY_LINKS_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_PHREEFORM;

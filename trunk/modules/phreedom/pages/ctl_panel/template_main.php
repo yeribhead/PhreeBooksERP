@@ -44,8 +44,8 @@ echo $toolbar->build_toolbar();
 $odd = true;
 foreach ($dashboards as $dashboard) {
 	load_method_language(DIR_FS_MODULES . $dashboard['module_id'] . '/dashboards/', $dashboard['dashboard_id']);
-	require_once        (DIR_FS_MODULES . $dashboard['module_id'] . '/dashboards/' . $dashboard['dashboard_id'] . '/' . $dashboard['dashboard_id'] . '.php');
-	$dashboard = new $dashboard['dashboard_id'];
+	$temp = "\\".$dashboard['module_id']."\dashboards\\".$dashboard['dashboard_id']."\\".$dashboard['dashboard_id'];
+	$dashboard = new $temp;
 	echo $dashboard->pre_install($odd, $my_profile);// returns nothing if user isn't valid.
 	if ($dashboard->valid_user) $odd = !$odd; //so only update if user is valid.
 } ?>

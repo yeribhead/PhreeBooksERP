@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/classes/install.php
 //
-namespace phreedom;
-class admin extends \core\admin {
+namespace phreedom\classes;
+class admin extends \core\classes\admin {
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
@@ -197,7 +197,7 @@ class admin extends \core\admin {
 	    // load the latest currency exchange rates
 	    if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
 			gen_pull_language('phreedom', 'admin');
-			$currency = new \phreedom\currency();
+			$currency = new \core\classes\currency();
 			$currency->btn_update();
 		}
 		// Fix for change to audit log for upgrade to R3.6 causes perpertual crashing when writing audit log
@@ -205,7 +205,7 @@ class admin extends \core\admin {
 		// load installed modules and initialize them
 		if (is_array($loaded_modules)) foreach ($loaded_modules as $module) {
 		  	if ($module == 'phreedom') continue; // skip this module
-		  	$install_class = "\\$module\admin";
+		  	$install_class = "\\$module\classes\admin";
 		  	$mod_init = new $install_class;
 		  	if (constant('MODULE_' . strtoupper($module) . '_STATUS') <> constant('MODULE_' . strtoupper($module) . '_VERSION')) {
 				// add any new constants

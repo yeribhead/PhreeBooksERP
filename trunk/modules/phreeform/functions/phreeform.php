@@ -18,7 +18,7 @@
 //
 
 function default_report() {
-  $report = new objectInfo();
+  $report = new \core\classes\objectInfo();
   $report->page->margin->top    = PF_DEFAULT_MARGIN;
   $report->page->margin->bottom = PF_DEFAULT_MARGIN;
   $report->page->margin->left   = PF_DEFAULT_MARGIN;
@@ -481,7 +481,7 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 	global $db, $messageStack, $FieldValues, $posted_currencies;
 	// Generate a form for each group element
 	$output = array();
-	$pdf    = new PDF();
+	$pdf    = new PDF();//@todo needs new location
 	foreach ($report->recordID as $formNum => $Fvalue) {
 	  $pdf->StartPageGroup();
 	  // find the single line data from the query for the current form page
@@ -489,7 +489,7 @@ function BuildPDF($report, $delivery_method = 'D') { // for forms only - PDF sty
 	  $FieldValues = array();
 	  if ($report->special_class) {
 	    $form_class   = $report->special_class;
-		$special_form = new $form_class();
+		$special_form = new $form_class();//@todo needs new location
 		$FieldValues  = $special_form->load_query_results($report->formbreakfield, $Fvalue);
 	  } else {
 		if (strlen($report->sqlField) > 0) {
@@ -646,7 +646,7 @@ function BuildSeq($report, $delivery_method = 'D') { // for forms only - Sequent
     $TrailingSQL = " from " . $report->sqlTable . " where " . ($report->sqlCrit ? $report->sqlCrit . " AND " : '') . prefixTables($report->formbreakfield) . " = '" . $Fvalue . "'";
     if ($report->special_class) {
 	  $form_class   = $report->special_class;
-	  $special_form = new $form_class();
+	  $special_form = new $form_class();//@todo needs new location
 	  $FieldValues  = $special_form->load_query_results($report->formbreakfield, $Fvalue);
     } else {
 	  $result       = $db->Execute("select " . $report->sqlField . $TrailingSQL);
@@ -1001,7 +1001,7 @@ function BuildDataArray($sql, $report) { // for reports only
       if (!$path = find_special_class($report->special_class)) return false;
 	  load_special_language($path, $report->special_class);
 	  require_once($path . '/classes/' . $report->special_class . '.php');
-	  $sp_report = new $report->special_class;
+	  $sp_report = new $report->special_class; //@todo needs new location
 	  return $sp_report->load_report_data($report, $Seq, $sql, $GrpField); // the special report formats all of the data, we're done
 	}
 
@@ -1071,7 +1071,7 @@ function ReplaceNonAllowedCharacters($input) {
 
 function GeneratePDFFile($Data, $report, $delivery_method = 'D') { // for pdf reports only
 	require_once(DIR_FS_MODULES . 'phreeform/classes/report_generator.php');
-	$pdf = new PDF();
+	$pdf = new PDF(); // @todo needs new location
 	$pdf->ReportTable($Data);
 	$ReportName = ReplaceNonAllowedCharacters($report->title) . '.pdf';
 	if ($delivery_method == 'S') return array('filename' => $ReportName, 'pdf' => $pdf->Output($ReportName, 'S'));
@@ -1086,7 +1086,7 @@ function GeneratePDFFile($Data, $report, $delivery_method = 'D') { // for pdf re
 
 function GenerateHTMLFile($Data, $report, $delivery_method = 'D') { // for html reports only
 	require_once(DIR_FS_MODULES . 'phreeform/classes/html_generator.php');
-	$html        = new HTML();
+	$html        = new HTML();//@todo needs new location
 	$html->title = ReplaceNonAllowedCharacters($report->title);
 	$html->ReportTable($Data);
 	$ReportName = ReplaceNonAllowedCharacters($report->title) . '.html';
@@ -1220,7 +1220,7 @@ function CreateSpecialDropDown($report) {
     if (!$path = find_special_class($report->special_class)) return false;
     load_special_language($path, $report->special_class);
     require_once($path . '/classes/' . $report->special_class . '.php');
-    $sp_report = new $report->special_class;
+    $sp_report = new $report->special_class; //@todo needs new location
     return $sp_report->build_selection_dropdown();
   }
   return CreateFieldArray($report);
@@ -1231,7 +1231,7 @@ function CreateFieldTblDropDown($report) {
     if (!$path = find_special_class($report->special_class)) return false;
     load_special_language($path, $report->special_class);
     require_once($path . '/classes/' . $report->special_class . '.php');
-    $sp_report = new $report->special_class;
+    $sp_report = new $report->special_class; //@todo need new location
     return $sp_report->build_table_drop_down();
   }
   return CreateFieldArray($report);

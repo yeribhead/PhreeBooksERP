@@ -20,8 +20,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/dashboards/todays_audit_log/todays_audit_log.php
 //
-
-class todays_audit_log extends ctl_panel {
+namespace phreedom\dashboards\todays_audit_log;
+class todays_audit_log extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'todays_audit_log';
 	public $description	 		= CP_TODAYS_AUDIT_LOG_DESCRIPTION;
 	public $max_length   		= 50;

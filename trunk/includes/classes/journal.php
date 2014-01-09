@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/classes/journal.php
 //
-namespace includes\classes;
+namespace core\classes;
 class journal {
   public function __construct($id = 0) {
 	global $db, $messageStack;

@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreeform/classes/admin.php
 //
-namespace phreeform;
-class admin extends \core\admin {
+namespace phreeform\classes;
+class admin extends \core\classes\admin {
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -63,7 +63,7 @@ class admin extends \core\admin {
 	global $loaded_modules;
 	if (is_array($loaded_modules)) foreach ($loaded_modules as $method) {
 	  gen_pull_language($method, 'admin');
-	  $cName    = $method . '\admin';
+	  $cName    = "\\$method\classes\admin";
 	  $mInstall = new $cName();
 	  $mInstall->load_reports($method);
 	}

@@ -21,21 +21,14 @@ $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-require_once(DIR_FS_WORKING . 'classes/chart_of_accounts.php');
-require_once(DIR_FS_WORKING . 'classes/tax_auths.php');
-require_once(DIR_FS_WORKING . 'classes/tax_auths_vend.php');
-require_once(DIR_FS_WORKING . 'classes/tax_rates.php');
-require_once(DIR_FS_WORKING . 'classes/tax_rates_vend.php');
-
 /**************   page specific initialization  *************************/
 $error  = false; 
-$install           = new phreebooks_admin();
-$chart_of_accounts = new chart_of_accounts();
-$tax_auths         = new tax_auths();
-$tax_auths_vend    = new tax_auths_vend();
-$tax_rates         = new tax_rates();
-$tax_rates_vend    = new tax_rates_vend();
+$install           = new \phreebooks\classes\admin();
+$chart_of_accounts = new \phreebooks\classes\chart_of_accounts();
+$tax_auths         = new \phreebooks\classes\tax_auths();
+$tax_auths_vend    = new \phreebooks\classes\tax_auths_vend();
+$tax_rates         = new \phreebooks\classes\tax_rates();
+$tax_rates_vend    = new \phreebooks\classes\tax_rates_vend();
 
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {

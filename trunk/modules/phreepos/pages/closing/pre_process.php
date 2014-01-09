@@ -22,9 +22,6 @@ define('JOURNAL_ID',2);
 gen_pull_language('phreebooks');
 require_once(DIR_FS_WORKING . 'classes/tills.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/banking.php');
-
 /**************   page specific initialization  *************************/
 $error			 = false;
 $till_known 	 = false;
@@ -34,8 +31,8 @@ $all_items       = array();
 $gl_types 		 = array('pmt','ttl','tpm');
 $post_date 		 = ($_POST['post_date']) ? gen_db_date($_POST['post_date']) : '';
 $payment_modules = load_all_methods('payment');
-$tills           = new tills();
-$glEntry		 = new journal();
+$tills           = new \phreepos\classes\tills();
+$glEntry		 = new \core\classes\journal();
 if(isset($_GET['till_id'])){
 	$tills->get_till_info(db_prepare_input($_GET['till_id']));
 	$post_date 		 = gen_db_date(gen_locale_date(date('Y-m-d')));
@@ -50,7 +47,8 @@ if(isset($_GET['till_id'])){
 if($post_date) $period = gen_calculate_period($post_date);
 foreach ($payment_modules as $pmt_class) {
 	$class  = $pmt_class['id'];
-	$$class = new $class;
+	$pay_meth = "\payment\methods\\$class\\$class";
+	$$class = new $pay_meth;
 }
 $glEntry->currencies_code  = DEFAULT_CURRENCY;
 $glEntry->currencies_value = 1;

@@ -43,21 +43,11 @@ switch ($type) {
 gen_pull_language('phreebooks');
 gen_pull_language('contacts');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/banking.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/orders.php');
-//if (file_exists(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php')) { 
-//	require_once(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php') ; 
-//}else{
-//    require_once(DIR_FS_MODULES . 'phreepos/classes/journal/journal_'.JOURNAL_ID.'.php'); // is needed here for the defining of the class and retriving the security_token
-//}
-//$class = 'journal_'.JOURNAL_ID;
 /**************   page specific initialization  *************************/
 $error            = false;
 $post_success     = false;
 $default_dep_acct = JOURNAL_ID == 18 ? AR_DEF_DEPOSIT_ACCT : AP_DEF_DEPOSIT_ACCT;
-//$order          = new $class();
-$order            = new banking;
+$order            = new \phreebooks\classes\banking;
 $gl_acct_id       = isset($_POST['gl_acct_id'])          ? db_prepare_input($_POST['gl_acct_id'])          : $order->gl_acct_id;
 $next_inv_ref     = isset($_POST['purchase_invoice_id']) ? db_prepare_input($_POST['purchase_invoice_id']) : $order->purchase_invoice_id;
 $post_date        = isset($_POST['post_date'])           ? gen_db_date($_POST['post_date'])                : date('Y-m-d');
@@ -70,14 +60,7 @@ if (!$period) { // bad post_date was submitted
 $order->gl_acct_id = $gl_acct_id;
 $order->acct_1     = DEF_DEP_GL_ACCT;
 // load available payment modules, receipts only
-$payment_modules   = array();
-if (JOURNAL_ID == 18) {
-  $payment_modules = load_all_methods('payment');
-  foreach ($payment_modules as $pmt_class) {
-	$class  = $pmt_class['id'];
-	$$class = new $class;
-  }
-}
+$payment_modules = return_all_methods('payment', true);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/deposit/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -128,8 +111,9 @@ switch ($_REQUEST['action']) {
 	// load the payments
 	switch (JOURNAL_ID) {
 	  case 18:
-	    $payment_module = $order->shipper_code; 
-	    $processor      = new $payment_module;
+	    $class = $order->shipper_code; 
+	    $payment_module = "\payment\methods\\$class\\$class\\";
+	    $processor      = new $payment_module; 
 	    if ($$payment_module->pre_confirmation_check()) $error = true;	
 		$pmt_meth = db_prepare_input($_POST['shipper_code']);
 		$pmt_amt  = $currencies->clean_value(db_prepare_input($_POST['pmt_' . $x]), $order->currencies_code) / $order->currencies_value;
@@ -162,7 +146,7 @@ switch ($_REQUEST['action']) {
 	if (!$error && $post_success = $order->post_ordr($_REQUEST['action'])) {
 	  $oID = $order->id; // save id for printing
 	  // now create a credit memo to show a credit on customers account
-	  $order                      = new orders();
+	  $order                      = new \phreebooks\classes\orders();
 	  $order->bill_short_name     = db_prepare_input($_POST['search']);
 	  $order->bill_acct_id        = db_prepare_input($_POST['bill_acct_id']);
 	  $order->bill_address_id     = db_prepare_input($_POST['bill_address_id']);
@@ -194,7 +178,7 @@ switch ($_REQUEST['action']) {
 	  );
 	  $post_credit = $order->post_ordr($_REQUEST['action']);
 	  if (!$post_credit) {
-		$order            = new objectInfo($_POST);
+		$order            = new \core\classes\objectInfo($_POST);
 		$order->post_date = gen_db_date($_POST['post_date']); // fix the date to original format
 		$order->id        = ($_POST['id'] <> '') ? $_POST['id'] : ''; // will be null unless opening an existing purchase/receive
 		$messageStack->add(GL_ERROR_NO_POST, 'error');
@@ -205,7 +189,7 @@ switch ($_REQUEST['action']) {
 		gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  } // else print or print_update, fall through and load javascript to call form_popup and clear form
 	} else { // else there was a post error, display and re-display form
-	  $order = new objectInfo($_POST);
+	  $order = new \core\classes\objectInfo($_POST);
 	  $order->post_date = gen_db_date($_POST['post_date']); // fix the date to original format
 	  $order->id = ($_POST['id'] <> '') ? $_POST['id'] : ''; // will be null unless opening an existing purchase/receive
 	  $messageStack->add(GL_ERROR_NO_POST, 'error');

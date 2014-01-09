@@ -18,6 +18,7 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace shipping\methods\flat;
 define('MODULE_SHIPPING_FLAT_VERSION','3.2');
 
 class flat {

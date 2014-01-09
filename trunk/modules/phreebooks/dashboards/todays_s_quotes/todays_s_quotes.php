@@ -20,8 +20,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/dashboards/todays_s_quotes/todays_s_quotes.php
 //
-
-class todays_s_quotes extends ctl_panel {
+namespace phreebooks\dashboards\todays_s_quotes;
+class todays_s_quotes extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'todays_s_quotes';
 	public $description	 		= CP_TODAYS_S_QUOTES_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_SALES_QUOTE;

@@ -17,8 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/fields.php
 //
-namespace contacts;
-class fields extends \core\fields{
+namespace contacts\classes;
+class fields extends \core\classes\fields{
 	public  $help_path   = '';
 	public  $title       = '';
 	public  $module      = 'contacts';

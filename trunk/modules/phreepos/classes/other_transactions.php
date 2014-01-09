@@ -105,7 +105,7 @@ class other_transactions {
         	$result = $db->Execute($sql);
         	foreach ($result->fields as $key => $value) $this->$key = $value;
 		}
-		$tills = new tills();
+		$tills = new \phreepos\classes\tills();
 		$output = "<script type='text/javascript'>
 						$(document).ready(function(){
 							changeOfType();

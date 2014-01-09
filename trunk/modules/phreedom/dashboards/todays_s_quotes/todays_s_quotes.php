@@ -21,10 +21,10 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/dashboards/todays_s_quotes/todays_s_quotes.php
 //
+namespace phreedom\dashboards\todays_s_quotes;
+class todays_s_quotes extends \core\classes\ctl_panel {
 
-class todays_s_quotes extends ctl_panel {
-
-  function todays_s_quotes() {
+  function __construct() {
     $this->max_length = 20;
   }
 

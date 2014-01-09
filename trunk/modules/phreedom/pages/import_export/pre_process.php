@@ -23,8 +23,6 @@ gen_pull_language('phreebooks');
 gen_pull_language('phreebooks', 'admin');
 gen_pull_language('contacts');
 require_once(DIR_FS_WORKING . 'defaults.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-require_once(DIR_FS_WORKING . 'classes/beg_balances_imp.php');
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
@@ -47,7 +45,7 @@ if (substr($_REQUEST['action'], 0, 3) == 'go_') {
   $_REQUEST['action']   = 'export_table';
 }
 $coa_types = load_coa_types();
-$glEntry   = new journal();
+$glEntry   = new \core\classes\journal();
 $glEntry->journal_id = JOURNAL_ID;
 // retrieve the original beginning_balances
 $sql = "select c.id, beginning_balance, c.description, c.account_type
@@ -237,7 +235,7 @@ switch ($_REQUEST['action']) {
 	  $error  = true;
 	  break;
 	}
-	$so_po = new beg_bal_import();
+	$so_po = new \phreedom\classes\beg_bal_import();
 	switch ($_REQUEST['action']) {
 	  case 'import_inv': if (!$so_po->processInventory($upload_name)) $error = true; break;
 	  case 'import_po':

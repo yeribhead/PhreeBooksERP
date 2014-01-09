@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/orders.php
 //
-
-class orders extends journal {
+namespace phreebooks\classes;
+class orders extends \core\classes\journal {
  var $closed = '0';
 	
   function __construct() {

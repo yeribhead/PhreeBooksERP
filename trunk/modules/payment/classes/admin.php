@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/payment/classes/admin.php
 //
-namespace payment;
-class admin extends \core\admin {
+namespace payment\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'   => 3.71,
@@ -30,11 +30,11 @@ class admin extends \core\admin {
 	$error = false;
 	$methods = array('cod','moneyorder'); // pick a couple of modules to install
 	foreach ($methods as $method) {
-	  require_once(DIR_FS_ADMIN . 'modules/' . $module . '/methods/' . $method . '/' . $method . '.php');
-	  $properties = new $method();
-	  write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
-	  foreach ($properties->key as $key) write_configure($key['key'], $key['default']);
-	  if (method_exists($properties, 'install')) $properties->install();
+		$temp = "\payment\methods\\$method\\$method\\";
+	  	$properties = new $temp;
+	  	write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
+	  	foreach ($properties->key as $key) write_configure($key['key'], $key['default']);
+	  	if (method_exists($properties, 'install')) $properties->install();
 	}
     return $error;
   }
@@ -53,8 +53,8 @@ class admin extends \core\admin {
 	  }
 	  $dir->close();//update keys
 	  foreach ($methods as $method) {
-	    require_once(DIR_FS_ADMIN . 'modules/' . $module . '/methods/' . $method . '/' . $method . '.php');
-	    $properties = new $method();
+	    $temp = "\payment\methods\\$method\\$method\\";
+	    $properties = new $temp;
 	    foreach ($properties->keys() as $key) {
 	    	if(!defined($key['key'])) write_configure($key['key'], $key['default']);
 	    }
@@ -80,8 +80,8 @@ class admin extends \core\admin {
 	  }
 	  $dir->close();
 	  foreach ($methods as $method) {
-	    require_once(DIR_FS_ADMIN . 'modules/' . $module . '/methods/' . $method . '/' . $method . '.php');
-	    $properties = new $method();
+	    $temp = "\payment\methods\\$method\\$method\\";
+	    $properties = new $temp;
 	    remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS');
 	    foreach ($properties->keys() as $key) remove_configure($key['key']);
 	    if (method_exists($properties, 'remove')) $properties->remove();

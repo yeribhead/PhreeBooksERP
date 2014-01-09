@@ -33,8 +33,8 @@
 	  <?php 
   if (sizeof($methods) > 0) foreach ($methods as $method) {
   	// load the method properties
-	require_once($method_dir . $method . '/' . $method . '.php');
-	$properties = new $method;
+	$temp = "\payment\methods\\$method\\$method\\";
+	$properties = new $temp;
 	
     $installed = defined('MODULE_PAYMENT_' . strtoupper($properties->code) . '_STATUS');
 	$bkgnd = $installed ? ' class="ui-state-active"' : '';

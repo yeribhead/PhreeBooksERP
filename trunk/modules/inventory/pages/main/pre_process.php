@@ -26,7 +26,7 @@ gen_pull_language('inventory','filter');
 $error       = false;
 $processed   = false;
 $criteria    = array();
-$fields		 = new \inventory\fields();
+$fields		 = new \inventory\classes\fields();
 $type        = isset($_REQUEST['inventory_type']) ? $_REQUEST['inventory_type'] : null; // default to stock item
 history_filter('inventory');
 $first_entry = isset($_GET['add']) ? true : false;
@@ -41,7 +41,7 @@ if (is_null($type)){
 	if ($result->RecordCount()>0) $type = $result->fields['inventory_type'];
 	else $type ='si';
 } 
-$temp = '\inventory\type\\'. $type;
+$temp = '\inventory\classes\type\\'. $type;
 $cInfo = new $temp;
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
@@ -92,8 +92,7 @@ switch ($_REQUEST['action']) {
   	    $imgID = db_prepare_input($_POST['rowSeq']);
 	    $filename = 'inventory_'.$cID.'_'.$imgID.'.zip';
 	    if (file_exists(INVENTORY_DIR_ATTACHMENTS . $filename)) {
-	       require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-	       $backup = new backup();
+	       $backup = new \phreedom\classes\backup();
 	       $backup->download(INVENTORY_DIR_ATTACHMENTS, $filename, true);
 	    }
         die;
@@ -105,7 +104,7 @@ switch ($_REQUEST['action']) {
 		   $filename = 'inventory_'.$cID.'_'.$key.'.zip';
 		   if (file_exists(INVENTORY_DIR_ATTACHMENTS . $filename)) {
 		      require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-		      $backup = new backup();
+		      $backup = new \phreedom\classes\backup();
 		      $backup->download(INVENTORY_DIR_ATTACHMENTS, $filename, true);
 		      die;
 		   }
@@ -238,11 +237,11 @@ switch ($_REQUEST['action']) {
     $query_raw    = "SELECT SQL_CALC_FOUND_ROWS DISTINCT " . implode(', ', $field_list)  . " from " . TABLE_INVENTORY ." a LEFT JOIN " . TABLE_INVENTORY_PURCHASE . " p on a.sku = p.sku ". $search . " order by $disp_order ";
     $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
     // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
     	$_REQUEST['list'] = $query_split->current_page_number;
     	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    	$query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     }
 	history_save('inventory');
     //building array's for filter dropdown selection

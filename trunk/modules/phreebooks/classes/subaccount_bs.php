@@ -14,9 +14,9 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreeform/custom/classes/subaccount_bs.php
+//  Path: /modules/phreebooks/classes/subaccount_bs.php
 //
-
+namespace phreebooks\classes;
 // this file contains special function calls to generate the data array needed to build reports not possible
 // with the current reportbuilder structure.
 class subaccount_bs {
@@ -44,7 +44,7 @@ class subaccount_bs {
 	$this->fill_bal_sheet($balance);
 	// build the output data
 	$this->bal_sheet_data = array();
-	$net_income = new income_statement();
+	$net_income = new \phreebooks\classes\income_statement();
 	$net_income->load_report_data($report, $period); // retrieve and add net income value
 	$net_income_entry = array(
 	    'id'              => '0',

@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/classes/tabs.php
 //
-namespace core;
+namespace core\classes;
 class tabs {
     public  $help_path   = '';
     public  $module      = '';

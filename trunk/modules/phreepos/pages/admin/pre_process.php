@@ -22,9 +22,9 @@ gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$install = new \phreepos\admin();
-$tills   = new \phreepos\tills();
-$trans	 = new \phreepos\other_transactions();
+$install = new \phreepos\classes\admin();
+$tills   = new \phreepos\classes\tills();
+$trans	 = new \phreepos\classes\other_transactions();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save': 

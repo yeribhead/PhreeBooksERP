@@ -215,7 +215,7 @@ echo $hidden_fields;
   </applet>
 <div id="popupPayment">
 <?php 
-$SeccondToolbar      = new toolbar;
+$SeccondToolbar      = new \core\classes\toolbar;
 $SeccondToolbar->icon_list['cancel']['params'] = 'onclick="disablePopup()"';
 $SeccondToolbar->icon_list['open']['show']     = false;
 $SeccondToolbar->icon_list['save']['params']   = 'onclick="SavePayment(\'save\')"';

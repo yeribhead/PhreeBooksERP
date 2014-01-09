@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/classes/backup.php
 //
-namespace phreedom;
+namespace phreedom\classes;
 define('lnbr', "\n");
 
 class backup {
@@ -110,7 +110,7 @@ class backup {
     global $messageStack;
     $error = false;
 	if (!class_exists('ZipArchive')) return $messageStack->add(GEN_BACKUP_NO_ZIP_CLASS, 'error');
-	$zip = new ZipArchive;
+	$zip = new \ZipArchive;
 	$res = $zip->open($this->dest_dir . $this->dest_file, ZipArchive::CREATE);
 	if ($res !== true) return $messageStack->add(GEN_BACKUP_FILE_ERROR . $this->dest_dir, 'error');
 	if ($type == 'file') {
@@ -137,7 +137,7 @@ class backup {
     $error = false;
     if (!$dest_path) $dest_path = $this->dest_dir;
 	if (!file_exists($file)) $error = true;
-	$zip = new ZipArchive;
+	$zip = new \ZipArchive;
     $zip->open($file);
     $zip->extractTo($dest_path);
     $zip->close();

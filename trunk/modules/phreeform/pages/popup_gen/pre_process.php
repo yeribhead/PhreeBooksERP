@@ -151,7 +151,7 @@ if (!$error) switch ($_REQUEST['action']) {
 	  // read the field listings
 	  $report->fieldlist = array();
 	  if ($_POST['fld_fld']) foreach ($_POST['fld_fld'] as $key => $value) {
-	    $report->fieldlist[] = new objectInfo(array(
+	    $report->fieldlist[] = new \core\classes\objectInfo(array(
 	      'fieldname'   => db_prepare_input($_POST['fld_fld'][$key]),
 	      'description' => db_prepare_input($_POST['fld_desc'][$key]),
 	      'visible'     => db_prepare_input($_POST['fld_vis'][$key]),
@@ -165,7 +165,7 @@ if (!$error) switch ($_REQUEST['action']) {
 	  $i = 0;
 	  while(true) {
 	    if (!isset($_POST['field_' . $i])) break;
-	    $report->fieldlist[$_POST['seq_' . $i]] = new objectInfo(
+	    $report->fieldlist[$_POST['seq_' . $i]] = new \core\classes\objectInfo(
 		  array(
 		    'fieldname'   => $_POST['field_' . $i],
 		    'description' => $_POST['desc_' . $i],

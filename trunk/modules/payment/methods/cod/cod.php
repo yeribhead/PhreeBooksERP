@@ -14,7 +14,7 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/payment/methods/cod.php
+//  Path: /modules/payment/methods/cod/cod.php
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control

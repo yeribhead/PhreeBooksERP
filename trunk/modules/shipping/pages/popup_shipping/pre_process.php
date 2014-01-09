@@ -23,10 +23,9 @@ $security_level = validate_user(0, true);
 gen_pull_language('contacts');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/shipping.php');
-require_once(DIR_FS_WORKING . 'classes/shipping.php');
 /**************   page specific initialization  *************************/
 $error       = false;
-$pkg         = new shipment();
+$pkg         = new \shipping\classes\shipment();
 $methods     = array();
 $files       = scandir(DEFAULT_MOD_DIR);
 foreach ($files as $choice) {
@@ -62,8 +61,8 @@ switch ($_REQUEST['action']) {
 	$rates = array();
 	foreach ($methods as $method) {
 	  if (isset($_POST['ship_method_' . $method])) {
-		require_once(DEFAULT_MOD_DIR . $method . '/' . $method . '.php');
-		$subject = new $method;
+		$shipping_method = "\shipping\methods\\$method\\$method";
+		$subject = new $shipping_method();
 		$result = $subject->quote($pkg); // will return false if there was an error
 		if (is_array($result)) {
 		  $rates = array_merge_recursive($result, $rates);

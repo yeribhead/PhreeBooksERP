@@ -461,7 +461,7 @@ function load_cash_acct_balance($post_date, $gl_acct_id, $period) {
 	  $cnt = 0;
 	  $db->transStart();
 	  while (!$result->EOF) {
-	    $gl_entry = new journal($result->fields['id']);
+	    $gl_entry = new \core\classes\journal($result->fields['id']);
 	    $gl_entry->remove_cogs_rows(); // they will be regenerated during the re-post
 	    if (!$gl_entry->Post('edit', true)) {
 		  $db->transRollback();

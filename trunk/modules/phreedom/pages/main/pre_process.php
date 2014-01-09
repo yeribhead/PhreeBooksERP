@@ -56,7 +56,7 @@ switch ($_REQUEST['action']) {
 			setcookie('pb_company' , $admin_company,  $cookie_exp);
 			setcookie('pb_language', $admin_language, $cookie_exp);
 			// load init functions for each module and execute
-			$phreedom = new \phreedom\admin(); 
+			$phreedom = new \phreedom\classes\admin(); 
 			if (MODULE_PHREEDOM_STATUS <> MODULE_PHREEDOM_VERSION) $phreedom->update('phreedom');
 			$phreedom->initialize($loaded_modules);
 			if (defined('TABLE_CONTACTS')) {
@@ -124,8 +124,8 @@ switch ($_REQUEST['action']) {
 		  if ($module_name <> '') break;
 		}
 	    load_method_language(DIR_FS_MODULES . "$module_id/dashboards/$dashboard_id");
-		require_once (DIR_FS_MODULES . "$module_id/dashboards/$dashboard_id/$dashboard_id.php");
-	    $new_box 				= new $dashboard_id;
+		$temp = "\\$module_id\dashboards\\$dashboard_id\\$dashboard_id";
+	    $new_box 				= new $temp;
 		$new_box->dashboard_id 	= $dashboard_id;
 		$new_box->menu_id      	= $menu_id;
 		$new_box->params        = array();

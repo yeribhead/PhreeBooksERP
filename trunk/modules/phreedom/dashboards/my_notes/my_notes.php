@@ -18,9 +18,11 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace phreedom\dashboards\my_notes;
+
 define('DASHBOARD_MY_NOTES_VERSION','3.2');
 
-class my_notes extends ctl_panel {
+class my_notes extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'my_notes';
 	public $description	 		= CP_MY_NOTES_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_MY_PROFILE;

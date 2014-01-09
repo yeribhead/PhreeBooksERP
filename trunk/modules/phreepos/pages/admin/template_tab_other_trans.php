@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/pages/admin/template_other_trans.php
 //
-$trans_toolbar = new toolbar();
+$trans_toolbar = new \core\classes\toolbar();
 $trans_toolbar->icon_list['cancel']['show'] = false;
 $trans_toolbar->icon_list['open']['show']   = false;
 $trans_toolbar->icon_list['delete']['show'] = false;

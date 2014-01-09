@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/classes/tabs.php
 //
-namespace inventory;
-class tabs extends \core\tabs{
+namespace inventory\classes;
+class tabs extends \core\classes\tabs{
     public  $help_path   = '07.04.04';
     public  $module      = 'inventory';
     public  $title       = '';

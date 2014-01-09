@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/classes/admin.php
 //
-namespace shipping;
-class admin extends \core\admin {
+namespace shipping\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.6,
@@ -100,11 +100,11 @@ class admin extends \core\admin {
 	$error = false;
 	$methods = array('freeshipper','flat'); // pick a couple of modules to install
 	foreach ($methods as $method) {
-	  require_once(DIR_FS_ADMIN . 'modules/' . $module . '/methods/' . $method . '/' . $method . '.php');
-	  $properties = new $method();
+	  $shipping_method = "\shipping\methods\\$method\\$method";
+  	  $shipment = new $shipping_method; 
 	  write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
-	  foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
-	  if (method_exists($properties, 'install')) $properties->install();
+	  foreach ($shipment->keys() as $key) write_configure($key['key'], $key['default']);
+	  if (method_exists($shipment, 'install')) $shipment->install();
 	}
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." ADD next_shipment_num VARCHAR(16) NOT NULL DEFAULT '1'");
     return $error;
@@ -138,11 +138,11 @@ class admin extends \core\admin {
 	  }
 	  $dir->close();
 	  foreach ($methods as $method) {
-	    require_once(DIR_FS_ADMIN . 'modules/' . $module . '/methods/' . $method . '/' . $method . '.php');
-	    $properties = new $method();
+	    $shipping_method = "\shipping\methods\\$method\\$method";
+  	  	$shipment = new $shipping_method; 
 	    remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS');
-	    foreach ($properties->keys() as $key) remove_configure($key['key']);
-	    if (method_exists($properties, 'remove')) $properties->remove();
+	    foreach ($shipment->keys() as $key) remove_configure($key['key']);
+	    if (method_exists($shipment, 'remove')) $shipment->remove();
 	  }
 	}
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_num");

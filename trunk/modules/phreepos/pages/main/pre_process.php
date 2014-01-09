@@ -28,7 +28,6 @@ require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('ORD_ACCT_ID',		GEN_CUSTOMER_ID);
 define('GL_TYPE',			'sos');
@@ -69,7 +68,7 @@ for ($i = 0; $i < count($ot_tax_rates); $i++) {
 $js_pmt_types = 'var pmt_types = new Array();' . chr(10);
 foreach ($payment_modules as $key => $pmts) {
   $pmt_method = $pmts['id'];
-  $$pmt_method = new $pmt_method;
+  $$pmt_method = new $pmts['classname'];//@todo
   if($$pmt_method->show_in_pos == false || $$pmt_method->pos_gl_acct == '') {
   	unset($payment_modules[$key]);
   }else{

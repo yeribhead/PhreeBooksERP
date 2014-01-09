@@ -22,14 +22,14 @@ $shipping_module = 'endicia';
 load_specific_method('shipping', $shipping_module);
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/shipping.php');
-require_once(DIR_FS_WORKING . 'classes/shipping.php');
 /**************   page specific initialization  *************************/
 $error      = false;
 $auto_print = false;
 $label_data = NULL;
 $pdf_list   = array();
-$sInfo      = new shipment();
-$shipment   = new $shipping_module;
+$sInfo      = new \shipping\classes\shipment();
+$shipping_method = "\shipping\methods\\$method\\$method";
+$shipment = new $shipping_method;
 // override shipping package types
 $shipping_defaults['package_type'] = $shipment->mailPieceShape;
 /***************   Act on the action request   *************************/

@@ -68,7 +68,7 @@ class contacts {
 		$this->address = array();
 		while (!$result->EOF) {
 		  $type = substr($result->fields['type'], 1);
-		  $this->address_book[$type][] = new objectInfo($result->fields);
+		  $this->address_book[$type][] = new \core\classes\objectInfo($result->fields);
 		  if ($type == 'm') { // prefill main address
 		  	foreach ($result->fields as $key => $value) $this->address[$result->fields['type']][$key] = $value;
 		  }
@@ -77,7 +77,7 @@ class contacts {
 		// load payment info
 		if ($_SESSION['admin_encrypt'] && ENABLE_ENCRYPTION) {
 		  $result = $db->Execute("select id, hint, enc_value from ".TABLE_DATA_SECURITY." where module='contacts' and ref_1=$this->id");
-		  $encrypt = new encryption();
+		  $encrypt = new \core\classes\encryption();
 		  while (!$result->EOF) {
 		    if (!$values = $encrypt->decrypt($_SESSION['admin_encrypt'], $result->fields['enc_value'])) {
 			  $error = $messageStack->add('Encryption error - ' . implode('. ', $encrypt->errors), 'error');
@@ -96,15 +96,15 @@ class contacts {
 		$result = $db->Execute("select * from ".TABLE_CONTACTS." where dept_rep_id=$this->id");
 		$this->contacts = array();
 		while (!$result->EOF) {
-		  $cObj = new objectInfo();
+		  $cObj = new \core\classes\objectInfo();
 		  foreach ($result->fields as $key => $value) $cObj->$key = $value;
 		  $addRec = $db->Execute("select * from ".TABLE_ADDRESS_BOOK." where type='im' and ref_id=".$result->fields['id']);
-		  $cObj->address['m'][] = new objectInfo($addRec->fields);
+		  $cObj->address['m'][] = new \core\classes\objectInfo($addRec->fields);
 		  $this->contacts[] = $cObj; //unserialize(serialize($cObj));
     	  // load crm notes
 		  $logs = $db->Execute("select * from ".TABLE_CONTACTS_LOG." where contact_id = ". $result->fields['id']. " order by log_date desc");
 		  while (!$logs->EOF) {
-		    $this->crm_log[] = new objectInfo($logs->fields);
+		    $this->crm_log[] = new \core\classes\objectInfo($logs->fields);
 		    $logs->MoveNext();
 		  }
 		  $result->MoveNext();
@@ -112,7 +112,7 @@ class contacts {
 		// load crm notes
 		$result = $db->Execute("select * from ".TABLE_CONTACTS_LOG." where contact_id = $this->id order by log_date desc");
 		while (!$result->EOF) {
-		  $this->crm_log[] = new objectInfo($result->fields);
+		  $this->crm_log[] = new \core\classes\objectInfo($result->fields);
 		  $result->MoveNext();
 		}
   }
@@ -217,7 +217,7 @@ class contacts {
   
   public function save_contact(){
   	global $db;
-  	$fields = new contacts\fields(false);
+  	$fields = new \contacts\classes\fields(false);
   	$sql_data_array = $fields->what_to_save();
     $sql_data_array['type']            = $this->type;
     $sql_data_array['short_name']      = $this->short_name;

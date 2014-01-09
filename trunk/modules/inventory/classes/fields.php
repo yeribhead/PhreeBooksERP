@@ -17,8 +17,8 @@
 //  Path: /modules/inventory/classes/fields.php
 //
 
-namespace inventory;
-class fields extends \core\fields{
+namespace inventory\classes;
+class fields extends \core\classes\fields{
 	public  $help_path   = '07.04.05';
 	public  $title       = TEXT_EXTRA_FIELDS;
 	public  $module      = 'inventory';

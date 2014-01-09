@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/dashboards/pos_this_week/pos_this_week.php
 //
-
-class pos_this_week extends ctl_panel {
+namespace phreepos\dashboards\pos_this_week;
+class pos_this_week extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'pos_this_week';
 	public $description	 		= CP_POS_THIS_WEEK_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_POS_MGR;

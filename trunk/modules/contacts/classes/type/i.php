@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/type/i.php
 //  crm
-namespace contacts\type;
-class i extends \contacts\contacts{	
+namespace contacts\classes\type;
+class i extends \contacts\classes\contacts{	
 	public  $security_token         = SECURITY_ID_PHREECRM;
 	public  $page_title_new         = BOX_CONTACTS_NEW_CONTACT;
 	public  $address_types          = array('im', 'is', 'ib');

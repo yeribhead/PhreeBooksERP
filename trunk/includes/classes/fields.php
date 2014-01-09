@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/classes/fields.php
 //
-namespace core;
+namespace core\classes;
 class fields {
 	public  $help_path      = '';
 	public  $title          = '';

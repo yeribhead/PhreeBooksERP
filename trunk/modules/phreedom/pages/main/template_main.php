@@ -44,8 +44,8 @@ while(!$cp_boxes->EOF) {
   	$module_id    = $cp_boxes->fields['module_id'];
 	if (file_exists(DIR_FS_MODULES . "$module_id/dashboards/$dashboard/$dashboard.php")) {
     	load_method_language(DIR_FS_MODULES . "$module_id/dashboards/$dashboard");
-    	require_once        (DIR_FS_MODULES . "$module_id/dashboards/$dashboard/$dashboard.php");
-    	$new_box               = new $dashboard;
+    	$temp = "\\$module_id\dashboards\\$dashboard\\$dashboard";
+	    $new_box 				= new $temp;
     	if($new_box->valid_user){
     		$new_box->menu_id      = $menu_id;
     		$new_box->module_id    = $module_id;

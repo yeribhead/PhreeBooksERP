@@ -22,7 +22,6 @@ gen_pull_language('phreebooks');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/inventory.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',16);	// Adjustment Journal
 define('GL_TYPE', '');
@@ -66,7 +65,7 @@ switch ($_REQUEST['action']) {
 	if ($source_store_id == $dest_store_id) $error = $messageStack->add(INV_XFER_ERROR_SAME_STORE_ID, 'error');
 	// process the request, first subtract from the source store
 	if (!$error) {
-	  $glEntry                      = new journal();
+	  $glEntry                      = new \core\classes\journal();
 	  $glEntry->id                  = isset($_POST['id']) ? $_POST['id'] : '';
 	  $glEntry->so_po_ref_id        = '-1'; // first of 2 adjustments
 	  $glEntry->journal_id          = JOURNAL_ID;
@@ -133,7 +132,7 @@ switch ($_REQUEST['action']) {
 //	    $glEntry->override_cogs_acct = $adj_account; // force cogs account to be users specified account versus default inventory account
 	    if ($glEntry->Post($glEntry->id ? 'edit' : 'insert')) {
 		  $first_id = $glEntry->id;
-	      $glEntry                      = new journal();
+	      $glEntry                      = new \core\classes\journal();
 	  	  $glEntry->id                  = isset($_POST['ref_id']) ? $_POST['ref_id'] : '';
 	      $glEntry->so_po_ref_id        = $first_id; // id of original adjustment
 	      $glEntry->journal_id          = JOURNAL_ID;
@@ -204,13 +203,13 @@ switch ($_REQUEST['action']) {
 	if (DEBUG) $messageStack->write_debug();
 	$db->transRollback();
 	$messageStack->add(GL_ERROR_NO_POST, 'error');
-	$cInfo = new objectInfo($_POST);
+	$cInfo = new \core\classes\objectInfo($_POST);
 	break;
 
   case 'delete':
 	validate_security($security_level, 4); // security check
 	if ($id = $_POST['id']) {
-	  $delOrd = new journal($id);
+	  $delOrd = new \core\classes\journal($id);
 	  $result = $db->Execute("SELECT id FROM ".TABLE_JOURNAL_MAIN." WHERE so_po_ref_id = $delOrd->id");
 	  $xfer_to_id = $result->fields['id']; // save the matching adjust ID
 	  if (!$xfer_to_id) $error = $messageStack('cannot deltete there is no offsetting record to delete!','error');
@@ -218,7 +217,7 @@ switch ($_REQUEST['action']) {
 	    // *************** START TRANSACTION *************************
 	    $db->transStart();
 	    if ($delOrd->unPost('delete')) {
-		  $delOrd = new journal($xfer_to_id);
+		  $delOrd = new \core\classes\journal($xfer_to_id);
 		  if ($delOrd->unPost('delete')) {
 		    $db->transCommit(); // if not successful rollback will already have been performed
 		    gen_add_audit_log(INV_LOG_ADJ . TEXT_DELETE, $delOrd->journal_rows[0]['sku'], $delOrd->journal_rows[0]['qty']);
@@ -230,7 +229,7 @@ switch ($_REQUEST['action']) {
 	  }
 	}
 	$error = $messageStack->add(GL_ERROR_NO_DELETE, 'error');
-	$cInfo = new objectInfo($_POST);
+	$cInfo = new \core\classes\objectInfo($_POST);
 	break;
 
   case 'edit':
@@ -238,7 +237,7 @@ switch ($_REQUEST['action']) {
     $oID = (int)$_GET['oID'];
 	// fall through like default
   default:
-	$cInfo = new objectInfo();
+	$cInfo = new \core\classes\objectInfo();
 }
 /*****************   prepare to display templates  *************************/
 $cal_xfr = array(

@@ -63,7 +63,7 @@
       <tr>
        <td>
 <?php // build a secondary toolbar for the contact form
-	$ctoolbar = new toolbar('i');
+	$ctoolbar = new \core\classes\toolbar('i');
 	$ctoolbar->icon_list['cancel']['show'] = false;
 	$ctoolbar->icon_list['open']['show']   = false;
 	$ctoolbar->icon_list['save']['show']   = false;

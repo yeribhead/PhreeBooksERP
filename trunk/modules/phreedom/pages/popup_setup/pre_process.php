@@ -27,7 +27,7 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 /**************   page specific initialization  *************************/
 $close_popup    = false;
 $sID            = $_GET['sID'];
-$classname 		= "\\$topic\\$subject"; 
+$classname 		= "\\$topic\classes\\$subject"; 
 $subject_module = new $classname;
 /**************   Check user security   *****************************/
 $security_level = $_SESSION['admin_security'][SECURITY_ID_CONFIGURATION];

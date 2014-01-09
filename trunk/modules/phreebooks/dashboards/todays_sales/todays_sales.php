@@ -18,8 +18,8 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-
-class todays_sales extends ctl_panel {
+namespace phreebooks\dashboards\todays_sales;
+class todays_sales extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'todays_sales';
 	public $description	 		= CP_TODAYS_SALES_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_SALES_INVOICE;

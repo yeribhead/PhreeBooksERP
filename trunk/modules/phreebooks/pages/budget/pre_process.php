@@ -116,13 +116,13 @@ if ($gl_acct && sizeof($lf_per) > 0) {
   $last_fy = $db->Execute("select budget from " . TABLE_CHART_OF_ACCOUNTS_HISTORY . " 
 	where account_id = '" . $gl_acct . "' and period in (" . implode(',', array_keys($lf_per)) . ")");
 } else {
-  $next_fy = new objectInfo();
+  $next_fy = new \core\classes\objectInfo();
 }
 if ($gl_acct && sizeof($nf_per) > 0) {
   $next_fy = $db->Execute("select budget from " . TABLE_CHART_OF_ACCOUNTS_HISTORY . " 
 	where account_id = '" . $gl_acct . "' and period in (" . implode(',', array_keys($nf_per)) . ")");
 } else {
-  $next_fy = new objectInfo();
+  $next_fy = new \core\classes\objectInfo();
 }
 $fy_array = array();
 while(!$result->EOF) {

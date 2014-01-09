@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/admin.php
 //
-namespace contacts;
-class admin extends \core\admin {
+namespace contacts\classes;
+class admin extends \core\classes\admin {
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs

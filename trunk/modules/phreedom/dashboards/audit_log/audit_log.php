@@ -20,8 +20,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/dashboards/audit_log/audit_log.php
 //
-
-class audit_log extends ctl_panel {
+namespace phreedom\dashboards\audit_log;
+class audit_log extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'audit_log';
 	public $description	 		= CP_AUDIT_LOG_DESCRIPTION;
 	public $max_length   		= 50;

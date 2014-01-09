@@ -44,7 +44,9 @@ $request_type = (strtolower($_SERVER['HTTPS']) == 'on' || $_SERVER['HTTPS'] == '
 
 require_once(DIR_FS_ADMIN . 'includes/common_functions.php');
 require_once(DIR_FS_ADMIN . 'includes/common_classes.php');
-
+set_error_handler("PhreebooksErrorHandler");
+set_exception_handler('PhreebooksExceptionHandler');
+spl_autoload_register('Phreebooks_autoloader', true, false);
 // set the session name and save path
 $http_domain  = gen_get_top_level_domain(HTTP_SERVER);
 $https_domain = gen_get_top_level_domain(HTTPS_SERVER);
@@ -99,8 +101,8 @@ gen_pull_language('phreedom', 'menu');
     }
   }
 
-$currencies   = new currencies;
-$messageStack = new messageStack;
+$currencies   = new \core\classes\currencies;
+$messageStack = new \core\classes\messageStack;
 if (get_cfg_var('safe_mode')) echo 'Operating in Safe Mode. (This is bad!)';
 // check if a default currency is set
 if (!defined('DEFAULT_CURRENCY')) $messageStack->add(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error');

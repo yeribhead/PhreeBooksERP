@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/classes/shipping.php
 //
-
+namespace shipping\classes;
 class shipment {
 	var $additional_handling        = SHIPPING_DEFAULT_ADDITIONAL_HANDLING_CHECKED;
 	var $cod                        = SHIPPING_DEFAULT_COD_CHECKED;

@@ -202,7 +202,7 @@ class registry {
 	    		if (method_exists($class, $_REQUEST['action'])){
 	    			$class->$_REQUEST['action']();
 	    		}else{
-	    			throw new Exception($_REQUEST['action'] . " method is not availeble in $class", 'error');
+	    			throw new \Exception($_REQUEST['action'] . " method is not availeble in $class");
 	    		}
 	    		$ActionAfter = "after_" . $_REQUEST['action'];
 	    		if (method_exists($class, $ActionAfter)) $class->$ActionAfter();
@@ -214,7 +214,7 @@ class registry {
 	  			if (method_exists($class, $_REQUEST['display'])){
 	  				$class->$_REQUEST['display']();
 	  			}else{
-	  				throw new Exception($_REQUEST['display'] . " method is not availeble in $class", 'error', $e);
+	  				throw new \Exception($_REQUEST['display'] . " method is not availeble in $class", '', $e);
 	  			}
 			}
     	}catch(Exception $e) {

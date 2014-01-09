@@ -34,7 +34,7 @@ $parent_id   = $_GET['parent_id']    ? $_GET['parent_id']: $_POST['parent_id'];
 $def_module  = $_POST['mod']         ? $_POST['mod']     : DEFAULT_MODULE;
 $def_lang    = $_POST['lang']        ? $_POST['lang']    : DEFAULT_LANGUAGE;
 $import_path = "modules/$def_module/language/$def_lang/reports/";
-$report      = new objectInfo();
+$report      = new \core\classes\objectInfo();
 // load the directory tree to java array (use for page display and error checking on update
 $js_dir = $db->Execute('select id, parent_id, doc_title from ' . TABLE_PHREEFORM . ' order by id');
 $dir_tree = array();
@@ -62,7 +62,7 @@ switch ($_REQUEST['action']) {
 	$report->page->size           = db_prepare_input($_POST['papersize']);
 	$report->page->orientation    = db_prepare_input($_POST['paperorientation']);
 	if ($_POST['table']) foreach ($_POST['table'] as $key => $value) {
-	  $report->tables[] = new objectInfo(array(
+	  $report->tables[] = new \core\classes\objectInfo(array(
 	    'joinopt'      => db_prepare_input($_POST['joinopt'][$key]),
 	    'tablename'    => db_prepare_input($_POST['table'][$key]),
 	    'relationship' => db_prepare_input($_POST['table_crit'][$key]),
@@ -107,7 +107,7 @@ switch ($_REQUEST['action']) {
 	  $report->totalonly            = db_prepare_input($_POST['totalonly']);
 	  $report->fieldlist            = array();
 	  if ($_POST['fld_fld']) foreach ($_POST['fld_fld'] as $key => $value) {
-	    $report->fieldlist[] = new objectInfo(
+	    $report->fieldlist[] = new \core\classes\objectInfo(
 		  array(
 	        'fieldname'   => db_prepare_input($_POST['fld_fld'][$key]),
 	        'description' => db_prepare_input($_POST['fld_desc'][$key]),
@@ -131,7 +131,7 @@ switch ($_REQUEST['action']) {
 	  while(true) {
 	    if (!isset($_POST['row_id'][$cnt])) break;
 		$key = $_POST['row_id'][$cnt];
-	    $properties = new objectInfo();
+	    $properties = new \core\classes\objectInfo();
 	    $properties->description = db_prepare_input($_POST['fld_desc'][$cnt]);
 	    $properties->abscissa    = db_prepare_input($_POST['fld_abs'][$cnt]);
 	    $properties->ordinate    = db_prepare_input($_POST['fld_ord'][$cnt]);
@@ -184,7 +184,7 @@ switch ($_REQUEST['action']) {
 		if ($_POST['hbox_fclr_' .$key]) $properties->hfillcolor   = $_POST['hbox_fclr_'.$key];
 		$boxfield = array();
 		for ($j = 0; $j < sizeof($_POST['box_fld_' . $key]); $j++) {
-		  $temp = new objectInfo();
+		  $temp = new \core\classes\objectInfo();
 		  if ($_POST['box_fld_' .$key]) $temp->fieldname          = $_POST['box_fld_'  .$key][$j];
 		  if ($_POST['box_desc_'.$key]) $temp->description        = $_POST['box_desc_' .$key][$j];
 		  if ($_POST['box_proc_'.$key]) $temp->processing         = $_POST['box_proc_' .$key][$j];
@@ -222,7 +222,7 @@ switch ($_REQUEST['action']) {
 	$report->filenamefield  = db_prepare_input($_POST['filename_field']);
 	$report->grouplist      = array();
 	if ($_POST['grp_fld']) foreach ($_POST['grp_fld'] as $key => $value) {
-	  $report->grouplist[]  = new objectInfo(array(
+	  $report->grouplist[]  = new \core\classes\objectInfo(array(
 	    'fieldname'   => db_prepare_input($_POST['grp_fld'][$key]),
 	    'description' => db_prepare_input($_POST['grp_desc'][$key]),
 	    'default'     => db_prepare_input($_POST['grp_def'][$key]),
@@ -232,7 +232,7 @@ switch ($_REQUEST['action']) {
 	}
 	$report->sortlist = array();
 	if ($_POST['sort_fld']) foreach ($_POST['sort_fld'] as $key => $value) {
-	  $report->sortlist[] = new objectInfo(array(
+	  $report->sortlist[] = new \core\classes\objectInfo(array(
 	    'fieldname'   => db_prepare_input($_POST['sort_fld'][$key]),
 	    'description' => db_prepare_input($_POST['sort_desc'][$key]),
 	    'default'     => db_prepare_input($_POST['srt_def'][$key]),
@@ -240,7 +240,7 @@ switch ($_REQUEST['action']) {
 	}
 	$report->filterlist = array();
 	if ($_POST['crit_fld']) foreach ($_POST['crit_fld'] as $key => $value) {
-	  $report->filterlist[] = new objectInfo(array(
+	  $report->filterlist[] = new \core\classes\objectInfo(array(
 	    'fieldname'   => db_prepare_input($_POST['crit_fld'][$key]),
 	    'description' => db_prepare_input($_POST['crit_desc'][$key]),
 	    'visible'     => db_prepare_input($_POST['crit_vis'][$key]),

@@ -24,10 +24,9 @@ gen_pull_language('phreedom', 'admin');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/phreeform.php');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install = new phreeform_admin();
+$install = new \phreeform\classes\admin();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save': 
@@ -44,15 +43,14 @@ switch ($_REQUEST['action']) {
 	// drop the database
 	$db->Execute("truncate ".TABLE_PHREEFORM);
 	// load all the install classes to re-build directory structure
-  	$install_mod = new phreeform_admin;
+  	$install_mod = new \phreeform\classes\admin;
 	$install_mod->load_reports('phreeform');
 	$contents    = scandir(DIR_FS_MODULES);
 	foreach ($contents as $entry) { // install each module
 	  if (!defined('MODULE_'.strtoupper($entry).'_STATUS')) continue; // skip uninstalled modules
 	  if (!in_array($entry, array('.', '..', 'phreeform')) && is_dir(DIR_FS_MODULES . $entry)) {
 	  	if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
-	  	  require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
-		  $classname   = $entry . '_admin';
+		  $classname   = "\\$entry\classes\admin";
 		  $install_mod = new $classname;
 		  $install_mod->load_reports($entry);
 		}

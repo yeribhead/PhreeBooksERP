@@ -18,9 +18,11 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
+namespace phreedom\dashboards\to_do;
+
 define('DASHBOARD_TO_DO_VERSION','3.5');
 
-class to_do extends ctl_panel {
+class to_do extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'to_do';
 	public $description	 		= CP_TO_DO_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_MY_PROFILE;

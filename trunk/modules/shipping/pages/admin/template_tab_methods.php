@@ -59,9 +59,8 @@
 	  echo html_icon('categories/preferences-system.png', TEXT_PROPERTIES, 'medium', 'onclick="toggleProperties(\'prop_' . $method . '\')"') . chr(10);
 	  echo '</td>' . chr(10);
 	  echo '      </tr>' . chr(10);
-	  // load the method properties
-	  require_once($method_dir . $method . '/' . $method . '.php');
-	  $properties = new $method();
+	  $shipping_method = "\shipping\methods\\$method\\$method";
+	  $properties = new $shipping_method();
 	  echo '      <tr id="prop_' . $method . '" style="display:none"><td colspan="3"><table width="100%" cellspacing="0" cellpadding="1">' . chr(10);
 	  if (defined('MODULE_SHIPPING_' . strtoupper($method) . '_TEXT_INTRODUCTION')) {
 	    echo '<tr><td colspan="2">' . constant('MODULE_SHIPPING_' . strtoupper($method) . '_TEXT_INTRODUCTION') . '</td></tr>';

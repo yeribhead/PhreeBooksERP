@@ -24,13 +24,13 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error          = false; 
-$install        = new contacts\admin();
-$departments    = new contacts\departments();
-$dept_types     = new contacts\dept_types();
-$project_costs  = new contacts\project_costs();
-$project_phases = new contacts\project_phases();
-$tabs           = new contacts\tabs();
-$fields         = new contacts\fields();
+$install        = new contacts\classes\admin();
+$departments    = new contacts\classes\departments();
+$dept_types     = new contacts\classes\dept_types();
+$project_costs  = new contacts\classes\project_costs();
+$project_phases = new contacts\classes\project_phases();
+$tabs           = new contacts\classes\tabs();
+$fields         = new contacts\classes\fields();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':

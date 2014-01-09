@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/beg_balances_imp.php
 //
-namespace phreedom;
+namespace phreedom\classes;
 class beg_bal_import {
   function __construct() {
   }
@@ -107,7 +107,7 @@ class beg_bal_import {
 	$row_cnt = 0;
 	while($row_cnt < count($this->records)) {
 	  $order = $this->records[$row_cnt];
-	  $glEntry = new journal();
+	  $glEntry = new \core\classes\journal();
 	  // determine if date is within a known period, if date is before period 1 use period = 0 (and enter beginning balances)
 	  $glEntry->period = gen_calculate_period($order['post_date'], $hide_error = true); // date format YYYY-MM-DD
 	  if (!$glEntry->period) $glEntry->period = 1; // if out of range default to first period (required to be valid period or it won't post)
@@ -235,7 +235,7 @@ class beg_bal_import {
 	global $coa, $db, $currencies, $messageStack;
 	if (!$this->cyberParse($upload_name)) return false;
 	$post_date = gen_specific_date(date('Y-m-d'), $day_offset = -1);
-	$glEntry   = new journal();
+	$glEntry   = new \core\classes\journal();
 	$sku_list  = array();
 	$coa_list  = array();
 	$affected_accounts = array();

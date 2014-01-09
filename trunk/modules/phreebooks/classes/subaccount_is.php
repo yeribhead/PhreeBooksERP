@@ -14,9 +14,9 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreeform/custom/classes/subaccount_is.php
+//  Path: /modules/phreebooks/classes/subaccount_is.php
 //
-
+namespace phreebooks\classes;
 // this file contains special function calls to generate the data array needed to build reports not possible
 // with the current reportbuilder structure.
 class subaccount_is {

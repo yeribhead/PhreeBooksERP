@@ -17,8 +17,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/tabs.php
 //
-namespace contacts;
-class tabs extends \core\tabs{
+namespace contacts\classes;
+class tabs extends \core\classes\tabs{
 	public  $help_path   = '';
 	public  $module      = 'contacts';
 	public  $title       = '';

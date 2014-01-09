@@ -19,8 +19,6 @@
 $security_level = validate_user(SECURITY_ID_SELECT_PAYMENT);
 /**************  include page specific files    *********************/
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
-require_once(DIR_FS_WORKING . 'classes/gen_ledger.php');
-require_once(DIR_FS_WORKING . 'classes/banking.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',20);
 define('GL_TYPE','chk');
@@ -84,7 +82,7 @@ switch ($_REQUEST['action']) {
 	$db->transStart();
 	// post each payment by vendor (save journal record id)
 	foreach ($payment_list as $account => $values) {
-	  $order = new banking();
+	  $order = new \phreebooks\classes\banking();
 	  // load journal main data
 	  $order->id = '';
 	  $order->journal_id          = JOURNAL_ID;

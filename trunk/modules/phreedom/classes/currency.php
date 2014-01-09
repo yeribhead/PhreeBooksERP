@@ -18,7 +18,7 @@
 //
 // define how do we update currency exchange rates. Possible values are 'oanda' 'yahoo'
 // xe no longer works as of 2012-02-01
-namespace phreedom;
+namespace phreedom\classes;
 define('CURRENCY_SERVER_PRIMARY', 'oanda');
 define('CURRENCY_SERVER_BACKUP',  'yahoo');
 
@@ -189,7 +189,7 @@ class currency {
 	if ($action == 'new') {
 	  $cInfo = '';
 	} else {
-      $cInfo = new objectInfo($result->fields);
+      $cInfo = new \core\classes\objectInfo($result->fields);
 	}
 	$output  = '<table class="ui-widget" style="border-style:none;width:100%">' . chr(10);
 	$output .= '  <thead class="ui-widget-header">' . "\n";

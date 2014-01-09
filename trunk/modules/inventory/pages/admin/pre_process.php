@@ -24,16 +24,12 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_WORKING . 'functions/inventory.php');
-require_once(DIR_FS_WORKING . 'classes/install.php');
-require_once(DIR_FS_WORKING . 'classes/inventory_tabs.php');
-require_once(DIR_FS_WORKING . 'classes/inventory_fields.php');
-
 /**************   page specific initialization  *************************/
 $error    = false; 
 $cog_type = explode(',', COG_ITEM_TYPES);
-$install  = new \inventory\admin();
-$tabs     = new \inventory\tabs();
-$fields   = new \inventory\fields();
+$install  = new \inventory\classes\admin();
+$tabs     = new \inventory\classes\tabs();
+$fields   = new \inventory\classes\fields();
 
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {

@@ -16,8 +16,8 @@
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreeform/custom/classes/acct_recon.php
-//
-
+// 
+namespace phreebooks\classes;
 // this file contains special function calls to generate the data array needed to build reports not possible
 // with the current reportbuilder structure.
 class acct_recon {

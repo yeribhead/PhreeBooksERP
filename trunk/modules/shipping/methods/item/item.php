@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/item/item.php
 //
+namespace shipping\methods\item;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_ITEM_VERSION','3.2');

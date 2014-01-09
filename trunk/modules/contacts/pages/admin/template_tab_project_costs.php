@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/admin/template_tab_project_costs.php
 //
-$project_costs_toolbar = new toolbar('project_costs');
+$project_costs_toolbar = new \core\classes\toolbar('project_costs');
 $project_costs_toolbar->icon_list['cancel']['show'] = false;
 $project_costs_toolbar->icon_list['open']['show']   = false;
 $project_costs_toolbar->icon_list['save']['show']   = false;

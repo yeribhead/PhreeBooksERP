@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/classes/admin.php
 //
-namespace inventory;
-class admin extends \core\admin {
+namespace inventory\classes;
+class admin extends \core\classes\admin {
 
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -494,9 +494,8 @@ class admin extends \core\admin {
 (18, 'PC-BB-512', 0, 'Fully assembled bare bones computer AMD/ATI 512MB/2GB/Red Case', 0, 0, '');
 	");
 	
-	// copy the demo images
-	require(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-	$backups = new backup;
+	// copy the demo image
+	$backups = new \phreedom\classes\backup;
 	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
 	$dir_source = DIR_FS_MODULES  . 'inventory/images/demo/';
 	$dir_dest   = DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo/';

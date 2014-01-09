@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class ia extends \inventory\inventory { //Master Build Sub Item. child of mb (master assembly) combination of mi and ma
+namespace inventory\classes\type;
+class ia extends \inventory\classes\inventory { //Master Build Sub Item. child of mb (master assembly) combination of mi and ma
 	public $inventory_type			= 'ia';
 	public $title 					= INV_TYPES_IA;
 	public $edit_ms_list			= false;

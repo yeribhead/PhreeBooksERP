@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/endicia/endicia.php
 //
+namespace shipping\methods\endicia;
 define('MODULE_SHIPPING_ENDICIA_PARTNER_ID','lpst'); // 'lpst' - PhreeSoft, LLC Partner ID
 define('MODULE_SHIPPING_ENDICIA_DIAL_A_ZIP_PW', 'Phreedom_2012_LLC'); // Dial-A-Zip test acct: 400540, password: HOCKEYSTAR
 // Revision history
@@ -313,7 +314,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
 //echo 'Endicia XML Submit String:<br />'; print_r($request); echo '<br />'; return false;
 	$arrRates = array();
 	$url = (MODULE_SHIPPING_ENDICIA_TEST_MODE=='Prod') ? MODULE_SHIPPING_ENDICIA_WSDL_URL : MODULE_SHIPPING_ENDICIA_TEST_WSDL_URL;
-	$client = new SoapClient($url, array('trace'=>1));
+	$client = new \SoapClient($url, array('trace'=>1));
 	try {
 	  $response = $client->CalculatePostageRates($request);
 //echo 'Request <pre>'  . htmlspecialchars($client->__getLastRequest()) . '</pre>';
@@ -371,7 +372,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
   	  ),
 	);
 	$url = (MODULE_SHIPPING_ENDICIA_TEST_MODE=='Prod') ? MODULE_SHIPPING_ENDICIA_WSDL_URL : MODULE_SHIPPING_ENDICIA_TEST_WSDL_URL;
-	$client = new SoapClient($url, array('trace'=>1));
+	$client = new \SoapClient($url, array('trace'=>1));
   	try {
 	  $response = $client->BuyPostage($data);
   	  if ($response->RecreditRequestResponse->Status == 0) {
@@ -416,7 +417,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
   	  ),
   	);
   	$url = (MODULE_SHIPPING_ENDICIA_TEST_MODE=='Prod') ? MODULE_SHIPPING_ENDICIA_WSDL_URL : MODULE_SHIPPING_ENDICIA_TEST_WSDL_URL;
-  	$client = new SoapClient($url, array('trace'=>1));
+  	$client = new \SoapClient($url, array('trace'=>1));
   	try {
 	  $response = $client->ChangePassPhrase($data);
   	  if ($response->ChangePassPhraseRequestResponse->Status == 0) {
@@ -445,7 +446,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
 //echo 'Endicia XML Label Submit String:'; print_r($xml); echo '<br />'; //return false;
 //	$client = new SoapClient((MODULE_SHIPPING_ENDICIA_TEST_MODE=='Test')?PATH_TO_TEST_RATE_WSDL:PATH_TO_RATE_WSDL, array('trace'=>1));
 	$url = (MODULE_SHIPPING_ENDICIA_TEST_MODE=='Prod') ? MODULE_SHIPPING_ENDICIA_WSDL_URL : MODULE_SHIPPING_ENDICIA_TEST_WSDL_URL;
-	$client = new SoapClient($url, array('trace'=>1));
+	$client = new \SoapClient($url, array('trace'=>1));
 	try {
 	  $response = $client->GetPostageLabel($xml);
 //echo 'Request <pre>' . htmlspecialchars($client->__getLastRequest()) . '</pre>';
@@ -618,7 +619,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
   	$xml .= xmlEntry('PICNumber', $tracking_number);
   	$xml .= "  </RefundList>\n";
   	$xml .= "</RefundRequest>\n";
-  	$client = new SoapClient(MODULE_SHIPPING_ENDICIA_ELS_URL, array('trace'=>1));
+  	$client = new \SoapClient(MODULE_SHIPPING_ENDICIA_ELS_URL, array('trace'=>1));
   	try {
 	  $response = $client->RefundRequest($xml);
 //echo 'Request <pre>' . htmlspecialchars($client->__getLastRequest()) . '</pre>';  
@@ -665,7 +666,7 @@ var $PackageMap = array( // for rate estimates, assume this set of options
 	  $shipments->MoveNext();
 	}
 	$xml .= "</StatusRequest>\n";
-  	$client = new SoapClient(MODULE_SHIPPING_ENDICIA_ELS_URL, array('trace'=>1));
+  	$client = new \SoapClient(MODULE_SHIPPING_ENDICIA_ELS_URL, array('trace'=>1));
 	try {
 	  $response = $client->StatusRequest($xml);
 //echo 'Request <pre>' . htmlspecialchars($client->__getLastRequest()) . '</pre>';  

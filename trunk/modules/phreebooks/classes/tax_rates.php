@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/tax_rates.php
 //
-
+namespace phreebooks\classes;
 class tax_rates {
 	public $code        = 'tax_rates'; // needs to match class name
 	public $db_table    = TABLE_TAX_RATES;

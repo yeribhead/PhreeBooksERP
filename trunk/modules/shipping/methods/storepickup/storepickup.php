@@ -17,6 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/storepickup/storepickup.php
 //
+namespace shipping\methods\storepickup;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_STOREPICKUP_VERSION','3.2');

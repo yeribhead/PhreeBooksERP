@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/table/table.php
 //
+namespace shipping\methods\table;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_TABLE_VERSION','3.2');

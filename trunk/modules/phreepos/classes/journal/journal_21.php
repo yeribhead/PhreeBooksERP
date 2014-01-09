@@ -17,9 +17,8 @@
 //  Path: /modules/phreepos/classes/journal/journal_21.php
 //
 // Inventory Direct Purchase Journal (POP)
-namespace phreepos\journal;
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-class journal_21 extends \core\journal {
+namespace phreepos\classes\journal;
+class journal_21 extends \core\classes\journal {
 	public $id					= '';
 	public $save_payment        = false;
     public $closed 				= '0';
@@ -134,7 +133,8 @@ class journal_21 extends \core\journal {
 		  $desc = MENU_HEADING_PHREEPOS . '-' . TEXT_TOTAL;
 		  $method     = $this->pmt_rows[$i]['meth'];
 		  if ($method) {
-		    $$method    = new $method;
+		    $pay_meth = "\payment\methods\\$method\\$method\\";
+		    $$method    = new $pay_meth;
 		    $deposit_id = $$method->def_deposit_id ? $$method->def_deposit_id : ('DP' . date('Ymd'));
 			$desc = JOURNAL_ID . ':' . $method . ':' . $$method->payment_fields;
 		  }

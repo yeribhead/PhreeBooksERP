@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/admin/template_tab_departments.php
 //
-$departments_toolbar = new toolbar('departments');
+$departments_toolbar = new \core\classes\toolbar('departments');
 $departments_toolbar->icon_list['cancel']['show'] = false;
 $departments_toolbar->icon_list['open']['show']   = false;
 $departments_toolbar->icon_list['save']['show']   = false;

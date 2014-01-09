@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class mi extends \inventory\inventory { //Master Stock Sub Item. child of ma (master assembly)
+namespace inventory\classes\type;
+class mi extends \inventory\classes\inventory { //Master Stock Sub Item. child of ma (master assembly)
 	public $inventory_type			= 'mi';
 	public $title 					= INV_TYPES_MI;
 	public $master					= '';

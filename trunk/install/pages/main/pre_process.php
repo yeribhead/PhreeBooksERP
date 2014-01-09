@@ -54,7 +54,7 @@ require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error   = false;
 $caution = false;
-$messageStack = new messageStack();
+$messageStack = new \core\classes\messageStack();
 /***************   act on the action request   *************************/
 switch ($_REQUEST['action']) {
 	default:
@@ -217,7 +217,7 @@ switch ($_REQUEST['action']) {
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  				$error = false;
-	  				$classname   = "\\$entry\admin";;
+	  				$classname   = "\\$entry\classes\admin";;
 	  				$install_mod = new $classname;
 			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
 			    		// Check for version levels
@@ -243,7 +243,7 @@ switch ($_REQUEST['action']) {
 	  	}
 		// load phreedom reports now since table exists
 	  	if (DEBUG) $messageStack->debug("\n  installing phreedom.");
-	  	$install_mod = new \phreedom\admin;
+	  	$install_mod = new \phreedom\classes\admin;
 	  	$install_mod->load_reports('phreedom');
 	  	if ($error) {
 	  		$messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $module), 'error');
@@ -255,8 +255,7 @@ switch ($_REQUEST['action']) {
 		  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
 		  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 				    	$error = false;
-				    	require_once (DIR_FS_MODULES . $entry . '/classes/admin.php');
-			    		$classname   = $entry . '_admin';
+			    		$classname   = $entry . '\classes\admin';
 			    		$install_mod = new $classname;
 			    		if (admin_check_versions($entry, $install_mod->prerequisites)) {
 			    			// Check for version levels

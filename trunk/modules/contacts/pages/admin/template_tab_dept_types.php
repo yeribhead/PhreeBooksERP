@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/admin/template_tab_dept_types.php
 //
-$dept_types_toolbar = new toolbar('dept_types');
+$dept_types_toolbar = new \core\classes\toolbar('dept_types');
 $dept_types_toolbar->icon_list['cancel']['show'] = false;
 $dept_types_toolbar->icon_list['open']['show']   = false;
 $dept_types_toolbar->icon_list['save']['show']   = false;

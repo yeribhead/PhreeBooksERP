@@ -26,9 +26,6 @@ gen_pull_language('phreeform');
 require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-require_once(DIR_FS_MODULES . 'phreepos/classes/tills.php');
-require_once(DIR_FS_MODULES . 'phreepos/classes/other_transactions.php');
 /**************   page specific initialization  *************************/
 define('ORD_ACCT_ID',GEN_CUSTOMER_ID);
 define('GL_TYPE','sos');
@@ -38,9 +35,9 @@ define('DEF_GL_ACCT_TITLE',ORD_AR_ACCOUNT);
 define('POPUP_FORM_TYPE','pos:rcpt');
 $error           = false;
 $account_type    = 'c';
-$order           = new journal();
-$transaction     = new other_transactions();
-$tills           = new tills();
+$order           = new \core\classes\journal();
+$transaction     = new \phreepos\classes\other_transactions();
+$tills           = new \phreepos\classes\tills();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_MODULES . 'phreepos/custom/ajax/other_transactions.php';
 if (file_exists($custom_path)) { include($custom_path); }

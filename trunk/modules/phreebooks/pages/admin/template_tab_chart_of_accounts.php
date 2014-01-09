@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/pages/admin/template_tab_chart_of_accounts.php
 //
-$chart_of_accounts_toolbar = new toolbar;
+$chart_of_accounts_toolbar = new \core\classes\toolbar;
 $chart_of_accounts_toolbar->icon_list['cancel']['show'] = false;
 $chart_of_accounts_toolbar->icon_list['open']['show']   = false;
 $chart_of_accounts_toolbar->icon_list['save']['show']   = false;

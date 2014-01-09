@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/inventory/pages/admin/template_tab_tabs.php
 //
-$tabs_toolbar = new toolbar;
+$tabs_toolbar = new \core\classes\toolbar;
 $tabs_toolbar->icon_list['cancel']['show'] = false;
 $tabs_toolbar->icon_list['open']['show']   = false;
 $tabs_toolbar->icon_list['save']['show']   = false;

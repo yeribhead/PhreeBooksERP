@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/banking.php
 //
-
-class banking extends journal {
+namespace phreebooks\classes;
+class banking extends \core\classes\journal {
 	
 	function __construct() {
 		global $db;
@@ -50,16 +50,16 @@ class banking extends journal {
 	}
 
 	function post_ordr($action) {
-		global $db, $currencies, $messageStack, $processor;
+		global $db, $currencies, $messageStack;
 		$this->journal_main_array = $this->build_journal_main_array();	// build ledger main record
 		$this->journal_rows = array();	// initialize ledger row(s) array
 
 		switch ($this->journal_id) {
 			case 18: // Cash Receipts Journal
 				$method = (isset($this->shipper_code)) ? $this->shipper_code : 'freecharger'; 
-				$method = load_specific_method('payment', $method);
 				if (class_exists($method)) {
-					$processor = new $method;
+					$temp = "\payment\methods\\$method\\$method\\";
+	  				$processor = new $temp;
 					if (!defined('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS')) return false;
 				}
 				$result        = $this->add_item_journal_rows('credit');	// read in line items and add to journal row array
@@ -228,7 +228,7 @@ class banking extends journal {
 	}
 
 	function encrypt_payment($method, $card_key_pos = false) {
-	  $encrypt = new encryption();
+	  $encrypt = new \core\classes\encryption();
 	  $cc_info = array();
 	  $cc_info['name']    = isset($_POST[$method.'_field_0']) ? db_prepare_input($_POST[$method.'_field_0']) : '';
 	  $cc_info['number']  = isset($_POST[$method.'_field_1']) ? db_prepare_input($_POST[$method.'_field_1']) : '';

@@ -31,7 +31,7 @@ $default_f0 = defined('CONTACTS_F0_'.strtoupper($type)) ? constant('CONTACTS_F0_
 $_SESSION['f0'] = (isset($_SESSION['f0'])) ? $_SESSION['f0'] : $default_f0;
 if($_SERVER['REQUEST_METHOD'] == 'POST') $_SESSION['f0'] = (isset($_REQUEST['f0'])) ? $_REQUEST['f0'] : false; // show inactive checkbox
 if(!isset($_REQUEST['list'])) $_REQUEST['list'] = 1; 
-$temp = '\contacts\type\\'.$type;
+$temp = '\contacts\classes\type\\'.$type;
 $cInfo = new $temp;
 /**************   Check user security   *****************************/
 
@@ -44,7 +44,7 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_WORKING . 'functions/contacts.php');
-$fields = new \contacts\fields();
+$fields = new \contacts\classes\fields();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/main/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -64,7 +64,7 @@ switch ($_REQUEST['action']) {
 		  $cInfo->save_contact(); 
 		  $cInfo->save_addres();
 		  if ($type <> 'i' && ($_POST['i_short_name'] || $_POST['address']['im']['primary_name'])) { // is null
-		  	$crmInfo = new \contacts\type\i;
+		  	$crmInfo = new \contacts\classes\type\i;
 	        $crmInfo->auto_field  = $cInfo->type=='v' ? 'next_vend_id_num' : 'next_cust_id_num';
 	        $crmInfo->dept_rep_id = $cInfo->id;
 		  	// error check contact
@@ -76,7 +76,7 @@ switch ($_REQUEST['action']) {
 		  }
 		  // payment fields
 		  if (ENABLE_ENCRYPTION && $_POST['payment_cc_name'] && $_POST['payment_cc_number']) { // save payment info
-			  $encrypt = new encryption();
+			  $encrypt = new \core\classes\encryption();
 				$cc_info = array(
 				  'name'    => db_prepare_input($_POST['payment_cc_name']),
 				  'number'  => db_prepare_input($_POST['payment_cc_number']),
@@ -158,8 +158,7 @@ switch ($_REQUEST['action']) {
   	    $imgID = db_prepare_input($_POST['rowSeq']);
 	    $filename = 'contacts_'.$cID.'_'.$imgID.'.zip';
 	    if (file_exists(CONTACTS_DIR_ATTACHMENTS . $filename)) {
-	       require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-	       $backup = new backup();
+	       $backup = new \phreedom\classes\backup();
 	       $backup->download(CONTACTS_DIR_ATTACHMENTS, $filename, true);
 	    }
         die;
@@ -171,8 +170,7 @@ switch ($_REQUEST['action']) {
   	    foreach ($attachments as $key => $value) {
 		   $filename = 'contacts_'.$cID.'_'.$key.'.zip';
 		   if (file_exists(CONTACTS_DIR_ATTACHMENTS . $filename)) {
-		      require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-		      $backup = new backup();
+		      $backup = new \phreedom\classes\backup();
 		      $backup->download(CONTACTS_DIR_ATTACHMENTS, $filename, true);
 		      die;
 		   }
@@ -259,11 +257,11 @@ switch ($_REQUEST['action']) {
 			from " . TABLE_CONTACTS . " c left join " . TABLE_ADDRESS_BOOK . " a on c.id = a.ref_id " . $search . " order by $disp_order";
 	    $query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
 	    // the splitPageResults should be run directly after the query that contains SQL_CALC_FOUND_ROWS
-    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    	$query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     	if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
     		$_REQUEST['list'] = $query_split->current_page_number;
 	    	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    		$query_split  = new splitPageResults($_REQUEST['list'], '');
+    		$query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     	}
     	history_save('contacts'.$type);
 	    $include_template = 'template_main.php'; // include display template (required)

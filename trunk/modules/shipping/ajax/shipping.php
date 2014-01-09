@@ -44,12 +44,13 @@ switch ($_REQUEST['action']) {
   	  $message = 'No tracking ID passed!';
   	} else {
   	  load_specific_method('shipping', $method);
-  	  $shipment = new $method;
+  	  $shipping_method = "\shipping\methods\\$method\\$method";
+  	  $shipment = new $shipping_method; 
   	  $message = $shipment->trackPackages('', $tID);
   	}
   	break;
   case 'validate':
-	$address = new objectInfo();
+	$address = new \core\classes\objectInfo();
 	$address->ship_primary_name   = db_prepare_input($_GET['primary_name']);
 	$address->ship_contact        = db_prepare_input($_GET['contact']);
 	$address->ship_address1       = db_prepare_input($_GET['address1']);
@@ -59,7 +60,8 @@ switch ($_REQUEST['action']) {
 	$address->ship_postal_code    = db_prepare_input($_GET['postal_code']);
 	$address->ship_country_code   = db_prepare_input($_GET['country_code']);
 	load_specific_method('shipping', $method);
-	$shipment = new $method;
+	$shipping_method = "\shipping\methods\\$method\\$method";
+  	$shipment = new $shipping_method; 
 	$result = $shipment->validateAddress($address);
 	if ($result['result'] == 'success') $xml .= $result['xmlString'];
 	$debug   = $result['debug'];

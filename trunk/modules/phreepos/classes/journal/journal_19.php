@@ -110,7 +110,8 @@ class journal_19 extends \core\classes\journal {
 		}
 		// cycle through the payments
 		foreach ($this->pmt_rows as $pay_method) {
-	        $pay_meth  = $pay_method['meth'];
+	        $method   = $pay_method['meth'];
+	        $pay_meth = "\payment\methods\\$method\\$method\\";
 	        $processor = new $pay_meth;
 	        $messageStack->debug("\n encryption =".ENABLE_ENCRYPTION." save_payment =$this->save_payment enable_encryption=$processor->enable_encryption");
 	        if (ENABLE_ENCRYPTION && $this->save_payment && $processor->enable_encryption !== false) {
@@ -151,7 +152,8 @@ class journal_19 extends \core\classes\journal {
 		  		$desc   = MENU_HEADING_PHREEPOS . '-' . TEXT_PAYMENT;
 		  		$method = $this->pmt_rows[$i]['meth'];
 		  		if ($method) {
-		    		$$method    = new $method;
+		  			$pay_meth = "\payment\methods\\$method\\$method\\";
+		    		$$method    = new $pay_meth;
 		    		$deposit_id = $$method->def_deposit_id ? $$method->def_deposit_id : ('DP' . date('Ymd'));
 					$desc       = JOURNAL_ID . ':' . $method . ':' . $$method->payment_fields;
 					$gl_acct_id = $$method->pos_gl_acct;
@@ -319,7 +321,7 @@ class journal_19 extends \core\classes\journal {
   
 	function encrypt_payment($method) {
   		global $messageStack;	
-	  	$encrypt = new encryption();
+	  	$encrypt = new \core\classes\encryption();
 	  	$cc_info = array();
 	  	$cc_info['name']    = $method['f0'];
 	  	$cc_info['number']  = $method['f1'];

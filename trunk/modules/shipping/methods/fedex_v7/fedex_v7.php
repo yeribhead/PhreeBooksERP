@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/fedex_v7/fedex_v7.php
 //
+namespace shipping\methods\fedex_v7;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_FEDEX_V7_VERSION','3.2');
@@ -261,9 +262,9 @@ class fedex_v7 {
 	}
 
 	if (MODULE_SHIPPING_FEDEX_V7_TEST_MODE == 'Test') {
-	  $client = new SoapClient(PATH_TO_TEST_RATE_WSDL, array('trace' => 1));
+	  $client = new \SoapClient(PATH_TO_TEST_RATE_WSDL, array('trace' => 1));
 	} else {
-	  $client = new SoapClient(PATH_TO_RATE_WSDL, array('trace' => 1));
+	  $client = new \SoapClient(PATH_TO_RATE_WSDL, array('trace' => 1));
 	}
 	// fisrt check if small package
 	if ($pkg->split_large_shipments || ($pkg->num_packages == 1 && $pkg->pkg_weight <= FEDEX_V7_MAX_SINGLE_BOX_WEIGHT)) {
@@ -510,9 +511,9 @@ class fedex_v7 {
 		  return false;
 		}
 		if (MODULE_SHIPPING_FEDEX_V7_TEST_MODE == 'Test') {
-			$client = new SoapClient(PATH_TO_TEST_SHIP_WSDL, array('trace' => 1));
+			$client = new \SoapClient(PATH_TO_TEST_SHIP_WSDL, array('trace' => 1));
 		} else {
-			$client = new SoapClient(PATH_TO_SHIP_WSDL, array('trace' => 1));
+			$client = new \SoapClient(PATH_TO_SHIP_WSDL, array('trace' => 1));
 		}
 		for ($key = 0; $key < count($sInfo->package); $key++) {
 		  $labels = array();
@@ -937,9 +938,9 @@ class fedex_v7 {
 	}
 	$result = array();
 	if (MODULE_SHIPPING_FEDEX_V7_TEST_MODE == 'Test') {
-	  $client = new SoapClient(PATH_TO_TEST_SHIP_WSDL, array('trace' => 1));
+	  $client = new \SoapClient(PATH_TO_TEST_SHIP_WSDL, array('trace' => 1));
 	} else {
-	  $client = new SoapClient(PATH_TO_SHIP_WSDL, array('trace' => 1));
+	  $client = new \SoapClient(PATH_TO_SHIP_WSDL, array('trace' => 1));
 	}
 	  $request = $this->FormatFedExDeleteRequest($method, $tracking_number);
 //echo 'request = '; print_r($request); echo '<br />';  
@@ -1013,7 +1014,7 @@ class fedex_v7 {
 			$messageStack->add('Tracking only works on the FedEx production server!','error');
 			return false;
 		} else {
-			$client = new SoapClient(PATH_TO_TRACK_WSDL, array('trace' => 1));
+			$client = new \SoapClient(PATH_TO_TRACK_WSDL, array('trace' => 1));
 		}
 		if ($log_id) {
 			$shipments  = $db->Execute("select id, ref_id, deliver_date, actual_date, tracking_id, notes 
@@ -1121,9 +1122,9 @@ class fedex_v7 {
 	function closeFedEx($close_date = '', $report_only = false, $report_type = 'MANIFEST') {
 		global $messageStack;
 		if (MODULE_SHIPPING_FEDEX_V7_TEST_MODE == 'Test') {
-			$client = new SoapClient(PATH_TO_TEST_CLOSE_WSDL, array('trace' => 1));
+			$client = new \SoapClient(PATH_TO_TEST_CLOSE_WSDL, array('trace' => 1));
 		} else {
-			$client = new SoapClient(PATH_TO_CLOSE_WSDL, array('trace' => 1));
+			$client = new \SoapClient(PATH_TO_CLOSE_WSDL, array('trace' => 1));
 		}
 		$today = date('c');
 		if (!$close_date) $close_date = $today;

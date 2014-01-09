@@ -18,8 +18,8 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-
-class so_status extends ctl_panel {
+namespace phreebooks\dashboards\so_status;
+class so_status extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'so_status';
 	public $description	 		= CP_SO_STATUS_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_SALES_ORDER;

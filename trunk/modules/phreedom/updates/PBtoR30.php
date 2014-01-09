@@ -82,8 +82,7 @@ if (defined('MODULE_SHIPPING_USPS_SORT_ORDER'))        write_configure('MODULE_S
 gen_pull_language('phreeform', 'admin');
 require_once (DIR_FS_MODULES . 'phreeform/config.php');
 require_once (DIR_FS_MODULES . 'phreeform/defaults.php');
-require_once (DIR_FS_MODULES . 'phreeform/classes/install.php');
-$mInstall = new phreeform_admin;
+$mInstall = new \phreeform\classes\admin;
 admin_install_dirs($mInstall->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/');
 admin_install_tables($mInstall->tables);
 write_configure('MODULE_PHREEFORM_STATUS', constant('MODULE_PHREEFORM_VERSION'));
@@ -98,8 +97,7 @@ foreach ($contents as $entry) { // load the configuration files to load version 
     if (defined('MODULE_' . strtoupper($entry) . '_STATUS') && $entry <> 'phreeform') { // build the directories
 	  gen_pull_language($entry, 'admin');
 	  require_once (DIR_FS_MODULES . $entry . '/config.php');
-	  require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
-	  $classname   = $entry . '_admin';
+	  $classname   = $entry . '\classes\admin';
 	  $install_mod = new $classname;
 	  $install_mod->load_reports($entry);
     }

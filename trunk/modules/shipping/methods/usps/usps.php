@@ -17,6 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/usps/usps.php
 //
+namespace shipping\methods\usps;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_USPS_VERSION','3.2');

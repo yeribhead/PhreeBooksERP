@@ -31,9 +31,8 @@ $xml     = NULL;
 if (!$page || !subject) die('no subject or module');
 if (!$_REQUEST['list']) 	$_REQUEST['list'] = 1;
 if (!$_REQUEST['action']) 	$_REQUEST['action'] = 'go_first';
-
-require_once(DIR_FS_MODULES . $page . '/classes/' . $subject . '.php');
-$my_class = new $subject();
+$temp = "\\$page\classes\\$subject";
+$my_class = new $temp;
 $my_class->message = false;
 
 switch ($_REQUEST['action']) {

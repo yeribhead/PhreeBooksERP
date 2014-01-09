@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/classes/admin.php
 //
-namespace core;
+namespace core\classes;
 class admin {
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly

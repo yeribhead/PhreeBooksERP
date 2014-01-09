@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /includes/classes/user.php
 //
-namespace includes\classes;
+namespace core\classes;
 class user {
 	private $language  = 'en_us';
 	
@@ -32,8 +32,8 @@ class user {
 	}
 	
 	static public function get_language(){
-		if   (isset($_GET['language'])) {
-			 $_SESSION['language'] = $_GET['language']; 
+		if   (isset($_REQUEST['language'])) {
+			 $_SESSION['language'] = $_REQUEST['language']; 
 		} elseif (!isset($_SESSION['language'])) { 
 			$_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : $this->language; 
 		}

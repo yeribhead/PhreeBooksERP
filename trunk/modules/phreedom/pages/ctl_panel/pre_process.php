@@ -53,20 +53,15 @@ switch ($_REQUEST['action']) {
   	foreach ($dashboards as $dashboard) {
 	  // build add and delete list
 	  // if post is set and not in my_profile -> add
+	  $temp = "\\".$dashboard['module_id']."\dashboards\\".$dashboard['dashboard_id']."\\".$dashboard['dashboard_id'];
+	  $dbItem = new $temp;
+	  $dbItem->menu_id      = $menu_id;
+	  $dbItem->module_id    = $dashboard['module_id'];
 	  if (isset($_POST[$dashboard['dashboard_id']]) && !in_array($dashboard['dashboard_id'], $my_profile)) {
-	  	include_once (DIR_FS_MODULES . $dashboard['module_id'] . '/dashboards/' . $dashboard['dashboard_id'] . '/' . $dashboard['dashboard_id'] . '.php');
-	    $dbItem = new $dashboard['dashboard_id'];
-	    $dbItem->menu_id      = $menu_id;
-	    $dbItem->module_id    = $dashboard['module_id'];
 		$dbItem->Install();
-	  }
-	  // if post is not set and in my_profile -> delete
-	  if (!isset($_POST[$dashboard['dashboard_id']]) && in_array($dashboard['dashboard_id'], $my_profile)) { // delete it
-	  	include_once  (DIR_FS_MODULES . $dashboard['module_id'] . '/dashboards/' . $dashboard['dashboard_id'] . '/' . $dashboard['dashboard_id'] . '.php');
-	    $dbItem = new $dashboard['dashboard_id'];
-	    $dbItem->menu_id      = $menu_id;
-	    $dbItem->module_id    = $dashboard['module_id'];
-	    $dbItem->Remove();
+	  }else{
+	  	// if post is not set and in my_profile -> delete
+	  	$dbItem->Remove();
 	  }
 	}
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '&module=phreedom&page=main&mID=' . $menu_id, 'SSL'));

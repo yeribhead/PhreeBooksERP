@@ -55,7 +55,7 @@ if (!$type) { // use the first type of the FormEntries array since it will be sh
   $type = array_shift($temp);
 }
 
-$properties       = new objectInfo();
+$properties       = new \core\classes\objectInfo();
 $properties->type = $type;
 $output           = box_build($properties, $rowID);
 

@@ -20,7 +20,6 @@ $security_level = validate_user(SECURITY_ID_GEN_ADMIN_TOOLS);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 require(DIR_FS_WORKING . 'functions/phreebooks.php');
-require(DIR_FS_WORKING . 'classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',2);	// General Journal
 $error      = false;
@@ -82,7 +81,7 @@ switch ($_REQUEST['action']) {
 	$highest_period  = validate_fiscal_year($next_fy, $next_period, $next_start_date);
 	build_and_check_account_history_records();
 	// *************** roll account balances into next fiscal year *************************
-    $glEntry = new journal();
+    $glEntry = new \core\classes\journal();
 	$result = $db->Execute("select id from " . TABLE_CHART_OF_ACCOUNTS);
 	while (!$result->EOF) {
 		$glEntry->affected_accounts[$result->fields['id']] = 1;
@@ -229,7 +228,7 @@ switch ($_REQUEST['action']) {
 	if ($_REQUEST['action'] == 'coa_hist_fix' && sizeof($bad_accounts) > 0) {
 		// *************** START TRANSACTION *************************
 		$db->transStart();
-	    $glEntry = new journal();
+	    $glEntry = new \core\classes\journal();
 		foreach ($bad_accounts as $gl_acct => $acct_array) {
 		  $glEntry->affected_accounts[$gl_acct] = 1;
 		  foreach ($acct_array as $period => $sql_data_array) {

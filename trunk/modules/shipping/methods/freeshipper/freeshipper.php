@@ -16,6 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/shipping/methods/freeshipper/freeshipper.php
 //
+namespace shipping\methods\freeshipper;
 // Revision history
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_FREESHIPPER_VERSION','3.2');

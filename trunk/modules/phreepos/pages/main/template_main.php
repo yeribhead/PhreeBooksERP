@@ -229,7 +229,7 @@ echo $hidden_fields;
 </applet>
 <div class="easyui-dialog" data-options="closed: true," id="popupPayment" title="<?php echo PAYMENT_TITLE; ?>" style="height:450px;width:450px">
 <?php 
-$SeccondToolbar      = new toolbar;
+$SeccondToolbar      = new \core\classes\toolbar;
 $SeccondToolbar->icon_list['cancel']['params'] = 'onclick="disablePopup()"';
 $SeccondToolbar->icon_list['open']['show']     = false;
 $SeccondToolbar->icon_list['save']['params']   = 'onclick="SavePayment(\'save\')"';
@@ -274,8 +274,8 @@ echo $SeccondToolbar->build_toolbar();
 
 <div class="easyui-dialog" data-options="closed: true," id="popupOtherTrans" title="<?php echo TEXT_OTHER_TRANS; ?>" style="height:410px;width:1050px;padding:10px">
 <?php 
-echo html_form('popupOtherTranss', FILENAME_DEFAULT) . chr(10);
-$thirdToolbar      = new toolbar;
+echo html_form('popupOtherTrans_form', FILENAME_DEFAULT) . chr(10);
+$thirdToolbar      = new \core\classes\toolbar;
 $thirdToolbar->icon_list['cancel']['params'] = 'onclick="disablePopup()"';
 $thirdToolbar->icon_list['open']['show']     = false;
 $thirdToolbar->icon_list['save']['params']   = 'onclick="SaveOt()"';

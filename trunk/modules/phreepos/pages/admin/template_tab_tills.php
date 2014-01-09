@@ -16,7 +16,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/pages/admin/template_tab_tills.php
 //
-$tills_toolbar = new toolbar();
+$tills_toolbar = new \core\classes\toolbar();
 $tills_toolbar->icon_list['cancel']['show'] = false;
 $tills_toolbar->icon_list['open']['show']   = false;
 $tills_toolbar->icon_list['delete']['show'] = false;

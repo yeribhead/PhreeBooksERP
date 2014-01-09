@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class ms extends \inventory\inventory {//Master Stock Item parent of mi
+namespace inventory\classes\type;
+class ms extends \inventory\classes\inventory {//Master Stock Item parent of mi
 	public $inventory_type			= 'ms';
 	public $title       			= INV_TYPES_MS;
 	public $account_sales_income	= INV_MASTER_STOCK_DEFAULT_SALES;

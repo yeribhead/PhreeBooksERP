@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/pages/admin/template_tab_tax_auths_vend.php
 //
-$tax_auths_vend_toolbar = new toolbar;
+$tax_auths_vend_toolbar = new \core\classes\toolbar;
 $tax_auths_vend_toolbar->icon_list['cancel']['show'] = false;
 $tax_auths_vend_toolbar->icon_list['open']['show']   = false;
 $tax_auths_vend_toolbar->icon_list['save']['show']   = false;

@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/admin/template_tab_project_phases.php
 //
-$project_phases_toolbar = new toolbar('project_phases');
+$project_phases_toolbar = new \core\classes\toolbar('project_phases');
 $project_phases_toolbar->icon_list['cancel']['show'] = false;
 $project_phases_toolbar->icon_list['open']['show']   = false;
 $project_phases_toolbar->icon_list['save']['show']   = false;

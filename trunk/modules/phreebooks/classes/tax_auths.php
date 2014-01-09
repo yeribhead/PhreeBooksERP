@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/tax_auths.php
 //
-
+namespace phreebooks\classes;
 class tax_auths {
 	public $code        = 'tax_auths'; // needs to match class name
     public $db_table    = TABLE_TAX_AUTH;

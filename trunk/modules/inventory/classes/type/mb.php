@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class mb extends \inventory\inventory {//Master Build (combination of Master Stock Item and assembly) parent of ia
+namespace inventory\classes\type;
+class mb extends \inventory\classes\inventory {//Master Build (combination of Master Stock Item and assembly) parent of ia
 	public $inventory_type			= 'mb';
 	public $title       			= INV_TYPES_MB;
 	public $account_sales_income	= INV_ASSY_DEFAULT_SALES;

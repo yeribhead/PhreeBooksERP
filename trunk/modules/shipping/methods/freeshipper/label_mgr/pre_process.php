@@ -23,12 +23,10 @@ $shipping_module = 'freeshipper';
 /**************  include page specific files    *********************/
 load_method_language(DEFAULT_MOD_DIR, $shipping_module);
 require(DIR_FS_WORKING . 'functions/shipping.php');
-require(DIR_FS_WORKING . 'classes/shipping.php');
-require(DIR_FS_WORKING . 'methods/' . $shipping_module . '/' . $shipping_module . '.php');
-
 /**************   page specific initialization  *************************/
 $error = false;
-$sInfo = new shipment();	// load defaults
+$shipping_method = "\shipping\methods\\$shipping_module\\$shipping_module";
+$sInfo = new $shipping_method();	// load defaults
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':

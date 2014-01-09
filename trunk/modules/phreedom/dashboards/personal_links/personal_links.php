@@ -18,8 +18,8 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-
-class personal_links extends ctl_panel {
+namespace phreedom\dashboards\personal_links;
+class personal_links extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'personal_links';
 	public $description	 		= CP_PERSONAL_LINKS_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_MY_PROFILE;

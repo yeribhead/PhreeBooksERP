@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/pages/admin/template_tab_fields.php
 //
-$field_toolbar = new toolbar('fields');
+$field_toolbar = new \core\classes\toolbar('fields');
 $field_toolbar->icon_list['cancel']['show'] = false;
 $field_toolbar->icon_list['open']['show']   = false;
 $field_toolbar->icon_list['delete']['show'] = false;

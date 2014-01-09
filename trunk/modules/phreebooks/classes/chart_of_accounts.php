@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreebooks/classes/chart_of_accounts.php
 //
-
+namespace phreebooks\classes;
 require_once(DIR_FS_MODULES . 'phreebooks/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 

@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreepos/dashboards/pos_todays/pos_todays.php
 //
-
-class pos_todays extends ctl_panel {
+namespace phreepos\dashboards\pos_todays;
+class pos_todays extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'pos_today';
 	public $description	 		= CP_POS_TODAYS_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_POS_MGR;

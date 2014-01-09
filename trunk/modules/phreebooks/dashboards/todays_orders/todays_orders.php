@@ -18,8 +18,8 @@
 //
 // Revision history
 // 2011-07-01 - Added version number for revision control
-
-class todays_orders extends ctl_panel {
+namespace phreebooks\dashboards\todays_orders;
+class todays_orders extends \core\classes\ctl_panel {
 	public $dashboard_id 		= 'todays_orders';
 	public $description	 		= CP_TODAYS_ORDERS_DESCRIPTION;
 	public $security_id  		= SECURITY_ID_SALES_ORDER;

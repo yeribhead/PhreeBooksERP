@@ -20,13 +20,12 @@ $security_level = validate_user(SECURITY_ID_ASSEMBLE_INVENTORY);
 /**************  include page specific files    *********************/
 gen_pull_language('phreebooks');
 require_once(DIR_FS_WORKING . 'defaults.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 require_once(DIR_FS_WORKING . 'functions/inventory.php');
 /**************   page specific initialization  *************************/
 $error = false;
 define('JOURNAL_ID', 14); // Inventory Assemblies Journal
 define('GL_TYPE', '');
-$glEntry             = new journal();
+$glEntry             = new \core\classes\journal();
 $glEntry->id         = ($_POST['id'] <> '')      ? $_POST['id'] : ''; // will be null unless opening an existing gl entry
 $glEntry->journal_id = JOURNAL_ID;
 $glEntry->store_id   = isset($_POST['store_id']) ? $_POST['store_id'] : 0;
@@ -58,7 +57,7 @@ switch ($_REQUEST['action']) {
 	if (!$qty) $error = $messageStack->add(JS_ASSY_VALUE_ZERO, 'error');
 	// finished checking errors, reload if any errors found
 	if ($error) {
-	  $cInfo = new objectInfo($_POST);
+	  $cInfo = new \core\classes\objectInfo($_POST);
 	  break; // bail if an input error was found.
 	}
 	// process the request, build main record
@@ -77,7 +76,7 @@ switch ($_REQUEST['action']) {
 	$db->transStart();
 	if (!$glEntry->Post($glEntry->id ? 'edit' : 'insert')) {
 	  $messageStack->add(GL_ERROR_NO_POST, 'error');
-	  $cInfo = new objectInfo($_POST);
+	  $cInfo = new \core\classes\objectInfo($_POST);
 	} else {
 	  $db->transCommit();	// post the chart of account values
 	  gen_add_audit_log(INV_LOG_ASSY . ($_REQUEST['action']=='save' ? TEXT_SAVE : TEXT_EDIT), $sku, $qty);
@@ -90,7 +89,7 @@ switch ($_REQUEST['action']) {
   case 'delete':
 	validate_security($security_level, 4); // security check
 	if (!$error && $glEntry->id) {
-	  $delAssy = new journal($glEntry->id); // load the posted record based on the id submitted
+	  $delAssy = new \core\classes\journal($glEntry->id); // load the posted record based on the id submitted
 	  // *************** START TRANSACTION *************************
 	  $db->transStart();
 	  if ($delAssy->unPost('delete')) {	// unpost the prior assembly
@@ -103,12 +102,12 @@ switch ($_REQUEST['action']) {
 	  }
 	}
 	$messageStack->add(GL_ERROR_NO_DELETE, 'error');
-	$cInfo = new objectInfo($_POST);
+	$cInfo = new \core\classes\objectInfo($_POST);
 	break;
   case 'edit':
 	validate_security($security_level, 2); // security check
     $oID = (int)$_GET['oID'];
-	$cInfo = new objectInfo(array());
+	$cInfo = new \core\classes\objectInfo(array());
     break;
   default:
 }

@@ -16,8 +16,8 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreehelp/classes/admin.php
 //
-namespace phreehelp;
-class admin extends \core\admin {
+namespace phreehelp\classes;
+class admin extends \core\classes\admin {
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom' => 3.6,

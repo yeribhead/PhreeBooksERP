@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/phreedom/pages/admin/template_currency_currency.php
 //
-$currency_toolbar = new toolbar('currency');
+$currency_toolbar = new \core\classes\toolbar('currency');
 $currency_toolbar->icon_list['cancel']['show'] = false;
 $currency_toolbar->icon_list['open']['show']   = false;
 $currency_toolbar->icon_list['save']['show']   = false;

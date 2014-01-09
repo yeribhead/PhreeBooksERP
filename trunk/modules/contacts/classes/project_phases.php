@@ -17,7 +17,7 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/contacts/classes/project_phases.php
 //
-namespace contacts;
+namespace contacts\classes;
 require_once(DIR_FS_MODULES . 'contacts/defaults.php');
 
 class project_phases {

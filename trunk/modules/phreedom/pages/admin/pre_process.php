@@ -26,7 +26,6 @@ if (defined('MODULE_PHREEFORM_STATUS')) {
   require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
 }
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
-require_once(DIR_FS_WORKING . 'classes/backup.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
 $core_modules = array('phreedom','phreeform','phreebooks','contacts','inventory','phreehelp','payment'); // phreeform first!
@@ -38,8 +37,8 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 7);
   $_REQUEST['action'] = 'remove';
 }
-$install   = new \phreedom\admin();
-$currency  = new \phreedom\currency();
+$install   = new \phreedom\classes\admin();
+$currency  = new \phreedom\classes\currency();
 // load other module admin information
 $page_list = array();
 if ($dir = @dir(DIR_FS_MODULES)) {
@@ -68,15 +67,14 @@ switch ($_REQUEST['action']) {
   case 'update':
   	validate_security($security_level, 4);
 	// load the module installation class
-	if (!file_exists(DIR_FS_MODULES . $method . '/classes/install.php')) {
+	if (!file_exists(DIR_FS_MODULES . $method . '/classes/admin.php')) {
 	  $messageStack->add(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method),'error');
 	  break;
 	}
 	gen_pull_language($method, 'admin');
 	gen_pull_language($method);
 	require_once(DIR_FS_MODULES . $method . '/config.php'); // config is not loaded yet since module is not installed.
-	require_once(DIR_FS_MODULES . $method . '/classes/install.php');
-	$cName = $method . '_admin';
+	$cName = "\\$method\classes\admin";
 	$mInstall = new $cName();
 	if ($_REQUEST['action'] == 'install') {
 	  if (admin_check_versions($method, $mInstall->prerequisites)) { // Check for version levels
@@ -106,12 +104,11 @@ switch ($_REQUEST['action']) {
   case 'remove':
   	validate_security($security_level, 4);
 	// load the module installation class
-	if (!file_exists(DIR_FS_MODULES . $method . '/classes/install.php')) {
+	if (!file_exists(DIR_FS_MODULES . $method . '/classes/admin.php')) {
 	  $messageStack->add(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method),'error');
 	  break;
 	}
-	require_once(DIR_FS_MODULES . $method . '/classes/install.php');
-	$cName = $method . '_admin';
+	$cName = "\\$method\classes\admin";
 	$mInstall = new $cName();
 	foreach ($mInstall->keys as $key => $value) remove_configure($key);
 	remove_configure('MODULE_' . strtoupper($method) . '_STATUS');
@@ -172,14 +169,13 @@ switch ($_REQUEST['action']) {
 
 	$copy_modules = $core_modules;
 	foreach ($loaded_modules as $entry) if (isset($_POST[$entry])) $copy_modules[] = $entry;
-	$backup = new backup;
+	$backup = new \phreedom\classes\backup;
     $backup->source_dir  = DIR_FS_MY_FILES . $db_name . '/temp/';
     $backup->source_file = 'temp.sql';
 	if (!$error) {
 	  foreach ($copy_modules as $entry) gen_pull_language($entry, 'admin');
 	  foreach ($copy_modules as $entry) {
-		require_once (DIR_FS_MODULES . $entry . '/classes/install.php');
-		$classname   = $entry . '_admin';
+		$classname   = "\\$entry\classes\admin";
 		$install_mod = new $classname;
 	    $task        = $_POST[$entry . '_action']; 
 		if ($entry == 'phreedom') $task = 'data'; // force complete copy of phreedom module
@@ -198,7 +194,7 @@ switch ($_REQUEST['action']) {
 			  if ($task == 'demo') if ($install_mod->load_demo()) $error = true; // load demo data
 			  if ($entry <> 'phreedom') $install_mod->load_reports($entry);
 			  if ($entry == 'phreeform') {
-			  	$temp_mod = new phreedom_admin;
+			  	$temp_mod = new \phreedom\classes\admin;
 	  			$temp_mod->load_reports('phreedom');
 			  }
 			}

@@ -14,9 +14,9 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /modules/phreeform/custom/classes/entry_builder.php
+//  Path: /modules/phreebooks/classes/entry_builder.php
 //
-
+namespace phreebooks\classes;
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 
 class entry_builder {

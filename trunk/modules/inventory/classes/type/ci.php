@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class ci extends \inventory\inventory {//Charge Item
+namespace inventory\classes\type;
+class ci extends \inventory\classes\inventory {//Charge Item
 	public $inventory_type			= 'ci';
 	public $title 					= INV_TYPES_CI;
 	public $account_sales_income	= INV_CHARGE_DEFAULT_SALES;

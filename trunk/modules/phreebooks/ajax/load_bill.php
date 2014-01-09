@@ -37,7 +37,7 @@ if ($bID) {
   $bill = $db->Execute("select * from " . TABLE_JOURNAL_MAIN . " where id = '" . $bID . "'");
   if ($bill->fields['bill_acct_id']) $cID = $bill->fields['bill_acct_id']; // replace bID with ID from payment
 } else {
-  $bill = new objectInfo();
+  $bill = new \core\classes\objectInfo();
 }
 // select the customer and build the contact record
 $contact = $db->Execute("select * from " . TABLE_CONTACTS . " where id = '" . $cID . "'");

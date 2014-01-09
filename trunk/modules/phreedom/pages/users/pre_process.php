@@ -119,7 +119,7 @@ switch ($_REQUEST['action']) {
 	} elseif ($error) {
 	  $_REQUEST['action'] = 'edit';
 	}
-	$uInfo = new objectInfo($_POST);
+	$uInfo = new \core\classes\objectInfo($_POST);
 	$uInfo->admin_security = $admin_security;
 	break;
 
@@ -165,7 +165,7 @@ switch ($_REQUEST['action']) {
 	$result = $db->Execute("select * from " . TABLE_USERS . " where admin_id = " . (int)$admin_id);
 	$temp = unserialize($result->fields['admin_prefs']);
 	unset($result->fields['admin_prefs']);
-	$uInfo = new objectInfo($result->fields);
+	$uInfo = new \core\classes\objectInfo($result->fields);
 	if (is_array($temp)) foreach ($temp as $key => $value) $uInfo->$key = $value;
 	break;
 
@@ -241,11 +241,11 @@ switch ($_REQUEST['action']) {
 	if (is_array($extra_query_list_fields) > 0) $field_list = array_merge($field_list, $extra_query_list_fields);
 	$query_raw    = "select SQL_CALC_FOUND_ROWS " . implode(', ', $field_list) . " from " . TABLE_USERS . " where is_role = '0'" . $search . " order by $disp_order";
 	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    $query_split  = new splitPageResults($_REQUEST['list'], '');
+    $query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     if ($query_split->current_page_number <> $_REQUEST['list']) { // if here, go last was selected, now we know # pages, requery to get results
     	$_REQUEST['list'] = $query_split->current_page_number;
     	$query_result = $db->Execute($query_raw, (MAX_DISPLAY_SEARCH_RESULTS * ($_REQUEST['list'] - 1)).", ".  MAX_DISPLAY_SEARCH_RESULTS);
-    	$query_split  = new splitPageResults($_REQUEST['list'], '');
+    	$query_split  = new \core\classes\splitPageResults($_REQUEST['list'], '');
     }
     history_save('users');
     

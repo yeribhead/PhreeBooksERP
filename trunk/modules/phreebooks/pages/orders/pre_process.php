@@ -38,8 +38,6 @@ gen_pull_language('shipping');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
-require_once(DIR_FS_WORKING . 'classes/gen_ledger.php');
-require_once(DIR_FS_WORKING . 'classes/orders.php');
 if (defined('MODULE_SHIPPING_STATUS')) { 
   require_once(DIR_FS_MODULES . 'shipping/functions/shipping.php');
   require_once(DIR_FS_MODULES . 'shipping/defaults.php'); 
@@ -163,7 +161,7 @@ switch (JOURNAL_ID) {
 
 $error        = false;
 $post_success = false;
-$order        = new orders();
+$order        = new \phreebooks\classes\orders();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/orders/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -350,7 +348,7 @@ switch ($_REQUEST['action']) {
 	  if ($result->RecordCount() > 0) {
 	    $oID    = $result->fields['id'];
 	    $_REQUEST['action'] = 'edit'; // force page to reload with the new order to edit
-		$order  = new orders();
+		$order  = new \phreebooks\classes\orders();
       } else { // at the beginning
 	  	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  }
@@ -362,7 +360,7 @@ switch ($_REQUEST['action']) {
 	  if ($result->RecordCount() > 0) {
 	    $oID    = $result->fields['id'];
 	    $_REQUEST['action'] = 'edit'; // force page to reload with the new order to edit
-		$order  = new orders();
+		$order  = new \phreebooks\classes\orders();
       } else { // at the end
 	  	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	  }
@@ -374,7 +372,7 @@ switch ($_REQUEST['action']) {
 	validate_security($security_level, 4);
   	$id = ($_POST['id'] <> '') ? $_POST['id'] : ''; // will be null unless opening an existing purchase/receive
 	if ($id) {
-	  $delOrd = new orders();
+	  $delOrd = new \phreebooks\classes\orders();
 	  $delOrd->journal($id); // load the posted record based on the id submitted
 	  if ($_SESSION['admin_prefs']['restrict_period'] && $delOrd->period <> CURRENT_ACCOUNTING_PERIOD) {
 	    $error = $messageStack->add(ORD_ERROR_DEL_NOT_CUR_PERIOD, 'error');
@@ -405,8 +403,7 @@ switch ($_REQUEST['action']) {
   case 'dn_attach':
 	$oID = db_prepare_input($_POST['id']);
 	if (file_exists(PHREEBOOKS_DIR_MY_ORDERS . 'order_' . $oID . '.zip')) {
-	  require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-	  $backup = new backup();
+	  $backup = new \phreedom\classes\backup();
 	  $backup->download(PHREEBOOKS_DIR_MY_ORDERS, 'order_' . $oID . '.zip', true);
 	}
 	die;

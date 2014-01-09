@@ -27,13 +27,6 @@ require_once(DIR_FS_MODULES . 'inventory/defaults.php');
 require_once(DIR_FS_MODULES . 'phreeform/defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 require_once(DIR_FS_MODULES . 'phreeform/functions/phreeform.php');
-//require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
-if (file_exists(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php')) { 
-	require_once(DIR_FS_MODULES . 'phreepos/custom/classes/journal/journal_'.JOURNAL_ID.'.php') ; 
-}else{
-    require_once(DIR_FS_MODULES . 'phreepos/classes/journal/journal_'.JOURNAL_ID.'.php'); // is needed here for the defining of the class and retriving the security_token
-}
-require_once(DIR_FS_MODULES . 'phreepos/classes/tills.php');
 /**************   page specific initialization  *************************/
 define('ORD_ACCT_ID',GEN_CUSTOMER_ID);
 define('GL_TYPE','sos');
@@ -47,9 +40,8 @@ $total_discount  = 0;
 $total_fixed     = 0;
 $account_type    = 'c';
 $post_success    = false;
-$order           = new journal_19();
-$payment_modules = load_all_methods('payment');
-$tills           = new tills();
+$order           = new \phreepos\classes\journal\journal_19();
+$tills           = new \phreepos\classes\tills();
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_MODULES . 'phreepos/custom/ajax/save_main.php';
 if (file_exists($custom_path)) { include($custom_path); }

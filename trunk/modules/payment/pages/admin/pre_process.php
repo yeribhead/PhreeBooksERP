@@ -16,14 +16,13 @@
 // +-----------------------------------------------------------------+
 //  Path: /modules/payment/pages/admin/pre_process.php
 //
-namespace payment;
 $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 /**************  include page specific files    *********************/
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new \payment\admin();
+$install    = new \payment\classes\admin();
 
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
@@ -50,8 +49,8 @@ sort($methods);
 switch ($_REQUEST['action']) {
   case 'install':
 	validate_security($security_level, 4);
-  	require_once($method_dir . $method . '/' . $method . '.php');
-	$properties = new $method();
+  	$temp = "\payment\methods\\$method\\$method\\";
+	$properties = new $temp;
 	write_configure('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS', '1');
 	foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
 	if (method_exists($properties, 'install')) $properties->install(); // handle special case install, db, files, etc
@@ -59,8 +58,8 @@ switch ($_REQUEST['action']) {
 	break;
   case 'remove';
 	validate_security($security_level, 4);
-  	require_once($method_dir . $method . '/' . $method . '.php');
-	$properties = new $method();
+  	$temp = "\payment\methods\\$method\\$method\\";
+	$properties = new $temp;
 	if (method_exists($properties, 'remove')) $properties->remove(); // handle special case removal, db, files, etc
 	foreach ($properties->keys() as $key) { // remove all of the keys from the configuration table
       $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = '" . $key['key'] . "'");
@@ -71,10 +70,10 @@ switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	// foreach method if enabled, save info
-	if (sizeof($methods) > 0) foreach ($methods as $shipper) {
-	  require_once($method_dir . $shipper . '/' . $shipper . '.php');
-	  if (defined('MODULE_PAYMENT_' . strtoupper($shipper) . '_STATUS')) {
-	    $properties = new $shipper();
+	if (sizeof($methods) > 0) foreach ($methods as $method) {
+	  if (defined('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS')) {
+	  	$temp = "\payment\methods\\$method\\$method\\";
+		$properties = new $temp;
 	    $properties->update();
 	  }
 	}

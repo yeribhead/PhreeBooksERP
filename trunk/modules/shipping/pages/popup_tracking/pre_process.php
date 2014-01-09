@@ -69,7 +69,7 @@ if ($sID) {
   $sql = "select id, shipment_id, carrier, ref_id, method, ship_date, deliver_date, tracking_id, cost 
 	from " . TABLE_SHIPPING_LOG . " where id = " . (int)$sID;
   $result = $db->Execute($sql);
-  $cInfo = new objectInfo($result->fields);
+  $cInfo = new \core\classes\objectInfo($result->fields);
   // need to build the methods pull down
   $carrier_methods = array();
   foreach ($shipping_defaults['service_levels'] as $key => $value) {
@@ -81,7 +81,7 @@ if ($sID) {
 	}
   }
 } else {
-  $cInfo = new objectInfo(array(
+  $cInfo = new \core\classes\objectInfo(array(
 	'shipment_id' => $sID, 
 	'carrier'     => $carrier, 
 	'method'      => $method, 

@@ -1,6 +1,6 @@
 <?php
-namespace inventory\type;
-class ds extends \inventory\inventory {//Description
+namespace inventory\classes\type;
+class ds extends \inventory\classes\inventory {//Description
 	public $inventory_type			= 'ds';
 	public $title					= INV_TYPES_DS;
 	public $account_sales_income	= null;

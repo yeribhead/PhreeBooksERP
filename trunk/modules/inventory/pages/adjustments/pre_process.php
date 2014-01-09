@@ -21,13 +21,12 @@ $security_level = validate_user(SECURITY_ID_ADJUST_INVENTORY);
 gen_pull_language('phreebooks');
 require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
-require_once(DIR_FS_MODULES . 'phreebooks/classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',16);	// Adjustment Journal
 define('GL_TYPE', '');
 $post_date           = isset($_POST['post_date'])? gen_db_date($_POST['post_date']) : date('Y-m-d');
 $error               = false;
-$glEntry             = new journal();
+$glEntry             = new \core\classes\journal();
 $glEntry->id         = isset($_POST['id'])       ? $_POST['id']       : '';
 $glEntry->journal_id = JOURNAL_ID;
 $glEntry->store_id   = isset($_POST['store_id']) ? $_POST['store_id'] : 0;
@@ -107,13 +106,13 @@ switch ($_REQUEST['action']) {
 	  $messageStack->add(INV_ADJ_QTY_ZERO, 'error');
 	}
 	$error = $messageStack->add(GL_ERROR_NO_POST, 'error');
-	$cInfo = new objectInfo($_POST);
+	$cInfo = new \core\classes\objectInfo($_POST);
 	break;
 
   case 'delete':
 	validate_security($security_level, 4); // security check
 	if ($glEntry->id) {
-	  $delOrd = new journal();
+	  $delOrd = new \core\classes\journal();
 	  $delOrd->journal($glEntry->id); // load the posted record based on the id submitted
 	  // *************** START TRANSACTION *************************
 	  $db->transStart();
@@ -126,7 +125,7 @@ switch ($_REQUEST['action']) {
 	  }
 	}
 	$error = $messageStack->add(GL_ERROR_NO_DELETE, 'error');
-	$cInfo = new objectInfo($_POST);
+	$cInfo = new \core\classes\objectInfo($_POST);
 	break;
 
   case 'edit':
@@ -134,7 +133,7 @@ switch ($_REQUEST['action']) {
     $oID = (int)$_GET['oID'];
 	// fall through like default
   default:
-	$cInfo = new objectInfo();
+	$cInfo = new \core\classes\objectInfo();
 	$cInfo->gl_acct = INV_STOCK_DEFAULT_COS;
 	break;
 }
