@@ -133,7 +133,7 @@ class journal_21 extends \core\classes\journal {
 		  $desc = MENU_HEADING_PHREEPOS . '-' . TEXT_TOTAL;
 		  $method     = $this->pmt_rows[$i]['meth'];
 		  if ($method) {
-		    $pay_meth = "\payment\methods\\$method\\$method\\";
+		    $pay_meth = "\payment\methods\\$method\\$method";
 		    $$method    = new $pay_meth;
 		    $deposit_id = $$method->def_deposit_id ? $$method->def_deposit_id : ('DP' . date('Ymd'));
 			$desc = JOURNAL_ID . ':' . $method . ':' . $$method->payment_fields;

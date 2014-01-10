@@ -24,13 +24,14 @@ class admin extends \core\classes\admin {
 	  'phreedom'   => 3.6,
 	  'phreebooks' => 3.6,
 	);
+	parent::__construct();
   }
 
   function install($module) {
 	$error = false;
 	$methods = array('cod','moneyorder'); // pick a couple of modules to install
 	foreach ($methods as $method) {
-		$temp = "\payment\methods\\$method\\$method\\";
+		$temp = "\payment\methods\\$method\\$method";
 	  	$properties = new $temp;
 	  	write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
 	  	foreach ($properties->key as $key) write_configure($key['key'], $key['default']);
@@ -53,7 +54,7 @@ class admin extends \core\classes\admin {
 	  }
 	  $dir->close();//update keys
 	  foreach ($methods as $method) {
-	    $temp = "\payment\methods\\$method\\$method\\";
+	    $temp = "\payment\methods\\$method\\$method";
 	    $properties = new $temp;
 	    foreach ($properties->keys() as $key) {
 	    	if(!defined($key['key'])) write_configure($key['key'], $key['default']);
@@ -80,7 +81,7 @@ class admin extends \core\classes\admin {
 	  }
 	  $dir->close();
 	  foreach ($methods as $method) {
-	    $temp = "\payment\methods\\$method\\$method\\";
+	    $temp = "\payment\methods\\$method\\$method";
 	    $properties = new $temp;
 	    remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS');
 	    foreach ($properties->keys() as $key) remove_configure($key['key']);

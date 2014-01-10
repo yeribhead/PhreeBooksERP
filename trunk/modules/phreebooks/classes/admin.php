@@ -261,6 +261,7 @@ class admin extends \core\classes\admin {
 		  KEY period (period)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;",
     );
+    parent::__construct();
   }
 
   function install($module, $demo = false) {

@@ -2136,16 +2136,19 @@ function Phreebooks_autoloader($temp){
 	$class = str_replace("\\", "/", $temp);
 	$path = explode("/", $class, 3);
 	if($path[0] == 'core'){
+		$file = DIR_FS_ADMIN."includes/$path[1]/$path[2].php";
 		include_once(DIR_FS_ADMIN."includes/$path[1]/$path[2].php");
 	}else{
 		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php")){
+			$file = DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php";
 			include_once(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php");
 		}else{
+			$file = DIR_FS_ADMIN."modules/$path[0]/$path[1]/$path[2].php";
 			include_once(DIR_FS_ADMIN."modules/$path[0]/$path[1]/$path[2].php");
 		}
 	}
 	if (!class_exists($temp, false)) {
-        trigger_error("Unable to load module = $path[0] $path[1] = $path[2] called = $temp<br/>", E_USER_ERROR);
+        trigger_error("Unable to load module = $path[0] <br/>$path[1] = $path[2]<br/> called = $temp<br/>file = $file", E_USER_ERROR);
     }
 }
 ?>

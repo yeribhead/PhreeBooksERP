@@ -24,6 +24,11 @@ class admin {
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
 
+	function __construct(){
+		$this->version = constant('MODULE_' . strtoupper(get_called_class()) . '_VERSION');
+		$this->status  = constant('MODULE_' . strtoupper(get_called_class()) . '_STATUS');
+	}
+	
 	function install($module) {
 		$error = false;
 	    return $error;
@@ -51,6 +56,10 @@ class admin {
 
 	function load_demo() {
 	}
-
+	
+	function should_update(){
+		if (constant('MODULE_' . strtoupper(get_called_class()) . '_STATUS') <> constant('MODULE_' . strtoupper(get_called_class()) . '_VERSION')) return true;
+		else return false;
+	}
 }
 ?>

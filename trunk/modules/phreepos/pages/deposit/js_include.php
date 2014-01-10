@@ -68,7 +68,7 @@ function check_form() {
     var payment_method = document.getElementById('shipper_code').options[index].value;
 	<?php
 	  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
-		echo $pmt_class->javascript_validation();
+		echo $pmt_class->javascript_validation();//@todo werkt dit
 	  }
 	?>
   }

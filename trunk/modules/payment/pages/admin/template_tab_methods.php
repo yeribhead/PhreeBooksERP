@@ -33,7 +33,7 @@
 	  <?php 
   if (sizeof($methods) > 0) foreach ($methods as $method) {
   	// load the method properties
-	$temp = "\payment\methods\\$method\\$method\\";
+	$temp = "\payment\methods\\$method\\$method";
 	$properties = new $temp;
 	
     $installed = defined('MODULE_PAYMENT_' . strtoupper($properties->code) . '_STATUS');

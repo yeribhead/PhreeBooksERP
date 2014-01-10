@@ -139,6 +139,7 @@ class admin extends \core\classes\admin {
 		  KEY description_short (description_short)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci",
     );
+    parent::__construct();
   }
 
   function install($module) {

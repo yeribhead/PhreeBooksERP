@@ -42,6 +42,7 @@ class admin extends \core\classes\admin {
 		  FULLTEXT KEY doc_title (doc_title, doc_text)
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
     );
+    parent::__construct();
   }
 
   function update($module) {

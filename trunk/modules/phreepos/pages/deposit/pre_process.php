@@ -112,7 +112,7 @@ switch ($_REQUEST['action']) {
 	switch (JOURNAL_ID) {
 	  case 18:
 	    $class = $order->shipper_code; 
-	    $payment_module = "\payment\methods\\$class\\$class\\";
+	    $payment_module = "\payment\methods\\$class\\$class";
 	    $processor      = new $payment_module; 
 	    if ($$payment_module->pre_confirmation_check()) $error = true;	
 		$pmt_meth = db_prepare_input($_POST['shipper_code']);
