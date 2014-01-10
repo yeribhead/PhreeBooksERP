@@ -24,6 +24,7 @@ class admin extends \core\classes\admin {
 	  'phreedom'  => '3.3',
 	  'inventory' => '3.3',
 	);
+	parent::__construct();
   }
 
   function update($module) {

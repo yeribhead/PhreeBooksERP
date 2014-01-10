@@ -24,6 +24,7 @@ class admin extends \core\classes\admin{
 	  'phreedom'   => '3.3',
 	  'phreebooks' => '3.3',
 	);
+	parent::__construct();
   }
 
 }

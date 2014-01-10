@@ -32,6 +32,7 @@ class admin extends \core\classes\admin {
     $this->keys = array(
     	 'AUDIT_DEBIT_NUMBER'               => ''
     );
+    parent::__construct();
   }
 
   function install($module) {
