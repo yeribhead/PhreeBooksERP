@@ -44,6 +44,7 @@ class journal_19 extends journal {
 	public $opendrawer			= false;
 	public $printed				= false;
 	public $post_date			= '';
+	public $store_id			= 0;
 	public $till_id				= 0;
 	public $rep_id				= 0;
 	public $subtotal			= 0;

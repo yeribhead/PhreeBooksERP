@@ -52,9 +52,10 @@ switch (JOURNAL_ID) {
 	default:
 		die('No valid journal id found (filename: modules/phreebooks/popup.php), Journal ID needs to be passed to this script to identify the correct procedure.');
 }
-$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 history_filter('pb_pop_orders');
 $acct_period = $_REQUEST['search_period'];
+if (!$acct_period) $acct_period = CURRENT_ACCOUNTING_PERIOD;
+$period_filter = ($acct_period == 'all') ? '' : (' and period = ' . $acct_period);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_orders/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }

@@ -43,8 +43,9 @@ echo $toolbar->build_toolbar(true);
 ?>
 <h1><?php echo PAGE_TITLE; ?></h1>
 <div id="filter_bar">
+<div style="height:19px"><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_TRANSLATIONS); ?>
 <div style="float:right"><?php echo $query_split->display_links(); ?></div>
-<div><?php echo $query_split->display_count(TEXT_DISPLAY_NUMBER . TEXT_TRANSLATIONS); ?></div>
+</div>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <tbody class="ui-widget-content">
   <tr>
