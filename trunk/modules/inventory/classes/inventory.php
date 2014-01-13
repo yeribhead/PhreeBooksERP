@@ -222,7 +222,7 @@ class inventory {
 		$result = $db->Execute("select * from " . TABLE_INVENTORY . " where sku = '" . $this->old_sku. "'");
 		//if ($result->RecordCount() == 0) return false;
 		$sql_data_array = array();
-		$not_usable_keys = array('id','sku','last_journal_date','upc_code','image_with_path','quantity_on_hand','quantity_on_order','quantity_on_sales_order','creation_date','last_update');
+		$not_usable_keys = array('id','sku','last_journal_date','upc_code','image_with_path','quantity_on_hand','quantity_on_order','quantity_on_sales_order','quantity_on_allocation','creation_date','last_update');
 		foreach ($result->fields as $key => $value) {
 			if(!in_array($key, $not_usable_keys)) $sql_data_array[$key] = $value;
 		}
