@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -148,6 +147,17 @@ echo $toolbar->build_toolbar();
 	  <td><?php echo GEN_ADM_TOOLS_J20; ?></td>
 	  <td colspan="2" align="right"><?php echo html_button_field('repost', GEN_ADM_TOOLS_BTN_REPOST, 'onclick="if (confirm(\'' . GEN_ADM_TOOLS_REPOST_CONFIRM . '\')) submitToDo(\'repost\')"'); ?></td>
 	</tr>
+  </tbody>
+ </table>
+</fieldset>
+
+<fieldset>
+<legend><?php echo GEN_ADM_TOOLS_INVENTORY_OWED; ?></legend>
+<p><?php echo sprintf(GEN_ADM_TOOLS_INVENTORY_DESC, $cogs_owed); ?></p>
+ <table class="ui-widget" style="border-style:none;width:100%">
+  <tbody class="ui-widget-content">
+    <tr><th><?php echo GEN_ADM_TOOLS_OWED_FIX; ?></th></tr>
+	<tr><td align="center"><?php echo html_button_field('inv_owed_fix', GEN_ADM_TOOLS_BTN_OWED, 'onclick="if (confirm(\'' . GEN_ADM_TOOLS_OWED_CONFIRM . '\')) submitToDo(\'inv_owed_fix\')"'); ?></td></tr>
   </tbody>
  </table>
 </fieldset>

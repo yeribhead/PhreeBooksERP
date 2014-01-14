@@ -149,6 +149,34 @@ switch ($_REQUEST['action']) {
 	if (DEBUG) $messageStack->write_debug();
 	break;
 
+	case 'inv_owed_fix' :
+		validate_security($security_level, 3);
+		$error = false;
+		$result = $db->Execute("SELECT journal_main_id FROM ".TABLE_INVENTORY_COGS_OWED);
+		$cnt = 0;
+		$db->transStart();
+		while (!$result->EOF) {
+		    $gl_entry = new journal($result->fields['journal_main_id']);
+		    $gl_entry->remove_cogs_rows(); // they will be regenerated during the re-post
+		    if (!$gl_entry->Post('edit', true)) {
+			  $db->transRollback();
+			  $messageStack->add('<br /><br />Failed Re-posting the inventory owed. The record that failed was # '.$gl_entry->id,'error');
+			  $error = true;
+			  break;
+		    }
+			$cnt++;
+		    $result->MoveNext();
+		}
+	    $db->transCommit();
+		if ($error) {
+			$messageStack->add(GEN_ADM_TOOLS_RE_POST_FAILED,'caution');
+		} else {
+			$messageStack->add(sprintf(GEN_ADM_TOOLS_RE_POST_SUCCESS, $cnt), 'success');
+			gen_add_audit_log(GEN_ADM_TOOLS_AUDIT_LOG_RE_POST, "inventory owed");
+		}
+		if (DEBUG) $messageStack->write_debug();
+		break;
+
   case 'coa_hist_test':
   case 'coa_hist_fix':
 	validate_security($security_level, 4);
@@ -297,6 +325,9 @@ $cal_repost_end = array(
     'default'   => gen_locale_date($end_date),
     'params'    => array('align' => 'left'),
 );
+
+$result = $db->Execute("SELECT journal_main_id FROM ".TABLE_INVENTORY_COGS_OWED);
+$cogs_owed = $result->RecordCount();
 
 $include_header   = true;
 $include_footer   = true;

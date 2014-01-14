@@ -87,6 +87,11 @@ define('GEN_ADM_TOOLS_DATE_RANGE','Re-post Date Range');
 define('GEN_ADM_TOOLS_START_DATE','Start Date');
 define('GEN_ADM_TOOLS_END_DATE','End Date');
 define('GEN_ADM_TOOLS_BTN_REPOST','Re-post Journals');
+define('GEN_ADM_TOOLS_INVENTORY_OWED','Re-post Inventory Owed');
+define('GEN_ADM_TOOLS_INVENTORY_DESC','Your inventory_cogs_owed table currently has %s entries in it. This tool will attempt to re-post all entries in the inventory_cogs_owed table. The inventory_cogs_owed table should not have any entries in it unless the stock levels are negative. If the table has items listed and the stock levels are zero or greater, this tool will attempt to fix the table by re-posting the pending journal entries. There have been issues in R3.6 and earlier that have caused this table to fill up waiting for inventory to show up and certain cases when partial stock is available. You can run a report to see a list of the items in your cogs_owed table.');
+define('GEN_ADM_TOOLS_OWED_FIX','Re-post Inventory Owed');
+define('GEN_ADM_TOOLS_BTN_OWED','Start Re-post');
+define('GEN_ADM_TOOLS_OWED_CONFIRM','Are you sure you want to re-post the inventory owed?\n\nYOU SHOULD BACKUP YOUR COMPANY BEFORE DOING THIS!');
 
 define('GEN_ADM_TOOLS_REPAIR_CHART_HISTORY','Validate and Repair General Ledger Account Balances');
 define('GEN_ADM_TOOLS_REPAIR_CHART_DESC','This operation validates and repairs the chart of account balances. If the trial balance or balance sheet are not in balance, this is where to start. First validate the balances to see if there is an error and repair if necessary.');

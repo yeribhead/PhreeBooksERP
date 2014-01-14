@@ -354,11 +354,13 @@ class inventory {
 	// this is the general save function.
 	function save() {
 		global $db, $currencies, $fields, $messageStack;
-	    $sql_data_array 						= $fields->what_to_save();
+	    $sql_data_array = $fields->what_to_save();
+	    // handle the checkboxes
+	    $sql_data_array['inactive'] = isset($_POST['inactive']) ? $_POST['inactive'] : '0'; // else unchecked
 	    foreach(array('quantity_on_hand', 'quantity_on_order', 'quantity_on_sales_order', 'quantity_on_allocation' ) as $key){
 	    	unset($sql_data_array[$key]);
 	    }     
-		$sql_data_array['last_update'] 			= date('Y-m-d H-i-s');
+		$sql_data_array['last_update'] = date('Y-m-d H-i-s');
 		if ($_SESSION['admin_security'][SECURITY_ID_PURCHASE_INVENTORY] > 1){
 			$sql_data_array['item_cost'] = $this->store_purchase_array();	
 			$sql_data_array['vendor_id'] = $this->min_vendor_id;
