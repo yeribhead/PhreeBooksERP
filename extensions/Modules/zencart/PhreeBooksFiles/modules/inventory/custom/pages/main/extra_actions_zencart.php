@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -21,7 +20,7 @@
 // This file contains the extra actions added to the maintain inventory module, it is executed
 // before the standard switch statement
 
-switch ($action) {
+switch ($_REQUEST['action']) {
 // Begin - Upload operation added by PhreeSoft to upload products to ZenCart
   case 'upload_zc':
 	$id = db_prepare_input($_POST['rowSeq']);
@@ -29,7 +28,7 @@ switch ($action) {
 	require_once(DIR_FS_MODULES . 'zencart/classes/zencart.php');
 	$upXML = new zencart();
 	$upXML->submitXML($id, 'product_ul');
-	$action = '';
+	$_REQUEST['action'] = '';
 	break;
 // End - Upload operation added by PhreeSoft	
   default:

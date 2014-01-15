@@ -1,8 +1,8 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                    Phreedom Open Source ERP                     |
+// |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -46,7 +46,7 @@ class zencart {
 	}
 //echo 'Submit to ' . ZENCART_URL . '/soap/' . $url . ' and XML string = <pre>' . htmlspecialchars($this->strXML) . '</pre><br />';
 	$this->response = doCURLRequest('POST', ZENCART_URL . '/soap/' . $url, $this->strXML);
-//echo 'XML response (at the Phreedom side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
+//echo 'XML response (at the PhreeBooks side from Zencart) => <pre>' . htmlspecialchars($this->response) . '</pre><br />' . chr(10);
 	if (!$this->response) return false;
 	if (!$results = xml_to_object($this->response)) return false;
 //echo 'Parsed string = '; print_r($results); echo '<br />';

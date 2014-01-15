@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -18,20 +18,20 @@
 //
 
 class zencart_admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
+	public $notes 		  = array(); // placeholder for any operational notes
+	public $prerequisites = array(); // modules required and rev level for this module to work properly
+	public $keys		  = array(); // Load configuration constants for this module, must match entries in admin tabs
+	public $dirlist		  = array(); // add new directories to store images and data
+	public $tables		  = array(); // Load tables
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.1,
-	  'contacts'   => 3.4,
-	  'inventory'  => 3.1,
-	  'payment'    => 3.1,
-	  'phreebooks' => 3.1,
-	  'shipping'   => 3.1,
+	  'phreedom'   => '3.6',
+	  'contacts'   => '3.6',
+	  'inventory'  => '3.6',
+	  'payment'    => '3.6',
+	  'phreebooks' => '3.6',
+	  'shipping'   => '3.6',
 	);
 	// Load configuration constants for this module, must match entries in admin tabs
     $this->keys = array(
@@ -50,14 +50,17 @@ class zencart_admin {
     global $db, $messageStack;
 	$error = false;
 	if (!db_field_exists(TABLE_INVENTORY, 'catalog')) { // setup new tab in table inventory
-	  $sql_data_array = array(
-	    'module_id'   => 'inventory',
-	    'tab_name'    => 'ZenCart',
-	    'description' => 'ZenCart Catalog',
-	    'sort_order'  => '49',
-	  );
-	  db_perform(TABLE_EXTRA_TABS, $sql_data_array);
-	  $tab_id = db_insert_id();
+	  $result = $db->Execute("select id FROM ".TABLE_EXTRA_TABS." WHERE tab_name='ZenCart'");
+	  if ($result->RecordCount() == 0) {
+	  	$sql_data_array = array(
+	      'module_id'   => 'inventory',
+	      'tab_name'    => 'ZenCart',
+	      'description' => 'ZenCart Catalog',
+	      'sort_order'  => '49',
+	    );
+	    db_perform(TABLE_EXTRA_TABS, $sql_data_array);
+	    $tab_id = db_insert_id();
+	  } else $tab_id = $result->fields['id'];
 	  gen_add_audit_log(ZENCART_LOG_TABS . TEXT_ADD, 'zencart');
 	  // setup extra fields for inventory
 	  $sql_data_array = array(
@@ -66,7 +69,9 @@ class zencart_admin {
 	    'entry_type'  => 'check_box',
 	    'field_name'  => 'catalog',
 	    'description' => ZENCART_CATALOG_ADD,
-	    'params'      => serialize(array('type' => 'check_box', 'select' => '0')),
+	  	'sort_order'  => 10,
+	  	'use_in_inventory_filter'=>'1',
+	    'params'      => serialize(array('type'=>'check_box', 'select'=>'0', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 	  );
 	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `catalog` enum('0','1') default '0'");
@@ -76,7 +81,9 @@ class zencart_admin {
 	    'entry_type'  => 'text',
 	    'field_name'  => 'category_id',
 	    'description' => ZENCART_CATALOG_CATEGORY_ID,
-	    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
+	  	'sort_order'  => 20,
+	  	'use_in_inventory_filter'=>'1',
+	  	'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 	  );
 	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `category_id` varchar(64) default ''");
@@ -87,32 +94,39 @@ class zencart_admin {
 	    'entry_type'  => 'text',
 	    'field_name'  => 'manufacturer',
 	    'description' => ZENCART_CATALOG_MANUFACTURER,
-	    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
+	  	'sort_order'  => 30,
+	  	'use_in_inventory_filter'=>'1',
+	  	'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 	  );
 	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `manufacturer` varchar(64) default ''");
-	  
-	  $sql_data_array = array(
-	    'module_id'   => 'inventory',
-	    'tab_id'      => $tab_id,
-	    'entry_type'  => 'text',
-	    'field_name'  => 'ProductURL',
-	    'description' => ZENCART_CATALOG_URL,
-	    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
-	  );
-	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
-	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `ProductURL` varchar(64) default ''");
-	  
+
 	  $sql_data_array = array(
 	    'module_id'   => 'inventory',
 	    'tab_id'      => $tab_id,
 	    'entry_type'  => 'text',
 	    'field_name'  => 'ProductModel',
 	    'description' => ZENCART_CATALOG_MODEL,
-	    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
+	  	'sort_order'  => 40,
+	  	'use_in_inventory_filter'=>'1',
+	  	'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 	  );
 	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `ProductModel` varchar(64) default ''");
+
+	  $sql_data_array = array(
+	  	'module_id'   => 'inventory',
+	  	'tab_id'      => $tab_id,
+	  	'entry_type'  => 'text',
+	  	'field_name'  => 'ProductURL',
+	  	'description' => ZENCART_CATALOG_URL,
+	  	'sort_order'  => 50,
+	  	'use_in_inventory_filter'=>'1',
+	  	'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
+	  );
+	  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
+	  $db->Execute("alter table " . TABLE_INVENTORY . " add column `ProductURL` varchar(64) default ''");
+
 	  gen_add_audit_log(ZENCART_LOG_FIELDS . TEXT_NEW, 'zencart - catalog');
 	}
     return $error;
@@ -163,7 +177,7 @@ class zencart_admin {
 		    'entry_type'  => 'text',
 		    'field_name'  => 'ProductURL',
 		    'description' => ZENCART_CATALOG_URL,
-		    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
+		    'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 		  );
 		  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 		  $db->Execute("alter table " . TABLE_INVENTORY . " add column `ProductURL` varchar(64) default ''");
@@ -175,7 +189,7 @@ class zencart_admin {
 		    'entry_type'  => 'text',
 		    'field_name'  => 'ProductModel',
 		    'description' => ZENCART_CATALOG_MODEL,
-		    'params'      => serialize(array('type' => 'text', 'length' => '64', 'default' => '')),
+		    'params'      => serialize(array('type'=>'text', 'length'=>'64', 'default'=>'', 'inventory_type'=>'ai:ci:ds:sf:ma:ia:lb:mb:ms:mi:ns:sa:sr:sv:si:')),
 		  );
 		  db_perform(TABLE_EXTRA_FIELDS, $sql_data_array);
 		  $db->Execute("alter table " . TABLE_INVENTORY . " add column `ProductModel` varchar(64) default ''");

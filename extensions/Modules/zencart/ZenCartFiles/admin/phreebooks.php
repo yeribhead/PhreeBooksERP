@@ -1,9 +1,8 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                    Phreedom Open Source ERP                     |
+// |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2008-2013 PhreeSoft, LLC                          |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -15,25 +14,25 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /admin/phreedom.php
+//  Path: /admin/phreebooks.php
 //
 // This file is a modified version of modules.php. Changes could have been made to modules.php to add the 
-// phreedom module but this way is less disruptive when ZenCart is upgraded.
+// phreebooks module but this way is less disruptive when ZenCart is upgraded.
 
   require('includes/application_top.php');
 
-  $set = (isset($_GET['set']) ? $_GET['set'] : (isset($_POST['set']) ? $_POST['set'] : 'phreedom'));
+  $set = (isset($_GET['set']) ? $_GET['set'] : (isset($_POST['set']) ? $_POST['set'] : 'phreebooks'));
 
   $is_ssl_protected = (substr(HTTP_SERVER, 0, 5) == 'https') ? TRUE : FALSE;
 
   if (zen_not_null($set)) {
     switch ($set) {
-      case 'phreedom':
+      case 'phreebooks':
       default:
-        $module_type      = 'phreedom';
-        $module_directory = DIR_FS_CATALOG_MODULES . 'phreedom/';
-        $module_key       = 'MODULE_PHREEDOM_INSTALLED';
-        define('HEADING_TITLE', HEADING_TITLE_MODULES_PHREEDOM);
+        $module_type      = 'phreebooks';
+        $module_directory = DIR_FS_CATALOG_MODULES . 'phreebooks/';
+        $module_key       = 'MODULE_PHREEBOOKS_INSTALLED';
+        define('HEADING_TITLE', HEADING_TITLE_MODULES_PHREEBOOKS);
         break;
     }
   }
@@ -59,7 +58,7 @@
         $configuration = $db->Execute($configuration_query);
         $msg = sprintf(TEXT_EMAIL_MESSAGE_ADMIN_SETTINGS_CHANGED, preg_replace('/[^\d\w]/', '*', $_GET['module']), $admname);
         zen_mail(STORE_OWNER_EMAIL_ADDRESS, STORE_OWNER_EMAIL_ADDRESS, TEXT_EMAIL_SUBJECT_ADMIN_SETTINGS_CHANGED, $msg, STORE_NAME, EMAIL_FROM, array('EMAIL_MESSAGE_HTML'=>$msg), 'admin_settings_changed');
-        zen_redirect(zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
+        zen_redirect(zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL'));
         break;
       case 'install':
         $file_extension = substr($PHP_SELF, strrpos($PHP_SELF, '.'));
@@ -76,7 +75,7 @@
           $result = $module->install();
         }
         if ($result != 'failed') {
-          zen_redirect(zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL'));
+          zen_redirect(zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL'));
         }
        break;
       case 'removeconfirm':
@@ -92,7 +91,7 @@
           zen_mail(STORE_OWNER_EMAIL_ADDRESS, STORE_OWNER_EMAIL_ADDRESS, TEXT_EMAIL_SUBJECT_ADMIN_SETTINGS_CHANGED, $msg, STORE_NAME, EMAIL_FROM, array('EMAIL_MESSAGE_HTML'=>$msg), 'admin_settings_changed');
           $result = $module->remove();
         }
-        zen_redirect(zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $class, 'NONSSL'));
+        zen_redirect(zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $class, 'NONSSL'));
        break;
     }
   }
@@ -206,12 +205,12 @@
         }
         if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) {
           if ($module->check() > 0) {
-            echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL') . '\'">' . "\n";
+            echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $class . '&action=edit', 'NONSSL') . '\'">' . "\n";
           } else {
             echo '              <tr id="defaultSelected" class="dataTableRowSelected" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">' . "\n";
           }
         } else {
-          echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
+          echo '              <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)" onclick="document.location.href=\'' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $class, 'NONSSL') . '\'">' . "\n";
         }
 //print_r($module) . '<br><BR>';
 //echo (!empty($module->enabled) ? 'ENABLED' : 'NOT ENABLED') . ' vs ' . (is_numeric($module->sort_order) ? 'ON' : 'OFF') . '<BR><BR>' ;
@@ -229,7 +228,7 @@
                     }
                   ?>
                 </td>
-                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $class, 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
+                <td class="dataTableContent" align="right"><?php if (isset($mInfo) && is_object($mInfo) && ($class == $mInfo->code) ) { echo zen_image(DIR_WS_IMAGES . 'icon_arrow_right.gif'); } else { echo '<a href="' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $class, 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icon_info.gif', IMAGE_ICON_INFO) . '</a>'; } ?>&nbsp;</td>
               </tr>
 <?php
       }
@@ -270,12 +269,12 @@
   	case 'remove':
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
 
-      $contents = array('form' => zen_draw_form('module_delete', FILENAME_PHREEDOM, '&action=removeconfirm'));
+      $contents = array('form' => zen_draw_form('module_delete', FILENAME_PHREEBOOKS, '&action=removeconfirm'));
       $contents[] = array('text' => '<input type="hidden" name="set" value="' . (isset($_GET['set']) ? $_GET['set'] : "") . '" />');
       $contents[] = array('text' => '<input type="hidden" name="module" value="' . (isset($_GET['module']) ? $_GET['module'] : "") . '"/>');
       $contents[] = array('text' => TEXT_DELETE_INTRO);
 
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_remove.gif', IMAGE_DELETE, 'name="removeButton"') . ' <a href="' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL, 'name="cancelButton"') . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_remove.gif', IMAGE_DELETE, 'name="removeButton"') . ' <a href="' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL, 'name="cancelButton"') . '</a>');
       break;
     case 'edit':
       if (!$is_ssl_protected && in_array($_GET['module'], array('paypaldp', 'linkpoint_api', 'authorizenet_aim', 'authorizenet_echeck'))) break;
@@ -292,12 +291,12 @@
       }
       $keys = substr($keys, 0, strrpos($keys, '<br><br>'));
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
-      $contents = array('form' => zen_draw_form('modules', FILENAME_PHREEDOM, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
+      $contents = array('form' => zen_draw_form('modules', FILENAME_PHREEBOOKS, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : '') . '&action=save', 'post', '', true));
       if (ADMIN_CONFIGURATION_KEY_ON == 1) {
         $contents[] = array('text' => '<strong>Key: ' . $mInfo->code . '</strong><br />');
       }
       $contents[] = array('text' => $keys);
-      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE, 'name="saveButton"') . ' <a href="' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL, 'name="cancelButton"') . '</a>');
+      $contents[] = array('align' => 'center', 'text' => '<br>' . zen_image_submit('button_update.gif', IMAGE_UPDATE, 'name="saveButton"') . ' <a href="' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . ($_GET['module'] != '' ? '&module=' . $_GET['module'] : ''), 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL, 'name="cancelButton"') . '</a>');
       break;
     default:
       $heading[] = array('text' => '<b>' . $mInfo->title . '</b>');
@@ -330,16 +329,16 @@
         }
         $keys = substr($keys, 0, strrpos($keys, '<br><br>'));
         if (!(!$is_ssl_protected && in_array($mInfo->code, array('paypaldp', 'linkpoint_api', 'authorizenet_aim', 'authorizenet_echeck')))) {
-          $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT, 'name="editButton"') . '</a>');
+          $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . (isset($_GET['module']) ? '&module=' . $_GET['module'] : '') . '&action=edit', 'NONSSL') . '">' . zen_image_button('button_edit.gif', IMAGE_EDIT, 'name="editButton"') . '</a>');
         } else {
           $contents[] = array('align' => 'center', 'text' => TEXT_WARNING_SSL_EDIT);
         }
-        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PHREEDOM, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . zen_image_button('button_module_remove.gif', IMAGE_MODULE_REMOVE, 'name="removeButton"') . '</a>');
+        $contents[] = array('align' => 'center', 'text' => '<a href="' . zen_href_link(FILENAME_PHREEBOOKS, 'set=' . $set . '&module=' . $mInfo->code . '&action=remove', 'NONSSL') . '">' . zen_image_button('button_module_remove.gif', IMAGE_MODULE_REMOVE, 'name="removeButton"') . '</a>');
         $contents[] = array('text' => '<br>' . $mInfo->description);
         $contents[] = array('text' => '<br>' . $keys);
       } else {
         if (!(!$is_ssl_protected && in_array($mInfo->code, array('paypaldp', 'linkpoint_api', 'authorizenet_aim', 'authorizenet_echeck')))) {
-          $contents[] = array('align' => 'center', 'text' => zen_draw_form('install_module', FILENAME_PHREEDOM, 'set=' . $set . '&action=install') . '<input type="hidden" name="module" value="' . $mInfo->code . '" />' . zen_image_submit('button_module_install.gif', IMAGE_MODULE_INSTALL, 'name="installButton"') . '</form>');
+          $contents[] = array('align' => 'center', 'text' => zen_draw_form('install_module', FILENAME_PHREEBOOKS, 'set=' . $set . '&action=install') . '<input type="hidden" name="module" value="' . $mInfo->code . '" />' . zen_image_submit('button_module_install.gif', IMAGE_MODULE_INSTALL, 'name="installButton"') . '</form>');
         } else {
           $contents[] = array('align' => 'center', 'text' => TEXT_WARNING_SSL_INSTALL);
         }

@@ -1,9 +1,8 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                    Phreedom Open Source ERP                     |
+// |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2010 PhreeSoft, LLC                               |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -15,7 +14,7 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /admin/includes/classes/phreedom.php
+//  Path: /admin/includes/classes/phreebooks.php
 //
 
 // Hook for including customization of product attributes
@@ -25,7 +24,7 @@ if (file_exists(DIR_FS_ADMIN . 'soap/extra_actions/extra_order_actions.php')) { 
 // pull in the general phreedom parser and general functions
 require_once(DIR_FS_ADMIN . 'soap/classes/parser.php');
 
-class phreedom extends parser {
+class phreebooks extends parser {
 
   function submitXML($action, $data = '') {
 	global $db, $messageStack;
@@ -35,8 +34,8 @@ class phreedom extends parser {
 		$strXML = utf8_encode($strXML);
 //echo 'Zencart order array = '; print_r($data); echo '<br>';
 //echo 'Submit XML string = ' . htmlspecialchars($strXML) . '</pre><br>';
-		$this->response = $this->doCURLRequest('POST', MODULE_PHREEDOM_ORDER_DOWNLOAD_URL . '?db=' . MODULE_PHREEDOM_ORDER_DOWNLOAD_DB, $strXML);
-//echo 'XML response (at the ZenCart Side from Phreedom) => <pre>' . htmlspecialchars($this->response) . '</pre><br>' . chr(10);
+		$this->response = $this->doCURLRequest('POST', MODULE_PHREEBOOKS_ORDER_DOWNLOAD_URL . '?db=' . MODULE_PHREEBOOKS_ORDER_DOWNLOAD_DB, $strXML);
+//echo 'XML response (at the ZenCart Side from PhreeBooks) => <pre>' . htmlspecialchars($this->response) . '</pre><br>' . chr(10);
 		if (!$this->response) return false;
 		if (!$objXML = $this->xml_to_object($this->response)) return false;  // parse the response string, check for errors
 //echo 'Parsed response string = '; print_r($objXML); echo '<br>';
@@ -47,31 +46,31 @@ class phreedom extends parser {
 		$this->failed = $objXML->Response->FailedOrders;
 		if ($this->close) {
 		  $db->Execute("update " . TABLE_ORDERS . " set phreebooks = 1, last_modified = now() where orders_id in (" . $this->close . ")");
-		  if (defined('MODULE_PHREEDOM_ORDER_DOWNLOAD_ORDER_STATUS') && MODULE_PHREEDOM_ORDER_DOWNLOAD_ORDER_STATUS) {
+		  if (defined('MODULE_PHREEBOOKS_ORDER_DOWNLOAD_ORDER_STATUS') && MODULE_PHREEBOOKS_ORDER_DOWNLOAD_ORDER_STATUS) {
 			// insert a new status in the order status table
 			$pb_orders = explode(',', $this->close);
 			if (is_array($pb_orders)) foreach ($pb_orders as $value) {
 			  $db->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . " set 
 			    orders_id = '" . trim($value) . "', 
-			    orders_status_id = " . MODULE_PHREEDOM_ORDER_DOWNLOAD_ORDER_STATUS . ", 
+			    orders_status_id = " . MODULE_PHREEBOOKS_ORDER_DOWNLOAD_ORDER_STATUS . ", 
 			    date_added = now(), 
 			    customer_notified = '0', 
 			    comments = '" . 'Order is in process.' . "'");
 			}
 			// update the status in the orders table
 			$db->Execute("update " . TABLE_ORDERS . " set 
-			  orders_status = " . MODULE_PHREEDOM_ORDER_DOWNLOAD_ORDER_STATUS . ",
+			  orders_status = " . MODULE_PHREEBOOKS_ORDER_DOWNLOAD_ORDER_STATUS . ",
 			  last_modified = now() 
 			  where orders_id in (" . $this->close . ")");
 		  }
-		  $messageStack->add(sprintf('Orders successfully downloaded to Phreedom: %s', $this->close), 'success');
+		  $messageStack->add(sprintf('Orders successfully downloaded to PhreeBooks: %s', $this->close), 'success');
 		}
 		if ($this->failed) {
-		  $messageStack->add(sprintf('Orders the failed to download to Phreedom: %s' . "<br />" . $this->text, $this->failed), 'error');
+		  $messageStack->add(sprintf('Orders the failed to download to PhreeBooks: %s' . "<br />" . $this->text, $this->failed), 'error');
 		}
 		break;
 	  default:
-		$messageStack->add('Invalid action requested in Phreedom interface class. Aborting!', 'error');
+		$messageStack->add('Invalid action requested in PhreeBooks interface class. Aborting!', 'error');
 	}
   }
 
@@ -79,8 +78,8 @@ class phreedom extends parser {
 	// clean up some fields
 	$strXML  = '<?xml version="1.0" encoding="UTF-8" ?>' . chr(10);
 	$strXML .= '<Request>' . chr(10);
-	$strXML .= $this->xmlEntry('UserID',   MODULE_PHREEDOM_ORDER_DOWNLOAD_USER);
-	$strXML .= $this->xmlEntry('Password', MODULE_PHREEDOM_ORDER_DOWNLOAD_PW);
+	$strXML .= $this->xmlEntry('UserID',   MODULE_PHREEBOOKS_ORDER_DOWNLOAD_USER);
+	$strXML .= $this->xmlEntry('Password', MODULE_PHREEBOOKS_ORDER_DOWNLOAD_PW);
 	$strXML .= $this->xmlEntry('Version',  '1.00');
 	$strXML .= $this->xmlEntry('Function', 'SalesOrder');
 	$strXML .= $this->xmlEntry('Action',   'New');
@@ -93,11 +92,11 @@ class phreedom extends parser {
 
 	  $strXML .= '<Order>' . chr(10);
 	  $strXML .= $this->xmlEntry('Reference',      $oID);
-	  $strXML .= $this->xmlEntry('StoreID',        MODULE_PHREEDOM_ORDER_DOWNLOAD_STORE_ID);
-	  $strXML .= $this->xmlEntry('SalesRepID',     MODULE_PHREEDOM_ORDER_DOWNLOAD_SALES_REP_ID);
-	  $strXML .= $this->xmlEntry('SalesGLAccount', MODULE_PHREEDOM_ORDER_DOWNLOAD_SALES_GL_ACCOUNT);
-	  $strXML .= $this->xmlEntry('ReceivablesGLAccount', MODULE_PHREEDOM_ORDER_DOWNLOAD_AR_GL_ACCOUNT);
-	  $strXML .= $this->xmlEntry('OrderID',        MODULE_PHREEDOM_ORDER_DOWNLOAD_PREFIX . $data->id);
+	  $strXML .= $this->xmlEntry('StoreID',        MODULE_PHREEBOOKS_ORDER_DOWNLOAD_STORE_ID);
+	  $strXML .= $this->xmlEntry('SalesRepID',     MODULE_PHREEBOOKS_ORDER_DOWNLOAD_SALES_REP_ID);
+	  $strXML .= $this->xmlEntry('SalesGLAccount', MODULE_PHREEBOOKS_ORDER_DOWNLOAD_SALES_GL_ACCOUNT);
+	  $strXML .= $this->xmlEntry('ReceivablesGLAccount', MODULE_PHREEBOOKS_ORDER_DOWNLOAD_AR_GL_ACCOUNT);
+	  $strXML .= $this->xmlEntry('OrderID',        MODULE_PHREEBOOKS_ORDER_DOWNLOAD_PREFIX . $data->id);
 //	  $strXML .= $this->xmlEntry('PurchaseOrderID', 'TBD');
 	  $strXML .= $this->xmlEntry('OrderDate',      $order_date);
 	  $strXML .= $this->xmlEntry('OrderTotal',     $data->info['total']);
@@ -122,7 +121,7 @@ class phreedom extends parser {
 	  }
 	  $strXML .= '</Payment>' . chr(10);
 	  $strXML .= '<Customer>' . chr(10);
-	  switch (PHREEDOM_DOWNLOAD_USER_ID_METHOD) {
+	  switch (PHREEBOOKS_DOWNLOAD_USER_ID_METHOD) {
 	    case 'Telephone': $customer_id = ereg_replace("[^0-9]", "", $data->customer['telephone']); break;
 	    case 'Email':
 	    default:          $customer_id = $data->customer['email_address']; break;

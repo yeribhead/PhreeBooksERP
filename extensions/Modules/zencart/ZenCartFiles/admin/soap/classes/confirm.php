@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2010 PhreeSoft, LLC                               |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -71,7 +70,7 @@ class xml_confirm extends parser {
 
     $order_cnt = 0;
 	$order_list = array();
-	$order_prefix = defined('MODULE_PHREEDOM_ORDER_DOWNLOAD_PREFIX') ? MODULE_PHREEDOM_ORDER_DOWNLOAD_PREFIX : false;
+	$order_prefix = defined('MODULE_PHREEBOOKS_ORDER_DOWNLOAD_PREFIX') ? MODULE_PHREEBOOKS_ORDER_DOWNLOAD_PREFIX : false;
     foreach ($orders['order'] as $value) {
       $id = $order_prefix ? str_replace($order_prefix, '', $value['id'], $count = 1) : $value['id'];
 	  $result = $db->Execute("select orders_status from " . TABLE_ORDERS . " where orders_id = '$id'");

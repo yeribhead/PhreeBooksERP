@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -22,8 +22,9 @@
 // 3.1 => 2011-04-15 - Bug fixes
 // 3.2 => 2011-05-27 - Patch for shared field change in Phreedom 3.1
 // 3.5 => 2013-08-08 - added product fields 
+// 3.6 => 2014-01-15 - updated for move back to phreebooks and menu changes
 // Module software version information
-define('MODULE_ZENCART_VERSION',      3.5);
+define('MODULE_ZENCART_VERSION',      3.6);
 // Set the menu order, if using ZenCart title menu option (after Customers and before Vendors)
 define('MENU_HEADING_ZENCART_ORDER',     15);
 // Security id's

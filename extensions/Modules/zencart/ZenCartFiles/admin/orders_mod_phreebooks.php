@@ -53,14 +53,14 @@
     }
   }
 
-// BOF - Individual and bulk download operation added by PhreeSoft to download orders to PHREEDOM
-define('PB_TEXT_DOWNLOAD','Download to Phreedom');
-define('PB_TEXT_BULK_DOWNLOAD','Bulk Download to Phreedom');
-define('PB_BULK_MESSAGE','Completed downloading orders to Phreedom. The number of orders successfully downloaded was: %s');
+  // BOF - Individual and bulk download operation added by PhreeSoft to download orders to PHREEDOM
+define('PB_TEXT_DOWNLOAD','Download to PhreeBooks');
+define('PB_TEXT_BULK_DOWNLOAD','Bulk Download to PhreeBooks');
+define('PB_BULK_MESSAGE','Completed downloading orders to PhreeBooks. The number of orders successfully downloaded was: %s');
 //  if (zen_not_null($action) && $order_exists == true) { // original line commented out
 //    switch ($action) { // original line commented out
 
-/**** This has been disabled since it results in duplicate SO's in Phreedom **********************
+/**** This has been disabled since it results in duplicate SO's in PhreeBooks **********************
   switch ($action) {
     case 'bulk_dl':
 	  $pb_orders = array();
@@ -69,8 +69,8 @@ define('PB_BULK_MESSAGE','Completed downloading orders to Phreedom. The number o
 		$pb_orders[] = $pb_list->fields['orders_id'];
 		$pb_list->MoveNext();
 	  }
-	  require_once(DIR_WS_CLASSES . 'phreedom.php');
-	  $dnXML = new phreedom();
+	  require_once(DIR_WS_CLASSES . 'phreebooks.php');
+	  $dnXML = new phreebooks();
 	  if (sizeof($pb_orders) > 0) $dnXML->submitXML('download', $pb_orders);
 	  $_GET['action'] = '';
 	  $action         = '';
@@ -81,8 +81,8 @@ define('PB_BULK_MESSAGE','Completed downloading orders to Phreedom. The number o
   if (zen_not_null($action) && $order_exists == true) {
 	switch ($action) {
       case 'download':
-        require_once(DIR_WS_CLASSES . 'phreedom.php'); // open the phreedom class
-        $dnXML = new phreedom();
+        require_once(DIR_WS_CLASSES . 'phreebooks.php'); // open the phreebooks class
+        $dnXML = new phreebooks();
 		$dnXML->submitXML('download', array($oID));
         $_GET['action'] = '';
 		$action         = '';
@@ -460,6 +460,12 @@ function couponpopupWindow(url) {
         <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
+<?php // BOF - Modified by PhreeSoft for PhreeBooks
+//************** This has been disabled pending bug duplicating SO's in PhreeBooks with same SO Number **************88
+//echo '<td class="pageHeading"><a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . '&action=bulk_dl', 'NONSSL') . '">';
+//echo '    <input type="button" name="pb_bulk_dl" id="pb_bulk_dl" value="' . PB_TEXT_BULK_DOWNLOAD . '" style="cursor:pointer;">';
+//echo '</a></td>';
+// EOF - Modified by PhreeSoft for PhreeBooks ?>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
             <td class="pageHeading" align="right"><?php echo '<a href="javascript:history.back()">' . zen_image_button('button_back.gif', IMAGE_BACK) . '</a>'; ?></td>
           </tr>
@@ -741,12 +747,6 @@ function couponpopupWindow(url) {
         <td width="100%"><table border="0" width="100%" cellspacing="0" cellpadding="0">
           <tr>
             <td class="pageHeading"><?php echo HEADING_TITLE; ?></td>
-<?php // BOF - Modified by PhreeSoft for Phreedom
-//************** This has been disabled pending bug duplicating SO's in Phreedom with same SO Number **************88
-//echo '<td class="pageHeading"><a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . '&action=bulk_dl', 'NONSSL') . '">';
-//echo '    <input type="button" name="pb_bulk_dl" id="pb_bulk_dl" value="' . PB_TEXT_BULK_DOWNLOAD . '" style="cursor:pointer;">';
-//echo '</a></td>';
-// EOF - Modified by PhreeSoft for Phreedom ?>
             <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
             <td align="right"><table border="0" width="100%" cellspacing="0" cellpadding="0">
               <tr><?php echo zen_draw_form('orders', FILENAME_ORDERS, '', 'get', '', true); ?>
@@ -841,7 +841,7 @@ function couponpopupWindow(url) {
 } // eof: search orders or orders_products
     $new_fields = ", o.customers_company, o.customers_email_address, o.customers_street_address, o.delivery_company, o.delivery_name, o.delivery_street_address, o.billing_company, o.billing_name, o.billing_street_address, o.payment_module_code, o.shipping_module_code, o.ip_address ";
 // BOF - Added by PhreeSoft 
-	if (MODULE_PHREEDOM_ORDER_DOWNLOAD_STATUS == 'True') $new_fields .= ", o.phreebooks ";
+	if (MODULE_PHREEBOOKS_ORDER_DOWNLOAD_STATUS == 'True') $new_fields .= ", o.phreebooks ";
 // EOF -  Added by PhreeSoft
 ?>
 <?php
@@ -933,11 +933,11 @@ if (($_GET['page'] == '' or $_GET['page'] <= 1) and $_GET['oID'] != '') {
                 <td class="dataTableContent" align="center"><?php echo zen_datetime_short($orders->fields['date_purchased']); ?></td>
                 <td class="dataTableContent" align="right"><?php echo $orders->fields['orders_status_name']; ?></td>
                 <td class="dataTableContent" align="center"><?php echo (zen_get_orders_comments($orders->fields['orders_id']) == '' ? '' : zen_image(DIR_WS_IMAGES . 'icon_yellow_on.gif', TEXT_COMMENTS_YES, 16, 16)); ?></td>
-
+				
 <?php // BOF - Download icon added by PhreeSoft to download order ?>
                 <td class="dataTableContent" align="right">
 <?php
-if ($orders->fields['phreebooks'] == 0 && MODULE_PHREEDOM_ORDER_DOWNLOAD_STATUS == 'True') {
+if ($orders->fields['phreebooks'] == 0 && MODULE_PHREEBOOKS_ORDER_DOWNLOAD_STATUS == 'True') {
   echo '<a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $orders->fields['orders_id'] . '&action=download', 'NONSSL') . '">' . zen_image(DIR_WS_IMAGES . 'icons/file_download.gif', PB_TEXT_DOWNLOAD) . '</a>';
 }
 // this is the original line expanded to make it more readable

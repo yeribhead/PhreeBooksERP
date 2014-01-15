@@ -1,12 +1,21 @@
 <?php
-/**
- * @package admin
- * @copyright Copyright 2010 PhreeSoft LLC
- * @copyright Copyright 2003-2006 Zen Cart Development Team
- * @copyright Portions Copyright 2003 osCommerce
- * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: application_bottom.php 3009 2006-02-11 15:41:10Z wilt $
- */
+// +-----------------------------------------------------------------+
+// |                   PhreeBooks Open Source ERP                    |
+// +-----------------------------------------------------------------+
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// +-----------------------------------------------------------------+
+// | This program is free software: you can redistribute it and/or   |
+// | modify it under the terms of the GNU General Public License as  |
+// | published by the Free Software Foundation, either version 3 of  |
+// | the License, or any later version.                              |
+// |                                                                 |
+// | This program is distributed in the hope that it will be useful, |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of  |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
+// | GNU General Public License for more details.                    |
+// +-----------------------------------------------------------------+
+// Path: /admin/soap/application_bottom.php
+
 if (!defined('IS_ADMIN_FLAG')) {
   die('Illegal Access');
 }

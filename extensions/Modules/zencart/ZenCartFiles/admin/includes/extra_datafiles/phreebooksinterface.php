@@ -1,4 +1,4 @@
-<?
+<?php
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
@@ -14,12 +14,8 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /admin/soap/sync.php
-//
+// path: /admin/includes/extra_datafiles/english/phreebooksinterface.php
 
-require_once('application_top.php');
-require_once('classes/sync.php');
-$rawpost = urldecode(file_get_contents("php://input"));
-$products_sync = new xml_sync();
-$products_sync->processXML($rawpost);
+define('BOX_TOOLS_PHREEBOOKSINTERFACE', 'PhreeBooks Interface');
+define('FILENAME_PHREEBOOKS', 'phreebooks');
 ?>

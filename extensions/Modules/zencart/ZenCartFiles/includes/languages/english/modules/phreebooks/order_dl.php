@@ -1,4 +1,4 @@
-<?
+<?php
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
@@ -14,12 +14,9 @@
 // | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the   |
 // | GNU General Public License for more details.                    |
 // +-----------------------------------------------------------------+
-//  Path: /admin/soap/sync.php
-//
+// path: /admin/includes/languages/english/modules/phreebooks/order_dl.php
 
-require_once('application_top.php');
-require_once('classes/sync.php');
-$rawpost = urldecode(file_get_contents("php://input"));
-$products_sync = new xml_sync();
-$products_sync->processXML($rawpost);
+define('MODULE_PHREEBOOKS_ORDER_DL_TEXT_TITLE', 'PhreeBooks ERP Order Download Capability');
+define('MODULE_PHREEBOOKS_ORDER_DL_TEXT_DESCRIPTION', 'Download Orders to PhreeBooks ERP');
+define('TEXT_MODULE_DIRECTORY','Module Directory: ');
 ?>

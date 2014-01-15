@@ -2,8 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright (c) 2010 PhreeSoft, LLC                               |
-// | http://www.PhreeSoft.com                                        |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -50,6 +49,7 @@ class xml_sync extends parser {
 	// Here we map the received xml array to the pre-defined generic structure (application specific format later)
 	$this->reference = $objXML->Request->Reference;
 	$products = array('action' => $objXML->Request->Action);
+	if (isset($objXML->Request->Product->SKU) && !is_array($objXML->Request->Product->SKU)) $objXML->Request->Product->SKU = array($objXML->Request->Product->SKU);
 	if (is_array($objXML->Request->Product->SKU)) foreach ($objXML->Request->Product->SKU as $item) {
 	  $products['product'][] = $item;
 	}

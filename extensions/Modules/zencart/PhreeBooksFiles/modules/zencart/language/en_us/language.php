@@ -1,8 +1,8 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                    Phreedom Open Source ERP                     |
+// |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -30,7 +30,7 @@ define('ZENCART_BULK_UPLOAD_TEXT','Bulk upload products to e-store');
 define('ZENCART_INCLUDE_IMAGES','Include Images');
 define('ZENCART_BULK_UPLOAD_BTN','Bulk Upload');
 define('ZENCART_PRODUCT_SYNC_TITLE','Synchronize Products');
-define('ZENCART_PRODUCT_SYNC_INFO','Synchronize active products from the Phreedom database (set to show in the catalog and active) with current listings from ZenCart. Any SKUs that should not be listed on Zencart are displayed. They need to be removed from ZenCart manually through the ZenCart admin interface.');
+define('ZENCART_PRODUCT_SYNC_INFO','Synchronize active products from the PhreeBooks database (set to show in the catalog and active) with current listings from ZenCart. Any SKUs that should not be listed on Zencart are displayed. They need to be removed from ZenCart manually through the ZenCart admin interface.');
 define('ZENCART_PRODUCT_SYNC_TEXT','Synchronize products with e-store');
 define('ZENCART_DELETE_ZENCART','Also delete products in ZenCart that are not falgged to be there.');
 define('ZENCART_PRODUCT_SYNC_BTN','Synchronize');

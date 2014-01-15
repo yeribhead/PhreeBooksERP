@@ -1,8 +1,8 @@
 <?php
 // +-----------------------------------------------------------------+
-// |                    Phreedom Open Source ERP                     |
+// |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -19,10 +19,10 @@
 
 // Module information
 define('MODULE_ZENCART_TITLE','ZenCart Module');
-define('MODULE_ZENCART_DESCRIPTION','The ZenCart module interfaces Phreedom with a ZenCart e-store. Functons include upload products, download orders and synchronizing product databases.');
+define('MODULE_ZENCART_DESCRIPTION','The ZenCart module interfaces PhreeBooks with a ZenCart e-store. Functons include upload products, download orders and synchronizing product databases.');
 define('ZENCART_ADMIN_URL','ZenCart path to Admin (no trailing slash)');
-define('ZENCART_ADMIN_USERNAME','ZenCart admin username (can be unique to Phreedom Interface');
-define('ZENCART_ADMIN_PASSWORD','ZenCart admin password (can be unique to Phreedom Interface)');
+define('ZENCART_ADMIN_USERNAME','ZenCart admin username (can be unique to PhreeBooks Interface');
+define('ZENCART_ADMIN_PASSWORD','ZenCart admin password (can be unique to PhreeBooks Interface)');
 define('MODULE_ZENCART_CONFIG_INFO','Please set the configuration values to your ZenCart e-store.');
 define('ZENCART_TAX_CLASS','Enter the ZenCart Tax Class Text field (Must match exactly to the entry in ZenCart if tax is charged)');
 define('ZENCART_USE_PRICES','Do you want to use price sheets?');
