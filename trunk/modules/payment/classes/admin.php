@@ -18,6 +18,8 @@
 //
 namespace payment\classes;
 class admin extends \core\classes\admin {
+	public $module 			= 'payment';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'contacts'   => 3.71,
@@ -27,24 +29,24 @@ class admin extends \core\classes\admin {
 	parent::__construct();
   }
 
-  function install($module) {
+  function install() {
 	$error = false;
 	$methods = array('cod','moneyorder'); // pick a couple of modules to install
 	foreach ($methods as $method) {
 		$temp = "\payment\methods\\$method\\$method";
 	  	$properties = new $temp;
-	  	write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
+	  	write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS', '1');
 	  	foreach ($properties->key as $key) write_configure($key['key'], $key['default']);
 	  	if (method_exists($properties, 'install')) $properties->install();
 	}
     return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
   	// load all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $module . '/methods/';
+	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
 	$methods = array();
 	if ($dir = @dir($method_dir)) {
 	  while ($choice = $dir->read()) {
@@ -62,16 +64,16 @@ class admin extends \core\classes\admin {
 	  }
 	}
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
 	$error = false;
 	// load and remove all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $module . '/methods/';
+	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
 	$methods = array();
 	if ($dir = @dir($method_dir)) {
 	  while ($choice = $dir->read()) {
@@ -83,7 +85,7 @@ class admin extends \core\classes\admin {
 	  foreach ($methods as $method) {
 	    $temp = "\payment\methods\\$method\\$method";
 	    $properties = new $temp;
-	    remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS');
+	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS');
 	    foreach ($properties->keys() as $key) remove_configure($key['key']);
 	    if (method_exists($properties, 'remove')) $properties->remove();
 	  }

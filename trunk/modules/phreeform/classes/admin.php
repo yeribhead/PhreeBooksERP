@@ -18,6 +18,7 @@
 //
 namespace phreeform\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'phreeform';
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -58,20 +59,16 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
-	$error = false;
-    // load all the active modules and load directory structure, reports
-	global $loaded_modules;
-	if (is_array($loaded_modules)) foreach ($loaded_modules as $method) {
-	  gen_pull_language($method, 'admin');
-	  $cName    = "\\$method\classes\admin";
-	  $mInstall = new $cName();
-	  $mInstall->load_reports($method);
+  function install() {
+	global $admin_classes;
+	if (is_array($admin_classes)) foreach ($admin_classes as $module) {
+	  gen_pull_language($module, 'admin');
+	  $module->load_reports();
 	}
 	return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	if (MODULE_PHREEFORM_STATUS == '3.0') write_configure('PDF_APP', 'TCPDF');
@@ -82,13 +79,13 @@ class admin extends \core\classes\admin {
 //		if (admin_add_report_folder($id, TEXT_LETTERS, 'vend:ltr', 'fl')) $error = true;
 	}
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function load_reports($module) {
+  function load_reports() {
 	$error = false;
 	$id = admin_add_report_heading(TEXT_MISC, 'misc');
 	if (admin_add_report_folder($id, TEXT_REPORTS, 'misc',      'fr')) $error = true;

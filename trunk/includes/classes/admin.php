@@ -23,6 +23,8 @@ class admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
+	public $module 			= ''; //@todo rename to id
+	public $text; //@todo add to other files
 
 	function __construct(){
 		$this->version = constant('MODULE_' . strtoupper(get_called_class()) . '_VERSION');
@@ -50,7 +52,15 @@ class admin {
 		$error = false;
 		return $error;
 	}
-
+	
+  	function release_update($version, $path = '') {
+    	global $db, $messageStack;
+		$error = false;
+		if (file_exists($path)) { include_once ($path); }
+		write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', $version);
+		return $error ? false : $version;
+  	}
+	
 	function load_reports($module) {
 	}
 

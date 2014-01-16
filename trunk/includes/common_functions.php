@@ -1073,25 +1073,25 @@ function gen_db_date($raw_date = '', $separator = '/') {
     return $form;
   }
 
-  function html_input_field($name, $value = '', $parameters = '', $required = false, $type = 'text') {
-	if (strpos($name, '[]')) { // don't show id attribute if generic array
-	  $id = false;
-	} else {
-	  $id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
-	  $id = str_replace(']', '',  $id);
-    }
-    $field = '<input type="' . $type . '" name="' . $name . '"';
-	if ($id)                       $field .= ' id="'    . $id    . '"';
-    if (gen_not_null($value))      $field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
-    if (gen_not_null($parameters)) $field .= ' ' . $parameters;
-    $field .= ' />';
-    if ($required == true) $field .= TEXT_FIELD_REQUIRED;
-    return $field;
-  }
+  	function html_input_field($name, $value = '', $parameters = '', $required = false, $type = 'text') {
+		if (strpos($name, '[]')) { // don't show id attribute if generic array
+		  	$id = false;
+		} else {
+	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
+	  		$id = str_replace(']', '',  $id);
+    	}
+    	$field = '<input type="' . $type . '" name="' . $name . '" class="easyui-validatebox"';
+		if ($id)                       	$field .= ' id="'    . $id    . '"';
+    	if (gen_not_null($value))      	$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
+    	if ($required == true) 			$field .= ' required="required"'; 
+    	if (gen_not_null($parameters)) 	$field .= ' ' . $parameters;
+    	$field .= ' />';
+    	return $field;
+  	}
 
-  function html_hidden_field($name, $value = '', $parameters = '') {
-    return html_input_field($name, $value, $parameters, false, 'hidden', false);
-  }
+  	function html_hidden_field($name, $value = '', $parameters = '') {
+    	return html_input_field($name, $value, $parameters, false, 'hidden', false);
+  	}
   
   	function html_currency_field($name, $value, $parameters, $currency_code = DEFAULT_CURRENCY){//@todo test and implement
   		global $currencies;
@@ -1101,7 +1101,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
 	  		$id = str_replace(']', '',  $id);
     	}
-    	$field = "<input name='$name' ";
+    	$field = "<input class='easyui-numberbox' data-options='min:0,precision:2' name='$name' ";//@todo set precision
 		if ($id)						$field .= " id='$id' ";
     	if (gen_not_null($value))		$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
     	if (gen_not_null($parameters))	$field .= " $parameters ";
@@ -1118,7 +1118,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
 	  		$id = str_replace(']', '',  $id);
     	}
-    	$field = "<input name='$name' ";
+    	$field = "<input class='easyui-numberbox' data-options='min:0,precision:2' name='$name' ";
 		if ($id)						$field .= " id='$id' ";
     	if (gen_not_null($value))		$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
     	if (gen_not_null($parameters))	$field .= " $parameters ";
@@ -1136,17 +1136,16 @@ function gen_db_date($raw_date = '', $separator = '/') {
   	 */
   	
   	function html_date_field($name, $value, $required = false){//@todo test and implement date format needs to be right
-  		if($required) $temp = ",required:true";
   		if (strpos($name, '[]')) { // don't show id attribute if generic array
 	  		$id = false;
 		} else {
 	  		$id = str_replace('[', '_', $name); // clean up for array inputs causing html errors
 	  		$id = str_replace(']', '',  $id);
     	}
-    	$field = "<input name='$name' ";
+    	$field = "<input class='easyui-datebox' name='$name' ";
 		if ($id)					$field .= " id='$id'";
     	if (gen_not_null($value))	$field .= ' value="' . str_replace('"', '&quot;', $value) . '"';
-    	if ($required)				$field .= " required='required' ";
+    	if ($required == true)		$field .= " required='required' ";
     	$field .= " class='easyui-datebox' />";
     	return $field;
   	}
@@ -1222,9 +1221,10 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	  $id = str_replace('[','_', $name); // clean up for array inputs causing html errors
 	  $id = str_replace(']','',  $id);
     }
-    $field = '<select name="' . $name . '"';
+    $field = '<select class="easyui-combobox" name="' . $name . '"';
 	if ($id) $field .= ' id="' . $id . '"';
     if (gen_not_null($parameters)) $field .= ' ' . $parameters;
+    if ($required)				$field .= ' required="required" ';
     $field .= '>';
     if (empty($default) && isset($GLOBALS[$name])) $default = stripslashes($GLOBALS[$name]);
 	if (is_array($values) > 0) {
@@ -1239,7 +1239,6 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	  }
 	}
     $field .= '</select>';
-    if ($required == true) $field .= TEXT_FIELD_REQUIRED;
     return $field;
   }
 
@@ -1252,8 +1251,9 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	    $id = str_replace(']', '', $id);
       }
 	}
-	$field  = '<input type="text" name="' . $name . '"';
-	if (gen_not_null($id)) $field .= ' id="' . $id . '"';
+	$field  = '<input class="easyui-combobox" type="text" name="' . $name . '"';
+	if (gen_not_null($id)) 	$field .= ' id="' . $id . '"';
+	if ($required)			$field .= ' required="required" ';
 	$field .= ' value="' . $default . '" ' . $parameters . ' />';
 	$field .= '<img name="imgName' . $id . '" id="imgName' . $id . '" alt="" src="' . DIR_WS_ICONS . '16x16/phreebooks/pull_down_inactive.gif" height="16" width="16" align="top" style="border:none;" onmouseover="handleOver(\'imgName' . $id . '\'); return true;" onmouseout="handleOut(\'imgName' . $id . '\'); return true;" onclick="JavaScript:cbMmenuActivate(\'' . $id . '\', \'combodiv' . $id . '\', \'combosel' . $id . '\', \'imgName' . $id . '\')" />';
 	$field .= '<div id="combodiv' . $id . '" style="position:absolute; display:none; top:0px; left:0px; z-index:10000" onmouseover="javascript:oOverMenu=\'combodiv' . $id . '\';" onmouseout="javascript:oOverMenu=false;">';

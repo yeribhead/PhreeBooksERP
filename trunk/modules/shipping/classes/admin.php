@@ -18,6 +18,8 @@
 //
 namespace shipping\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'shipping';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.6,
@@ -96,14 +98,14 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
 	$methods = array('freeshipper','flat'); // pick a couple of modules to install
 	foreach ($methods as $method) {
 	  $shipping_method = "\shipping\methods\\$method\\$method";
   	  $shipment = new $shipping_method; 
-	  write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS', '1');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS', '1');
 	  foreach ($shipment->keys() as $key) write_configure($key['key'], $key['default']);
 	  if (method_exists($shipment, 'install')) $shipment->install();
 	}
@@ -111,7 +113,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	if (MODULE_SHIPPING_STATUS < 3.2) {
@@ -119,17 +121,17 @@ class admin extends \core\classes\admin {
 	  if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_desc");
 	}
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
 	$error = false;
 	// load and remove all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $module . '/methods/';
+	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
 	$methods = array();
 	if ($dir = @dir($method_dir)) {
 	  while ($choice = $dir->read()) {
@@ -141,7 +143,7 @@ class admin extends \core\classes\admin {
 	  foreach ($methods as $method) {
 	    $shipping_method = "\shipping\methods\\$method\\$method";
   	  	$shipment = new $shipping_method; 
-	    remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS');
+	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS');
 	    foreach ($shipment->keys() as $key) remove_configure($key['key']);
 	    if (method_exists($shipment, 'remove')) $shipment->remove();
 	  }

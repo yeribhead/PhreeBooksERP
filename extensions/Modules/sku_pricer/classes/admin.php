@@ -18,6 +18,7 @@
 //
 namespace sku_pricer\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'sku_pricer';
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly

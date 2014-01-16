@@ -18,6 +18,7 @@
 //
 namespace translator\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'translator';
 	
   function translator_admin() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -44,12 +45,12 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	if (!$error) {
-	  write_configure('MODULE_'.strtoupper($module).'_STATUS', constant('MODULE_'.strtoupper($module).'_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_'.strtoupper($module).'_VERSION')), 'success');
+	  write_configure('MODULE_'.strtoupper($this->module).'_STATUS', constant('MODULE_'.strtoupper($this->module).'_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_'.strtoupper($this->module).'_VERSION')), 'success');
 	}
 	return $error;
   }

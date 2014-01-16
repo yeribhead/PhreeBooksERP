@@ -18,6 +18,7 @@
 //
 namespace rma\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'rma';
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -64,7 +65,7 @@ class admin extends \core\classes\admin {
 	parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
     // add a current status field for the next rma number
@@ -74,7 +75,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
     $error = false;
     if (MODULE_RMA_STATUS < 3.1) {
@@ -106,13 +107,13 @@ class admin extends \core\classes\admin {
 	  if (db_table_exists(DB_PREFIX . 'rma_module_item')) $db->Execute("drop table ".DB_PREFIX.'rma_module_item');
     }
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
     return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_rma_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_rma_num");

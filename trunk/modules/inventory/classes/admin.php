@@ -18,6 +18,7 @@
 //
 namespace inventory\classes;
 class admin extends \core\classes\admin {
+	public $module 			= 'inventory';
 
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -199,7 +200,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
 	global $db;
 	$error = false;
 	$this->notes[] = MODULE_INVENTORY_NOTES_1;
@@ -274,7 +275,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack, $currencies;
 	$error = false;
     if (MODULE_INVENTORY_STATUS < 3.1) {
@@ -411,13 +412,13 @@ class admin extends \core\classes\admin {
 	}
 	if (!$error) {
 		xtra_field_sync_list('inventory', TABLE_INVENTORY);
-	  	write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  	$messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  	write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  	$messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db, $messageStack;
 	$error = false;
 	$db->Execute("delete from " . TABLE_EXTRA_FIELDS . " where module_id = 'inventory'");
@@ -425,7 +426,7 @@ class admin extends \core\classes\admin {
 	return $error;
   }
 
-  function load_reports($module) {
+  function load_reports() {
 	$error = false;
 	$id    = admin_add_report_heading(MENU_HEADING_INVENTORY, 'inv');
 	if (admin_add_report_folder($id, TEXT_REPORTS, 'inv', 'fr')) $error = true;

@@ -19,6 +19,8 @@
 //
 namespace bulk_inv\classes;
 class admin extends \core\classes\admin {
+	public $module 			= 'bulk_inv';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'  => '3.3',
@@ -27,12 +29,12 @@ class admin extends \core\classes\admin {
 	parent::__construct();
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }

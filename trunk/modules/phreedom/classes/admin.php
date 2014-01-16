@@ -23,6 +23,7 @@ class admin extends \core\classes\admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
+	public $module			= 'phreedom';
 	
   function __construct() {
 	// Load configuration constants for this module, must match entries in admin tabs
@@ -175,7 +176,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
 	// load some default currency values
@@ -192,8 +193,8 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-	function initialize($loaded_modules) {
-		global $db, $messageStack, $currencies;
+	function initialize() {
+		global $db, $messageStack, $currencies, $admin_classes;
   		try{
 	    	// load the latest currency exchange rates
 		    if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
@@ -240,13 +241,13 @@ class admin extends \core\classes\admin {
   		return true;
   	}
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	$db_version = defined('MODULE_PHREEDOM_STATUS') ? MODULE_PHREEDOM_STATUS : false;
 	foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
 	if ($db_version < MODULE_PHREEDOM_STATUS) {
- 	  $db_version = $this->release_update($module, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
+ 	  $db_version = $this->release_update($this->module, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
 	  if (!$db_version) return true;
 	}
   	if (MODULE_PHREEDOM_STATUS < 3.1) {
@@ -268,27 +269,10 @@ class admin extends \core\classes\admin {
 	  if (!db_field_exists(TABLE_AUDIT_LOG, 'stats'))        $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
   	}
     if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
-  }
-
-  function remove($module) {
-  }
-
-  function release_update($module, $version, $path = '') {
-    global $db, $messageStack;
-	$error = false;
-	if (file_exists($path)) { include_once($path); }
-	write_configure('MODULE_' . strtoupper($module) . '_STATUS', $version);
-	return $error ? false : $version;
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

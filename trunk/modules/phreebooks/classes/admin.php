@@ -23,6 +23,7 @@ class admin extends \core\classes\admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
+	public $module 			= 'phreebooks';
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -264,7 +265,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module, $demo = false) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
 	// load some current status values
@@ -289,14 +290,14 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function initialize($module) {
+  function initialize() {
   	if (AUTO_UPDATE_PERIOD) {
 	  require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 	  gen_auto_update_period();
 	}
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	$db_version = defined('MODULE_PHREEBOOKS_STATUS') ? MODULE_PHREEBOOKS_STATUS : false;
@@ -310,13 +311,13 @@ class admin extends \core\classes\admin {
 	  }
 	}
 	if ($db_version == 2.1 || $db_version == '2.1') {
-	  $db_version = $this->release_update($module, 3.0, DIR_FS_MODULES . 'phreebooks/updates/R21toR30.php');
+	  $db_version = $this->release_update($this->module, 3.0, DIR_FS_MODULES . 'phreebooks/updates/R21toR30.php');
 	  if (!$db_version) return true;
       // remove table project_version, no longer needed
       if (!$error) $db->Execute("DROP TABLE " . TABLE_PROJECT_VERSION);
 	}
 	if ($db_version == 3.0 || $db_version == '3.0') {
-	  $db_version = $this->release_update($module, 3.1, DIR_FS_MODULES . 'phreebooks/updates/R30toR31.php');
+	  $db_version = $this->release_update($this->module, 3.1, DIR_FS_MODULES . 'phreebooks/updates/R30toR31.php');
 	  if (!$db_version) return true;
 	}
 	if ($db_version == 3.1 || $db_version == '3.1') {
@@ -352,13 +353,13 @@ class admin extends \core\classes\admin {
 		if (!db_field_exists(TABLE_JOURNAL_ITEM, 'purch_package_quantity')) $db->Execute("ALTER TABLE ".TABLE_JOURNAL_ITEM." ADD purch_package_quantity float default NULL AFTER project_id");
 	}
 	if (!$error) {
-	  write_configure('MODULE_'.strtoupper($module).'_STATUS', constant('MODULE_'.strtoupper($module).'_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_'.strtoupper($module).'_VERSION')), 'success');
+	  write_configure('MODULE_'.strtoupper($this->module).'_STATUS', constant('MODULE_'.strtoupper($this->module).'_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_'.strtoupper($this->module).'_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_po_num'))       $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_po_num");
@@ -373,15 +374,9 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function release_update($module, $version, $path = '') {
-    global $db, $messageStack;
-	$error = false;
-	if (file_exists($path)) { include_once ($path); }
-	write_configure('MODULE_' . strtoupper($module) . '_STATUS', $version);
-	return $error ? false : $version;
-  }
 
-  function load_reports($module) {
+
+  function load_reports() {
 	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_CUSTOMERS,   'cust');
 	if (admin_add_report_folder($id, TEXT_REPORTS,           'cust',      'fr')) $error = true;

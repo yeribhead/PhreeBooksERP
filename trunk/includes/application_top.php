@@ -56,8 +56,6 @@ if ( !isset($_SESSION['language']) && isset($_GET['language'])) {
 }elseif (!isset($_SESSION['language'])) { 
 	$_SESSION['language'] = defined('DEFAULT_LANGUAGE') ? DEFAULT_LANGUAGE : 'en_us'; 
 }
-// see if the user is logged in
-//$user_validated = isset($_SESSION['admin_id']) ? true : false;
 // load general language translation, Check for global define overrides first
 $path = DIR_FS_MODULES . 'phreedom/custom/language/' . $_SESSION['language'] . '/language.php';
 if (file_exists($path)) { require_once($path); }
@@ -67,7 +65,6 @@ else { require_once(DIR_FS_MODULES . 'phreedom/language/en_us/language.php'); }
 // define general functions and classes used application-wide
 require_once(DIR_FS_MODULES  . 'phreedom/defaults.php');
 require_once(DIR_FS_INCLUDES . 'common_functions.php');
-require_once(DIR_FS_INCLUDES . 'common_classes.php');
 set_error_handler("PhreebooksErrorHandler");
 set_exception_handler('PhreebooksExceptionHandler');
 spl_autoload_register('Phreebooks_autoloader', true, false);
@@ -94,6 +91,7 @@ if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR
 	$dsn = DB_TYPE.":dbname=".$db_company.";host=".DB_SERVER_HOST;
 	try {
 		$db = new PDO($dsn, DB_SERVER_USERNAME, DB_SERVER_PASSWORD);
+		$db->setAttribute(PDO::ERRMODE_EXCEPTION, PDO::CASE_NATURAL); 
 	} catch (PDOException $e) {
 		trigger_error('database connection failed: ' . $e->getMessage() , E_USER_ERROR);
 	}
@@ -112,14 +110,16 @@ if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR
   require_once(DIR_FS_MODULES . 'phreedom/config.php');
   $messageStack->debug_header();
   $loaded_modules = array();
+  $admin_classes = array();
   $dirs = scandir(DIR_FS_MODULES);
   foreach ($dirs as $dir) { // first pull all module language files, loaded or not
     if ($dir == '.' || $dir == '..') continue;
 	if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu');
   	if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
-  		$admin = $dir.'\admin';
+  		$class = "\\$dir\classes\admin";
   		registry::storeObject($admin, $admin);
 	  $loaded_modules[] = $dir;
+	  $admin_classes[]  = new $class;
       require_once(DIR_FS_MODULES . $dir . '/config.php');
     } 
   }

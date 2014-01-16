@@ -117,7 +117,6 @@ define('TEXT_EXPORT_CSV','Export CSV');
 define('TEXT_EXPORT_PDF','Export PDF');
 define('TEXT_FALSE','False');
 define('TEXT_FIELD', 'Field');
-define('TEXT_FIELD_REQUIRED', '&nbsp;<span class="fieldRequired">*</span>');
 define('TEXT_FIELDS','Fields');
 define('TEXT_FILENAME','File Name');
 define('TEXT_FILE_UPLOAD','File Upload');

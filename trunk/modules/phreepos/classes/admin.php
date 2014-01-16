@@ -18,6 +18,7 @@
 //
 namespace phreepos\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'phreepos';
 	
   function __construct(){
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -76,14 +77,14 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module, $demo = false) {
+  function install() {
     global $db;
 	$error = false;
 //	$this->notes[] = MODULE_PHREEPOS_NOTES_1;
     return $error;
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
 	if (MODULE_PHREEPOS_STATUS < 3.2) {
@@ -124,13 +125,13 @@ class admin extends \core\classes\admin {
 	}
 	if (!db_field_exists(TABLE_PHREEPOS_TILLS, 'tax_id')) $db->Execute("ALTER TABLE " . TABLE_PHREEPOS_TILLS . " ADD tax_id INT(11) default '-1' AFTER max_discount");
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
     $error = false;
     // Don't allow delete if there is activity
@@ -146,7 +147,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function load_reports($module) {
+  function load_reports() {
 	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_PHREEPOS, 'pos');
 	if (admin_add_report_folder($id, TEXT_REPORTS,        'pos',      'fr')) $error = true;

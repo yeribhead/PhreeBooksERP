@@ -22,6 +22,8 @@
 //
 namespace audit\classes;
 class admin extends \core\classes\admin {
+	public $module = 'audit';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.0,
@@ -35,15 +37,15 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db;
 	$error = false;
     return $error;
   }
 
-  function update($module) {
+  function update() {
   	global $db;
-	write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
+	write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
   }
 }
 ?>

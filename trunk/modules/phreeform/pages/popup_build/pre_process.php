@@ -344,7 +344,7 @@ switch ($_REQUEST['action']) {
   case 'import_all':
   case 'refresh_dir':
     $sel_modules = array();
-	foreach ($loaded_modules as $mod) $sel_modules[] = array('id' => $mod, 'text' => $mod);
+	foreach ($loaded_modules as $mod) $sel_modules[] = array('id' => $mod, 'text' => $mod); //@todo make use of the gen_build_dropdown($admin_classes);
 	$sel_language = load_language_dropdown();
 	define('PAGE_TITLE', PHREEFORM_DOC_IMPORT);
     $include_template = 'template_import.php';

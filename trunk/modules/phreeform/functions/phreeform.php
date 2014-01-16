@@ -158,14 +158,11 @@ function load_my_reports() {
 }
 
 function find_special_class($class_name) {
-  global $loaded_modules, $messageStack;
-  if (is_array($loaded_modules)) foreach ($loaded_modules as $module) {
-    if (file_exists(DIR_FS_MODULES . $module . '/classes/' . $class_name . '.php')) {
-	  return DIR_FS_MODULES . $module . '/';
-	}
-  }
-  $messageStack->add('Special class: ' . $class_name . ' was called but could not be found!', 'error');
-  return false;
+	global $loaded_modules;
+  	if (is_array($loaded_modules)) foreach ($loaded_modules as $module) {
+    	if (file_exists(DIR_FS_MODULES . $module . '/classes/' . $class_name . '.php')) return DIR_FS_MODULES . $module . '/';
+  	}
+  	throw new \Exception('Special class: ' . $class_name . ' was called but could not be found!');
 }
 
 function load_special_language($path, $class_name) {
@@ -719,6 +716,8 @@ function BuildSeq($report, $delivery_method = 'D') { // for forms only - Sequent
 			}
 			$oneline .= implode("", $temp). "\n";
 		  }
+		  $oneline = substr($oneline, 0, -2);//strip the last \n 
+		  $field->rowbreak = 1;
 		  break;
 		case 'TDup':
 		  if (!$StoredTable) return $messageStack->add(PHREEFORM_EMPTYTABLE . $field->description, 'error');

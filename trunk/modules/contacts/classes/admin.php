@@ -23,6 +23,7 @@ class admin extends \core\classes\admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
+	public $module 			= 'contacts';
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -142,7 +143,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db;
 	$error = false;
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_cust_id_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " ADD next_cust_id_num VARCHAR( 16 ) NOT NULL DEFAULT 'C10000';");
@@ -152,10 +153,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function initialize($module) {
-  }
-
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
     if (MODULE_CONTACTS_STATUS < 3.3) {
@@ -201,13 +199,13 @@ class admin extends \core\classes\admin {
     }
 
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db, $messageStack;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_cust_id_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_cust_id_num");
@@ -219,7 +217,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function load_reports($module) {
+  function load_reports() {
 	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_CUSTOMERS,   'cust');
 	if (admin_add_report_folder($id, TEXT_REPORTS,           'cust', 'fr')) $error = true;

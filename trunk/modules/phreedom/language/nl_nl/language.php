@@ -215,7 +215,6 @@ define('TEXT_FILTER','Filter');
 define('TEXT_FILL','Vullen');
 define('TEXT_FILE_UPLOAD','Bestand Uploaden');
 define('TEXT_FILENAME','File Name');
-define('TEXT_FIELD_REQUIRED','&nbsp;<span class=\"fieldRequired\">*</span>');
 define('TEXT_FIELDS','Velden');
 define('TEXT_FALSE','Niet Waar');
 define('TEXT_FIELD','Veld');

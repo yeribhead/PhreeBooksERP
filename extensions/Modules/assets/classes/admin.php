@@ -18,7 +18,8 @@
 //
 namespace assets\classes; 
 class admin extends \core\classes\admin {
-
+	public $module 			= 'assets';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.5,
@@ -58,17 +59,17 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
 	$error = false;
 	require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 	xtra_field_sync_list('assets', TABLE_ASSETS);
     return $error;
   }
 
-  function initialize($module) {
+  function initialize() {
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
     if (MODULE_ASSETS_STATUS < 3.1) {
@@ -108,13 +109,13 @@ class admin extends \core\classes\admin {
 	  xtra_field_sync_list('assets', TABLE_ASSETS);
     }
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
 	$error = false;
 	$db->Execute("delete from " . TABLE_EXTRA_FIELDS . " where module_id = 'assets'");

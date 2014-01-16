@@ -19,6 +19,8 @@
 //
 namespace cp_action\classes;
 class admin extends \core\classes\admin {
+	public $module 			= 'cp_action';
+	
   function __construct() {
 	$this->notes = array(); // placeholder for any operational notes
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -76,7 +78,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
     // add a current status field for the next ca/pa number
@@ -86,32 +88,23 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function initialize($module) {
-  }
-
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_capa_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_capa_desc");
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db, $messageStack;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_capa_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_capa_num");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_capa_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_capa_desc");
 	return $error;
-  }
-
-  function load_reports($module) {
-  }
-
-  function load_demo() {
   }
 
 }

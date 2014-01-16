@@ -83,7 +83,7 @@ class toolbar {
     foreach($this->icon_list as $uniqid => $row) foreach($row as $key => $value) $sort_arr[$key][$uniqid] = $value;
 	array_multisort($sort_arr['order'], SORT_ASC, $this->icon_list);
 	foreach ($this->icon_list as $id => $icon) {
-	  if ($icon['show']) $output .= html_icon($icon['icon'], $icon['text'], $this->icon_size, 'id ="tb_icon_' . $id . '" style="cursor:pointer;" ' . $icon['params']) . "\n";
+	  	if ($icon['show']) $output .= html_icon($icon['icon'], $icon['text'], $this->icon_size, "id ='tb_icon_$id' ". $icon['params']) . "\n";
 	}
 	$output .= '</div>' . "\n"; // end of the right justified icons
 	// display alerts/error messages, if any

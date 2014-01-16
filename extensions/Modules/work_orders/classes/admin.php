@@ -18,6 +18,8 @@
 //
 namespace work_orders\classes;
 class admin extends \core\classes\admin {
+	public $module			= 'work_orders';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',
@@ -101,7 +103,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
     if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_wo_num')) {
 	  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " ADD next_wo_num VARCHAR(16) NOT NULL DEFAULT 'WO-0001';");
@@ -109,7 +111,7 @@ class admin extends \core\classes\admin {
 	write_configure('PHREEHELP_FORCE_RELOAD', '1');
   }
 
-  function update($module) {
+  function update() {
     global $db, $messageStack;
 	$error = false;
     if (MODULE_WORK_ORDERS_STATUS < '3.1') {
@@ -128,13 +130,13 @@ class admin extends \core\classes\admin {
 	  }
 	} 
 	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 	}
 	return $error;
   }
 
-  function remove($module) {
+  function remove() {
     global $db;
 	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_wo_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_wo_num");
@@ -142,7 +144,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
 
-  function load_reports($module) {
+  function load_reports() {
 	global $db;
 	$error = false;
 	$result = $db->Execute("select id from " . TABLE_PHREEFORM . " where doc_group = 'inv' and doc_ext = '0'");

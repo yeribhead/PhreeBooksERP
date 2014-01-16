@@ -22,6 +22,8 @@
 //
 namespace import_bank\classes;
 class admin extends \core\classes\admin {
+	public $module 			= 'import_bank';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => 3.0,
@@ -47,7 +49,7 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install($module) {
+  function install() {
     global $db, $messageStack;
 	$error = false;
 	if (!db_field_exists(TABLE_CONTACTS, 'bank_account_1')) { 
@@ -78,7 +80,7 @@ class admin extends \core\classes\admin {
     return $error;
   }
   
-  function update($module) {
+  function update() {
   	global $db;
   	foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
   	$sql = "select id from " . TABLE_EXTRA_FIELDS . " where module_id = 'contacts' and field_name = 'bank_account'";
@@ -97,7 +99,7 @@ class admin extends \core\classes\admin {
 		if ($table == TABLE_IMPORT_BANK) admin_install_tables(array($table => $sql));
 	}
 	
-	write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
+	write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
   }
 
 }

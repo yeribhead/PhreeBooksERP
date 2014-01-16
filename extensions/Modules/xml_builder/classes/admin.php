@@ -19,6 +19,8 @@
 //
 namespace xml_builder\classes;
 class admin extends \core\classes\admin{
+	public $module			= 'xml_builder';
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom'   => '3.3',

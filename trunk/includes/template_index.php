@@ -72,6 +72,11 @@ if      (file_exists($js_i18n = 'modules/phreedom/custom/language/'.$_SESSION['l
 } elseif(file_exists($js_i18n = 'modules/phreedom/language/'       .$_SESSION['language'].'/jquery_i18n.js')) {
 } else               $js_i18n = 'modules/phreedom/language/en_us/jquery_i18n.js';
 echo '  <script type="text/javascript" src="'.$js_i18n.'"></script>'."\n";
+//for easyui
+if      (file_exists($file = 'includes/easyui/custom/language/'.$_SESSION['language'].'/easyui_lang.js')) {
+} elseif(file_exists($file = 'includes/easyui/language/'       .$_SESSION['language'].'/easyui_lang.js')) {
+} else               $file = 'includes/easyui/language/en_us/easyui_lang.js';
+echo '  <script type="text/javascript" src="'.$file.'"></script>'."\n";
 // load the javascript specific, required
 $js_include_path = DIR_FS_WORKING . 'pages/' . $page . '/js_include.php';
 if (file_exists($js_include_path)) { require_once($js_include_path); } 
