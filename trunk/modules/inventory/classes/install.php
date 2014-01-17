@@ -151,7 +151,8 @@ class inventory_admin {
 		  serialize_number varchar(24) NOT NULL default '',
 		  remaining float NOT NULL default '0',
 		  unit_cost float NOT NULL default '0',
-		  post_date datetime default NULL,
+		  avg_cost float NOT NULL default '0',
+	  	  post_date datetime default NULL,
 		  PRIMARY KEY (id),
 		  KEY sku (sku),
 		  KEY ref_id (ref_id),
@@ -414,6 +415,9 @@ class inventory_admin {
 			$result->MoveNext();
 		}
 	  	mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/attachments/', 0755, true);
+	}
+	if (MODULE_INVENTORY_STATUS < 3.7) {
+		if (!db_field_exists(TABLE_INVENTORY_HISTORY, 'avg_cost')) $db->Execute("ALTER TABLE ".TABLE_INVENTORY." ADD avg_cost FLOAT NOT NULL DEFAULT '0' AFTER unit_cost");
 	}
 	if (!$error) {
 		xtra_field_sync_list('inventory', TABLE_INVENTORY);
