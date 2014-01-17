@@ -23,6 +23,7 @@ require(DIR_FS_WORKING . 'functions/phreebooks.php');
 require(DIR_FS_WORKING . 'classes/gen_ledger.php');
 /**************   page specific initialization  *************************/
 define('JOURNAL_ID',2);	// General Journal
+if (!defined('CURRENT_ACCOUNTING_PERIOD')) gen_auto_update_period(false);
 $error      = false;
 $start_date = ($_POST['start_date'])  ? gen_db_date($_POST['start_date']) : CURRENT_ACCOUNTING_PERIOD_START;
 $end_date   = ($_POST['end_date'])    ? gen_db_date($_POST['end_date'])   : CURRENT_ACCOUNTING_PERIOD_END;
