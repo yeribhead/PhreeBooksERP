@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -841,16 +841,19 @@ class journal {
 	  if (ENABLE_MULTI_BRANCH) $sql .= " and store_id = " . $this->store_id;
 	  $sql .= " order by post_date";
 	  $result = $db->Execute($sql);
-	  $working_qty = $item['qty'] + $defaults['quantity_on_hand'];
+	  $working_qty = $item['qty'];
+	  $working_qoh = $defaults['quantity_on_hand'];
 	  while (!$result->EOF) {
-		$working_qty -= $result->fields['qty'];
-		if ($working_qty >= 0) { // repost this journal entry and remove the owed record since we will repost all the negative quantities necessary
+	  	$messageStack->debug("\n      Relieving cogs owed, working_qoh = $working_qoh and working_qty = $working_qty");
+	  	$working_qoh += $result->fields['qty'];
+		if ($working_qty >= $working_qoh && $working_qty > 0 && $working_qoh >= 0) { // repost this journal entry and remove the owed record since we will repost all the negative quantities necessary
 		  if ($result->fields['journal_main_id'] <> $this->id) { // prevent infinite loop
 		    $messageStack->debug("\nCOGS calculation is queing ID: " . $result->fields['journal_main_id'] . " to re-post.");
 			$this->repost_ids[$result->fields['journal_main_id']] = $result->fields['journal_main_id'];
 		  }
 		  $db->Execute("delete from " . TABLE_INVENTORY_COGS_OWED . " where id = " . $result->fields['id']);
 		}
+	  	$working_qty -= $result->fields['qty'];
 		if ($working_qty <= 0) break; // we are finished listing all records that will be affected by this inv receipt
 		$result->MoveNext();
 	  }
@@ -888,7 +891,7 @@ class journal {
 		if ($result->RecordCount() <> 1) return $this->fail_message(GL_ERROR_SERIALIZE_COGS); 
 	  } else {
 		$sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." 
-		  WHERE sku='".$item['sku']."' AND remaining > 0 AND post_date <= '$this->post_date 23:59:59'";
+		  WHERE sku='".$item['sku']."' AND remaining > 0"; // AND post_date <= '$this->post_date 23:59:59'"; // causes re-queue to owed table for negative inventory posts and rcv after sale date
 		if (ENABLE_MULTI_BRANCH) $sql .= " AND store_id='$this->store_id'";
 		$sql .= " ORDER BY ".($defaults['cost_method']=='l' ? 'post_date DESC, id DESC' : 'post_date, id');
 		$result = $db->Execute($sql);

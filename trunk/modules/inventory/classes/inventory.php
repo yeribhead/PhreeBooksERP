@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -222,7 +222,7 @@ class inventory {
 		$result = $db->Execute("select * from " . TABLE_INVENTORY . " where sku = '" . $this->old_sku. "'");
 		//if ($result->RecordCount() == 0) return false;
 		$sql_data_array = array();
-		$not_usable_keys = array('id','sku','last_journal_date','upc_code','image_with_path','quantity_on_hand','quantity_on_order','quantity_on_sales_order','creation_date','last_update');
+		$not_usable_keys = array('id','sku','last_journal_date','upc_code','image_with_path','quantity_on_hand','quantity_on_order','quantity_on_sales_order','quantity_on_allocation','creation_date','last_update');
 		foreach ($result->fields as $key => $value) {
 			if(!in_array($key, $not_usable_keys)) $sql_data_array[$key] = $value;
 		}
@@ -354,11 +354,13 @@ class inventory {
 	// this is the general save function.
 	function save() {
 		global $db, $currencies, $fields, $messageStack;
-	    $sql_data_array 						= $fields->what_to_save();
+	    $sql_data_array = $fields->what_to_save();
+	    // handle the checkboxes
+	    $sql_data_array['inactive'] = isset($_POST['inactive']) ? $_POST['inactive'] : '0'; // else unchecked
 	    foreach(array('quantity_on_hand', 'quantity_on_order', 'quantity_on_sales_order', 'quantity_on_allocation' ) as $key){
 	    	unset($sql_data_array[$key]);
 	    }     
-		$sql_data_array['last_update'] 			= date('Y-m-d H-i-s');
+		$sql_data_array['last_update'] = date('Y-m-d H-i-s');
 		if ($_SESSION['admin_security'][SECURITY_ID_PURCHASE_INVENTORY] > 1){
 			$sql_data_array['item_cost'] = $this->store_purchase_array();	
 			$sql_data_array['vendor_id'] = $this->min_vendor_id;
