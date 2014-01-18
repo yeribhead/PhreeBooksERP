@@ -39,10 +39,9 @@ switch ($_REQUEST['action']) {
 		    $admin_language = db_prepare_input($_POST['language']);
 		    $sql = "select admin_id, admin_name, inactive, display_name, admin_email, admin_pass, account_id, admin_prefs, admin_security 
 				from " . TABLE_USERS . " where admin_name = '" . db_input($admin_name) . "'";
-			$result = false;
 		    if ($db->db_connected) $result = $db->Execute($sql);
-			if (!$result || $admin_name <> $result->fields['admin_name'] || $result->fields['inactive']) throw new Exception(ERROR_WRONG_LOGIN);
-		    if (!pw_validate_password($admin_pass, $result->fields['admin_pass'])) throw new Exception(ERROR_WRONG_LOGIN);
+			if (!$result || $admin_name <> $result->fields['admin_name'] || $result->fields['inactive']) throw new \Exception(ERROR_WRONG_LOGIN);
+		    pw_validate_password($admin_pass, $result->fields['admin_pass']);
 		    $_SESSION['admin_id']       = $result->fields['admin_id'];
 		    $_SESSION['display_name']   = $result->fields['display_name'];
 		    $_SESSION['admin_email']    = $result->fields['admin_email'];
@@ -57,7 +56,7 @@ switch ($_REQUEST['action']) {
 			setcookie('pb_language', $admin_language, $cookie_exp);
 			// load init functions for each module and execute
 			$phreedom = new \phreedom\classes\admin(); 
-			if (MODULE_PHREEDOM_STATUS <> MODULE_PHREEDOM_VERSION) $phreedom->update();
+			if ($phreedom->should_update()) $phreedom->update();
 			$phreedom->initialize();
 			if (defined('TABLE_CONTACTS')) {
 			    $dept = $db->Execute("select dept_rep_id from " . TABLE_CONTACTS . " where id = " . $result->fields['account_id']);
@@ -66,17 +65,24 @@ switch ($_REQUEST['action']) {
 			gen_add_audit_log(GEN_LOG_LOGIN . $admin_name);
 			// check for session timeout to reload to requested page
 			$get_params = '';
-			if (isset($_SESSION['pb_cat']) && $_SESSION['pb_cat']) {
-				$get_params  = 'module='    . $_SESSION['pb_cat'];
-			    $get_params .= '&amp;page=' . $_SESSION['pb_module'];
-			    if (isset($_SESSION['pb_jID']) && $_SESSION['pb_jID'])  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
+			if (isset($_SESSION['pb_module']) && $_SESSION['pb_module']) {
+				$get_params  = 'module='    . $_SESSION['pb_module'];
+			    if (isset($_SESSION['pb_page']) && $_SESSION['pb_page']) $get_params .= '&amp;page=' . $_SESSION['pb_page'];
+			    if (isset($_SESSION['pb_jID'])  && $_SESSION['pb_jID'])  $get_params .= '&amp;jID='  . $_SESSION['pb_jID'];
 			    if (isset($_SESSION['pb_type']) && $_SESSION['pb_type']) $get_params .= '&amp;type=' . $_SESSION['pb_type'];
+			    if (isset($_SESSION['pb_list']) && $_SESSION['pb_list']) $get_params .= '&amp;list=' . $_SESSION['pb_list'];
+			    unset($_SESSION['pb_module']);
+  				unset($_SESSION['pb_page']);
+  				unset($_SESSION['pb_jID']);
+  				unset($_SESSION['pb_type']);
+  				unset($_SESSION['pb_list']);
+			    gen_redirect(html_href_link(FILENAME_DEFAULT, $get_params, 'SSL'));
 			}
 			// check safe mode is allowed to log in.
 			if (get_cfg_var('safe_mode')) $messageStack->add(SAFE_MODE_ERROR, 'error');
 		    $_REQUEST['action'] = '';
 		    break;
-		}catch(Exception $e) {
+		}catch(\Exception $e) {
 			$messageStack->add($e->getMessage(), $e->getCode);
 			// Note: This is assigned to admin id = 1 since the user is not logged in.
 			gen_add_audit_log(sprintf(GEN_LOG_LOGIN_FAILED, $e->getMessage(), $admin_name));

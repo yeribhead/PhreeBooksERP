@@ -150,7 +150,6 @@ define('INV_ERROR_CANNOT_DELETE','Dit Voorraad item kan niet worden verwijderd o
 define('INV_ERROR_BAD_SKU','Er was een fout met het item assemblage lijst, kunt u artikel waarden te valideren en te controleren. Fout bij Art.nr: ');
 define('INV_ERROR_SKU_INVALID','Art.nr. is ongeldig. Gelieve de Art.nr en de voorraad rekeningen te controleren op fouten.');
 define('INV_ERROR_SKU_BLANK','De Art.nr. veld was leeg gelaten. Voer het in en probeer het opnieuw.');
-define('INV_ERROR_FIELD_BLANK','De veldnaam was niet ingevuld. Voer het in en probeer het opnieuw.');
 define('INV_ERROR_FIELD_DUPLICATE','Het veld dat u heeft opgegeven, is een duplicaat. wijzig de naam en dienen het opnieuw in.');
 define('INV_ERROR_NEGATIVE_BALANCE','Fout: Demonteren van de voorraad, niet voldoende voorraad om de gevraagde hoeveelheid te demonteren!');
 define('INV_DESCRIPTION','Omschrijving: ');

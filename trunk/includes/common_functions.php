@@ -39,6 +39,7 @@
     while (strstr($url, '&amp;')) $url = str_replace('&amp;', '&', $url);
     header('Location: ' . $url);
     exit;
+    ob_end_flush();
   }
 
   function gen_pull_language($page, $file = 'language') {
@@ -1810,6 +1811,7 @@ function pw_validate_password($plain, $encrypted) {
       return true;
     }
   }
+  throw new \Exception(ERROR_WRONG_LOGIN);
   return false;
 }
 
@@ -1881,7 +1883,7 @@ function xmlEntry($key, $data, $ignore = NULL) {
 function xml_to_object($xml = '') {
   $xml     = trim($xml);
   if ($xml == '') return '';
-  $output  = new objectInfo();
+  $output  = new \core\classes\objectInfo();
   $runaway = 0;
   if( strlen(substr($xml, 0,strpos($xml, '<?xml'))) != 0) throw new \Exception("There is a unforseen error on the other side: " . substr($xml, 0,strpos($xml, '<?xml')));
   while (strlen($xml) > 0) {
@@ -1970,7 +1972,7 @@ function object_to_xml($params, $multiple = false, $multiple_key = '', $level = 
 
 function array_to_object($arr = array()) {
   if (!is_array($arr)) return $arr;
-  $output = new objectInfo();
+  $output = new \core\classes\objectInfo;
   foreach ($arr as $key => $value) {
     if (is_array($value)) {
 	  $output->$key = array_to_object($value);
@@ -2124,7 +2126,7 @@ function PhreebooksExceptionHandler($exception) {
     $messageStack->add($exception->getMessage(), 'error');
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
     $text .= " Exception: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
-    if(DEBUG) error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
+    error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
 	if ($_REQUEST['page'] == 'ajax'){
     	echo createXmlHeader() . createXmlFooter();
         die();
@@ -2132,7 +2134,6 @@ function PhreebooksExceptionHandler($exception) {
 }
 
 function Phreebooks_autoloader($temp){ 
-	if (stristr($temp,'objectInfo')) return;
 	$class = str_replace("\\", "/", $temp);
 	$path = explode("/", $class, 3);
 	if($path[0] == 'core'){

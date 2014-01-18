@@ -20,7 +20,6 @@ define('PAGE_EXECUTION_START_TIME', microtime(true));
 if (!get_cfg_var('safe_mode')) {
 	if (ini_get('max_execution_time') < 60) set_time_limit(60);
 }
-$currencies        = ''; 
 $force_reset_cache = false;
 // set php_self in the local scope
 if (!isset($PHP_SELF)) $PHP_SELF = $_SERVER['PHP_SELF'];
@@ -46,8 +45,6 @@ $request_type = (isset($_SERVER['HTTPS']) && (strtolower($_SERVER['HTTPS']) == '
 define('COG_ITEM_TYPES','si,sr,ms,mi,ma,sa');
 @ini_set('session.gc_maxlifetime', (SESSION_TIMEOUT_ADMIN < 900 ? (SESSION_TIMEOUT_ADMIN + 900) : SESSION_TIMEOUT_ADMIN));
 $_REQUEST = array_merge($_GET, $_POST);
-// The line below breaks the $_REQUEST string as array_map expects 2 parameters and the second array is null thus erasing all the values in $_REQUEST while keeping the keys.
-//$_REQUEST = array_map('mysql_real_escape_string', $_REQUEST); // this should pas all variables in the $_REQUEST pas the db_prepare_input function
 session_start();
 $session_started = true;
 // set the language
@@ -78,8 +75,9 @@ define('MY_MENU',  isset($_SESSION['admin_prefs']['menu'])  ?$_SESSION['admin_pr
 define('DIR_WS_IMAGES', DIR_WS_THEMES . 'images/');
 if (file_exists(DIR_WS_THEMES . 'icons/')) { define('DIR_WS_ICONS',  DIR_WS_THEMES . 'icons/'); }
 else { define('DIR_WS_ICONS', 'themes/default/icons/'); } // use default
-$messageStack = new \core\classes\messageStack;
-$toolbar      = new \core\classes\toolbar;
+$messageStack 	= new \core\classes\messageStack;
+$toolbar      	= new \core\classes\toolbar;
+$currencies  	= new \core\classes\currencies;
 // determine what company to connect to
 if ($_REQUEST['action']=="validate") $_SESSION['company'] = $_POST['company'];
 if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR_FS_MY_FILES . $_SESSION['company'] . '/config.php')) {
@@ -104,32 +102,28 @@ if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR
     }catch (PDOException $e) {
     	trigger_error(LOAD_CONFIG_ERROR . $e->getMessage(), E_USER_ERROR);
     }
-  // search the list modules and load configuration files and language files
-  gen_pull_language('phreedom', 'menu');
-  gen_pull_language('phreebooks', 'menu');
-  require_once(DIR_FS_MODULES . 'phreedom/config.php');
-  $messageStack->debug_header();
-  $loaded_modules = array();
-  $admin_classes = array();
-  $dirs = scandir(DIR_FS_MODULES);
-  foreach ($dirs as $dir) { // first pull all module language files, loaded or not
-    if ($dir == '.' || $dir == '..') continue;
-	if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu');
-  	if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
-  		$class = "\\$dir\classes\admin";
-  		registry::storeObject($admin, $admin);
-	  $loaded_modules[] = $dir;
-	  $admin_classes[]  = new $class;
-      require_once(DIR_FS_MODULES . $dir . '/config.php');
-    } 
-  }
-  // pull in the custom language over-rides for this module (to pre-define the standard language)
-  $path = DIR_FS_MODULES . "$module/custom/pages/$page/extra_menus.php";
-  if (file_exists($path)) { include($path); }
-  $currencies = new \core\classes\currencies();
+  	// search the list modules and load configuration files and language files
+  	gen_pull_language('phreedom', 'menu');
+  	gen_pull_language('phreebooks', 'menu');
+  	require_once(DIR_FS_MODULES . 'phreedom/config.php');
+  	$loaded_modules = array();
+  	$admin_classes = array();
+  	$dirs = scandir(DIR_FS_MODULES);
+  	foreach ($dirs as $dir) { // first pull all module language files, loaded or not
+    	if ($dir == '.' || $dir == '..') continue;
+		if (is_dir(DIR_FS_MODULES . $dir)) gen_pull_language($dir, 'menu');
+  		if (defined('MODULE_' . strtoupper($dir) . '_STATUS')) { // module is loaded
+  			$class = "\\$dir\classes\admin";
+	  		$loaded_modules[] = $dir;
+	  		$admin_classes[]  = new $class;
+      		require_once(DIR_FS_MODULES . $dir . '/config.php');
+    	} 
+  	}
+	// pull in the custom language over-rides for this module (to pre-define the standard language)
+  	$path = DIR_FS_MODULES . "$module/custom/pages/$page/extra_menus.php";
+  	if (file_exists($path)) { include($path); }
+  	$currencies->load_currencies();
 }
 $prefered_type = ENABLE_SSL_ADMIN == 'true' ? 'SSL' : 'NONSSL';
 if ($request_type <> $prefered_type) gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL')); // re-direct if SSL request not matching actual request
-if (\core\classes\user::is_validated() && !defined('DEFAULT_CURRENCY')) throw new Exception(ERROR_NO_DEFAULT_CURRENCY_DEFINED, 'error'); // check for default currency defined
-
 ?>

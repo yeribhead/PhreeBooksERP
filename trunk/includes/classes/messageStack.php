@@ -20,6 +20,10 @@ namespace core\classes;
 class messageStack {
     public $debug_info 	= NULL;
     
+    function __construct(){
+    	$this->debug_header();
+    }
+    
     function add($message, $type = 'error') {
       	if ($type == 'error') {
         	$_SESSION['messageToStack'][] = array('type' => $type, 'params' => 'class="ui-state-error"', 'text' => html_icon('emblems/emblem-unreadable.png', TEXT_ERROR) . '&nbsp;' . $message, 'message' => $message);

@@ -199,7 +199,7 @@ class admin extends \core\classes\admin {
 	    	// load the latest currency exchange rates
 		    if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
 				gen_pull_language('phreedom', 'admin');
-				$currency = new \core\classes\currency();
+				$currency = new \phreedom\classes\currency(); //@todo should be core.
 				$currency->btn_update();
 			}
 			// Fix for change to audit log for upgrade to R3.6 causes perpertual crashing when writing audit log
@@ -222,9 +222,9 @@ class admin extends \core\classes\admin {
 				  		if (!defined($key)) write_configure($key, $value);
 					}
 					admin_install_dirs($module->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/');
-			    	if (method_exists($module, 'update')) $module->update($module);
+			    	if (method_exists($module, 'update')) $module->update();
 			  	}
-			  	if (method_exists($module, 'initialize')) $module->initialize($module);
+			  	if (method_exists($module, 'initialize')) $module->initialize();
 			  	if ($revisions) {
 			  		$mod = $module->id;
 			  		$latest  = $versions->Revisions->Modules->$mod->Current;

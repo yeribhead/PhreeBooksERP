@@ -459,6 +459,8 @@ echo html_input_field('bill_email', $order->bill_email, 'size="35" maxlength="48
         </tr>
         </tbody>
       </table>
+      <?php echo TEXT_COMMENT . ' '; ?>
+      <?php echo html_textarea_field('comment','50','2',$order->comment);?>
     </td>
   </tr>
  </tbody>

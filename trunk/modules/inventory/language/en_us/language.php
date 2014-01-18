@@ -169,7 +169,6 @@ define('INV_ERROR_CANNOT_DELETE','The inventory item cannot be deleted because t
 define('INV_ERROR_BAD_SKU','There was an error with the item assembly list, please validate sku values and check quantities. Failing sku was: ');
 define('INV_ERROR_SKU_INVALID','SKU is invalid. Please check the sku and default item inventory default gl accounts for missing information or errors.');
 define('INV_ERROR_SKU_BLANK','The SKU field was left blank. Please enter a sku value and retry.');
-define('INV_ERROR_FIELD_BLANK','The field name was left blank. Please enter a field name and retry.');
 define('INV_ERROR_FIELD_DUPLICATE','The field you entered is a duplicate, please change the field name and re-submit.');
 define('INV_ERROR_NEGATIVE_BALANCE','Error unbuilding inventory, not enough stock on hand to unbuild the requested quantity!');
 define('INV_DESCRIPTION', 'Description: ');

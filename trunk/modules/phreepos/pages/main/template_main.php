@@ -213,7 +213,16 @@ echo $toolbar->build_toolbar();
 	</tfoot>
 </table>	 
 
-<footer><?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?></footer>
+<footer style="witdh:800px;">
+<div style="float:right;">
+   	<?php echo TEXT_COMMENT; ?><br/>
+   	<?php echo html_textarea_field('comment','50','2',$order->comment);?><br/>
+</div>
+<div style="witdh:450px;float:left;">
+	<?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?>
+</div>
+</footer>
+
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
 ?>

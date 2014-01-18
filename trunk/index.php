@@ -28,23 +28,21 @@ elseif (isset($_GET['page']))   $page = $_GET['page'];
 else                     		$page = 'main';
 
 require_once('includes/application_top.php');
-if (!core\user::is_validated()) {
-  if ($page == 'ajax'){
-	echo createXmlHeader() . xmlEntry('error', SORRY_YOU_ARE_LOGGED_OUT) . createXmlFooter();
-	die;
-  }
-  $_SESSION['pb_cat']    = isset($_GET['module']) 	? $_GET['module']	: '';
-  $_SESSION['pb_module'] = isset($_GET['page']) 	? $_GET['page']		: '';
-  $_SESSION['pb_jID']    = isset($_GET['jID']) 		? $_GET['jID'] 		: '';
-  $_SESSION['pb_type']   = isset($_GET['type'])		? $_GET['type']		: '';
-  $module = 'phreedom';
-  $page   = 'main';
-  if (!isset($_REQUEST['action']) || $_REQUEST['action'] <> 'validate') $_REQUEST['action'] = 'login';
-} else {
-  unset($_SESSION['pb_cat']);
-  unset($_SESSION['pb_module']);
-  unset($_SESSION['pb_jID']);
-  unset($_SESSION['pb_type']);
+if (!\core\classes\user::is_validated()) {
+  	if ($page == 'ajax'){
+		echo createXmlHeader() . xmlEntry('error', SORRY_YOU_ARE_LOGGED_OUT) . createXmlFooter();
+		die;
+  	}
+  	if (isset($_REQUEST['module'])	&& !$_SESSION['pb_module'])	$_SESSION['pb_module']	= $_REQUEST['module'];
+  	if (isset($_REQUEST['page']) 	&& !$_SESSION['pb_page']) 	$_SESSION['pb_page'] 	= $_REQUEST['page'];
+  	if (isset($_REQUEST['jID']) 	&& !$_SESSION['pb_jID'])	$_SESSION['pb_jID']		= $_REQUEST['jID'];
+  	if (isset($_REQUEST['type']) 	&& !$_SESSION['pb_type'])	$_SESSION['pb_type']	= $_REQUEST['type'];
+  	if (isset($_REQUEST['list'])	&& !$_SESSION['pb_list'])	$_SESSION['pb_list']	= $_REQUEST['list'];
+	$module = 'phreedom';
+	$page   = 'main';
+  	if (!isset($_REQUEST['action']) || !in_array($_REQUEST['action'], array('validate','pw_lost_sub','pw_lost_req'))){
+   		$_REQUEST['action'] = 'login';
+  	}
 }
 if ($page == 'ajax') {
   $pre_process_path = DIR_FS_MODULES . $module . 'custom/ajax/' . $_GET['op'] . '.php';

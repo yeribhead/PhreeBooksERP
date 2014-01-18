@@ -18,67 +18,81 @@
 //
 namespace phreebooks\classes;
 class orders extends \core\classes\journal {
- var $closed = '0';
-	
-  function __construct() {
-	$this->journal_id          = JOURNAL_ID;
-	$this->gl_type             = GL_TYPE;
-	$this->gl_acct_id          = DEF_GL_ACCT;
-	$this->currencies_code     = DEFAULT_CURRENCY;
-	$this->currencies_value    = '1.0';
-	$this->bill_primary_name   = GEN_PRIMARY_NAME;
-	$this->bill_contact        = GEN_CONTACT;
-	$this->bill_address1       = GEN_ADDRESS1;
-	$this->bill_address2       = GEN_ADDRESS2;
-	$this->bill_city_town      = GEN_CITY_TOWN;
-	$this->bill_state_province = GEN_STATE_PROVINCE;
-	$this->bill_postal_code    = GEN_POSTAL_CODE;
-	$this->bill_country_code   = COMPANY_COUNTRY;
+	public $id;
+	public $recur_id;
+	public $recur_frequency;
+	public $so_po_ref_id;
+	public $bill_acct_id;
+	public $bill_address_id;
+	public $terms;
+	public $item_count;
+	public $weight;
+	public $printed 			= false;
+	public $waiting 			= false;
+	public $purchase_invoice_id;
+	public $bill_add_update		= false;
+ 	public $closed 				= false;
+ 	public $journal_id          = JOURNAL_ID;
+	public $gl_type             = GL_TYPE;
+	public $gl_acct_id          = DEF_GL_ACCT;
+	public $currencies_code     = DEFAULT_CURRENCY;
+	public $currencies_value    = '1.0';
+	public $bill_primary_name   = GEN_PRIMARY_NAME;
+	public $bill_contact        = GEN_CONTACT;
+	public $bill_address1       = GEN_ADDRESS1;
+	public $bill_address2       = GEN_ADDRESS2;
+	public $bill_city_town      = GEN_CITY_TOWN;
+	public $bill_state_province = GEN_STATE_PROVINCE;
+	public $bill_postal_code    = GEN_POSTAL_CODE;
+	public $bill_country_code   = COMPANY_COUNTRY;
 	// shipping defaults
-	$this->ship_short_name     = '';
-	$this->ship_add_update     = 0;
-	$this->ship_acct_id        = 0;
-	$this->ship_address_id     = 0;
-	$this->ship_country_code   = COMPANY_COUNTRY;
-	$this->shipper_code        = '';
-	$this->drop_ship           = 0;
-	$this->freight             = 0;
-	switch ($this->journal_id) { // default to company data for purchases/PO's
-	  case  3:
-	  case  4:
-	  case  6:
-	  case  7:
-		$this->disc_gl_acct_id     = AP_DISCOUNT_PURCHASE_ACCOUNT;
-		$this->ship_gl_acct_id     = AP_DEF_FREIGHT_ACCT;
-		$this->ship_primary_name   = COMPANY_NAME;
-		$this->ship_contact        = AP_CONTACT_NAME;
-		$this->ship_address1       = COMPANY_ADDRESS1;
-		$this->ship_address2       = COMPANY_ADDRESS2;
-		$this->ship_city_town      = COMPANY_CITY_TOWN;
-		$this->ship_state_province = COMPANY_ZONE;
-		$this->ship_postal_code    = COMPANY_POSTAL_CODE;
-		$this->ship_telephone1     = COMPANY_TELEPHONE1;
-		$this->ship_email          = COMPANY_EMAIL;
-		break;
-	  case  9:
-	  case 10:
-	  case 12:
-	  case 13:
-		$this->disc_gl_acct_id     = AR_DISCOUNT_SALES_ACCOUNT;
-		$this->ship_gl_acct_id     = AR_DEF_FREIGHT_ACCT;
-		$this->ship_primary_name   = GEN_PRIMARY_NAME;
-		$this->ship_contact        = GEN_CONTACT;
-		$this->ship_address1       = GEN_ADDRESS1;
-		$this->ship_address2       = GEN_ADDRESS2;
-		$this->ship_city_town      = GEN_CITY_TOWN;
-		$this->ship_state_province = GEN_STATE_PROVINCE;
-		$this->ship_postal_code    = GEN_POSTAL_CODE;
-		$this->ship_telephone1     = GEN_TELEPHONE1;
-		$this->ship_email          = GEN_EMAIL;
-		break;
-	  default:
+	public $ship_short_name     = '';
+	public $ship_add_update     = 0;
+	public $ship_acct_id        = 0;
+	public $ship_address_id     = 0;
+	public $ship_country_code   = COMPANY_COUNTRY;
+	public $shipper_code        = '';
+	public $drop_ship           = 0;
+	public $freight             = 0;
+	public $comment;
+	
+	function __construct() {
+		switch ($this->journal_id) { // default to company data for purchases/PO's
+		  case  3:
+		  case  4:
+		  case  6:
+		  case  7:
+			$this->disc_gl_acct_id     = AP_DISCOUNT_PURCHASE_ACCOUNT;
+			$this->ship_gl_acct_id     = AP_DEF_FREIGHT_ACCT;
+			$this->ship_primary_name   = COMPANY_NAME;
+			$this->ship_contact        = AP_CONTACT_NAME;
+			$this->ship_address1       = COMPANY_ADDRESS1;
+			$this->ship_address2       = COMPANY_ADDRESS2;
+			$this->ship_city_town      = COMPANY_CITY_TOWN;
+			$this->ship_state_province = COMPANY_ZONE;
+			$this->ship_postal_code    = COMPANY_POSTAL_CODE;
+			$this->ship_telephone1     = COMPANY_TELEPHONE1;
+			$this->ship_email          = COMPANY_EMAIL;
+			break;
+		  case  9:
+		  case 10:
+		  case 12:
+		  case 13:
+			$this->disc_gl_acct_id     = AR_DISCOUNT_SALES_ACCOUNT;
+			$this->ship_gl_acct_id     = AR_DEF_FREIGHT_ACCT;
+			$this->ship_primary_name   = GEN_PRIMARY_NAME;
+			$this->ship_contact        = GEN_CONTACT;
+			$this->ship_address1       = GEN_ADDRESS1;
+			$this->ship_address2       = GEN_ADDRESS2;
+			$this->ship_city_town      = GEN_CITY_TOWN;
+			$this->ship_state_province = GEN_STATE_PROVINCE;
+			$this->ship_postal_code    = GEN_POSTAL_CODE;
+			$this->ship_telephone1     = GEN_TELEPHONE1;
+			$this->ship_email          = GEN_EMAIL;
+			break;
+		  default:
+		}
 	}
-  }
 
   function post_ordr($action) {
 	global $db, $messageStack;

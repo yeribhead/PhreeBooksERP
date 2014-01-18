@@ -37,22 +37,22 @@ if ($single_language) echo html_hidden_field('language', $languages[0]['id']) . 
 			  </tr>
               <tr>
                 <td width="35%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo TEXT_LOGIN_NAME; ?></td>
-                <td width="65%"><?php echo html_input_field('admin_name', (isset($_POST['admin_name']) ? $_POST['admin_name'] : '')); ?></td>
+                <td width="65%"><?php echo html_input_field('admin_name', (isset($_POST['admin_name']) ? $_POST['admin_name'] : ''), '', true); ?></td>
               </tr>
               <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo TEXT_LOGIN_PASS; ?></td>
-                <td><?php echo html_password_field('admin_pass', ''); ?></td>
+                <td><?php echo html_password_field('admin_pass', '', true); ?></td>
               </tr>
 <?php if (!$single_company) { ?>
               <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo TEXT_LOGIN_COMPANY; ?></td>
-                <td><?php echo html_pull_down_menu('company', $_SESSION['companies'], $company_index); ?></td>
+                <td><?php echo html_pull_down_menu('company', $_SESSION['companies'], $company_index, '', true); ?></td>
               </tr>
 <?php } ?>
 <?php if (!$single_language) { ?>
               <tr>
                 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo TEXT_LOGIN_LANGUAGE; ?></td>
-                <td><?php echo html_pull_down_menu('language', $languages, $language_index); ?></td>
+                <td><?php echo html_pull_down_menu('language', $languages, $language_index, '', true); ?></td>
               </tr>
 <?php } ?>
               <tr>
@@ -62,7 +62,7 @@ if ($single_language) echo html_hidden_field('language', $languages[0]['id']) . 
 				</td>
               </tr>
               <tr>
-                <td colspan="2"><?php echo '<a href="' . html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;req=pw_lost_req', 'SSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?></td>
+                <td colspan="2"><?php echo '<a href="' . html_href_link(FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=pw_lost_req', 'SSL') . '">' . TEXT_PASSWORD_FORGOTTEN . '</a>'; ?></td>
               </tr>
               <tr>
                 <td colspan="2">

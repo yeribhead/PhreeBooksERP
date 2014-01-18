@@ -18,28 +18,30 @@
 //
 namespace core\classes;
 class currencies {
-  public $currencies = array();
+	private $default_currency = false;
+  	public  $currencies = array();
   
-  function __construct() {
-    global $db;
-    $currencies = $db->Execute("select * from " . TABLE_CURRENCIES);
-    while (!$currencies->EOF) {
-	  $this->currencies[$currencies->fields['code']] = array(
-	    'title'           => $currencies->fields['title'],
-	    'symbol_left'     => $currencies->fields['symbol_left'],
-	    'symbol_right'    => $currencies->fields['symbol_right'],
-	    'decimal_point'   => $currencies->fields['decimal_point'],
-	    'thousands_point' => $currencies->fields['thousands_point'],
-	    'decimal_places'  => $currencies->fields['decimal_places'],
-	    'decimal_precise' => $currencies->fields['decimal_precise'],
-	    'value'           => $currencies->fields['value'],
-	  );
-      $currencies->MoveNext();
-    }
-	if (DEFAULT_CURRENCY == '') { // do not put this in the translation file, it is loaded before the language file is loaded.
-	  trigger_error('You do not have a default currency set, PhreeBooks requires a default currency to operate properly! Please set the default currency in Setup -> Currencies.');
-	}
-  }
+  	function __construct() {		
+  	}
+  
+  	function load_currencies(){
+  		global $db;
+  		$currencies = $db->Execute("select * from " . TABLE_CURRENCIES);
+    	while (!$currencies->EOF) {
+	  		$this->currencies[$currencies->fields['code']] = array(
+	    	  'title'           => $currencies->fields['title'],
+	    	  'symbol_left'     => $currencies->fields['symbol_left'],
+	    	  'symbol_right'    => $currencies->fields['symbol_right'],
+	    	  'decimal_point'   => $currencies->fields['decimal_point'],
+	    	  'thousands_point' => $currencies->fields['thousands_point'],
+	    	  'decimal_places'  => $currencies->fields['decimal_places'],
+	    	  'decimal_precise' => $currencies->fields['decimal_precise'],
+	    	  'value'           => $currencies->fields['value'],
+	  		);
+      		$currencies->MoveNext();
+    	}
+    	$this->default_currency_code(); // set default currecy code.
+  	}
 
   // omits the symbol_left and symbol_right (just the formattted number))
   function format($number, $calculate_currency_value = true, $currency_type = DEFAULT_CURRENCY, $currency_value = '') {
@@ -82,7 +84,7 @@ class currencies {
     return $format_string;
   }
 
-  function get_value($code) {
+  function get_value($currency_type = DEFAULT_CURRENCY) {
     return $this->currencies[$code]['value'];
   }
 
@@ -105,4 +107,9 @@ class currencies {
 	$js_values = substr($js_values, 0, -1) . ");";
 	return $js_codes . chr(10) . $js_values . chr(10);
   }
+  
+  	function default_currency_code(){
+  		if(!defined('DEFAULT_CURRENCY')) throw new \Exception(ERROR_NO_DEFAULT_CURRENCY_DEFINED); // check for default currency defined
+  		return $this->default_currency = DEFAULT_CURRENCY;
+  	}
 }

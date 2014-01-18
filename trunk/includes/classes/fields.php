@@ -42,15 +42,15 @@ class fields {
 	if ($this->security_id < 2) throw new \Exception(ERROR_NO_PERMISSION);
     // clean out all non-allowed values and then check if we have a empty string 
 	$this->field_name   = preg_replace("[^A-Za-z0-9_]", "", $this->field_name); 
-	if ($this->field_name == '') throw new \Exception(ASSETS_ERROR_FIELD_BLANK);
+	if ($this->field_name == '') throw new \Exception(EXTRA_ERROR_FIELD_BLANK);
 	// check if the field name belongs to one of the mysql reserved names
 	$reserved_names = array('select', 'delete', 'insert', 'update', 'to', 'from', 'where', 'and', 'or',
 		'alter', 'table', 'add', 'change', 'in', 'order', 'set', 'inner');
-	if (in_array($this->field_name, $reserved_names)) throw new \Exception(ASSETS_FIELD_RESERVED_WORD);
+	if (in_array($this->field_name, $reserved_names)) throw new \Exception(EXTRA_FIELD_RESERVED_WORD);
 	// if the id is empty then check for duplicate field names
 	if($this->id == ''){
 	   $result = $db->Execute("SELECT id FROM ".TABLE_EXTRA_FIELDS." WHERE module_id='$this->module' AND field_name='$this->field_name'");
-	   if ($result->RecordCount() > 0 && $this->id =='') throw new \Exception(ASSETS_ERROR_FIELD_DUPLICATE);
+	   if ($result->RecordCount() > 0 && $this->id =='') throw new \Exception(EXTRA_FIELD_ERROR_DUPLICATE);
 	}
 	// condense the type array to a single string.
     while ($type = array_shift($this->type_array)){
@@ -213,7 +213,7 @@ class fields {
 	  $params  = unserialize($result->fields['params']);
 	  $actions = '';
 	  if ($this->security_id > 1)									  $actions .= html_icon('actions/edit-find-replace.png', TEXT_EDIT,   'small', 'onclick="loadPopUp(\'fields_edit\', ' . $result->fields['id'] . ')"') . chr(10);
-	  if ($result->fields['tab_id'] <> '0' && $this->security_id > 3) $actions .= html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . ASSETS_FIELD_DELETE_INTRO . '\')) subjectDelete(\'fields\', ' . $result->fields['id'] . ')"') . chr(10);
+	  if ($result->fields['tab_id'] <> '0' && $this->security_id > 3) $actions .= html_icon('emblems/emblem-unreadable.png', TEXT_DELETE, 'small', 'onclick="if (confirm(\'' . EXTRA_FIELD_DELETE_INTRO . '\')) subjectDelete(\'fields\', ' . $result->fields['id'] . ')"') . chr(10);
 	  $content['tbody'][$rowCnt] = array(
 	    array('value' => htmlspecialchars($result->fields['description']),
 			  'params'=> 'style="cursor:pointer" onclick="loadPopUp(\'fields_edit\',\''.$result->fields['id'].'\')"'),

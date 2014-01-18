@@ -27,48 +27,46 @@ class admin {
 	public $text; //@todo add to other files
 
 	function __construct(){
-		$this->version = constant('MODULE_' . strtoupper(get_called_class()) . '_VERSION');
-		$this->status  = constant('MODULE_' . strtoupper(get_called_class()) . '_STATUS');
+		$this->version = constant('MODULE_' . strtoupper($this->module) . '_VERSION');
+		$this->status  = constant('MODULE_' . strtoupper($this->module) . '_STATUS');
 	}
 	
-	function install($module) {
+	function install() {
 		$error = false;
 	    return $error;
 	}
 
-  	function initialize($module) {
+  	function initialize() {
   	}
 
-	function update($module) {
+	function update() {
 	    
-		if (!$error) {
-		  write_configure('MODULE_' . strtoupper($module) . '_STATUS', constant('MODULE_' . strtoupper($module) . '_VERSION'));
-	   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $module, constant('MODULE_' . strtoupper($module) . '_VERSION')), 'success');
+		if (!$this->error) {
+		  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+	   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
 		}
 		return $error;
 	}
 
-	function remove($module) {
-		$error = false;
-		return $error;
+	function remove() {
+		return $this->error;
 	}
 	
   	function release_update($version, $path = '') {
     	global $db, $messageStack;
-		$error = false;
 		if (file_exists($path)) { include_once ($path); }
 		write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', $version);
-		return $error ? false : $version;
+		return $this->error ? false : $version;
   	}
 	
-	function load_reports($module) {
+	function load_reports() {
 	}
 
 	function load_demo() {
 	}
 	
 	function should_update(){
-		if (constant('MODULE_' . strtoupper(get_called_class()) . '_STATUS') <> constant('MODULE_' . strtoupper(get_called_class()) . '_VERSION')) return true;
+		if (constant('MODULE_' . strtoupper($this->module) . '_STATUS') <> constant('MODULE_' . strtoupper($this->module) . '_VERSION')) return true;
 		else return false;
 	}
 }
