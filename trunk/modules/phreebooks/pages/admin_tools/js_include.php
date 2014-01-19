@@ -68,6 +68,15 @@ function updateEnd(index) {
   }
 }
 
+function confirmNewYear(){
+	$.messager.confirm('Please Confirm','<?php echo sprintf(GL_WARN_ADD_FISCAL_YEAR, ($highest_fy + 1))?>',function(r){
+		if (r){
+			submitToDo('new');
+		}
+	});
+	return false;
+}
+
 // -->
 </script>
 <?php

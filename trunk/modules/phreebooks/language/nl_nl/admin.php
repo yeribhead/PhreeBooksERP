@@ -91,7 +91,7 @@ define('GL_UTIL_PURGE_DB_CONFIRM','Weet u zeker dat u alle Journaal posten wil v
 define('GL_UTIL_PURGE_CONFIRM','Alle journaal records zijn verwijderd en de database is opgeschoond');
 define('GL_UTIL_PURGE_FAIL','Geen journaal Boekingen zijn gewijzigd!');
 define('GL_CURRENT_PERIOD','Huidige Periode is:');
-define('GL_WARN_ADD_FISCAL_YEAR','Weet u zeker dat het boekjaar wil toevoegen:');
+define('GL_WARN_ADD_FISCAL_YEAR','Weet u zeker dat het boekjaar %s wil toevoegen.');
 define('GL_ERROR_FISCAL_YEAR_SEQ','De laatste periode van de gewijzigde fiscale jaar stemt niet af met de start datum van de volgende fiscale jaar. De startdatum van het volgende fiscale jaar is gewijzigd en moeten worden herzien.');
 define('GL_WARN_CHANGE_ACCT_PERIOD','Voer een periode in om tot huidige periode te maken:');
 define('GL_ERROR_BAD_ACCT_PERIOD','De geselecteerde periode is nog niet ingesteld. Of verander de periode of voeg een nieuw boekjaar toe.');

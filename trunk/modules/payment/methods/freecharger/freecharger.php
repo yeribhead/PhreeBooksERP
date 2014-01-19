@@ -22,10 +22,10 @@
 namespace payment\methods\freecharger;
 define('MODULE_PAYMENT_FREECHARGER_VERSION','3.3');
 class freecharger extends \payment\classes\payment {
-  public $code        = 'freecharger'; // needs to match class name
-  public $title       = MODULE_PAYMENT_FREECHARGER_TEXT_TITLE;
-  public $description = MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION;
-  public $sort_order  = 45;
+  public $id        	= 'freecharger'; // needs to match class name
+  public $text			= MODULE_PAYMENT_FREECHARGER_TEXT_TITLE;
+  public $description	= MODULE_PAYMENT_FREECHARGER_TEXT_DESCRIPTION;
+  public $sort_order	= 45;
   
   public function __construct(){
   	parent::__construct();

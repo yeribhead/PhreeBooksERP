@@ -21,34 +21,26 @@ namespace shipping\methods\item;
 // 2011-07-01 - Added version number for revision control
 define('MODULE_SHIPPING_ITEM_VERSION','3.2');
 
-class item {
-  function __construct() {
-    $this->code = 'item';
-  }
+class item extends \shipping\classes\shipping {
+	public $id				= 'item'; // needs to match class name
+  	public $text			= MODULE_SHIPPING_ITEM_TEXT_TITLE;
+  	public $description		= MODULE_SHIPPING_ITEM_TEXT_DESCRIPTION;
+  	public $sort_order		= 30;
+  	public $version			= 3.2;
+  	public $shipping_cost	= 0.00;
+  	public $handling_cost	= 1.00;
+  	
+	function __construct() {
+    	parent::__construct();
+  	}
 
-  function keys() {
-    return array(
-	  array('key' => 'MODULE_SHIPPING_ITEM_TITLE',      'default' => 'Item Shipping'),
-	  array('key' => 'MODULE_SHIPPING_ITEM_COST',       'default' => '2.50'),
-	  array('key' => 'MODULE_SHIPPING_ITEM_HANDLING',   'default' => '0.00'),
-	  array('key' => 'MODULE_SHIPPING_ITEM_SORT_ORDER', 'default' => '30'),
-	);
-  }
-
-  function update() {
-    foreach ($this->keys() as $key) {
-	  $field = strtolower($key['key']);
-	  if (isset($_POST[$field])) write_configure($key['key'], $_POST[$field]);
-	}
-  }
-
-  function quote($pkg = '') {
-	if (!$pkg->pkg_item_count) $pkg->pkg_item_count = 1;
-	$arrRates = array();
-	$arrRates[$this->code]['GND']['book']  = '';
-	$arrRates[$this->code]['GND']['quote'] = ($pkg->pkg_item_count * MODULE_SHIPPING_ITEM_COST) + MODULE_SHIPPING_ITEM_HANDLING;
-	$arrRates[$this->code]['GND']['cost']  = '';
-	return array('result' => 'success', 'rates' => $arrRates);
-  }
+	function quote($pkg = '') {
+		if (!$pkg->pkg_item_count) $pkg->pkg_item_count = 1;
+		$arrRates = array();
+		$arrRates[$this->id]['GND']['book']  = '';
+		$arrRates[$this->id]['GND']['quote'] = ($pkg->pkg_item_count * MODULE_SHIPPING_ITEM_COST) + MODULE_SHIPPING_ITEM_HANDLING;
+		$arrRates[$this->id]['GND']['cost']  = '';
+		return array('result' => 'success', 'rates' => $arrRates);
+  	}
 }
 ?>

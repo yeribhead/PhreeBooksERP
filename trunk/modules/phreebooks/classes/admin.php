@@ -224,7 +224,6 @@ class admin extends \core\classes\admin {
 		  ship_email varchar(48) default NULL,
 		  terminal_date date default NULL,
 		  drop_ship enum('0','1') NOT NULL default '0',
-		  comment text,
 		  PRIMARY KEY  (id),
 		  KEY period (period),
 		  KEY journal_id (journal_id),
@@ -353,7 +352,6 @@ class admin extends \core\classes\admin {
 		}
 		if (!db_field_exists(TABLE_JOURNAL_ITEM, 'purch_package_quantity')) $db->Execute("ALTER TABLE ".TABLE_JOURNAL_ITEM." ADD purch_package_quantity float default NULL AFTER project_id");
 	}
-	if (!db_field_exists(TABLE_JORNAL_MAIN, 'comment')) $db->Execute("ALTER TABLE ".TABLE_JORNAL_MAIN." ADD comment TEXT();");
 	if (!$error) {
 	  write_configure('MODULE_'.strtoupper($this->module).'_STATUS', constant('MODULE_'.strtoupper($this->module).'_VERSION'));
    	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_'.strtoupper($this->module).'_VERSION')), 'success');
@@ -375,8 +373,6 @@ class admin extends \core\classes\admin {
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_ar_quote_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_ar_quote_num");
     return $error;
   }
-
-
 
   function load_reports() {
 	$error = false;

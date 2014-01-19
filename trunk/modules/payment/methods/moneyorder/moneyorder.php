@@ -22,10 +22,10 @@
 namespace payment\methods\moneyorder;
 define('MODULE_PAYMENT_MONEYORDER_VERSION','3.3');
 class moneyorder extends \payment\classes\payment {
-  public $code        = 'moneyorder'; // needs to match class name
-  public $title 	  = MODULE_PAYMENT_MONEYORDER_TEXT_TITLE;
-  public $description = MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION;
-  public $sort_order  = 30;
+  public $id			= 'moneyorder'; // needs to match class name
+  public $text			= MODULE_PAYMENT_MONEYORDER_TEXT_TITLE;
+  public $description	= MODULE_PAYMENT_MONEYORDER_TEXT_DESCRIPTION;
+  public $sort_order	= 30;
   
   public function __construct(){
   	parent::__construct();
@@ -36,12 +36,12 @@ class moneyorder extends \payment\classes\payment {
   function selection() {
     global $order;
     return array(
-	  'id'     => $this->code,
-      'page'   => $this->title,
+	  'id'     => $this->id,
+      'page'   => $this->text,
 	  'fields' => array(
 		array(
 		  'title' => MODULE_PAYMENT_MONEYORDER_TEXT_REF_NUM,
-		  'field' => html_input_field($this->code . '_field_0', $this->field_0, 'size="33" maxlength="32"'),
+		  'field' => html_input_field($this->id . '_field_0', $this->field_0, 'size="33" maxlength="32"'),
 		)
 	  ),
 	);

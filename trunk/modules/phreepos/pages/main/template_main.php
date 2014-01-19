@@ -213,16 +213,7 @@ echo $toolbar->build_toolbar();
 	</tfoot>
 </table>	 
 
-<footer style="witdh:800px;">
-<div style="float:right;">
-   	<?php echo TEXT_COMMENT; ?><br/>
-   	<?php echo html_textarea_field('comment','50','2',$order->comment);?><br/>
-</div>
-<div style="witdh:450px;float:left;">
-	<?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?>
-</div>
-</footer>
-
+<footer><?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?></footer>
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
 ?>
@@ -256,12 +247,11 @@ echo $SeccondToolbar->build_toolbar();
 	echo '    <fieldset>';
     echo '    <legend>'. TEXT_PAYMENT_METHOD . '</legend>';
 	echo '    <div style="position: relative; height: 150px;">';
-	echo html_pull_down_menu('payment_method', $payment_modules, $order->shipper_code, 'onchange="activateFields()"') . chr(10);
+	echo html_pull_down_menu('payment_method', gen_build_pull_down($payment_methods), $order->shipper_code, 'onchange="activateFields()"') . chr(10);
 	$count = 0;
-	foreach ($payment_modules as $value) {
+	foreach ($payment_methods as $method) {
 	  echo '      <div id="pm_' . $count . '" style="visibility:hidden; position:absolute; top:22px; left:1px">' . chr(10);
-	  $pmt_class = $value['id'];
-	  $disp_fields = $$pmt_class->selection();
+	  $disp_fields = $method->selection();
 	  for ($i=0; $i<count($disp_fields['fields']); $i++) {
 		echo $disp_fields['fields'][$i]['title'] . '<br />' . chr(10);
 		echo $disp_fields['fields'][$i]['field'] . '<br />' . chr(10);

@@ -22,10 +22,10 @@ namespace payment\methods\nova_xml;
 define('MODULE_PAYMENT_NOVA_XML_VERSION','3.3');
 // Elevon Payment Module
 class nova_xml extends \payment\classes\payment {
-  public $code        = 'nova_xml'; // needs to match class name
-  public $title 	  = MODULE_PAYMENT_NOVA_XML_TEXT_TITLE;
-  public $description = MODULE_PAYMENT_NOVA_XML_TEXT_DESCRIPTION;
-  public $sort_order  = 2;
+  public $id			= 'nova_xml'; // needs to match class name
+  public $text			= MODULE_PAYMENT_NOVA_XML_TEXT_TITLE;
+  public $description	= MODULE_PAYMENT_NOVA_XML_TEXT_DESCRIPTION;
+  public $sort_order	= 2;
     
   public function __construct(){
   	parent::__construct();
@@ -91,7 +91,7 @@ class nova_xml extends \payment\classes\payment {
 
   function javascript_validation() {
     $js = 
-	'  if (payment_method == "' . $this->code . '") {' . "\n" .
+	'  if (payment_method == "' . $this->id . '") {' . "\n" .
     '    var cc_owner  = document.getElementById("nova_xml_field_0").value;' . "\n" .
     '    var cc_number = document.getElementById("nova_xml_field_1").value;' . "\n" .
     '    var cc_cvv    = document.getElementById("nova_xml_field_4").value;' . "\n" . 
@@ -126,8 +126,8 @@ class nova_xml extends \payment\classes\payment {
       $expires_year[] = array('id' => strftime('%Y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
     }
     $selection = array(
-	  'id'     => $this->code,
-	  'page'   => $this->title,
+	  'id'     => $this->id,
+	  'page'   => $this->text,
 	  'fields' => array(
 	    array(  'title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_OWNER,
 			    'field' => html_input_field('nova_xml_field_0', $this->field_0)),
@@ -136,7 +136,7 @@ class nova_xml extends \payment\classes\payment {
 	    array(	'title' => MODULE_PAYMENT_CC_TEXT_CREDIT_CARD_EXPIRES,
 			    'field' => html_pull_down_menu('nova_xml_field_2', $expires_month, $this->field_2) . '&nbsp;' . html_pull_down_menu('nova_xml_field_3', $expires_year, $this->field_3)),
 		array ( 'title' => MODULE_PAYMENT_CC_TEXT_CVV,
-				'field' => html_input_field('nova_xml_field_4', $this->field_4, 'size="4" maxlength="4"' . ' id="' . $this->code . '-cc-cvv"' ) . ' ' . '<a href="javascript:popupWindow(\'' . html_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . TEXT_MORE_INFO . '</a>',)
+				'field' => html_input_field('nova_xml_field_4', $this->field_4, 'size="4" maxlength="4"' . ' id="' . $this->id . '-cc-cvv"' ) . ' ' . '<a href="javascript:popupWindow(\'' . html_href_link(FILENAME_POPUP_CVV_HELP) . '\')">' . TEXT_MORE_INFO . '</a>',)
 	  ));
     return $selection;
   }
@@ -171,7 +171,7 @@ class nova_xml extends \payment\classes\payment {
     }
 
     if (($result == false) || ($result < 1)) {
-      $messageStack->add($error . '<!-- ['.$this->code.'] -->', 'error');
+      $messageStack->add($error . '<!-- ['.$this->id.'] -->', 'error');
       return true;
     }
 

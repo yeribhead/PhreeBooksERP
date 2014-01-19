@@ -18,80 +18,54 @@
 //
 namespace payment\classes;
 class admin extends \core\classes\admin {
+	public $methods = array();
 	public $module 			= 'payment';
 	
-  function __construct() {
-	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'contacts'   => 3.71,
-	  'phreedom'   => 3.6,
-	  'phreebooks' => 3.6,
-	);
-	parent::__construct();
-  }
+  	function __construct() {
+		$this->prerequisites = array( // modules required and rev level for this module to work properly
+	  	  'contacts'   => 3.71,
+	  	  'phreedom'   => 3.6,
+	  	  'phreebooks' => 3.6,
+		);
+		//load and remove all modules
+		$this->methods = return_all_methods($this->module, false);
+		parent::__construct();
+  	}
 
-  function install() {
-	$error = false;
-	$methods = array('cod','moneyorder'); // pick a couple of modules to install
-	foreach ($methods as $method) {
-		$temp = "\payment\methods\\$method\\$method";
-	  	$properties = new $temp;
-	  	write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS', '1');
-	  	foreach ($properties->key as $key) write_configure($key['key'], $key['default']);
-	  	if (method_exists($properties, 'install')) $properties->install();
-	}
-    return $error;
-  }
-
-  function update() {
-    global $db, $messageStack;
-	$error = false;
-  	// load all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
-	$methods = array();
-	if ($dir = @dir($method_dir)) {
-	  while ($choice = $dir->read()) {
-		if (file_exists($method_dir . $choice . '/' . $choice . '.php') && $choice <> '.' && $choice <> '..') {
-		  $methods[] = $choice;
+  	function install() {
+		$error = false;
+		foreach ($this->methods as $method) {
+	  		write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS', '1');
+	  		foreach ($method->key as $key) write_configure($key['key'], $key['default']);
+	  		if (method_exists($method, 'install')) $method->install();
 		}
-	  }
-	  $dir->close();//update keys
-	  foreach ($methods as $method) {
-	    $temp = "\payment\methods\\$method\\$method";
-	    $properties = new $temp;
-	    foreach ($properties->keys() as $key) {
-	    	if(!defined($key['key'])) write_configure($key['key'], $key['default']);
-	    }
-	  }
-	}
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
-  }
+    	return $error;
+  	}
 
-  function remove() {
-	$error = false;
-	// load and remove all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
-	$methods = array();
-	if ($dir = @dir($method_dir)) {
-	  while ($choice = $dir->read()) {
-		if (file_exists($method_dir . $choice . '/' . $choice . '.php') && $choice <> '.' && $choice <> '..') {
-		  $methods[] = $choice;
+	function update() {
+	    global $db, $messageStack;
+		$error = false;
+		foreach ($this->methods as $method) {
+	    	foreach ($method->keys() as $key) {
+	    		if(!defined($key['key'])) write_configure($key['key'], $key['default']);
+			}
 		}
-	  }
-	  $dir->close();
-	  foreach ($methods as $method) {
-	    $temp = "\payment\methods\\$method\\$method";
-	    $properties = new $temp;
-	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS');
-	    foreach ($properties->keys() as $key) remove_configure($key['key']);
-	    if (method_exists($properties, 'remove')) $properties->remove();
-	  }
+		if (!$error) {
+		  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
+	   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
+		}
+		return $error;
 	}
-	return $error;
-  }
+
+	function remove() {
+		$error = false;
+	  	foreach ($this->methods as $method) {
+	    	remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS');
+	    	foreach ($method->keys() as $key) remove_configure($key['key']);
+	    	if (method_exists($method, 'remove')) $method->remove();
+	  	}
+		return $error;
+	}
 
 }
 ?>

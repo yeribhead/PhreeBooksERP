@@ -35,7 +35,7 @@ var text_enter_new     = '<?php echo TEXT_ENTER_NEW; ?>';
 var post_error         = <?php echo $error ? "true;" : "false;"; ?>
 var account_type       = '<?php echo $account_type; ?>';
 var store_country_code = '<?php echo STORE_COUNTRY; ?>';
-var payments_installed = <?php echo count($payment_modules) ? 'true' : 'false'; ?>;
+var payments_installed = <?php echo count($payment_methods) ? 'true' : 'false'; ?>;
 <?php echo js_calendar_init($cal_bills); ?>
 
 function init() {
@@ -80,9 +80,8 @@ function check_form() {
     var index = document.getElementById('shipper_code').selectedIndex;
     var payment_method = document.getElementById('shipper_code').options[index].value;
 	<?php
-	  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
-		$value = $pmt_class['id'];
-		echo $$value->javascript_validation();
+	  foreach ($payment_methods as $method) { // fetch the javascript validation of payments module
+		echo $method->javascript_validation();
 	  }
 	?>
   }

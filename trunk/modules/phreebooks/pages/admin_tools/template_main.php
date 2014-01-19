@@ -77,7 +77,7 @@ echo $toolbar->build_toolbar();
 		<?php echo html_hidden_field('period', '') . chr(10);
 		echo '<p>' . html_button_field('change', GL_BTN_CHG_ACCT_PERIOD, 'onclick="fetchPeriod()"') . '</p>' . chr(10);
 		echo '<p>' . html_button_field('update', GL_BTN_UPDATE_FY, 'onclick="submitToDo(\'update\')"') . '</p>' . chr(10);
-		echo '<p>' . html_button_field('new', GL_BTN_NEW_FY, 'onclick="if (confirm(\'' . GL_WARN_ADD_FISCAL_YEAR . ($highest_fy + 1). '\')) submitToDo(\'new\')"') . '</p>' . chr(10);
+		echo '<p>' . html_button_field('new', GL_BTN_NEW_FY, 'onclick="confirmNewYear()"') . '</p>' . chr(10);
 		?>
 	  </td>
     </tr>

@@ -11,10 +11,6 @@
 define('MODULE_SHIPPING_FREESHIPPER_TEXT_TITLE','Gratis Verzending!');
 define('MODULE_SHIPPING_FREESHIPPER_TITLE_SHORT','Gratis Verzending');
 define('MODULE_SHIPPING_FREESHIPPER_TEXT_DESCRIPTION','Gratis Verzending');
-define('MODULE_SHIPPING_FREESHIPPER_TITLE_DESC','De titel welke gebruikt moet worden in weergaven. ');
-define('MODULE_SHIPPING_FREESHIPPER_COST_DESC','Wat zijn de verzend kosten?');
-define('MODULE_SHIPPING_FREESHIPPER_HANDLING_DESC','Kosten voor deze verzend optie');
-define('MODULE_SHIPPING_FREESHIPPER_SORT_ORDER_DESC','Volgorde van tonen. Bepaalt in welke volgorde deze optie in lijsten voor moet komen.');
 define('freeshipper_1DEam','Beste optie');
 define('freeshipper_1Dam','Zender betaald 2 dagen');
 define('freeshipper_1Dpm','Zender betaald 1 dag');

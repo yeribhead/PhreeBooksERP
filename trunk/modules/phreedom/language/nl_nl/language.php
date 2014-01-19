@@ -400,4 +400,5 @@ define('TEXT_EMAIL_SEND','Email Verzonden');
 define('TEXT_USED','Gebruikt');
 define('SORRY_YOU_ARE_LOGGED_OUT','Sorry u moet opnieuw inloggen');
 define('INSTALL_ERROR_SAFE_MODE','In uw php configuratie is safe mode ingesteld op "on". Deze moet u instellen op "off" om Phreedom te kunnen installeren.');
+define('TEXT_METHODS_AVAILABLE', 'Modules Beschikbaar');
 ?>

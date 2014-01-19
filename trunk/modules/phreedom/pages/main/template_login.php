@@ -18,7 +18,7 @@
 //  Path: /modules/phreedom/pages/main/template_main.php
 //
 echo html_form('login', FILENAME_DEFAULT, 'module=phreedom&amp;page=main&amp;action=validate', 'post', 'onsubmit="return submit_wait();"').chr(10);
-if ($single_company)  echo html_hidden_field('company',  $companies[0]['id']) . chr(10);
+if ($single_company)  echo html_hidden_field('company',  $companies[1]['file']) . chr(10);
 if ($single_language) echo html_hidden_field('language', $languages[0]['id']) . chr(10);
 ?>
 <div style="margin-left:25%;margin-right:25%;margin-top:50px;">

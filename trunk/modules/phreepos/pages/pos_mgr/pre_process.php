@@ -51,11 +51,11 @@ switch ($_REQUEST['action']) {
 		  $db->transRollback();
 		  break;
 	    } else { // delete the payments
-		  $payment_modules = load_all_methods('payment');
 		  foreach ($delOrd->journal_rows as $value) {
 		    if ($value['gl_type'] <> 'ttl') continue;
 		    $pmt_fields  = explode(':', $value['description']);
-			$pmt_method  = new $pmt_fields[1]; // payment method
+		    $name = "\payment\methods\\$pmt_fields[1]\\$pmt_fields[1]";
+			$pmt_method  = new $name; // payment method
 			$pmt_field_0 = $pmt_fields[2]; // cardholder name/reference
 			$pmt_field_1 = $pmt_fields[3]; // card number
 			$pmt_field_2 = $pmt_fields[4]; // exp month

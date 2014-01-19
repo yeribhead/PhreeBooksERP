@@ -50,7 +50,7 @@ if (!$period) { // bad post_date was submitted
 $gl_acct_id        = ($_POST['gl_acct_id']) ? db_prepare_input($_POST['gl_acct_id']) : AP_PURCHASE_INVOICE_ACCOUNT;
 $post_success      = false;
 $error             = false;
-$payment_modules   = array();
+$payment_methods   = array();
 
 switch (JOURNAL_ID) {
   case 18:	// Cash Receipts Journal
@@ -59,10 +59,8 @@ switch (JOURNAL_ID) {
 	define('AUDIT_LOG_DESC',ORD_TEXT_18_WINDOW_TITLE);
 	define('AUDIT_LOG_DEL_DESC',ORD_TEXT_18_WINDOW_TITLE . '-' . TEXT_DELETE);
 	$account_type = ($type == 'v') ? 'v' : 'c';
-	foreach ($payment_modules as $method) {
-		$class = "\payment\methods\\$method\\$method\\";
-		$$class = new $class;
-	}
+	//load and remove all modules
+	$payment_methods = return_all_methods('payment', true);
 	break;
   case 20:	// Cash Disbursements Journal
 	define('GL_TYPE','chk');

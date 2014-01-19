@@ -18,6 +18,7 @@
 //
 namespace shipping\classes;
 class admin extends \core\classes\admin {
+	public $methods = array();
 	public $module			= 'shipping';
 	
   function __construct() {
@@ -95,19 +96,16 @@ class admin extends \core\classes\admin {
 		  KEY ref_id (ref_id)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
     );
-    parent::__construct();
+    $this->methods = return_all_methods($this->module, false);
   }
 
   function install() {
     global $db, $messageStack;
 	$error = false;
-	$methods = array('freeshipper','flat'); // pick a couple of modules to install
-	foreach ($methods as $method) {
-	  $shipping_method = "\shipping\methods\\$method\\$method";
-  	  $shipment = new $shipping_method; 
-	  write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS', '1');
-	  foreach ($shipment->keys() as $key) write_configure($key['key'], $key['default']);
-	  if (method_exists($shipment, 'install')) $shipment->install();
+	foreach ($this->methods as $method) {
+	  write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method->id) . '_STATUS', '1');
+	  foreach ($method->keys() as $key) write_configure($key['key'], $key['default']);
+	  if (method_exists($method, 'install')) $method->install();
 	}
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." ADD next_shipment_num VARCHAR(16) NOT NULL DEFAULT '1'");
     return $error;
@@ -130,23 +128,10 @@ class admin extends \core\classes\admin {
   function remove() {
     global $db;
 	$error = false;
-	// load and remove all modules
-	$method_dir = DIR_FS_ADMIN . 'modules/' . $this->module . '/methods/';
-	$methods = array();
-	if ($dir = @dir($method_dir)) {
-	  while ($choice = $dir->read()) {
-		if (file_exists($method_dir . $choice . '/' . $choice . '.php') && $choice <> '.' && $choice <> '..') {
-		  $methods[] = $choice;
-		}
-	  }
-	  $dir->close();
-	  foreach ($methods as $method) {
-	    $shipping_method = "\shipping\methods\\$method\\$method";
-  	  	$shipment = new $shipping_method; 
-	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method) . '_STATUS');
-	    foreach ($shipment->keys() as $key) remove_configure($key['key']);
-	    if (method_exists($shipment, 'remove')) $shipment->remove();
-	  }
+	foreach ($this->methods as $method) {
+	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method->id) . '_STATUS');
+	    foreach ($method->keys() as $key) remove_configure($key['key']);
+	    if (method_exists($method, 'remove')) $method->remove();
 	}
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_num");
 	if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_desc");

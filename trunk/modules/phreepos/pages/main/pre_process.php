@@ -39,7 +39,7 @@ $account_type = 'c';
 $order        = new \phreepos\classes\journal\journal_19();
 $tills        = new \phreepos\classes\tills();
 $trans	 	  = new \phreepos\classes\other_transactions();
-$payment_modules = load_all_methods('payment');
+$payment_methods = return_all_methods('payment', true);
 $extra_ThirdToolbar_buttons = null;
 $extra_toolbar_buttons		= null;
 /***************   hook for custom actions  ***************************/
@@ -65,18 +65,16 @@ for ($i = 0; $i < count($ot_tax_rates); $i++) {
 }
 //payment modules
 // generate payment choice arrays for receipt of payments
-$js_pmt_types = 'var pmt_types = new Array();' . chr(10);
-foreach ($payment_modules as $key => $pmts) {
-  $pmt_method = $pmts['id'];
-  $$pmt_method = new $pmts['classname'];//@todo
-  if($$pmt_method->show_in_pos == false || $$pmt_method->pos_gl_acct == '') {
-  	unset($payment_modules[$key]);
+$js_pmt_types = "var pmt_types = new Array();" . chr(10);
+foreach ($payment_methods as $method) {
+  if($method->show_in_pos == false || $method->pos_gl_acct == '') {
+  	unset($payment_methods[$key]);
   }else{
-  	$js_pmt_types .= 'pmt_types[\'' . $pmts['id'] . '\'] = "' . $pmts['text'] . '";' . chr(10);
+  	$js_pmt_types .= "pmt_types['$method->id'] = '$method->text';" . chr(10);
   }
 }
 //check if setting are right for usage of phreepos 
-if(count($payment_modules) < 1 ){
+if(count($payment_methods) < 1 ){
 	$messageStack->add(ERROR_NO_PAYMENT_METHODES, 'error');
 	gen_redirect(html_href_link(FILENAME_DEFAULT, '', 'SSL'));
 }

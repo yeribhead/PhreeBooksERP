@@ -38,15 +38,6 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 7);
   $_REQUEST['action'] = 'signup';
 }
-// load the available methods
-$methods = array();
-$contents = scandir($method_dir);
-foreach ($contents as $choice) {
-  if ($choice <> '.' && $choice <> '..') {
-	load_method_language($method_dir, $choice);
-	$methods[] = $choice;
-  }
-}
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'install':
@@ -72,12 +63,8 @@ switch ($_REQUEST['action']) {
   case 'save':
   	validate_security($security_level, 3);
     // foreach method if enabled, save info
-	if (sizeof($methods) > 0) foreach ($methods as $shipper) {
-	  	if (defined('MODULE_SHIPPING_' . strtoupper($shipper) . '_STATUS')) {
-	   		$shipping_method = "\shipping\methods\\$method\\$method";
-			$properties = new $shipping_method();
-			$properties->update();
-	  	}
+	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	  	if ($method->installed) $method->update();
 	}
 	// save general tab
 	foreach ($install->keys as $key => $default) {

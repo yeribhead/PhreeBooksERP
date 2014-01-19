@@ -421,5 +421,5 @@ define('GEN_LOG_PERIOD_CHANGE','Accounting Period - Change');
 define('GEN_LOG_INSTALL_SUCCESS','Module %s: ');
 
 define('TEXT_PRODUCT_DEFAULT','Product Default');
-
+define('TEXT_METHODS_AVAILABLE', 'Methods Available');
 ?>

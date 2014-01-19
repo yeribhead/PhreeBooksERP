@@ -54,7 +54,6 @@ class orders extends \core\classes\journal {
 	public $shipper_code        = '';
 	public $drop_ship           = 0;
 	public $freight             = 0;
-	public $comment;
 	
 	function __construct() {
 		switch ($this->journal_id) { // default to company data for purchases/PO's

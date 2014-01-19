@@ -23,7 +23,6 @@ gen_pull_language($module, 'admin');
 $error      = false; 
 $method_dir = DIR_FS_WORKING . 'methods/';
 $install    = new \payment\classes\admin();
-
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 8);
@@ -32,24 +31,11 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 7);
   $_REQUEST['action'] = 'remove';
 }
-
-// load the available methods
-$methods = array();
-if ($dir = @dir($method_dir)) {
-  while ($choice = $dir->read()) {
-	if (file_exists($method_dir . $choice . '/' . $choice . '.php') && $choice <> '.' && $choice <> '..') {
-	  load_method_language($method_dir, $choice);
-	  $methods[] = $choice;
-	}
-  }
-  $dir->close();
-}
-sort($methods);
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'install':
 	validate_security($security_level, 4);
-  	$temp = "\payment\methods\\$method\\$method\\";
+  	$temp = "\payment\methods\\$method\\$method";
 	$properties = new $temp;
 	write_configure('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS', '1');
 	foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
@@ -58,7 +44,7 @@ switch ($_REQUEST['action']) {
 	break;
   case 'remove';
 	validate_security($security_level, 4);
-  	$temp = "\payment\methods\\$method\\$method\\";
+  	$temp = "\payment\methods\\$method\\$method";
 	$properties = new $temp;
 	if (method_exists($properties, 'remove')) $properties->remove(); // handle special case removal, db, files, etc
 	foreach ($properties->keys() as $key) { // remove all of the keys from the configuration table
@@ -70,12 +56,8 @@ switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	// foreach method if enabled, save info
-	if (sizeof($methods) > 0) foreach ($methods as $method) {
-	  if (defined('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS')) {
-	  	$temp = "\payment\methods\\$method\\$method\\";
-		$properties = new $temp;
-	    $properties->update();
-	  }
+	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	  	if ($method->installed) $method->update();
 	}
 	// save general tab
 	foreach ($install->keys as $key => $default) {

@@ -1067,7 +1067,7 @@ function InventoryProp(elementID) {
 var resClockID  = 0;
 var cardLength  = 30; // guess size of card to auto convert card information
 var skuLength   = <?php echo ORD_BAR_CODE_LENGTH; ?>;
-var pay_methods = <?php echo count($payment_modules) ? 'true' : 'false'; ?>;
+var pay_methods = <?php echo count($payment_methods) ? 'true' : 'false'; ?>;
 
 
 function activateFields() {
@@ -1132,9 +1132,8 @@ function SavePayment(PrintOrSave) { // request function
   var f3 = document.getElementById(payment_method+'_field_3') ? document.getElementById(payment_method+'_field_3').value : '';
   var f4 = document.getElementById(payment_method+'_field_4') ? document.getElementById(payment_method+'_field_4').value : '';
 <?php
-  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
-	$value = $pmt_class['id'];
-	echo $$value->javascript_validation();
+  foreach ($payment_methods as $method) { // fetch the javascript validation of payments module
+	echo $method->javascript_validation();
   }
 ?>
   if ( error_message != ''){

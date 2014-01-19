@@ -74,11 +74,27 @@
 	  if ($method == '.' || $method == '..' || !is_dir($method_dir . $method)) continue;
 	  if ($active_only && !defined('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS')) continue;
 	  load_method_language($method_dir, $method);
-	  include_once($method_dir . $method . '/' . $method . '.php');
+	  //include_once($method_dir . $method . '/' . $method . '.php');
 	  $choices[constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_SORT_ORDER')] = array(
-	    'id'   => "\\$module\methods\\$method\\$method", 
+	    'id'   => $method, 
 		'text' => constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_TEXT_TITLE'),
 	  );
+    }
+    ksort($choices);
+    return $choices;
+  }
+  
+  function return_all_methods($module, $active_only = true) {
+    $choices     = array();
+	if (!$module) return $choices;
+    $method_dir  = DIR_FS_MODULES . "$module/methods/";
+    if ($methods = @scandir($method_dir)) foreach ($methods as $method) {
+	  if ($method == '.' || $method == '..' || !is_dir($method_dir . $method)) continue;
+	  if ($active_only && !defined('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS')) continue;
+	  load_method_language($method_dir, $method);
+	  //include_once($method_dir . $method . '/' . $method . '.php');
+	  $class = "\\$module\methods\\$method\\$method";
+	  $choices[constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_SORT_ORDER')] = new $class; 
     }
     ksort($choices);
     return $choices;
@@ -155,7 +171,12 @@
 	$values = array();
 	if (is_array($keyed_array)) {
 	  foreach($keyed_array as $key => $value) {
-		$values[] = array('id' => $key, 'text' => $value);
+	  	if(is_array($key)){
+			$values[] = array('id' => $key, 'text' => $value);
+	  	}else{
+	  		$values[] = array('id' => $value->id, 'text' => $value->text);
+	  		
+	  	}
 	  }
 	}
 	return $values;
@@ -200,9 +221,9 @@
 		$result = $db->Execute("select period from " . TABLE_ACCOUNTING_PERIODS . " 
 			where start_date <= '" . $post_date . "' and end_date >= '" . $post_date . "'");
 		if ($result->RecordCount() <> 1) { // post_date is out of range of defined accounting periods
-			if (!$hide_error) throw new \Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR, 'error');
+			if (!$hide_error) throw new \Exception(ERROR_MSG_POST_DATE_NOT_IN_FISCAL_YEAR);
 		}
-		if (!$hide_error) throw new \Exception(ERROR_MSG_BAD_POST_DATE,'caution');
+		if (!$hide_error) throw new \Exception(ERROR_MSG_BAD_POST_DATE);
 		return $result->fields['period'];
 	}
   }
@@ -497,8 +518,7 @@ function saveUploadZip($file_field, $dest_dir, $dest_name) {
 	if ($_FILES[$file_field]['error']) { // php error uploading file
 		throw new \Exception(TEXT_IMP_ERMSG5 . $_FILES[$file_field]['error']);
 	} elseif ($_FILES[$file_field]['size'] > 0) {
-		require_once(DIR_FS_MODULES . 'phreedom/classes/backup.php');
-		$backup              = new backup();
+		$backup              = new \phreedom\classes\backup();
 		$backup->source_dir  = $_FILES[$file_field]['tmp_name'];
 		$backup->source_file = '';
 		$backup->dest_dir    = $dest_dir;
@@ -2123,14 +2143,16 @@ function PhreebooksErrorHandler($errno, $errstr, $errfile, $errline, $errcontext
 
 function PhreebooksExceptionHandler($exception) {
 	global $messageStack;
-    $messageStack->add($exception->getMessage(), 'error');
   	$text  = date('Y-m-d H:i:s') . " User: " . $_SESSION['admin_id'] . " Company: " . $_SESSION['company'] ;
-    $text .= " Exception: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
+    $text .= " Uncaught Exception: '" . $exception->getMessage() . "' line " . $exception->getLine() . " in file " . $exception->getFile();
     error_log($text . PHP_EOL, 3, DIR_FS_MY_FILES."/errors.log");
 	if ($_REQUEST['page'] == 'ajax'){
     	echo createXmlHeader() . createXmlFooter();
         die();
     }
+    $messageStack->add(" Uncaught Exception: '" . $exception->getMessage(), 'error');
+    gen_redirect(html_href_link(FILENAME_DEFAULT, $get_params, 'SSL'));
+    
 }
 
 function Phreebooks_autoloader($temp){ 

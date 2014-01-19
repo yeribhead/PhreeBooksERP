@@ -81,7 +81,6 @@ if (file_exists($custom_path)) { include($custom_path); }
 	$order->rep_id              = db_prepare_input($_POST['rep_id']);
 	$order->gl_acct_id          = $tills->gl_acct_id;
 	$order->item_count          = db_prepare_input($_POST['item_count']);
-	$order->comment          	= db_prepare_input($_POST['comment']);
 	// currency values (convert to DEFAULT_CURRENCY to store in db)
 	$order->currencies_code     = db_prepare_input($_POST['currencies_code']);
 	$order->currencies_value    = db_prepare_input($_POST['currencies_value']);

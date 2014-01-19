@@ -23,8 +23,8 @@
 namespace payment\methods\paypal_nvp;
 define('MODULE_PAYMENT_PAYPAL_NVP_VERSION','3.2');
 class paypal_nvp extends \payment\classes\payment {
-  public $code              = 'paypal_nvp'; // needs to match class name
-  public $title 	        = MODULE_PAYMENT_CC_TEXT_CATALOG_TITLE;
+  public $id				= 'paypal_nvp'; // needs to match class name
+  public $text				= MODULE_PAYMENT_CC_TEXT_CATALOG_TITLE;
   public $description       = MODULE_PAYMENT_PAYPAL_NVP_TEXT_DESCRIPTION;
   public $enable_encryption = 1; // set to field position of credit card to create hint, false to turn off encryption
   public $sort_order        = 3;
@@ -92,7 +92,7 @@ class paypal_nvp extends \payment\classes\payment {
 
   function javascript_validation() {
     $js = 
-	'  if (payment_method == "' . $this->code . '") {' . "\n" .
+	'  if (payment_method == "' . $this->id . '") {' . "\n" .
     '    var cc_owner  = document.getElementById("paypal_nvp_field_0").value +" "+document.getElementById("paypal_nvp_field_5").value;' . "\n" .
     '    var cc_number = document.getElementById("paypal_nvp_field_1").value;' . "\n" . 
     '    var cc_cvv    = document.getElementById("paypal_nvp_field_4").value;' . "\n" . 
@@ -123,8 +123,8 @@ class paypal_nvp extends \payment\classes\payment {
       $expires_year[] = array('id' => strftime('%Y',mktime(0,0,0,1,1,$i)), 'text' => strftime('%Y',mktime(0,0,0,1,1,$i)));
     }
 	$selection = array(
-	   'id'     => $this->code,
-	   'page'   => $this->title,
+	   'id'     => $this->id,
+	   'page'   => $this->text,
 	   'fields' => array(
 			array(	'title' => MODULE_PAYMENT_PAYPAL_NVP_TEXT_CREDIT_CARD_OWNER,
 					'field' => html_input_field('paypal_nvp_field_0', $order->paypal_nvp_field_0, 'size="12" maxlength="25"') . '&nbsp;' . html_input_field('paypal_nvp_field_5', $order->paypal_nvp_field_5, 'size="12" maxlength="25"')),
@@ -164,7 +164,7 @@ class paypal_nvp extends \payment\classes\payment {
     }
 
     if ( ($result == false) || ($result < 1) ) {
-      $messageStack->add($error . '<!-- ['.$this->code.'] -->', 'error');
+      $messageStack->add($error . '<!-- ['.$this->id.'] -->', 'error');
       return true;
     }
 	return false;

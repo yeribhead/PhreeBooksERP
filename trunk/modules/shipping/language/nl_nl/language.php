@@ -10,7 +10,6 @@
 
 define('HEADING_TITLE_MODULES_SHIPPING','Verzending Services');
 define('SHIPPING_HEADING_SHIP_MGR','Verzending Module Manager');
-define('TEXT_SHIPPING_MODULES_AVAILABLE','Beschikbare Verzend Methodes');
 define('TEXT_PRODUCTION','Productie');
 define('TEXT_TEST','Test');
 define('TEXT_PDF','PDF');
@@ -158,5 +157,10 @@ define('SHIPPING_SENDER','Zender');
 define('SHIPPING_RECEIPIENT','Ontvanger');
 define('SHIPPING_THIRD_PARTY','Ontv/Derde Acct #');
 define('SHIPPING_COLLECT','Verzamel');
+// Key descriptions
+define('SHIPPING_TITLE_DESC', 'De titel welke gebruikt moet worden in weergaven. ');
+define('SHIPPING_COST_DESC', 'Wat zijn de verzend kosten?');
+define('SHIPPING_HANDLING_DESC', 'Kosten voor deze verzend optie');
+define('SORT_ORDER_DESC', 'Volgorde van tonen. Bepaalt in welke volgorde deze optie in lijsten voor moet komen.');
 
 ?>

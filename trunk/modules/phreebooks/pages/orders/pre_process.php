@@ -253,7 +253,6 @@ switch ($_REQUEST['action']) {
 	$order->rm_attach           = isset($_POST['rm_attach']) ? true : false;
 	$order->sales_tax           = $currencies->clean_value(db_prepare_input($_POST['sales_tax']), $order->currencies_code) / $order->currencies_value;
 	$order->total_amount        = $currencies->clean_value(db_prepare_input($_POST['total']), $order->currencies_code) / $order->currencies_value;
-	$order->comment				= $_POST['comment'];
 	// load item row data
 	$x = 1;
 	while (isset($_POST['qty_' . $x])) { // while there are item rows to read in

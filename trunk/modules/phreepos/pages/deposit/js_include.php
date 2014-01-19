@@ -27,7 +27,7 @@ var add_array          = new Array("<?php echo implode('", "', $js_arrays['field
 var default_array      = new Array("<?php echo implode('", "', $js_arrays['text']); ?>");
 var journalID          = '<?php echo JOURNAL_ID; ?>';
 var account_type       = '<?php echo $type; ?>';
-var payments_installed = <?php echo count($payment_modules) ? 'true' : 'false'; ?>;
+var payments_installed = <?php echo count($payment_methods) ? 'true' : 'false'; ?>;
 <?php echo js_calendar_init($cal_bills); ?>
 
 // List the gl accounts for line item pull downs
@@ -67,8 +67,8 @@ function check_form() {
     var index = document.getElementById('shipper_code').selectedIndex;
     var payment_method = document.getElementById('shipper_code').options[index].value;
 	<?php
-	  foreach ($payment_modules as $pmt_class) { // fetch the javascript validation of payments module
-		echo $pmt_class->javascript_validation();//@todo werkt dit
+	  foreach ($payment_methods as $method) { // fetch the javascript validation of payments module
+		echo $method->javascript_validation();
 	  }
 	?>
   }
