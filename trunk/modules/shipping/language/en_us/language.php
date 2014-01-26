@@ -192,5 +192,8 @@ define('SHIPPING_TITLE_DESC', 'Title to use for display purposes on shipping rat
 define('SHIPPING_COST_DESC', 'What is the Shipping cost?');
 define('SHIPPING_HANDLING_DESC', 'Handling fee for this shipping method.');
 define('SORT_ORDER_DESC', 'Sort order of display. Determines the order which this method appears on all generted lists.');
-
+define('SHIPPING_PRINTER_TYPE_DESC','Type of printer to use for printing labels. PDF for plain paper, Thermal for Eltron/Zebra Label Printer');
+define('SHIPPING_PRINTER_NAME_DESC', 'Sets then name of the printer to use for printing labels as defined in the printer preferences for the local workstation');
+define('SHIPPING_DEFAULT_SERVICE_DESC','Select the services to be offered by default');
+define('SHIPPING_TEST_MODE_DESC','Test/Production mode used for testing shipping labels');
 ?>

@@ -25,8 +25,6 @@ require_once(DIR_FS_WORKING . 'defaults.php');
 require_once(DIR_FS_WORKING . 'functions/shipping.php');
 /**************   page specific initialization  *************************/
 $error      = false; 
-$method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new shipping\classes\admin();
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 8);
@@ -42,19 +40,15 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
 switch ($_REQUEST['action']) {
   case 'install':
   	validate_security($security_level, 4);
-	$shipping_method = "\shipping\methods\\$method\\$method";
-	$properties = new $shipping_method();
 	write_configure('MODULE_SHIPPING_' . strtoupper($method) . '_STATUS', '1');
-	foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
-	if (method_exists($properties, 'install')) $properties->install(); // handle special case install, db, files, etc
+	foreach ($admin_classes['shipping']->methods[$method]->keys() as $key) write_configure($key['key'], $key['default']);
+	if (method_exists($admin_classes['shipping']->methods[$method], 'install')) $admin_classes['shipping']->methods[$method]->install(); // handle special case install, db, files, etc
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
   case 'remove';
   	validate_security($security_level, 4);
-	$shipping_method = "\shipping\methods\\$method\\$method";
-	$properties = new $shipping_method();
-	if (method_exists($properties, 'remove')) $properties->remove(); // handle special case removal, db, files, etc
-	foreach ($properties->keys() as $key) { // remove all of the keys from the configuration table
+	if (method_exists($admin_classes['shipping']->methods[$method], 'remove')) $admin_classes['shipping']->methods[$method]->remove(); // handle special case removal, db, files, etc
+	foreach ($admin_classes['shipping']->methods[$method]->keys() as $key) { // remove all of the keys from the configuration table
       $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = '" . $key['key'] . "'");
 	}
 	remove_configure('MODULE_SHIPPING_' . strtoupper($method) . '_STATUS');
@@ -63,11 +57,11 @@ switch ($_REQUEST['action']) {
   case 'save':
   	validate_security($security_level, 3);
     // foreach method if enabled, save info
-	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	if (sizeof($admin_classes['shipping']->methods) > 0) foreach ($admin_classes['shipping']->methods as $method) {
 	  	if ($method->installed) $method->update();
 	}
 	// save general tab
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['shipping']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }
@@ -75,9 +69,7 @@ switch ($_REQUEST['action']) {
     break;
   case 'signup':
   	validate_security($security_level, 4);
-	$shipping_method = "\shipping\methods\\$method\\$method";
-	$properties = new $shipping_method();
-	if (method_exists($properties, 'signup')) $properties->signup();
+	if (method_exists($admin_classes['shipping']->methods[$method], 'signup')) $admin_classes['shipping']->methods[$method]->signup();
 //	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
   case 'backup':
@@ -151,13 +143,6 @@ $sel_fy_month = array(
 $sel_fy_year = array();
 for ($i = 0; $i < 8; $i++) {
   $sel_fy_year[] = array('id' => date('Y')-$i, 'text' => date('Y')-$i);
-}
-$sel_method = array();
-$sel_method[] = array('id' => '', 'text' => GEN_HEADING_PLEASE_SELECT);
-foreach ($methods as $value) {
-  if (defined('MODULE_SHIPPING_' . strtoupper($value) . '_STATUS')) {
-    $sel_method[] = array('id' => $value, 'text' => constant('MODULE_SHIPPING_' . strtoupper($value) . '_TEXT_TITLE'));
-  }
 }
 $include_header   = true;
 $include_footer   = true;

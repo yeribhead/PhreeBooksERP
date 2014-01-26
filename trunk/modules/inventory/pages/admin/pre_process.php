@@ -27,7 +27,6 @@ require_once(DIR_FS_WORKING . 'functions/inventory.php');
 /**************   page specific initialization  *************************/
 $error    = false; 
 $cog_type = explode(',', COG_ITEM_TYPES);
-$install  = new \inventory\classes\admin();
 $tabs     = new \inventory\classes\tabs();
 $fields   = new \inventory\classes\fields();
 
@@ -36,7 +35,7 @@ switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3); // security check
 	// save general tab
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['inventory']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }

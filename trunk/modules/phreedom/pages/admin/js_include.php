@@ -37,10 +37,10 @@ function check_form() {
 function loadPopUp(action, id) {
   switch(action) {
     case 'countries_new':    action = 'new';    subject = 'countries'; break;
-    case 'currency_new':     action = 'new';    subject = 'currency';  break;
+    case 'currency_new':     action = 'new';    subject = 'currencies';  module = 'core'; break;
     case 'zones_new':        action = 'new';    subject = 'zones';     break;
     case 'countries_edit':   action = 'edit';   subject = 'countries'; break;
-    case 'currency_edit':    action = 'edit';   subject = 'currency';  break;
+    case 'currency_edit':    action = 'edit';   subject = 'currencies';  module = 'core'; break;
     case 'zones_edit':       action = 'edit';   subject = 'zones';     break;
 //    case 'countries_delete': action = 'delete'; subject = 'countries'; break;
 //    case 'currency_delete':  action = 'delete'; subject = 'currency';  break;

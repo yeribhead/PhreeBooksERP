@@ -29,7 +29,7 @@
 	</tr>
 	<tr>
 	  <td align="right"><?php echo SHIPPING_METHOD; ?></td>
-	  <td><?php echo html_pull_down_menu('carrier', $sel_method, $_POST['carrier'] ? $_POST['carrier'] : ''); ?></td>
+	  <td><?php echo html_pull_down_menu('carrier', gen_build_pull_down($admin_classes['shipping']->methods, true), $_POST['carrier'] ? $_POST['carrier'] : ''); ?></td>
 	</tr>
 	<tr>
 	  <td align="right"><?php echo SHIPPING_MONTH; ?></td>

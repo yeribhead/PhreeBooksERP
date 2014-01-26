@@ -17,6 +17,5 @@ define('item_2Dpm','Koerier');
 define('item_3Dpm','Zender betaald voordelig');
 define('item_GND','Locale levering');
 define('item_GDR','Klant haalt op');
-define('SHIPPING_ITEM_SHIPMENTS_ON','Per Item verzending op');
 
 ?>

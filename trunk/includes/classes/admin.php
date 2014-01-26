@@ -18,44 +18,48 @@
 //
 namespace core\classes;
 class admin {
+	public $id;
+	public $text; 
+	public $description;
 	public $notes 			= array();// placeholder for any operational notes
 	public $prerequisites 	= array();// modules required and rev level for this module to work properly
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
-	public $module 			= ''; //@todo rename to id
-	public $text; //@todo add to other files
+	public $methods			= array();// holds all classes in a array
+	public $status			= 1.0; // stores the moduel status
+	public $version			= 1.0; // stores availible version of the module
+	public $installed		= false; 
+	public $core			= false;
 
 	function __construct(){
-		$this->version = constant('MODULE_' . strtoupper($this->module) . '_VERSION');
-		$this->status  = constant('MODULE_' . strtoupper($this->module) . '_STATUS');
+		if (defined('MODULE_' . strtoupper($this->id) . '_STATUS')){
+			$this->installed = true;
+			$this->status  = constant('MODULE_' . strtoupper($this->id) . '_STATUS');
+		}
+		$this->version = constant('MODULE_' . strtoupper($this->id) . '_VERSION');
 	}
 	
 	function install() {
-		$error = false;
-	    return $error;
 	}
 
   	function initialize() {
   	}
 
 	function update() {
-	    
-		if (!$this->error) {
-		  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-	   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-		}
-		return $error;
+	    write_configure('MODULE_' . strtoupper($this->id) . '_STATUS', constant('MODULE_' . strtoupper($this->id) . '_VERSION'));
+	   	$messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->id, constant('MODULE_' . strtoupper($this->id) . '_VERSION')), 'success');
 	}
 
 	function remove() {
-		return $this->error;
+		
 	}
 	
   	function release_update($version, $path = '') {
     	global $db, $messageStack;
 		if (file_exists($path)) { include_once ($path); }
-		write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', $version);
+		write_configure('MODULE_' . strtoupper($this->id) . '_STATUS', $version);
+		//@todo should not return error but throw them
 		return $this->error ? false : $version;
   	}
 	
@@ -66,7 +70,8 @@ class admin {
 	}
 	
 	function should_update(){
-		if (constant('MODULE_' . strtoupper($this->module) . '_STATUS') <> constant('MODULE_' . strtoupper($this->module) . '_VERSION')) return true;
+		if (!$this->installed) return false;
+		if (constant('MODULE_' . strtoupper($this->id) . '_STATUS') <> constant('MODULE_' . strtoupper($this->id) . '_VERSION')) return true;
 		else return false;
 	}
 }

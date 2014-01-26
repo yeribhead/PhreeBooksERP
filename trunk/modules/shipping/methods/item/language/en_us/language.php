@@ -21,6 +21,5 @@ define('MODULE_SHIPPING_ITEM_TEXT_TITLE', 'Per Item');
 define('MODULE_SHIPPING_ITEM_TEXT_DESCRIPTION', 'Per Item Charge based on the number of items shipped.');
 // shipping methods
 define('item_GND',  'Per Item');
-define('SHIPPING_ITEM_SHIPMENTS_ON','Per Item Shipments on ');
 
 ?>

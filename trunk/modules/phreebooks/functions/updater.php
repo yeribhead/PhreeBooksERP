@@ -78,7 +78,7 @@ function execute_upgrade($db_release) {
 	$db_release = '2.1';
     if ($code_release == $db_release) return false;
   }
-  return true; // error
+  throw new \Exception("wasn't able to upgrade the database from $db_release to $db_release");
 }
 
 function update_version_db($major = PROJECT_VERSION_MAJOR, $minor = PROJECT_VERSION_MINOR) {

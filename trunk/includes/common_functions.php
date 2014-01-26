@@ -42,7 +42,7 @@
     ob_end_flush();
   }
 
-  function gen_pull_language($page, $file = 'language') {
+  function gen_pull_language($page, $file = 'language') {//@todo add switch for core files.
   	if (!is_dir(DIR_FS_MODULES . $page)) return;
   	if       (file_exists(DIR_FS_MODULES . "$page/custom/language/".$_SESSION['language']."/$file.php")) {
       include_once       (DIR_FS_MODULES . "$page/custom/language/".$_SESSION['language']."/$file.php");
@@ -84,21 +84,29 @@
     return $choices;
   }
   
-  function return_all_methods($module, $active_only = true) {
-    $choices     = array();
-	if (!$module) return $choices;
-    $method_dir  = DIR_FS_MODULES . "$module/methods/";
-    if ($methods = @scandir($method_dir)) foreach ($methods as $method) {
-	  if ($method == '.' || $method == '..' || !is_dir($method_dir . $method)) continue;
-	  if ($active_only && !defined('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS')) continue;
-	  load_method_language($method_dir, $method);
-	  //include_once($method_dir . $method . '/' . $method . '.php');
-	  $class = "\\$module\methods\\$method\\$method";
-	  $choices[constant('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_SORT_ORDER')] = new $class; 
-    }
-    ksort($choices);
-    return $choices;
-  }
+	function return_all_methods($module, $active_only = true) {
+	    $choices     = array();
+		if (!$module) return $choices;
+	    $method_dir  = DIR_FS_MODULES . "$module/methods/";
+	    if ($methods = @scandir($method_dir)) foreach ($methods as $method) {
+			if ($method == '.' || $method == '..' || !is_dir($method_dir . $method)) continue;
+		  	if ($active_only && !defined('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS')) continue;
+		  	load_method_language($method_dir, $method);
+		  	$class = "\\$module\methods\\$method\\$method";
+		  	$choices[$method] = new $class; 
+	    }
+		uasort($choices, "arange_object_by_sort_order");
+	    return $choices;
+	}
+  
+	/**
+	 * this function is for sorting a array of objects by the sort_order variable
+	 */
+  
+  	function arange_object_by_sort_order($a, $b){
+    	return strcmp($a->sort_order, $b->sort_order);
+	}
+
 
   function load_specific_method($module, $method) {
     $method_dir  = DIR_FS_MODULES . $module . '/methods/';
@@ -167,17 +175,24 @@
     return $null_array;
   }
 
-  function gen_build_pull_down($keyed_array) {
+  /**
+   * this function creates a array for dropdown doxes.
+   * arrays with objects may also be passed
+   * @param array $keyed_array
+   * @param bool  $installed_only. this wil be used for objects only 
+   */
+  function gen_build_pull_down($keyed_array, $installed_only = false, $inc_select = false) {
 	$values = array();
+	if ($inc_select) $values[] = array('id' => '0', 'text' => GEN_HEADING_PLEASE_SELECT);
 	if (is_array($keyed_array)) {
-	  foreach($keyed_array as $key => $value) {
-	  	if(is_array($key)){
-			$values[] = array('id' => $key, 'text' => $value);
-	  	}else{
-	  		$values[] = array('id' => $value->id, 'text' => $value->text);
-	  		
+	  	foreach($keyed_array as $key => $value) {
+	  		if(is_array($key)){
+				$values[] = array('id' => $key, 'text' => $value);
+	  		}else{
+	  			if($installed_only == true && $value->installed == false) continue;
+	  			else $values[] = array('id' => $value->id, 'text' => $value->text);
+	  		}
 	  	}
-	  }
 	}
 	return $values;
   }
@@ -1242,7 +1257,7 @@ function gen_db_date($raw_date = '', $separator = '/') {
 	  $id = str_replace('[','_', $name); // clean up for array inputs causing html errors
 	  $id = str_replace(']','',  $id);
     }
-    $field = '<select class="easyui-combobox" name="' . $name . '"';
+    $field = '<select name="' . $name . '"';
 	if ($id) $field .= ' id="' . $id . '"';
     if (gen_not_null($parameters)) $field .= ' ' . $parameters;
     if ($required)				$field .= ' required="required" ';
@@ -2157,15 +2172,22 @@ function PhreebooksExceptionHandler($exception) {
 
 function Phreebooks_autoloader($temp){ 
 	$class = str_replace("\\", "/", $temp);
-	$path = explode("/", $class, 3);
-	if($path[0] == 'core'){
+	$path  = explode("/", $class, 3);
+	if ($path[0] == 'core'){
+		gen_pull_language('phreedom'); //always load the main language file
+		// if it is a method or dashboard load those language files as well.
+		if ( in_array($path[1], array('methods','dashboards'))) load_method_language(DIR_FS_ADMIN."modules/$path[0]/$path[1]", $path[2]);
 		$file = DIR_FS_ADMIN."includes/$path[1]/$path[2].php";
-		include_once(DIR_FS_ADMIN."includes/$path[1]/$path[2].php");
+		include_once (DIR_FS_ADMIN."includes/$path[1]/$path[2].php");
 	}else{
+		gen_pull_language($path[0], 'admin');
+		gen_pull_language($path[0]); //always load the main language file
+		// if it is a method or dashboard load those language files as well.
+		if ( in_array($path[1], array('methods','dashboards'))) load_method_language(DIR_FS_ADMIN."modules/$path[0]/$path[1]", $path[2]);
 		if (file_exists(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php")){
 			$file = DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php";
 			include_once(DIR_FS_ADMIN."modules/$path[0]/custom/$path[1]/$path[2].php");
-		}else{
+		} else {
 			$file = DIR_FS_ADMIN."modules/$path[0]/$path[1]/$path[2].php";
 			include_once(DIR_FS_ADMIN."modules/$path[0]/$path[1]/$path[2].php");
 		}

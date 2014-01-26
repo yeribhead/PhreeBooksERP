@@ -26,14 +26,6 @@ require_once(DIR_FS_WORKING . 'functions/shipping.php');
 /**************   page specific initialization  *************************/
 $error       = false;
 $pkg         = new \shipping\classes\shipment();
-$methods     = array();
-$files       = scandir(DEFAULT_MOD_DIR);
-foreach ($files as $choice) {
-  if (defined('MODULE_SHIPPING_' . strtoupper($choice) . '_STATUS')) {
-    load_method_language(DEFAULT_MOD_DIR, $choice);
-    $methods[] = $choice;
-  }
-}
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/popup_shipping/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
@@ -59,11 +51,9 @@ switch ($_REQUEST['action']) {
 	$pkg->hazardous_material     = isset($_POST['hazardous_material']) ? '1' : '0';
 	// read the modules installed
 	$rates = array();
-	foreach ($methods as $method) {
-	  if (isset($_POST['ship_method_' . $method])) {
-		$shipping_method = "\shipping\methods\\$method\\$method";
-		$subject = new $shipping_method();
-		$result = $subject->quote($pkg); // will return false if there was an error
+	foreach ($admin_classes['shipping']->methods as $method) {
+	  if (isset($_POST['ship_method_' . $method->id])) {
+		$result = $method->quote($pkg); // will return false if there was an error
 		if (is_array($result)) {
 		  $rates = array_merge_recursive($result, $rates);
 		} else {

@@ -21,8 +21,6 @@ $security_level = validate_user(SECURITY_ID_CONFIGURATION);
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error      = false; 
-$method_dir = DIR_FS_WORKING . 'methods/';
-$install    = new \payment\classes\admin();
 // see if installing or removing a method
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 8);
@@ -35,19 +33,15 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
 switch ($_REQUEST['action']) {
   case 'install':
 	validate_security($security_level, 4);
-  	$temp = "\payment\methods\\$method\\$method";
-	$properties = new $temp;
 	write_configure('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS', '1');
-	foreach ($properties->keys() as $key) write_configure($key['key'], $key['default']);
-	if (method_exists($properties, 'install')) $properties->install(); // handle special case install, db, files, etc
+	foreach ($admin_classes['payment']->methods[$method]->keys() as $key) write_configure($key['key'], $key['default']);
+	if (method_exists($admin_classes['payment']->methods[$method], 'install')) $admin_classes['payment']->methods[$method]->install(); // handle special case install, db, files, etc
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
   case 'remove';
 	validate_security($security_level, 4);
-  	$temp = "\payment\methods\\$method\\$method";
-	$properties = new $temp;
-	if (method_exists($properties, 'remove')) $properties->remove(); // handle special case removal, db, files, etc
-	foreach ($properties->keys() as $key) { // remove all of the keys from the configuration table
+	if (method_exists($admin_classes['payment']->methods[$method], 'remove')) $admin_classes['payment']->methods[$method]->remove(); // handle special case removal, db, files, etc
+	foreach ($admin_classes['payment']->methods[$method]->keys() as $key) { // remove all of the keys from the configuration table
       $db->Execute("delete from " . TABLE_CONFIGURATION . " where configuration_key = '" . $key['key'] . "'");
 	}
 	remove_configure('MODULE_PAYMENT_' . strtoupper($method) . '_STATUS');
@@ -56,11 +50,11 @@ switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
   	// foreach method if enabled, save info
-	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	if (sizeof($admin_classes['payment']->methods) > 0) foreach ($admin_classes['payment']->methods as $method) {
 	  	if ($method->installed) $method->update();
 	}
 	// save general tab
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['payment']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }

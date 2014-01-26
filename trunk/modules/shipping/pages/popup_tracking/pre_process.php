@@ -24,7 +24,6 @@ require_once(DIR_FS_WORKING . 'functions/shipping.php');
 
 /**************   page specific initialization  *************************/
 $close_popup = false;
-$methods     = load_all_methods('shipping');
 $sID         = $_GET['sID']    ? $_GET['sID']    : '';
 $method      = $_GET['method'] ? $_GET['method'] : '';
 $ship_date   = date('Y-m-d');
@@ -63,7 +62,8 @@ switch ($_REQUEST['action']) {
 }
 
 /*****************   prepare to display templates  *************************/
-$js_methods = build_js_methods($methods);
+$methods     = load_all_methods('shipping');
+$js_methods  = build_js_methods($methods);
 
 if ($sID) {
   $sql = "select id, shipment_id, carrier, ref_id, method, ship_date, deliver_date, tracking_id, cost 

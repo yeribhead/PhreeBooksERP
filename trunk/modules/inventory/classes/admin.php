@@ -18,7 +18,10 @@
 //
 namespace inventory\classes;
 class admin extends \core\classes\admin {
-	public $module 			= 'inventory';
+	public $id 			= 'inventory';
+	public $text		= MODULE_INVENTORY_TITLE;
+	public $description = MODULE_INVENTORY_DESCRIPTION;
+	public $core		= true;
 
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -148,7 +151,8 @@ class admin extends \core\classes\admin {
 		  serialize_number varchar(24) NOT NULL default '',
 		  remaining float NOT NULL default '0',
 		  unit_cost float NOT NULL default '0',
-		  post_date datetime default NULL,
+		  avg_cost float NOT NULL default '0',
+	  	  post_date datetime default NULL,
 		  PRIMARY KEY (id),
 		  KEY sku (sku),
 		  KEY ref_id (ref_id),
@@ -202,7 +206,6 @@ class admin extends \core\classes\admin {
 
   function install() {
 	global $db;
-	$error = false;
 	$this->notes[] = MODULE_INVENTORY_NOTES_1;
 	require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 	xtra_field_sync_list('inventory', TABLE_INVENTORY);
@@ -263,7 +266,7 @@ class admin extends \core\classes\admin {
 	}
 	// set the fields to view in the inventory field filters 
 	$haystack = array('attachments', 'account_sales_income', 'item_taxable', 'purch_taxable', 'image_with_path', 'account_inventory_wage', 'account_cost_of_sales', 'cost_method', 'lead_time');
-	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type` = 'check_box' where field_name = 'inactive'");
+	$result = $db->Execute("update " . TABLE_EXTRA_FIELDS . " set entry_type='check_box' where field_name='inactive'");
 	$result = $db->Execute("select * from " . TABLE_EXTRA_FIELDS ." where module_id = 'inventory'");
 	while (!$result->EOF) {
 		$use_in_inventory_filter = '1';
@@ -272,12 +275,11 @@ class admin extends \core\classes\admin {
 		$result->MoveNext();
 	}
 	
-    return $error;
+    parent::install();
   }
 
   function update() {
-    global $db, $messageStack, $currencies;
-	$error = false;
+    global $db, $currencies;
     if (MODULE_INVENTORY_STATUS < 3.1) {
 	  $tab_map = array('0' => '0');
 	  if(db_table_exists(DB_PREFIX . 'inventory_categories')){
@@ -410,32 +412,27 @@ class admin extends \core\classes\admin {
 		}
 	  	mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/attachments/', 0755, true);
 	}
-	if (!$error) {
-		xtra_field_sync_list('inventory', TABLE_INVENTORY);
-	  	write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  	$messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
+	if (MODULE_INVENTORY_STATUS < 3.7) {
+		if (!db_field_exists(TABLE_INVENTORY_HISTORY, 'avg_cost')) $db->Execute("ALTER TABLE ".TABLE_INVENTORY." ADD avg_cost FLOAT NOT NULL DEFAULT '0' AFTER unit_cost");
 	}
-	return $error;
+	parent::update();
   }
 
   function remove() {
-    global $db, $messageStack;
-	$error = false;
+    global $db;
 	$db->Execute("delete from " . TABLE_EXTRA_FIELDS . " where module_id = 'inventory'");
 	$db->Execute("delete from " . TABLE_EXTRA_TABS   . " where module_id = 'inventory'");
-	return $error;
+	parent::remove();
   }
 
   function load_reports() {
-	$error = false;
 	$id    = admin_add_report_heading(MENU_HEADING_INVENTORY, 'inv');
-	if (admin_add_report_folder($id, TEXT_REPORTS, 'inv', 'fr')) $error = true;
-	return $error;
+	admin_add_report_folder($id, TEXT_REPORTS, 'inv', 'fr');
+	parent::load_reports();
   }
 
   function load_demo() {
     global $db;
-	$error = false;
 	// Data for table `inventory`
 	$db->Execute("TRUNCATE TABLE " . TABLE_INVENTORY);
 	$db->Execute("INSERT INTO " . TABLE_INVENTORY . " VALUES (1, 'AMD-3600-CPU', '0', 'si', 'AMD 3600+ Athlon CPU', 'AMD 3600+ Athlon CPU', 'AMD 3600+ Athlon CPU', 'demo/athlon.jpg', '4000', '1200', '5000', '1', '0', 100, 'f', '', '', 150, 150, 1.5, 1, 0, 0, 0, 0, 0, 0, 3, 1, '', '0', now(), '', '', '');");
@@ -498,11 +495,11 @@ class admin extends \core\classes\admin {
 	
 	// copy the demo image
 	$backups = new \phreedom\classes\backup;
-	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) $error = true;
+	if (!@mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo')) throw new \Exception("couldn't make folder " .DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo');
 	$dir_source = DIR_FS_MODULES  . 'inventory/images/demo/';
 	$dir_dest   = DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/images/demo/';
 	$backups->copy_dir($dir_source, $dir_dest);
-	return $error;
+	parent::load_demo();
   }
 
 }

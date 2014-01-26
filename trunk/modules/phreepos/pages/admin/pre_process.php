@@ -22,7 +22,6 @@ gen_pull_language($module, 'admin');
 gen_pull_language('phreedom', 'admin');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$install = new \phreepos\classes\admin();
 $tills   = new \phreepos\classes\tills();
 $trans	 = new \phreepos\classes\other_transactions();
 /***************   Act on the action request   *************************/
@@ -34,7 +33,7 @@ switch ($_REQUEST['action']) {
 		break;
 	}else{
 		// save general tab
-		foreach ($install->keys as $key => $default) {
+		foreach ($admin_classes['phreepos']->keys as $key => $default) {
 		  $field = strtolower($key);
 	      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
 	    }

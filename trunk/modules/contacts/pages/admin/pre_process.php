@@ -24,7 +24,6 @@ require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error          = false; 
-$install        = new contacts\classes\admin();
 $departments    = new contacts\classes\departments();
 $dept_types     = new contacts\classes\dept_types();
 $project_costs  = new contacts\classes\project_costs();
@@ -35,7 +34,7 @@ $fields         = new contacts\classes\fields();
 switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 3);
-  	foreach ($install->keys as $key => $default) {
+  	foreach ($admin_classes['contacts']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }

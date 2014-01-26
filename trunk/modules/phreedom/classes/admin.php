@@ -18,12 +18,9 @@
 //
 namespace phreedom\classes;
 class admin extends \core\classes\admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	public $module			= 'phreedom';
+	public $id 			= 'phreedom';
+	public $text;
+	public $description;
 	
   function __construct() {
 	// Load configuration constants for this module, must match entries in admin tabs
@@ -178,7 +175,6 @@ class admin extends \core\classes\admin {
 
   function install() {
     global $db, $messageStack;
-	$error = false;
 	// load some default currency values
 	$db->Execute("TRUNCATE TABLE " . TABLE_CURRENCIES);
 	$currencies_list = array(
@@ -190,7 +186,7 @@ class admin extends \core\classes\admin {
 	// Enter some data into table current status
 	$db->Execute("TRUNCATE TABLE " . TABLE_CURRENT_STATUS);
 	$db->Execute("insert into " . TABLE_CURRENT_STATUS . " set id = 1");
-    return $error;
+    parent::install();
   }
 
 	function initialize() {
@@ -198,9 +194,7 @@ class admin extends \core\classes\admin {
   		try{
 	    	// load the latest currency exchange rates
 		    if (web_connected(false) && AUTO_UPDATE_CURRENCY && ENABLE_MULTI_CURRENCY) {
-				gen_pull_language('phreedom', 'admin');
-				$currency = new \phreedom\classes\currency(); //@todo should be core.
-				$currency->btn_update();
+				$currencies->btn_update();
 			}
 			// Fix for change to audit log for upgrade to R3.6 causes perpertual crashing when writing audit log
 			if (!db_field_exists(TABLE_AUDIT_LOG, 'stats')) $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
@@ -247,7 +241,7 @@ class admin extends \core\classes\admin {
 	$db_version = defined('MODULE_PHREEDOM_STATUS') ? MODULE_PHREEDOM_STATUS : false;
 	foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
 	if ($db_version < MODULE_PHREEDOM_STATUS) {
- 	  $db_version = $this->release_update($this->module, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
+ 	  $db_version = $this->release_update($this->id, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
 	  if (!$db_version) return true;
 	}
   	if (MODULE_PHREEDOM_STATUS < 3.1) {
@@ -269,8 +263,8 @@ class admin extends \core\classes\admin {
 	  if (!db_field_exists(TABLE_AUDIT_LOG, 'stats'))        $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
   	}
     if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
+	  write_configure('MODULE_' . strtoupper($this->id) . '_STATUS', constant('MODULE_' . strtoupper($this->id) . '_VERSION'));
+   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->id, constant('MODULE_' . strtoupper($this->id) . '_VERSION')), 'success');
 	}
 	return $error;
   }

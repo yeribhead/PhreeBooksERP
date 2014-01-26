@@ -30,7 +30,7 @@
 	 </thead>
 	 <tbody class="ui-widget-content">
 	  <?php 
-	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	if (sizeof($admin_classes['payment']->methods) > 0) foreach ($admin_classes['payment']->methods as $method) {
 		$bkgnd = $method->installed? ' class="ui-state-active"' : '';
 		if (file_exists(DIR_WS_MODULES . 'payment/methods/' . $method->id . '/images/logo.png')) {
 			$logo = DIR_WS_MODULES . 'payment/methods/' . $method->id . '/images/logo.png';

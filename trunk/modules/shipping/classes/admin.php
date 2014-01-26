@@ -18,8 +18,9 @@
 //
 namespace shipping\classes;
 class admin extends \core\classes\admin {
-	public $methods = array();
-	public $module			= 'shipping';
+	public $id 			= 'shipping';
+	public $text		= MODULE_SHIPPING_TITLE;
+	public $description = MODULE_SHIPPING_DESCRIPTION;
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -96,46 +97,40 @@ class admin extends \core\classes\admin {
 		  KEY ref_id (ref_id)
 		) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;",
     );
-    $this->methods = return_all_methods($this->module, false);
+    $this->methods = return_all_methods($this->id, false);
+    parent::__construct();
   }
 
   function install() {
     global $db, $messageStack;
-	$error = false;
 	foreach ($this->methods as $method) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method->id) . '_STATUS', '1');
+	  write_configure('MODULE_' . strtoupper($this->id) . '_' . strtoupper($method->id) . '_STATUS', '1');
 	  foreach ($method->keys() as $key) write_configure($key['key'], $key['default']);
 	  if (method_exists($method, 'install')) $method->install();
 	}
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." ADD next_shipment_num VARCHAR(16) NOT NULL DEFAULT '1'");
-    return $error;
+    parent::install();
   }
 
   function update() {
     global $db, $messageStack;
-	$error = false;
 	if (MODULE_SHIPPING_STATUS < 3.2) {
 	  if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " ADD next_shipment_num VARCHAR(16) NOT NULL DEFAULT '1'");
 	  if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_desc");
 	}
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 
   function remove() {
     global $db;
-	$error = false;
 	foreach ($this->methods as $method) {
-	    remove_configure('MODULE_' . strtoupper($this->module) . '_' . strtoupper($method->id) . '_STATUS');
+	    remove_configure('MODULE_' . strtoupper($this->id) . '_' . strtoupper($method->id) . '_STATUS');
 	    foreach ($method->keys() as $key) remove_configure($key['key']);
 	    if (method_exists($method, 'remove')) $method->remove();
 	}
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_num");
 	if (db_field_exists(TABLE_CURRENT_STATUS, 'next_shipment_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_shipment_desc");
-	return $error;
+	parent::remove();
   }
 
 }

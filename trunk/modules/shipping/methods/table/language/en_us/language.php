@@ -26,7 +26,4 @@ define('MODULE_SHIPPING_TABLE_COST_DESC', 'The shipping cost is based on the tot
 define('MODULE_SHIPPING_TABLE_MODE_DESC', 'The shipping cost is based on the order total or the total weight of the items ordered.');
 // Shipping Methods
 define('table_GND', 'Table Rate');
-
-define('SHIPPING_TABLE_SHIPMENTS_ON','Table Rate Shipments on ');
-
 ?>

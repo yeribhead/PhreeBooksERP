@@ -23,6 +23,4 @@ define('table_2Dpm','Koerier');
 define('table_3Dpm','Zender Betaald Voordelig');
 define('table_GND','Locale Levering');
 define('table_GDR','Klant haald op');
-define('SHIPPING_TABLE_SHIPMENTS_ON','Tabel Tarief Verzendingen op');
-
 ?>

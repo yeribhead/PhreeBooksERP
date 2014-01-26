@@ -37,10 +37,10 @@ echo $toolbar->build_toolbar($add_search = false, false, $cal_ship);
 <div class="easyui-tabs" id="shippingtabs">
  
 <?php
-  foreach ($installed_modules as $value) {
-    $method_id = $value['id'];
-	echo '<div title="'.$value['text'].'" id="tab_' . $method_id . '">' . chr(10);
-	include_once(DIR_FS_MODULES . 'shipping/methods/' . $method_id . '/ship_mgr.php');
+  foreach ($admin_classes['shipping']->methods as $method) {
+  	if (!$method->installed) continue;
+	echo '<div title="'.$method->text.'" id="tab_' . $method->id . '">' . chr(10);
+	include_once(DIR_FS_MODULES . 'shipping/methods/' . $method->id . '/ship_mgr.php');
 	echo '</div>' . chr(10);
   }
 ?>

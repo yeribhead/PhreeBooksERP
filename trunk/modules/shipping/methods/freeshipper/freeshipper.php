@@ -29,10 +29,6 @@ class freeshipper extends \shipping\classes\shipping {
   	public $version			= 3.2;
   	public $shipping_cost	= 0.00;
   	public $handling_cost	= 1.00;
-  	
-  	function __construct() {
-    	parent::__construct();
-  	}
 
 	function quote($pkg = '') {
     	global $shipping_defaults;

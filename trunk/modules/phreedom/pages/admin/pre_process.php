@@ -37,22 +37,6 @@ if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 7);
   $_REQUEST['action'] = 'remove';
 }
-$install   = new \phreedom\classes\admin();
-$currency  = new \phreedom\classes\currency();
-// load other module admin information
-$page_list = array();
-if ($dir = @dir(DIR_FS_MODULES)) {
-  while ($file = $dir->read()) {
-    if (is_dir(DIR_FS_MODULES . $file) && $file <> '.' && $file <> '..') {
-	  if (file_exists(DIR_FS_MODULES . $file . '/config.php') && $file <> 'phreedom') {
-		gen_pull_language($file, 'admin');
-		$page_list[$file] = constant('MODULE_' . strtoupper($file) . '_TITLE');
-	  }
-    }
-  }
-  $dir->close();
-}
-asort($page_list);
 // load the current statuses
 $status_fields = array();
 $result = $db->Execute("show fields from " . TABLE_CURRENT_STATUS);
@@ -74,30 +58,28 @@ switch ($_REQUEST['action']) {
 	gen_pull_language($method, 'admin');
 	gen_pull_language($method);
 	require_once(DIR_FS_MODULES . $method . '/config.php'); // config is not loaded yet since module is not installed.
-	$cName = "\\$method\classes\admin";
-	$mInstall = new $cName();
 	if ($_REQUEST['action'] == 'install') {
-	  if (admin_check_versions($method, $mInstall->prerequisites)) { // Check for version levels
+	  if (admin_check_versions($method, $admin_classes[$method]->prerequisites)) { // Check for version levels
 	    $error = true;
-	  } elseif (admin_install_dirs($mInstall->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
+	  } elseif (admin_install_dirs($admin_classes[$method]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
 	    $error = true;
-	  } elseif (admin_install_tables($mInstall->tables)) { // Create the tables
+	  } elseif (admin_install_tables($admin_classes[$method]->tables)) { // Create the tables
 	    $error = true; 
 	  } else {
 	    // Load the installed module version into db
 	    write_configure('MODULE_' . strtoupper($method) . '_STATUS', constant('MODULE_' . strtoupper($method) . '_VERSION'));
 	    // Load the remaining configuration constants
-	    foreach ($mInstall->keys as $key => $value) write_configure($key, $value);
-	    if ($demo) $error = $mInstall->load_demo(); // load demo data
-		$mInstall->load_reports($method);
+	    foreach ($admin_classes[$method]->keys as $key => $value) write_configure($key, $value);
+	    if ($demo) $error = $admin_classes[$method]->load_demo(); // load demo data
+		$admin_classes[$method]->load_reports($method);
 		admin_add_reports($method);
 	  }
-	  if ($mInstall->install($method)) $error = true; // install any special stuff
+	  if ($admin_classes[$method]->install($method)) $error = true; // install any special stuff
 	} else {
-	  if ($mInstall->update($method)) $error = true;
+	  if ($admin_classes[$method]->update($method)) $error = true;
 	}
 	if ($error) break; 
-	if (sizeof($mInstall->notes) > 0) foreach ($mInstall->notes as $note) $messageStack->add($note, 'caution');
+	if (sizeof($admin_classes[$method]->notes) > 0) foreach ($admin_classes[$method]->notes as $note) $messageStack->add($note, 'caution');
 	gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $method) . (($_REQUEST['action'] == 'install') ? TEXT_INSTALL : TEXT_UPDATE), constant('MODULE_' . strtoupper($method) . '_VERSION'));
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
@@ -108,25 +90,23 @@ switch ($_REQUEST['action']) {
 	  $messageStack->add(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method),'error');
 	  break;
 	}
-	$cName = "\\$method\classes\admin";
-	$mInstall = new $cName();
-	foreach ($mInstall->keys as $key => $value) remove_configure($key);
+	foreach ($admin_classes[$method]->keys as $key => $value) remove_configure($key);
 	remove_configure('MODULE_' . strtoupper($method) . '_STATUS');
-	if (admin_remove_tables(array_keys($mInstall->tables))) $error = true;
-	if (admin_remove_dirs($mInstall->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) $error = true;
-	if ($mInstall->remove($method)) $error = true;
+	if (admin_remove_tables(array_keys($admin_classes[$method]->tables))) $error = true;
+	if (admin_remove_dirs($admin_classes[$method]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) $error = true;
+	if ($admin_classes[$method]->remove($method)) $error = true;
 	gen_add_audit_log(sprintf(AUDIT_LOG_REMOVE_SUCCESS, $method));
 	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
 	break;
   case 'save':
   	validate_security($security_level, 3);
 	// save general tab
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['phreedom']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, db_prepare_input($_POST[$field]));
 	  // special case for field COMPANY_NAME to update company config file
 	  if ($key == 'COMPANY_NAME' && $_POST[$field] <> COMPANY_NAME) {
-	    if (!install_build_co_config_file($_SESSION['company'], $_SESSION['company'] . '_TITLE', db_prepare_input($_POST[$field]))) $error = true;
+	    if (!install_build_co_config_file($_SESSION['company'], $_SESSION['company'] . '_TITLE', db_prepare_input($_POST[$field]))) $error = true;//@todo throw error
 	  }
     }
 	$messageStack->add(GENERAL_CONFIG_SAVED,'success');
@@ -173,42 +153,39 @@ switch ($_REQUEST['action']) {
     $backup->source_dir  = DIR_FS_MY_FILES . $db_name . '/temp/';
     $backup->source_file = 'temp.sql';
 	if (!$error) {
-	  foreach ($copy_modules as $entry) gen_pull_language($entry, 'admin');
 	  foreach ($copy_modules as $entry) {
-		$classname   = "\\$entry\classes\admin";
-		$install_mod = new $classname;
+	  	gen_pull_language($entry, 'admin');
 	    $task        = $_POST[$entry . '_action']; 
 		if ($entry == 'phreedom') $task = 'data'; // force complete copy of phreedom module
 	    switch ($task) {
 		  case 'core':
 		  case 'demo':
-			if (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES . $db_name . '/')) {
+			if (admin_install_dirs($admin_classes[$entry]->dirlist, DIR_FS_MY_FILES . $db_name . '/')) {
 			  $error = true;
-			} elseif (admin_install_tables($install_mod->tables)) { // Create the tables
+			} elseif (admin_install_tables($admin_classes[$entry]->tables)) { // Create the tables
 			  $error = true; 
 			} else {
 			  // Load the installed module version into db
 			  write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			  // Load the remaining configuration constants
-			  foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			  if ($task == 'demo') if ($install_mod->load_demo()) $error = true; // load demo data
-			  if ($entry <> 'phreedom') $install_mod->load_reports($entry);
+			  foreach ($admin_classes[$entry]->keys as $key => $value) write_configure($key, $value);
+			  if ($task == 'demo') if ($admin_classes[$entry]->load_demo()) $error = true; // load demo data
+			  if ($entry <> 'phreedom') $admin_classes[$entry]->load_reports($entry);
 			  if ($entry == 'phreeform') {
-			  	$temp_mod = new \phreedom\classes\admin;
-	  			$temp_mod->load_reports('phreedom');
+	  			$admin_classes['phreedom']->load_reports('phreedom');
 			  }
 			}
-			if ($install_mod->install($entry)) $error = true; // install any special stuff
+			if ($admin_classes[$entry]->install($entry)) $error = true; // install any special stuff
 			if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
 		    break;
 		  default:
 		  case 'data':
 			$table_list = array();
-		    if (is_array($install_mod->tables)) {
-			  foreach ($install_mod->tables as $table => $create_sql) $table_list[] = $table;
+		    if (is_array($admin_classes[$entry]->tables)) {
+			  foreach ($admin_classes[$entry]->tables as $table => $create_sql) $table_list[] = $table;
 			  $backup->copy_db_table($db_orig, $table_list, $type = 'both', $params = '');
 	  		}
-			if (is_array($install_mod->dirlist)) foreach($install_mod->dirlist as $source_dir) {
+			if (is_array($admin_classes[$entry]->dirlist)) foreach($admin_classes[$entry]->dirlist as $source_dir) {
 		      $dir_source = DIR_FS_MY_FILES . $_SESSION['company'] . '/' . $source_dir . '/';
 		      $dir_dest   = DIR_FS_MY_FILES . $db_name             . '/' . $source_dir . '/';
 			  @mkdir(DIR_FS_MY_FILES . $db_name . '/' . $source_dir);

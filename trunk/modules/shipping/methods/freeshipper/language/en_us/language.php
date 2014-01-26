@@ -29,7 +29,4 @@ define('freeshipper_2Dpm',  'Courier');
 define('freeshipper_3Dpm',  'Sender Paid Economy');
 define('freeshipper_GND',   'Local Delivery');
 define('freeshipper_GDR',   'Customer Pickup');
-
-define('SHIPPING_FREESHIPPER_SHIPMENTS_ON','Free Shipping Shipments on ');
-
 ?>

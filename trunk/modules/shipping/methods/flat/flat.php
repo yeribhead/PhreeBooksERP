@@ -28,10 +28,6 @@ class flat extends \shipping\classes\shipping {
   	public $sort_order		= 20;
   	public $version			= 3.2;
   	public $shipping_cost	= 5.00;
-	 
-  	function __construct() {
-  		parent::__construct();
-    }
 
   	function quote($pkg = '') {
     	global $shipping_defaults;

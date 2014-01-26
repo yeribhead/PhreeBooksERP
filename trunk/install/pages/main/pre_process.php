@@ -217,34 +217,31 @@ switch ($_REQUEST['action']) {
 	  		if ($entry <> '.' && $entry <> '..' && is_dir(DIR_FS_MODULES . $entry)) {
 	  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 	  				$error = false;
-	  				$classname   = "\\$entry\classes\admin";;
-	  				$install_mod = new $classname;
-			    	if (admin_check_versions($entry, $install_mod->prerequisites)) {
+			    	if (admin_check_versions($entry, $admin_classes[$entry]->prerequisites)) {
 			    		// Check for version levels
 			    		$error = true;
-			    	} elseif (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
+			    	} elseif (admin_install_dirs($admin_classes[$entry]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
 			    		$error = true;
-			    	} elseif (admin_install_tables($install_mod->tables)) {
+			    	} elseif (admin_install_tables($admin_classes[$entry]->tables)) {
 				    	// Create the tables
 			    		$error = true;
 				    } else {
 				    	// Load the installed module version into db
 			    		write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			    		// Load the remaining configuration constants
-			    		foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			    		if ($company_demo) if ($install_mod->load_demo()) $error = true; // load demo data
-			    		if ($entry <> 'phreedom') $install_mod->load_reports($entry);
+			    		foreach ($admin_classes[$entry]->keys as $key => $value) write_configure($key, $value);
+			    		if ($company_demo) if ($admin_classes[$entry]->load_demo()) $error = true; // load demo data
+			    		if ($entry <> 'phreedom') $admin_classes[$entry]->load_reports($entry);
 			    	}
-			    	if ($install_mod->install($entry)) $error = true; // install any special stuff
+			    	if ($admin_classes[$entry]->install($entry)) $error = true; // install any special stuff
 			    	if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
-			    	if (sizeof($install_mod->notes) > 0) $params = array_merge($params, $install_mod->notes);
+			    	if (sizeof($admin_classes[$entry]->notes) > 0) $params = array_merge($params, $admin_classes[$entry]->notes);
 	  			}
 	  		}
 	  	}
 		// load phreedom reports now since table exists
 	  	if (DEBUG) $messageStack->debug("\n  installing phreedom.");
-	  	$install_mod = new \phreedom\classes\admin;
-	  	$install_mod->load_reports('phreedom');
+	  	$admin_classes['phreedom']->load_reports('phreedom');
 	  	if ($error) {
 	  		$messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $module), 'error');
 	  	} else { // load all other modules and execute install script
@@ -255,28 +252,26 @@ switch ($_REQUEST['action']) {
 		  			if (DEBUG) $messageStack->debug("\n  installing additional module = " . $entry);
 		  			if (file_exists(DIR_FS_MODULES . $entry . '/config.php')) {
 				    	$error = false;
-			    		$classname   = $entry . '\classes\admin';
-			    		$install_mod = new $classname;
-			    		if (admin_check_versions($entry, $install_mod->prerequisites)) {
+			    		if (admin_check_versions($entry, $admin_classes[$entry]->prerequisites)) {
 			    			// Check for version levels
 			    			$error = true;
-			    		} elseif (admin_install_dirs($install_mod->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
+			    		} elseif (admin_install_dirs($admin_classes[$entry]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
 			    			// Create any new directories
 			    			$error = true;
-			    		} elseif (admin_install_tables($install_mod->tables)) {
+			    		} elseif (admin_install_tables($admin_classes[$entry]->tables)) {
 			    			// Create the tables
 			    			$error = true;
 			    		} else {
 			    			// Load the installed module version into db
 			    			write_configure('MODULE_' . strtoupper($entry) . '_STATUS', constant('MODULE_' . strtoupper($entry) . '_VERSION'));
 			    			// 	Load the remaining configuration constants
-			    			foreach ($install_mod->keys as $key => $value) write_configure($key, $value);
-			    			if ($company_demo) if ($install_mod->load_demo()) $error = true; // load demo data
-			    			$install_mod->load_reports($entry);
+			    			foreach ($admin_classes[$entry]->keys as $key => $value) write_configure($key, $value);
+			    			if ($company_demo) if ($admin_classes[$entry]->load_demo()) $error = true; // load demo data
+			    			$admin_classes[$entry]->load_reports($entry);
 			    		}
-			    		if ($install_mod->install($entry)) $error = true; // install any special stuff
+			    		if ($admin_classes[$entry]->install($entry)) $error = true; // install any special stuff
 			    		if ($error) $messageStack->add(sprintf(MSG_ERROR_MODULE_INSTALL, $entry), 'error');
-			    		if (sizeof($install_mod->notes) > 0) $params = array_merge($params, $install_mod->notes);
+			    		if (sizeof($admin_classes[$entry]->notes) > 0) $params = array_merge($params, $admin_classes[$entry]->notes);
 	  				}
 			  	}
 	  	  	}

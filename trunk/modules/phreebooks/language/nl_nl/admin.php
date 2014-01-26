@@ -9,7 +9,7 @@
 // Path: /modules/phreebooks/language/nl_nl/admin.php
 
 define('MODULE_PHREEBOOKS_TITLE','PhreeBooks Module');
-define('MODULE_PHREEBOOKS_DESCRIPTION','De phreebooks module biedt dubbele invoer boekhouden. De functies omvatten Inkooporders, Verkooporders, facturering, Journaalposten en nog veel meer. <b> LET OP: Dit is een core module en dient niet te worden verwijderd </ b>!');
+define('MODULE_PHREEBOOKS_DESCRIPTION','De phreebooks module biedt dubbele invoer boekhouden.<br>De functies omvatten Inkooporders, Verkooporders, facturering, Journaalposten en nog veel meer.');
 define('MODULE_PHREEBOOKS_NOTES_1','MEDIUM BELANGRIJK: Voer bedrijfsinformatie in (Bedrijf -> Module Administratie -> Mijn Bedrijf tabblad)');
 define('MODULE_PHREEBOOKS_NOTES_2','MINST BELANGRIJK: Set up mail server instellingen (Bedrijf -> Module Administratie -> Email tabblad)');
 define('MODULE_PHREEBOOKS_NOTES_3','HEEL BELANGRIJK: Verander de standaard grootboekrekeningen of importeer nieuwe (Bedrijf -> Module Administratie -> PhreeBooks Module -> Grootboekrekeningen tabblad)');

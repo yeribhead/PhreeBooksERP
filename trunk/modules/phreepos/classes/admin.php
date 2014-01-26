@@ -18,7 +18,9 @@
 //
 namespace phreepos\classes;
 class admin extends \core\classes\admin {
-	public $module			= 'phreepos';
+	public $id 			= 'phreepos';
+	public $text		= MODULE_PHREEPOS_TITLE;
+	public $description = MODULE_PHREEPOS_DESCRIPTION;
 	
   function __construct(){
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -77,13 +79,6 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install() {
-    global $db;
-	$error = false;
-//	$this->notes[] = MODULE_PHREEPOS_NOTES_1;
-    return $error;
-  }
-
   function update() {
     global $db, $messageStack;
 	$error = false;
@@ -121,38 +116,28 @@ class admin extends \core\classes\admin {
 	}
 	foreach ($this->tables as $table => $sql) {
 	  if ($table == TABLE_PHREEPOS_OTHER_TRANSACTIONS) admin_install_tables(array($table => $sql));
-		
 	}
 	if (!db_field_exists(TABLE_PHREEPOS_TILLS, 'tax_id')) $db->Execute("ALTER TABLE " . TABLE_PHREEPOS_TILLS . " ADD tax_id INT(11) default '-1' AFTER max_discount");
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 
   function remove() {
     global $db;
-    $error = false;
     // Don't allow delete if there is activity
 	$sql = "select id from " . TABLE_JOURNAL_MAIN . " where journal_id = '19'";
 	$result = $db->Execute($sql);
-	if ($result->RecordCount() <> 0 ) {
-	  $messageStack->add(ERROR_CANT_DELETE, 'error');
-	  return true;
-	}
+	if ($result->RecordCount() <> 0 ) throw new Exception(ERROR_CANT_DELETE);
     foreach ($this->tables as $table => $sql) {
 		  admin_remove_tables(array($table => $sql));
     }
-    return $error;
+    parent::remove();
   }
 
   function load_reports() {
-	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_PHREEPOS, 'pos');
-	if (admin_add_report_folder($id, TEXT_REPORTS,        'pos',      'fr')) $error = true;
-	if (admin_add_report_folder($id, TEXT_RECEIPTS,       'pos:rcpt', 'ff')) $error = true;
-	return $error;
+	admin_add_report_folder($id, TEXT_REPORTS,        'pos',      'fr');
+	admin_add_report_folder($id, TEXT_RECEIPTS,       'pos:rcpt', 'ff');
+	parent::load_reports();
   }
   
 }

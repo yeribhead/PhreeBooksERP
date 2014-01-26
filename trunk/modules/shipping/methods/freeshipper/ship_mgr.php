@@ -18,11 +18,11 @@
 //  Path: /modules/shipping/methods/freeshipper/ship_mgr.php
 //
 ?>
-<h1><?php echo constant('MODULE_SHIPPING_' . strtoupper($method_id) . '_TEXT_TITLE'); ?></h1>
+<h1><?php echo $method->text; ?></h1>
 <table class="ui-widget" style="border-collapse:collapse;width:100%">
  <thead class="ui-widget-header">
   <tr>
-    <th colspan="8"><?php echo SHIPPING_FREESHIPPER_SHIPMENTS_ON . gen_locale_date($date); ?></th>
+    <th colspan="8"><?php echo TEXT_SHIPMENTS_ON . gen_locale_date($date); ?></th>
   </tr>
   <tr>
 	<th><?php echo SHIPPING_TEXT_SHIPMENT_ID; ?></th>

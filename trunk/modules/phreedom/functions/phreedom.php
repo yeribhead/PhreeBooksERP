@@ -203,8 +203,7 @@ function admin_add_report_heading($doc_title, $doc_group) {
 
 function admin_add_report_folder($parent_id, $doc_title, $doc_group, $doc_ext) {
   global $db;
-  $error = false;
-  if ($parent_id == '') return true;
+  if ($parent_id == '') throw new \Exception("parent_id isn't set for document $doc_title");
   $result = $db->Execute("select id from ".TABLE_PHREEFORM." where doc_group = '$doc_group' and doc_ext = '$doc_ext'");
   if ($result->RecordCount() < 1) {
     $db->Execute("INSERT INTO ".TABLE_PHREEFORM." (parent_id, doc_type, doc_title, doc_group, doc_ext, security, create_date) VALUES 
@@ -213,7 +212,6 @@ function admin_add_report_folder($parent_id, $doc_title, $doc_group, $doc_ext) {
   } else {
     $id = $result->fields['id'];
   }
-  return $error;
 }
 
 function admin_add_reports($module, $save_path = PF_DIR_MY_REPORTS) {

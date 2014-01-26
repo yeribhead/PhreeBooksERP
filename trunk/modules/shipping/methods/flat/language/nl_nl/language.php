@@ -17,6 +17,4 @@ define('flat_2Dpm','Koerier');
 define('flat_3Dpm','Zender betaald voordelig');
 define('flat_GND','Locale levering');
 define('flat_GDR','Klant haalt op');
-define('SHIPPING_FLAT_SHIPMENTS_ON','Vast Tarief Verzendingen op ');
-
 ?>

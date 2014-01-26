@@ -18,12 +18,10 @@
 //
 namespace contacts\classes;
 class admin extends \core\classes\admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	public $module 			= 'contacts';
+	public $id 			= 'contacts';
+	public $text		= MODULE_CONTACTS_TITLE;
+	public $description = MODULE_CONTACTS_DESCRIPTION;
+	public $core		= true;
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -145,17 +143,15 @@ class admin extends \core\classes\admin {
 
   function install() {
     global $db;
-	$error = false;
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_cust_id_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " ADD next_cust_id_num VARCHAR( 16 ) NOT NULL DEFAULT 'C10000';");
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_vend_id_num')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " ADD next_vend_id_num VARCHAR( 16 ) NOT NULL DEFAULT 'V10000';");
 	require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');
 	xtra_field_sync_list('contacts', TABLE_CONTACTS);
-    return $error;
+    parent::install();
   }
 
   function update() {
     global $db, $messageStack;
-	$error = false;
     if (MODULE_CONTACTS_STATUS < 3.3) {
 	  $db->Execute("ALTER TABLE " . TABLE_CONTACTS . " CHANGE short_name short_name VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT ''");
 	  if (!db_table_exists(TABLE_CONTACTS_LOG)) {
@@ -197,40 +193,32 @@ class admin extends \core\classes\admin {
     if (MODULE_CONTACTS_STATUS < 3.7) {
       if (!db_field_exists(TABLE_CONTACTS_LOG, 'entered_by')) $db->Execute("ALTER TABLE " . TABLE_CONTACTS_LOG . " ADD entered_by INT(11) NOT NULL DEFAULT '0' AFTER contact_id");
     }
-
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 
   function remove() {
     global $db, $messageStack;
-	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_cust_id_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_cust_id_num");
 	if (db_field_exists(TABLE_CURRENT_STATUS, 'next_cust_id_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_cust_id_desc");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_vend_id_num'))  $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_vend_id_num");
 	if (db_field_exists(TABLE_CURRENT_STATUS, 'next_vend_id_desc')) $db->Execute("ALTER TABLE " . TABLE_CURRENT_STATUS . " DROP next_vend_id_desc");
 	$db->Execute("delete from " . TABLE_EXTRA_FIELDS . " where module_id = 'contacts'");
 	$db->Execute("delete from " . TABLE_EXTRA_TABS   . " where module_id = 'contacts'");
-    return $error;
+    parent::remove();
   }
 
   function load_reports() {
-	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_CUSTOMERS,   'cust');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'cust', 'fr')) $error = true;
+	admin_add_report_folder($id, TEXT_REPORTS,           'cust', 'fr');
 	$id = admin_add_report_heading(MENU_HEADING_EMPLOYEES,   'hr');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'hr',   'fr')) $error = true;
+	admin_add_report_folder($id, TEXT_REPORTS,           'hr',   'fr');
 	$id = admin_add_report_heading(MENU_HEADING_VENDORS,     'vend');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'vend', 'fr')) $error = true;
-	return $error;
+	admin_add_report_folder($id, TEXT_REPORTS,           'vend', 'fr');
+	parent::load_reports();
   }
 
   function load_demo() {
     global $db;
-	$error = false;
 	// Data for table `address_book`
 	$db->Execute("TRUNCATE TABLE " . TABLE_ADDRESS_BOOK);
 	$db->Execute("INSERT INTO " . TABLE_ADDRESS_BOOK . " VALUES (1, 1, 'vm', 'Obscure Video', '', '1354 Triple A Ave', '', 'Chatsworth', 'CA', '93245', 'USA', '800.345.5678', '', '', '', 'obsvid@obscurevideo.com', '', '');");
@@ -282,7 +270,7 @@ class admin extends \core\classes\admin {
 	$db->Execute("INSERT INTO " . TABLE_DEPT_TYPES . " VALUES (2, 'Sales and Marketing');");
 	$db->Execute("INSERT INTO " . TABLE_DEPT_TYPES . " VALUES (3, 'Manufacturing');");
 	$db->Execute("INSERT INTO " . TABLE_DEPT_TYPES . " VALUES (4, 'Shipping & Receiving');");
-	return $error;
+	parent::load_demo();
   }
 
 }

@@ -30,12 +30,11 @@ $message = '';
 
 switch ($_REQUEST['action']) {
   case 'form':
-	$template= $_GET['template'];
-	if (file_exists($mod_dir . $method.'/'.$template.'.php')) {
-	  require_once($mod_dir . $method.'/'.$template.'.php');
-	  foreach ($output as $key => $value) $xml .= xmlEntry($key, $value);
-	} else {
-	  $xml .= xmlEntry('message', 'Error locating file: '.$mod_dir.$method.'/'.$template.'.php to load template!');
+	$template = $_GET['template'];
+	$name = '\shipping\methods\\'.$template;
+	$class = new $name;
+	foreach (get_object_vars($class) as $key => $value) {
+    	$xml .= xmlEntry($key, $value);
 	}
 	break;
   case 'tracking':

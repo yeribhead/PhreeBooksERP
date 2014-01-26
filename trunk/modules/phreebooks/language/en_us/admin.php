@@ -19,7 +19,7 @@
 
 // Module information
 define('MODULE_PHREEBOOKS_TITLE','PhreeBooks Module');
-define('MODULE_PHREEBOOKS_DESCRIPTION','The phreebooks module provides double entry accounting. Functions include Purchase Orders, Sales Orders, Invoicing, Journal Entries and more. <b>NOTE: This is a core module and should not be removed!</b>');
+define('MODULE_PHREEBOOKS_DESCRIPTION','The phreebooks module provides double entry accounting.<br>Functions include Purchase Orders, Sales Orders, Invoicing, Journal Entries and more.');
 // Headings
 // Installation
 define('MODULE_PHREEBOOKS_NOTES_1','PRIORITY MEDIUM: Enter company information (Company -> Module Administration -> My Company tab)');

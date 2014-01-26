@@ -30,8 +30,7 @@
 	 </thead>
 	 <tbody class="ui-widget-content">
 	  <?php 
-	  
-	if (sizeof($install->methods) > 0) foreach ($install->methods as $method) {
+	if (sizeof($admin_classes['shipping']->methods) > 0) foreach ($admin_classes['shipping']->methods as $method) {
 		$bkgnd = $method->installed? ' class="ui-state-active"' : '';
 		if (file_exists(DIR_WS_MODULES . 'shipping/methods/' . $method->id . '/images/logo.png')) {
 			$logo = DIR_WS_MODULES . 'shipping/methods/' . $method->id . '/images/logo.png';
@@ -44,7 +43,7 @@
 		}
 		echo '      <tr>' . chr(10);
 		echo '        <td>' . html_image($logo, $method->text, $width = '', $height = '32', $params = '') . '</td>' . chr(10);
-		echo '        <td' . $bkgnd . '>' . $method->title . ' - ' . $method->description . '</td>' . chr(10);
+		echo '        <td' . $bkgnd . '>' . $method->text . ' - ' . $method->description . '</td>' . chr(10);
 		if (!$method->installed) {
 	      	echo '        <td align="center">&nbsp;</td>' . chr(10);
 		  	if ($security_level > 1) echo '        <td align="center">' . html_button_field('btn_' . $method->id, TEXT_INSTALL, 'onclick="submitToDo(\'install_' . $method->id . '\')"') . '</td>' . chr(10);

@@ -60,7 +60,11 @@ class shipping {
   	 * @param unknown_type $key
   	 */
   	function configure($key) {
+  		global $currencies;
     	switch ($key) {
+    		case 'MODULE_SHIPPING_'.strtoupper($this->id).'_COST':
+    		case 'MODULE_SHIPPING_'.strtoupper($this->id).'_HANDLING':
+    			return html_input_field(strtolower($key), $currencies->format( constant($key)));	
         	default:
                 return html_input_field(strtolower($key), constant($key));
     	}
@@ -78,5 +82,6 @@ class shipping {
                 return constant('MODULE_SHIPPING_'.strtoupper($this->id).'_SORT_ORDER');
         }
   	}
+
 }
 ?>

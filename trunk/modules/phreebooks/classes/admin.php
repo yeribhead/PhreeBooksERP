@@ -18,12 +18,10 @@
 //
 namespace phreebooks\classes;
 class admin extends \core\classes\admin {
-	public $notes 			= array();// placeholder for any operational notes
-	public $prerequisites 	= array();// modules required and rev level for this module to work properly
-	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
-	public $dirlist			= array();// add new directories to store images and data
-	public $tables			= array();// Load tables
-	public $module 			= 'phreebooks';
+	public $id 			= 'phreebooks';
+	public $text		= MODULE_PHREEBOOKS_TITLE;
+	public $description = MODULE_PHREEBOOKS_DESCRIPTION;
+	public $core		= true;
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -266,8 +264,7 @@ class admin extends \core\classes\admin {
   }
 
   function install() {
-    global $db, $messageStack;
-	$error = false;
+    global $db;
 	// load some current status values
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_po_num'))       $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." ADD next_po_num VARCHAR( 16 ) NOT NULL DEFAULT '5000';");
 	if (!db_field_exists(TABLE_CURRENT_STATUS, 'next_so_num'))       $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." ADD next_so_num VARCHAR( 16 ) NOT NULL DEFAULT '10000';");
@@ -287,7 +284,7 @@ class admin extends \core\classes\admin {
 	$this->notes[] = MODULE_PHREEBOOKS_NOTES_2;
 	$this->notes[] = MODULE_PHREEBOOKS_NOTES_3;
 	$this->notes[] = MODULE_PHREEBOOKS_NOTES_4;
-    return $error;
+    parent::install();
   }
 
   function initialize() {
@@ -295,30 +292,28 @@ class admin extends \core\classes\admin {
 	  require_once(DIR_FS_MODULES . 'phreebooks/functions/phreebooks.php');
 	  gen_auto_update_period();
 	}
+	parent::initialize();
   }
 
   function update() {
-    global $db, $messageStack;
-	$error = false;
+    global $db;
 	$db_version = defined('MODULE_PHREEBOOKS_STATUS') ? MODULE_PHREEBOOKS_STATUS : false;
 	if (!$db_version || $db_version < 2.1 || $db_version < '2.1') { // For PhreeBooks release 2.1 or lower to update to Phreedom structure
 	  require(DIR_FS_MODULES . 'phreebooks/functions/updater.php');
 	  if(db_table_exists(TABLE_PROJECT_VERSION)){
 		  $result = $db->Execute("select * from " . TABLE_PROJECT_VERSION . " WHERE project_version_key = 'PhreeBooks Database'");
 		  $db_version = $result->fields['project_version_major'] . '.' . $result->fields['project_version_minor'];
-		  if ($db_version < 2.1) $error = execute_upgrade($db_version);
+		  if ($db_version < 2.1) execute_upgrade($db_version);
 		  $db_version = 2.1;
 	  }
 	}
 	if ($db_version == 2.1 || $db_version == '2.1') {
-	  $db_version = $this->release_update($this->module, 3.0, DIR_FS_MODULES . 'phreebooks/updates/R21toR30.php');
-	  if (!$db_version) return true;
+	  $db_version = $this->release_update($this->id, 3.0, DIR_FS_MODULES . 'phreebooks/updates/R21toR30.php');
       // remove table project_version, no longer needed
-      if (!$error) $db->Execute("DROP TABLE " . TABLE_PROJECT_VERSION);
+      $db->Execute("DROP TABLE " . TABLE_PROJECT_VERSION);
 	}
 	if ($db_version == 3.0 || $db_version == '3.0') {
-	  $db_version = $this->release_update($this->module, 3.1, DIR_FS_MODULES . 'phreebooks/updates/R30toR31.php');
-	  if (!$db_version) return true;
+	  $db_version = $this->release_update($this->id, 3.1, DIR_FS_MODULES . 'phreebooks/updates/R30toR31.php');
 	}
 	if ($db_version == 3.1 || $db_version == '3.1') {
 	  if (!file_exists($path . $dir)) mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/phreebooks/orders/', 0755, true);
@@ -352,16 +347,11 @@ class admin extends \core\classes\admin {
 		}
 		if (!db_field_exists(TABLE_JOURNAL_ITEM, 'purch_package_quantity')) $db->Execute("ALTER TABLE ".TABLE_JOURNAL_ITEM." ADD purch_package_quantity float default NULL AFTER project_id");
 	}
-	if (!$error) {
-	  write_configure('MODULE_'.strtoupper($this->module).'_STATUS', constant('MODULE_'.strtoupper($this->module).'_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_'.strtoupper($this->module).'_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 
   function remove() {
     global $db;
-	$error = false;
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_po_num'))       $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_po_num");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_so_num'))       $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_so_num");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_inv_num'))      $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_inv_num");
@@ -371,40 +361,38 @@ class admin extends \core\classes\admin {
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_vcm_num'))      $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_vcm_num");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_ap_quote_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_ap_quote_num");
     if (db_field_exists(TABLE_CURRENT_STATUS, 'next_ar_quote_num')) $db->Execute("ALTER TABLE ".TABLE_CURRENT_STATUS." DROP next_ar_quote_num");
-    return $error;
+    parent::remove();
   }
 
   function load_reports() {
-	$error = false;
 	$id = admin_add_report_heading(MENU_HEADING_CUSTOMERS,   'cust');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'cust',      'fr')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_CUST_QUOTE,       'cust:quot', 'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_SALES_ORDER,      'cust:so',   'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_INV_PKG_SLIP,     'cust:inv',  'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_CUST_CRD_MEMO,    'cust:cm',   'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_CUST_STATEMENT,   'cust:stmt', 'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_COLLECT_LTR,      'cust:col',  'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_CUST_LABEL,       'cust:lblc', 'ff')) $error = true;
+	admin_add_report_folder($id, TEXT_REPORTS,           'cust',      'fr');
+	admin_add_report_folder($id, PB_PF_CUST_QUOTE,       'cust:quot', 'ff');
+	admin_add_report_folder($id, PB_PF_SALES_ORDER,      'cust:so',   'ff');
+	admin_add_report_folder($id, PB_PF_INV_PKG_SLIP,     'cust:inv',  'ff');
+	admin_add_report_folder($id, PB_PF_CUST_CRD_MEMO,    'cust:cm',   'ff');
+	admin_add_report_folder($id, PB_PF_CUST_STATEMENT,   'cust:stmt', 'ff');
+	admin_add_report_folder($id, PB_PF_COLLECT_LTR,      'cust:col',  'ff');
+	admin_add_report_folder($id, PB_PF_CUST_LABEL,       'cust:lblc', 'ff');
 	$id = admin_add_report_heading(MENU_HEADING_VENDORS,     'vend');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'vend',      'fr')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_VENDOR_QUOTE,     'vend:quot', 'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_PURCH_ORDER,      'vend:po',   'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_VENDOR_CRD_MEMO,  'vend:cm',   'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_VENDOR_LABEL,     'vend:lblv', 'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_VENDOR_STATEMENT, 'vend:stmt', 'ff')) $error = true;
+	admin_add_report_folder($id, TEXT_REPORTS,           'vend',      'fr');
+	admin_add_report_folder($id, PB_PF_VENDOR_QUOTE,     'vend:quot', 'ff');
+	admin_add_report_folder($id, PB_PF_PURCH_ORDER,      'vend:po',   'ff');
+	admin_add_report_folder($id, PB_PF_VENDOR_CRD_MEMO,  'vend:cm',   'ff');
+	admin_add_report_folder($id, PB_PF_VENDOR_LABEL,     'vend:lblv', 'ff');
+	admin_add_report_folder($id, PB_PF_VENDOR_STATEMENT, 'vend:stmt', 'ff');
 	$id = admin_add_report_heading(MENU_HEADING_BANKING,     'bnk');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'bnk',       'fr')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_DEP_SLIP,         'bnk:deps',  'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_BANK_CHECK,       'bnk:chk',   'ff')) $error = true;
-	if (admin_add_report_folder($id, PB_PF_SALES_REC,        'bnk:rcpt',  'ff')) $error = true;
+	admin_add_report_folder($id, TEXT_REPORTS,           'bnk',       'fr');
+	admin_add_report_folder($id, PB_PF_DEP_SLIP,         'bnk:deps',  'ff');
+	admin_add_report_folder($id, PB_PF_BANK_CHECK,       'bnk:chk',   'ff');
+	admin_add_report_folder($id, PB_PF_SALES_REC,        'bnk:rcpt',  'ff');
 	$id = admin_add_report_heading(MENU_HEADING_GL,          'gl');
-	if (admin_add_report_folder($id, TEXT_REPORTS,           'gl',        'fr')) $error = true;
-	return $error;
+	admin_add_report_folder($id, TEXT_REPORTS,           'gl',        'fr');
+	parent::load_reports();
   }
 
   function load_demo() {
     global $db;
-	$error = false;
 	// Data for table `tax_authorities`
 	$db->Execute("TRUNCATE TABLE " . TABLE_TAX_AUTH);
 	$db->Execute("INSERT INTO " . TABLE_TAX_AUTH . " VALUES (1, 'c', 'City Tax', 'City Tax on Taxable Items', '2312', 0, 2.5);");
@@ -414,7 +402,7 @@ class admin extends \core\classes\admin {
 	$db->Execute("TRUNCATE TABLE " . TABLE_TAX_RATES);
 	$db->Execute("INSERT INTO " . TABLE_TAX_RATES . " VALUES (1, 'c', 'Local Tax', 'Local POS Tax', '1:2:3', '0');");
 	$db->Execute("INSERT INTO " . TABLE_TAX_RATES . " VALUES (2, 'c', 'State Only', 'State Only Tax - Shipments', '2', '0');");
-	return $error;
+	parent::load_demo();
   }
 
 }

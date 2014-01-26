@@ -29,6 +29,4 @@ define('flat_3Dpm', 'Sender Paid Economy');
 define('flat_GND',  'Local Delivery');
 define('flat_GDR',  'Customer Pickup');
 
-define('SHIPPING_FLAT_SHIPMENTS_ON','Flat Rate Shipments on ');
-
 ?>

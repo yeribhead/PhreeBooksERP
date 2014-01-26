@@ -9,7 +9,7 @@
 // Path: /modules/phreeform/language/nl_nl/admin.php
 
 define('MODULE_PHREEFORM_TITLE','PhreeForm Module');
-define('MODULE_PHREEFORM_DESCRIPTION','De phreeform module bevat alle rapport en formulier tools die nodig zijn om rapporten in PDF of HTML-formaat af te drukken. <b> LET OP: Dit is een kernmodule en dient niet te worden verwijderd </ b>!');
+define('MODULE_PHREEFORM_DESCRIPTION','De phreeform module bevat alle rapport en formulier tools die nodig zijn om rapporten in PDF of HTML-formaat af te drukken.');
 define('BOX_PHREEFORM_MODULE_ADM','PhreeForm Admin');
 define('PB_CONVERT_REPORTS','Converteren .txt Rapporten naar PhreeForm');
 define('PB_CONVERT_SAVE_ERROR','Er was en fout bij het opslaan van het geconverteerde rapport: %s');

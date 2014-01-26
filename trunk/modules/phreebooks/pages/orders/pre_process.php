@@ -440,14 +440,8 @@ $result = $db->Execute("select account_id from " . TABLE_USERS . " where admin_i
 $default_sales_rep = $result->fields['account_id'] ? $result->fields['account_id'] : '0';
 
 // Load shipping methods
-if (defined('MODULE_SHIPPING_STATUS')) {
-  $methods           = load_all_methods('shipping', true, true);
-  $shipping_methods  = build_js_methods($methods);
-} else {
-  $shipping_methods  = 'var freightLevels   = new Array(); ' . chr(10);
-  $shipping_methods .= 'var freightCarriers = new Array(); ' . chr(10);
-  $shipping_methods .= 'var freightDetails  = new Array(); ' . chr(10);
-}
+$shipping_methods = return_all_methods('shipping', false);
+$js_shipping_options  = build_js_methods($shipping_methods);
 
 // load calendar parameters
 $cal_order = array(

@@ -18,7 +18,11 @@
 //
 namespace phreehelp\classes;
 class admin extends \core\classes\admin {
-	public $module			= 'phreehelp';
+	public $id 			= 'phreehelp';
+	public $text		= MODULE_PHREEHELP_TITLE;
+	public $description = MODULE_PHREEHELP_DESCRIPTION;
+	public $core		= true;
+	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom' => 3.6,
@@ -48,18 +52,13 @@ class admin extends \core\classes\admin {
 
   function update() {
     global $db, $messageStack;
-    $error = false;
 	if (MODULE_PHREEHELP_STATUS < 3.0) {
 	  foreach ($this->tables as $table => $create_table_sql) {
 		if (!db_table_exists($table)) if (!$db->Execute($create_table_sql)) $error = true;
 	  }
 	}
 	write_configure(PHREEHELP_FORCE_RELOAD, '1');
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 }
 ?>

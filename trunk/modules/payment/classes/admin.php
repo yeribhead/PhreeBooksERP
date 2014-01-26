@@ -18,8 +18,10 @@
 //
 namespace payment\classes;
 class admin extends \core\classes\admin {
-	public $methods = array();
-	public $module 			= 'payment';
+	public $id 			= 'payment';
+	public $text		= MODULE_PAYMENT_TITLE;
+	public $description = MODULE_PAYMENT_DESCRIPTION;
+	public $core		= true;
 	
   	function __construct() {
 		$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -28,43 +30,36 @@ class admin extends \core\classes\admin {
 	  	  'phreebooks' => 3.6,
 		);
 		//load and remove all modules
-		$this->methods = return_all_methods($this->module, false);
+		$this->methods = return_all_methods($this->id, false);
 		parent::__construct();
   	}
 
   	function install() {
-		$error = false;
 		foreach ($this->methods as $method) {
 	  		write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS', '1');
 	  		foreach ($method->key as $key) write_configure($key['key'], $key['default']);
 	  		if (method_exists($method, 'install')) $method->install();
 		}
-    	return $error;
+    	parent::install();
   	}
 
 	function update() {
-	    global $db, $messageStack;
-		$error = false;
+	    global $db;
 		foreach ($this->methods as $method) {
 	    	foreach ($method->keys() as $key) {
 	    		if(!defined($key['key'])) write_configure($key['key'], $key['default']);
 			}
 		}
-		if (!$error) {
-		  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-	   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-		}
-		return $error;
+		parent::update();
 	}
 
 	function remove() {
-		$error = false;
 	  	foreach ($this->methods as $method) {
 	    	remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS');
 	    	foreach ($method->keys() as $key) remove_configure($key['key']);
 	    	if (method_exists($method, 'remove')) $method->remove();
 	  	}
-		return $error;
+		parent::remove();
 	}
 
 }

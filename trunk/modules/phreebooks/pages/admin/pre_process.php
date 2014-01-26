@@ -23,7 +23,6 @@ gen_pull_language('phreedom', 'admin');
 require_once(DIR_FS_WORKING . 'functions/phreebooks.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$install           = new \phreebooks\classes\admin();
 $chart_of_accounts = new \phreebooks\classes\chart_of_accounts();
 $tax_auths         = new \phreebooks\classes\tax_auths();
 $tax_auths_vend    = new \phreebooks\classes\tax_auths_vend();
@@ -74,7 +73,7 @@ switch ($_REQUEST['action']) {
 	$_POST['ar_use_credit_limit'] = isset($_POST['ar_use_credit_limit']) ? '1' : '0';
 	$_POST['ap_use_credit_limit'] = isset($_POST['ap_use_credit_limit']) ? '1' : '0';
 	// save general tab
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['phreebooks']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }

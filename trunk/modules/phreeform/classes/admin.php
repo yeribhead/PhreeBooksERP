@@ -18,7 +18,9 @@
 //
 namespace phreeform\classes;
 class admin extends \core\classes\admin {
-	public $module			= 'phreeform';
+	public $id 			= 'phreeform';
+	public $text		= MODULE_PHREEFORM_TITLE;
+	public $description = MODULE_PHREEFORM_DESCRIPTION;
 	
   function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -65,12 +67,11 @@ class admin extends \core\classes\admin {
 	  gen_pull_language($module, 'admin');
 	  $module->load_reports();
 	}
-	return $error;
+	parent::install();
   }
 
   function update() {
     global $db, $messageStack;
-	$error = false;
 	if (MODULE_PHREEFORM_STATUS == '3.0') write_configure('PDF_APP', 'TCPDF');
 	if (MODULE_PHREEFORM_STATUS < '3.5') {
 //		$id = admin_add_report_heading(TEXT_MISC, 'cust');
@@ -78,19 +79,14 @@ class admin extends \core\classes\admin {
 //		$id = admin_add_report_heading(TEXT_MISC, 'vend');
 //		if (admin_add_report_folder($id, TEXT_LETTERS, 'vend:ltr', 'fl')) $error = true;
 	}
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
+	parent::update();
   }
 
   function load_reports() {
-	$error = false;
 	$id = admin_add_report_heading(TEXT_MISC, 'misc');
-	if (admin_add_report_folder($id, TEXT_REPORTS, 'misc',      'fr')) $error = true;
-	if (admin_add_report_folder($id, TEXT_FORMS,   'misc:misc', 'ff')) $error = true;
-	return $error;
+	admin_add_report_folder($id, TEXT_REPORTS, 'misc',      'fr');
+	admin_add_report_folder($id, TEXT_FORMS,   'misc:misc', 'ff');
+	parent::load_reports();
   }
 
 }

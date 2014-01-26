@@ -56,7 +56,8 @@ class payment {
 	$card_number = trim($this->field_1);
 	$card_number = substr($card_number, 0, 4) . '********' . substr($card_number, -4);
 	$this->payment_fields = implode(':', array($this->field_0, $card_number, $this->field_2, $this->field_3, $this->field_4, $this->field_5, $this->field_6));
-	$this->installed = defined('MODULE_PAYMENT_' . strtoupper($this->id) . '_STATUS');
+  	if (defined('MODULE_PAYMENT_' . strtoupper($this->id) . '_STATUS'))	 $this->installed = true;
+	if (defined('MODULE_SHIPPING_'.strtoupper($this->id).'_SORT_ORDER')) $this->sort_order = constant('MODULE_SHIPPING_'.strtoupper($this->id).'_SORT_ORDER');
   }
 
     function update() {

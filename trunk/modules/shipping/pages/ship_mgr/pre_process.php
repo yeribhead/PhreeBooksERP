@@ -26,20 +26,18 @@ $method   = isset($_POST['module_id']) ? $_POST['module_id'] : '';
 $row_seq     = isset($_POST['rowSeq'])    ? $_POST['rowSeq']    : '';
 $action		 = $_REQUEST['action'];
 // load methods
-$installed_modules = load_all_methods('shipping');
+$installed_modules = return_all_methods('shipping', true);
 /***************   hook for custom actions  ***************************/
 $custom_path = DIR_FS_WORKING . 'custom/pages/ship_mgr/extra_actions.php';
 if (file_exists($custom_path)) { include($custom_path); }
 /***************   Act on the action request   *************************/
 if ($method) {
-  $shipping_method = "\shipping\methods\\$method\\$method";
-  $shipping = new $shipping_method();
   switch ($_REQUEST['action']) {
     default:
-      if (method_exists($shipping, $action)) $shipping->$action();
+      if (method_exists($admin_classes['shipping']->methods[$method], $action)) $admin_classes['shipping']->methods[$method]->$action();
       break;
-    case 'track':     $shipping->trackPackages($date, $row_seq);   break;
-    case 'reconcile': $shipping->reconcileInvoice();               break;
+    case 'track':     $admin_classes['shipping']->methods[$method]->trackPackages($date, $row_seq);   break;
+    case 'reconcile': $admin_classes['shipping']->methods[$method]->reconcileInvoice();               break;
     case 'search':
     case 'search_reset':
   }

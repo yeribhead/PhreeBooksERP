@@ -33,7 +33,7 @@ var company_array        = new Array("<?php echo implode('", "', $js_arrays['com
 var default_array        = new Array("<?php echo implode('", "', $js_arrays['text']); ?>");
 var journalID            = '<?php echo JOURNAL_ID; ?>';
 var securityLevel        = <?php echo $security_level; ?>;
-var single_line_list     = '<?php echo SINGLE_LINE_ORDER_SCREEN; ?>';
+var single_line_list     = <?php echo SINGLE_LINE_ORDER_SCREEN; ?>;
 var account_type         = '<?php echo $account_type; ?>';
 var text_search          = '<?php echo TEXT_SEARCH; ?>';
 var text_enter_new       = '<?php echo TEXT_ENTER_NEW; ?>';
@@ -117,10 +117,10 @@ function init() {
   if ($error && isset($order->shipper_code)) {
     $values = explode(':', $order->shipper_code);
     echo '  document.getElementById("ship_carrier").value = "' . $values[0] . '";' . chr(10);
-    echo '  buildFreightDropdown();';
+    echo '  buildFreightDropdown();' . chr(10);
     echo '  document.getElementById("ship_service").value = "' . $values[1] . '";' . chr(10);
   } else {
-    echo '  buildFreightDropdown();';
+    echo '  buildFreightDropdown();' . chr(10);
   }
 ?>
   setField('sku_1',text_search);

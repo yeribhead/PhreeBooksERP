@@ -55,9 +55,8 @@ switch ($_REQUEST['action']) {
 			setcookie('pb_company' , $admin_company,  $cookie_exp);
 			setcookie('pb_language', $admin_language, $cookie_exp);
 			// load init functions for each module and execute
-			$phreedom = new \phreedom\classes\admin(); 
-			if ($phreedom->should_update()) $phreedom->update();
-			$phreedom->initialize();
+			if ($admin_classes['phreedom']->should_update()) $admin_classes['phreedom']->update();
+			$admin_classes['phreedom']->initialize();
 			if (defined('TABLE_CONTACTS')) {
 			    $dept = $db->Execute("select dept_rep_id from " . TABLE_CONTACTS . " where id = " . $result->fields['account_id']);
 			    $_SESSION['department'] = $dept->fields['dept_rep_id'];

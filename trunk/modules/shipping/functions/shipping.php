@@ -27,10 +27,10 @@ function build_js_methods($methods) {
   for ($i = 0; $i < sizeof($choices); $i++) $service_levels .= "freightLevels[".$i."]='".$choices[$i]."'; " . chr(10);
   $i = 0;
   if (sizeof($methods) > 0) foreach ($methods as $method) {
-    $carriers          .= "freightCarriers[".$i."]='" . $method['id'] . "';" . chr(10);
+    $carriers          .= "freightCarriers[".$i."]='" . $method->id . "';" . chr(10);
     $carrier_details   .= 'freightDetails['.$i.'] = new Array();' . chr(10);
     for ($j = 0; $j < sizeof($choices); $j++) {
-	  $carrier_details .= "freightDetails[".$i."][".$j."]='" . (defined($method['id'] . '_' . $choices[$j]) ? constant($method['id'] . '_' . $choices[$j]) : "") . "'; " . chr(10);
+	  $carrier_details .= "freightDetails[".$i."][".$j."]='" . (defined($method->id . '_' . $choices[$j]) ? constant($method->id . '_' . $choices[$j]) : "") . "'; " . chr(10);
     }
     $i++;
   }
