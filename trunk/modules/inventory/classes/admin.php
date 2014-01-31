@@ -413,7 +413,7 @@ class admin extends \core\classes\admin {
 	  	mkdir(DIR_FS_MY_FILES . $_SESSION['company'] . '/inventory/attachments/', 0755, true);
 	}
 	if (MODULE_INVENTORY_STATUS < 3.7) {
-		if (!db_field_exists(TABLE_INVENTORY_HISTORY, 'avg_cost')) $db->Execute("ALTER TABLE ".TABLE_INVENTORY." ADD avg_cost FLOAT NOT NULL DEFAULT '0' AFTER unit_cost");
+		if (!db_field_exists(TABLE_INVENTORY_HISTORY, 'avg_cost')) $db->Execute("ALTER TABLE ".TABLE_INVENTORY_HISTORY." ADD avg_cost FLOAT NOT NULL DEFAULT '0' AFTER unit_cost");
 	}
 	parent::update();
   }

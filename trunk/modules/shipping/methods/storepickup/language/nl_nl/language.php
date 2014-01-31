@@ -10,11 +10,6 @@
 
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE','Ophalen in winkel');
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION','Ophalen door klant in winkel');
-define('storepickup_1DEam','Beste optie');
-define('storepickup_1Dam','Zender betaald 2 Dagen');
-define('storepickup_1Dpm','Zender betaald 1 Dagen');
-define('storepickup_2Dpm','Koerier');
-define('storepickup_3Dpm','Zender betaald Goedkoop');
-define('storepickup_GND','Locale levering');
-define('storepickup_GDR','Klant ophalen');
+// Shipping Methods
+define('storepickup_GND', 'Store Pickup');
 ?>

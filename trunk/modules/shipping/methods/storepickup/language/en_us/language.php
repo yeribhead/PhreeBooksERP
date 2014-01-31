@@ -20,9 +20,6 @@
 
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE', 'Store Pickup');
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION', 'Customer In Store Pick-up');
-
-// Key descriptions
-define('MODULE_SHIPPING_STOREPICKUP_TITLE_DESC', 'Title to use for display purposes on shipping rate estimator');
 // Shipping Methods
 define('storepickup_GND', 'Store Pickup');
 

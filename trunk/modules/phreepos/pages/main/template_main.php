@@ -2,7 +2,7 @@
 // +-----------------------------------------------------------------+
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
-// | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
+// | Copyright(c) 2008-2014 PhreeSoft, LLC (www.PhreeSoft.com)       |
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -51,10 +51,11 @@ if ($security_level > 1) {
   $toolbar->icon_list['previous_print']['icon'] = 'actions/go-previous.png';
   $toolbar->icon_list['previous_print']['text'] = TEXT_PRINT_PREVIOUS;
 // open drawer 
+if (defined('PHREEPOS_ENABLE_DIRECT_PRINTING') && PHREEPOS_ENABLE_DIRECT_PRINTING  == true){
   $toolbar->add_icon('open_drawer', 'onclick="OpenDrawer()"', 50);
   $toolbar->icon_list['open_drawer']['icon'] = 'actions/go-bottom.png';
   $toolbar->icon_list['open_drawer']['text'] = TEXT_OPEN_DRAWER;
-  
+}  
 // pull in extra toolbar overrides and additions
 if (count($extra_toolbar_buttons) > 0) {
   foreach ($extra_toolbar_buttons as $key => $value) $toolbar->icon_list[$key] = $value;
@@ -86,8 +87,7 @@ echo $toolbar->build_toolbar();
 		echo '<li><label>' . TEXT_EXCHANGE_RATE . ' ' . html_input_field('currencies_value', $order->currencies_value, 'readonly="readonly"'). '</label></li>'; 
  } ?>
  		<li><label> 
- <?php	echo TEXT_SKU . ' ' . html_input_field('sku', '', ' size="' . (MAX_INVENTORY_SKU_LENGTH + 1) . '" maxlength="' . MAX_INVENTORY_SKU_LENGTH . '" title="' . TEXT_SEARCH . '"  onchange ="loadSkuDetails(0, 0)"') . chr(10);
-  		echo html_icon('actions/system-search.png', TEXT_SEARCH, 'small', 'id="sku_open" align="top" style="cursor:pointer" onclick="InventoryList(0)"') . chr(10);	?>
+ <?php	echo TEXT_SKU . ' ' . html_search_field('sku', "startSkuSearch") . chr(10);?>
  		</label></li>
 	</ol>
 </fieldset>
@@ -213,20 +213,30 @@ echo $toolbar->build_toolbar();
 	</tfoot>
 </table>	 
 
-<footer><?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?></footer>
+<footer style="witdh:800px;">
+<div style="witdh:450px;float:left;">
+	<?php echo "<b><u>" . TEXT_NOTES . "</u></b><br>" . PHREEPOS_ITEM_NOTES; ?>
+</div>
+</footer>
+
 <?php // display the hidden fields that are not used in this rendition of the form
 echo $hidden_fields;
+if (defined('PHREEPOS_ENABLE_DIRECT_PRINTING') && PHREEPOS_ENABLE_DIRECT_PRINTING  == true){
 ?>
 <!--
-<object type="application/x-java-applet" width="16" height="16" id="jZebra" name="jZebra">
-  	<param name="archive"   value="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/jzebra.jar'; ?>" />
-  	<param name="code"      value="jzebra.PrintApplet.class" />
+<object type="application/x-java-applet" width="16" height="16" id="qz" name="qz">
+  	<param name="archive"   value="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" />
+  	<param name="code"      value="qz.PrintApplet.class" />
   	<param name="mayscript" value="true" />
+  	<param name="permissions" value="all-permissions" />
 </object>
 -->
 <applet id="qz" name="QZ Print Plugin" code="qz.PrintApplet.class" archive="<?php echo DIR_WS_ADMIN . 'modules/phreedom/includes/jzebra/qz-print.jar'; ?>" width="16px" height="16px">
 	<param name="permissions" value="all-permissions" />
 </applet>
+<?php }else{
+	echo html_hidden_field("qz");
+}?>
 <div class="easyui-dialog" data-options="closed: true," id="popupPayment" title="<?php echo PAYMENT_TITLE; ?>" style="height:450px;width:450px">
 <?php 
 $SeccondToolbar      = new \core\classes\toolbar;

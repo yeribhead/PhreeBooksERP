@@ -232,7 +232,7 @@ switch ($_REQUEST['action']) {
 		if (in_array($acct, $acct_list) && in_array($period, $max_periods)) $next_beg_bal = 0;
 		if (abs($diff_debit) > $tolerance || abs($diff_credit) > $tolerance) {
 		  if ($_REQUEST['action'] == 'coa_hist_test') {
-		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_ERROR_MSG, 'gl '.$period, $acct, $posted_bal, $currencies->format($next_beg_bal)), 'caution');
+		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_ERROR_MSG, $period, 'gl '.$acct, $posted_bal, $currencies->format($next_beg_bal)), 'caution');
 		  }
 		  $bad_accounts[$acct][$period]['debit_amount']  = $posted->fields['debit'];
 		  $bad_accounts[$acct][$period]['credit_amount'] = $posted->fields['credit'];
@@ -241,8 +241,9 @@ switch ($_REQUEST['action']) {
 		  $first_error_period = min($first_error_period, $period);
 		}
 		if ($currencies->format(abs($next_beg_bal - $history[$acct][$period+1]['beg_bal'])) > $tolerance) {
-		  if ($_REQUEST['action'] == 'coa_hist_test') {
-		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_ERROR_MSG, 'bb '.$period, $acct, $posted_bal, $currencies->format($next_beg_bal)), 'caution');
+		  if ($_REQUEST['action'] == 'coa_hist_test' && $period <= CURRENT_ACCOUNTING_PERIOD) {
+//@todo remove		  	$messageStack->add("$next_beg_bal - ".$history[$acct][$period+1]['beg_bal']." ".$currencies->format(abs($next_beg_bal - $history[$acct][$period+1]['beg_bal'])) .">". $tolerance);
+		    $messageStack->add(sprintf(GEN_ADM_TOOLS_REPAIR_BALANCE_ERROR_MSG, $period, $acct, $currencies->format($history[$acct][$period+1]['beg_bal']), $currencies->format($next_beg_bal)), 'caution');
 		  }
 		  $bad_accounts[$acct][$period+1]['beginning_balance'] = $next_beg_bal;
 		  $history[$acct][$period+1]['beg_bal'] = $next_beg_bal;
