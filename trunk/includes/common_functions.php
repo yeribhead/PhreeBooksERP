@@ -84,15 +84,15 @@
     return $choices;
   }
   
-	function return_all_methods($module, $active_only = true) {
+	function return_all_methods($module, $active_only = true, $type ='methods') {
 	    $choices     = array();
 		if (!$module) return $choices;
-	    $method_dir  = DIR_FS_MODULES . "$module/methods/";
+	    $method_dir  = DIR_FS_MODULES . "$module/$type/";
 	    if ($methods = @scandir($method_dir)) foreach ($methods as $method) {
 			if ($method == '.' || $method == '..' || !is_dir($method_dir . $method)) continue;
 		  	if ($active_only && !defined('MODULE_' . strtoupper($module) . '_' . strtoupper($method) . '_STATUS')) continue;
 		  	load_method_language($method_dir, $method);
-		  	$class = "\\$module\methods\\$method\\$method";
+		  	$class = "\\$module\$type\\$method\\$method";
 		  	$choices[$method] = new $class; 
 	    }
 		uasort($choices, "arange_object_by_sort_order");

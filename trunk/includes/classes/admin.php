@@ -26,6 +26,7 @@ class admin {
 	public $keys			= array();// Load configuration constants for this module, must match entries in admin tabs
 	public $dirlist			= array();// add new directories to store images and data
 	public $tables			= array();// Load tables
+	public $dashboards		= array();// holds all classes in a array
 	public $methods			= array();// holds all classes in a array
 	public $status			= 1.0; // stores the moduel status
 	public $version			= 1.0; // stores availible version of the module
@@ -38,6 +39,8 @@ class admin {
 			$this->status  = constant('MODULE_' . strtoupper($this->id) . '_STATUS');
 		}
 		$this->version = constant('MODULE_' . strtoupper($this->id) . '_VERSION');
+		$this->methods = return_all_methods($this->id, false, 'methods');
+		$this->dashboards = return_all_methods($this->id, false, 'dashboards');
 	}
 	
 	function install() {
