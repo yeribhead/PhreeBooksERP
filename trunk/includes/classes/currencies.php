@@ -126,10 +126,7 @@ class currencies {
   	
   	function btn_save($id = '') {
 	  	global $db, $messageStack;
-		if ($this->security_id < 3) {
-			$messageStack->add(ERROR_NO_PERMISSION,'error');
-			return false;
-		}
+		if ($this->security_id < 3) throw new \Exception(ERROR_NO_PERMISSION);
 		$title = db_prepare_input($_POST['title']);
 		$code = strtoupper(db_prepare_input($_POST['code']));
 		if ($_POST['decimal_precise'] == '') $_POST['decimal_precise'] = $_POST['decimal_places'];
@@ -153,18 +150,15 @@ class currencies {
 		}
 	
 		if (isset($_POST['default']) && ($_POST['default'] == 'on')) {
-		  // first check to see if there are any general ledger entries
-		  $result = $db->Execute("SELECT id FROM " . TABLE_JOURNAL_MAIN . " LIMIT 1");
-		  if ($result->RecordCount() > 0) {
-			$messageStack->add(SETUP_ERROR_CANNOT_CHANGE_DEFAULT,'error');
-		  } else {
-		    write_configure('DEFAULT_CURRENCY', db_input($code));
+			// first check to see if there are any general ledger entries
+		  	$result = $db->Execute("SELECT id FROM " . TABLE_JOURNAL_MAIN . " LIMIT 1");
+		  	if ($result->RecordCount() > 0) throw new \Exception(SETUP_ERROR_CANNOT_CHANGE_DEFAULT);
+		  	write_configure('DEFAULT_CURRENCY', db_input($code));
 			db_perform($this->db_table, array('value' => 1), 'update', "code='$code'"); // change default exc rate to 1
 		    $db->Execute("alter table " . TABLE_JOURNAL_MAIN . " 
 				change currencies_code currencies_code CHAR(3) NOT NULL DEFAULT '" . db_input($code) . "'");
 			$this->def_currency = db_input($code);
 			$this->btn_update();
-		  }
 		}
 		return true;
 	}

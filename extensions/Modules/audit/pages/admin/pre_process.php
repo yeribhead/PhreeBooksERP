@@ -28,14 +28,13 @@ gen_pull_language($module);
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install= new \audit\classes\admin();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
   case 'save':
   	try{
 		validate_security($security_level, 3);
 		// save general tab
-		foreach ($install->keys as $key => $default) {
+		foreach ($admin_classes['audit']->keys as $key => $default) {
 		  $field = strtolower($key);
 	      if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
 	    }

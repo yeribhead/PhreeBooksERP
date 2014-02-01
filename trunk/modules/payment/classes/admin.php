@@ -22,6 +22,7 @@ class admin extends \core\classes\admin {
 	public $text		= MODULE_PAYMENT_TITLE;
 	public $description = MODULE_PAYMENT_DESCRIPTION;
 	public $core		= true;
+	public $sort_order  = 7;
 	
   	function __construct() {
 		$this->prerequisites = array( // modules required and rev level for this module to work properly
@@ -33,34 +34,5 @@ class admin extends \core\classes\admin {
 		$this->methods = return_all_methods($this->id, false);
 		parent::__construct();
   	}
-
-  	function install() {
-		foreach ($this->methods as $method) {
-	  		write_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS', '1');
-	  		foreach ($method->key as $key) write_configure($key['key'], $key['default']);
-	  		if (method_exists($method, 'install')) $method->install();
-		}
-    	parent::install();
-  	}
-
-	function update() {
-	    global $db;
-		foreach ($this->methods as $method) {
-	    	foreach ($method->keys() as $key) {
-	    		if(!defined($key['key'])) write_configure($key['key'], $key['default']);
-			}
-		}
-		parent::update();
-	}
-
-	function remove() {
-	  	foreach ($this->methods as $method) {
-	    	remove_configure('MODULE_' . strtoupper($module) . '_' . strtoupper($method->id) . '_STATUS');
-	    	foreach ($method->keys() as $key) remove_configure($key['key']);
-	    	if (method_exists($method, 'remove')) $method->remove();
-	  	}
-		parent::remove();
-	}
-
 }
 ?>

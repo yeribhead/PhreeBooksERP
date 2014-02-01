@@ -121,6 +121,7 @@ if (isset($_SESSION['company']) && $_SESSION['company'] != '' && file_exists(DIR
 	  		$admin_classes[$dir]  = new $class;
 		}
   	}
+  	uasort($admin_classes, "arange_object_by_sort_order");
 	// pull in the custom language over-rides for this module (to pre-define the standard language)
   	$path = DIR_FS_MODULES . "$module/custom/pages/$page/extra_menus.php";
   	if (file_exists($path)) { include($path); }

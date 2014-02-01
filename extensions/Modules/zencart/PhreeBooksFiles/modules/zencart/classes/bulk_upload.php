@@ -24,12 +24,9 @@ class bulk_upload {
 	$error  = false;
 	$result = $db->Execute("select id from " . TABLE_INVENTORY . " where catalog = '1' ");
 	$cnt    = 0;
+	$prodXML = new \zencart\classes\zencart();
 	while(!$result->EOF) {
-	  $prodXML = new \zencart\classes\zencart();
-	  if (!$prodXML->submitXML($result->fields['id'], 'product_ul', true, $inc_image)) {
-		$error = true;
-		break;
-	  }
+	  $prodXML->submitXML($result->fields['id'], 'product_ul', true, $inc_image);
 	  $cnt++;
 	  $result->MoveNext();
 	}

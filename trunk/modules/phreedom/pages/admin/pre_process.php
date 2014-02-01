@@ -28,7 +28,6 @@ if (defined('MODULE_PHREEFORM_STATUS')) {
 require_once(DIR_FS_WORKING . 'functions/phreedom.php');
 /**************   page specific initialization  *************************/
 $error  = false; 
-$core_modules = array('phreedom','phreeform','phreebooks','contacts','inventory','phreehelp','payment'); // phreeform first!
 // see if installing or removing a module
 if (substr($_REQUEST['action'], 0, 8) == 'install_') {
   $method = substr($_REQUEST['action'], 8);
@@ -47,57 +46,48 @@ while (!$result->EOF) {
 $status_values = $db->Execute("select * from " . TABLE_CURRENT_STATUS);
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
-  case 'install':
-  case 'update':
-  	validate_security($security_level, 4);
-	// load the module installation class
-	if (!file_exists(DIR_FS_MODULES . $method . '/classes/admin.php')) {
-	  $messageStack->add(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method),'error');
-	  break;
-	}
-	gen_pull_language($method, 'admin');
-	gen_pull_language($method);
-	require_once(DIR_FS_MODULES . $method . '/config.php'); // config is not loaded yet since module is not installed.
-	if ($_REQUEST['action'] == 'install') {
-	  if (admin_check_versions($method, $admin_classes[$method]->prerequisites)) { // Check for version levels
-	    $error = true;
-	  } elseif (admin_install_dirs($admin_classes[$method]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) {
-	    $error = true;
-	  } elseif (admin_install_tables($admin_classes[$method]->tables)) { // Create the tables
-	    $error = true; 
-	  } else {
-	    // Load the installed module version into db
-	    write_configure('MODULE_' . strtoupper($method) . '_STATUS', constant('MODULE_' . strtoupper($method) . '_VERSION'));
-	    // Load the remaining configuration constants
-	    foreach ($admin_classes[$method]->keys as $key => $value) write_configure($key, $value);
-	    if ($demo) $error = $admin_classes[$method]->load_demo(); // load demo data
-		$admin_classes[$method]->load_reports($method);
-		admin_add_reports($method);
-	  }
-	  if ($admin_classes[$method]->install($method)) $error = true; // install any special stuff
-	} else {
-	  if ($admin_classes[$method]->update($method)) $error = true;
-	}
-	if ($error) break; 
-	if (sizeof($admin_classes[$method]->notes) > 0) foreach ($admin_classes[$method]->notes as $note) $messageStack->add($note, 'caution');
-	gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $method) . (($_REQUEST['action'] == 'install') ? TEXT_INSTALL : TEXT_UPDATE), constant('MODULE_' . strtoupper($method) . '_VERSION'));
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	break;
-  case 'remove':
-  	validate_security($security_level, 4);
-	// load the module installation class
-	if (!file_exists(DIR_FS_MODULES . $method . '/classes/admin.php')) {
-	  $messageStack->add(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method),'error');
-	  break;
-	}
-	foreach ($admin_classes[$method]->keys as $key => $value) remove_configure($key);
-	remove_configure('MODULE_' . strtoupper($method) . '_STATUS');
-	if (admin_remove_tables(array_keys($admin_classes[$method]->tables))) $error = true;
-	if (admin_remove_dirs($admin_classes[$method]->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/')) $error = true;
-	if ($admin_classes[$method]->remove($method)) $error = true;
-	gen_add_audit_log(sprintf(AUDIT_LOG_REMOVE_SUCCESS, $method));
-	gen_redirect(html_href_link(FILENAME_DEFAULT, gen_get_all_get_params(array('action')), 'SSL'));
-	break;
+  	case 'install':
+  	case 'update':
+  		try{
+	  		validate_security($security_level, 4);
+			// load the module installation class
+			if (!array_key_exists($method, $admin_classes)) throw new \Exception(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method));
+			$db->transStart();
+			require_once(DIR_FS_MODULES . $method . '/config.php'); // config is not loaded yet since module is not installed.
+			if ($_REQUEST['action'] == 'install') {
+		  		$admin_classes[$method]->install(DIR_FS_MY_FILES.$_SESSION['company'].'/', false);
+		  		write_configure('MODULE_' . strtoupper($admin_classes[$method]->id) . '_STATUS', $this->version);
+ 				gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $admin_classes[$method]->text) . TEXT_INSTALL , $admin_classes[$method]->version);
+ 				$messageStack->add(sprintf(GEN_LOG_INSTALL_SUCCESS, $admin_classes[$method]->text). TEXT_INSTALL . $admin_classes[$method]->version, 'success');
+			} else {
+		  		$admin_classes[$method]->update();
+		  		write_configure('MODULE_' . strtoupper($this->id) . '_STATUS', $this->version);
+ 				gen_add_audit_log(sprintf(GEN_LOG_INSTALL_SUCCESS, $admin_classes[$method]->text) . TEXT_UPDATE, $admin_classes[$method]->version);
+	   			$messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $admin_classes[$method]->id, $admin_classes[$method]->version), 'success');
+			} 
+			if (sizeof($admin_classes[$method]->notes) > 0) foreach ($admin_classes[$method]->notes as $note) $messageStack->add($note, 'caution');
+			$db->transCommit();
+			break;
+  		}catch (Exception $e){
+  			$db->transRollback();
+  			$messageStack->add($e->getMessage(),'error');
+  		}
+  	case 'remove':
+  		try{
+		  	validate_security($security_level, 4);
+		  	gen_pull_language($method, 'admin');
+			gen_pull_language($method);
+			// load the module installation class
+			if (!array_key_exists($method, $admin_classes)) throw new \Exception(sprintf('Looking for the installation script for module %s, but could not locate it. The module cannot be installed!', $method));
+			$db->transStart();
+			$admin_classes[$method]->delete(DIR_FS_MY_FILES.$_SESSION['company'].'/');
+			$db->transCommit();
+			gen_add_audit_log(sprintf(AUDIT_LOG_REMOVE_SUCCESS, $admin_classes[$method]->text));
+			break;
+  		}catch (Exception $e){
+  			$db->transRollback();
+  			$messageStack->add($e->getMessage(),'error');
+  		}
   case 'save':
   	validate_security($security_level, 3);
 	// save general tab
@@ -147,7 +137,7 @@ switch ($_REQUEST['action']) {
 	  if (!install_build_co_config_file($db_name, 'DB_SERVER_HOST',     $db_server)) $error = true;
 	}
 
-	$copy_modules = $core_modules;
+	$copy_modules = array('phreedom','phreeform','phreebooks','contacts','inventory','phreehelp','payment'); // phreeform first!;
 	foreach ($loaded_modules as $entry) if (isset($_POST[$entry])) $copy_modules[] = $entry;
 	$backup = new \phreedom\classes\backup;
     $backup->source_dir  = DIR_FS_MY_FILES . $db_name . '/temp/';

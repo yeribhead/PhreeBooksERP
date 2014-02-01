@@ -128,64 +128,40 @@ function gen_pull_db_config_info($database, $key) {
 }
 
 /**************************** admin functions ***********************************************/
-function admin_check_versions($module, $prerequisites = NULL) {
-  global $messageStack;
-  $error = false;
-  if (is_array($prerequisites) && sizeof($prerequisites) > 0) {
-	foreach ($prerequisites as $mod => $version) {
-	  if (!$cur_rev = constant('MODULE_' . strtoupper($mod) . '_VERSION')) {
-	    $messageStack->add(sprintf(ERROR_MODULE_NOT_INSTALLED, $module, $mod),'error');
-		$error = true;
-	  } elseif ($cur_rev < $version) {
-	    $messageStack->add(sprintf(ERROR_MODULE_VERSION_TOO_LOW, $module, $mod, $version, $cur_rev),'error');
-		$error = true;
-	  }
-	}
-  }
-  return $error;
-}
 
 function admin_install_dirs($dirlist, $path = DIR_FS_MY_FILES) {
-  global $messageStack;
-  $error = false;
   if (is_array($dirlist)) foreach ($dirlist as $dir) {
 	if (!file_exists($path . $dir)) {
-	  if (!@mkdir($path . $dir, 0755, true)) $error = $messageStack->add(sprintf(ERROR_CANNOT_CREATE_MODULE_DIR, $path . $dir), 'error');
+	  if (!@mkdir($path . $dir, 0755, true)) throw new \Exception (sprintf(ERROR_CANNOT_CREATE_MODULE_DIR, $path . $dir));
     }
   }
-  return $error;
 }
 
 function admin_remove_dirs($dirlist, $path = DIR_FS_MY_FILES) {
-  global $messageStack;
-  $error = false;
   if (is_array($dirlist)) {
     $temp = array_reverse($dirlist);
 	foreach($temp as $dir) {
-	  if (!@rmdir($path . $dir)) $error = $messageStack->add(sprintf(ERROR_CANNOT_REMOVE_MODULE_DIR, $path . $dir), 'error');
+	  if (!@rmdir($path . $dir)) throw new \Exception (sprintf(ERROR_CANNOT_REMOVE_MODULE_DIR, $path . $dir));
 	}
   }
-  return $error;
 }
 
 function admin_install_tables($tables) {
-  global $db, $messageStack;
-  $error = false;
+  global $db;
   foreach ($tables as $table => $create_table_sql) {
     if (!db_table_exists($table)) {
-	  if (!$db->Execute($create_table_sql)) $error = $messageStack->add(sprintf("Error installing table: %s", $table), 'error');
+	  if (!$db->Execute($create_table_sql)) throw new \Exception (sprintf("Error installing table: %s", $table));
 	}
   }
-  return $error;
 }
 
 function admin_remove_tables($tables) {
   global $db;
-  $error = false;
   if (is_array($tables)) foreach($tables as $table) {
-	if (db_table_exists($table)) $db->Execute('DROP TABLE ' . $table);
+	if (db_table_exists($table)){
+		if ($db->Execute('DROP TABLE ' . $table)) throw new \Exception (sprintf("Error deleting table: %s", $table));
+	}
   }
-  return $error;
 }
 
 function admin_add_report_heading($doc_title, $doc_group) {
@@ -201,7 +177,7 @@ function admin_add_report_heading($doc_title, $doc_group) {
   return $id;
 }
 
-function admin_add_report_folder($parent_id, $doc_title, $doc_group, $doc_ext) {
+function admin_add_report_folder($parent_id, $doc_title, $doc_group, $doc_ext) {//@todo check if return is expected.
   global $db;
   if ($parent_id == '') throw new \Exception("parent_id isn't set for document $doc_title");
   $result = $db->Execute("select id from ".TABLE_PHREEFORM." where doc_group = '$doc_group' and doc_ext = '$doc_ext'");

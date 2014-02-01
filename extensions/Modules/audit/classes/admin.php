@@ -22,30 +22,21 @@
 //
 namespace audit\classes;
 class admin extends \core\classes\admin {
-	public $module = 'audit';
+	public $id 			= 'audit';
+	public $text		= MODULE_AUDIT_TITLE;
+	public $description = MODULE_AUDIT_DESCRIPTION;
 	
-  function __construct() {
-	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'   => 3.0,
-	  'phreebooks' => 3.0,
-	  'contacts'   => 3.1,
-	);
-	// Load configuration constants for this module, must match entries in admin tabs
-    $this->keys = array(
-    	 'AUDIT_DEBIT_NUMBER'               => ''
-    );
-    parent::__construct();
-  }
-
-  function install() {
-    global $db;
-	$error = false;
-    return $error;
-  }
-
-  function update() {
-  	global $db;
-	write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-  }
+  	function __construct() {
+		$this->prerequisites = array( // modules required and rev level for this module to work properly
+	  	  'phreedom'   => 3.0,
+	  	  'phreebooks' => 3.0,
+	  	  'contacts'   => 3.1,
+		);
+		// Load configuration constants for this module, must match entries in admin tabs
+    	$this->keys = array(
+    	  'AUDIT_DEBIT_NUMBER'               => ''
+    	);
+    	parent::__construct();
+  	}
 }
 ?>

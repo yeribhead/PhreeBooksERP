@@ -18,6 +18,7 @@
 //
 namespace phreedom\classes;
 class admin extends \core\classes\admin {
+	public $sort_order  = 1;
 	public $id 			= 'phreedom';
 	public $text;
 	public $description;
@@ -173,23 +174,23 @@ class admin extends \core\classes\admin {
     parent::__construct();
   }
 
-  function install() {
-    global $db, $messageStack;
-	// load some default currency values
-	$db->Execute("TRUNCATE TABLE " . TABLE_CURRENCIES);
-	$currencies_list = array(
-	  array('title' => 'US Dollar', 'code' => 'USD', 'symbol_left' => '$', 'symbol_right' => '',    'decimal_point' => '.', 'thousands_point' => ',', 'decimal_places' => '2', 'decimal_precise' => '2', 'value' => 1.00000000, 'last_updated' => date('Y-m-d H:i:s')),
-	  array('title' => 'Euro',      'code' => 'EUR', 'symbol_left' => '',  'symbol_right' => 'EUR', 'decimal_point' => '.', 'thousands_point' => ',', 'decimal_places' => '2', 'decimal_precise' => '2', 'value' => 0.75000000, 'last_updated' => date('Y-m-d H:i:s')),
-	);
-	foreach($currencies_list as $entry) db_perform(TABLE_CURRENCIES, $entry, 'insert');
-	write_configure('DEFAULT_CURRENCY', 'USD');
-	// Enter some data into table current status
-	$db->Execute("TRUNCATE TABLE " . TABLE_CURRENT_STATUS);
-	$db->Execute("insert into " . TABLE_CURRENT_STATUS . " set id = 1");
-    parent::install();
-  }
+	function install($path_my_files, $demo = false) {
+	    global $db, $messageStack;
+	    parent::install($path_my_files, $demo);
+		// load some default currency values
+		$db->Execute("TRUNCATE TABLE " . TABLE_CURRENCIES);
+		$currencies_list = array(
+		  array('title' => 'US Dollar', 'code' => 'USD', 'symbol_left' => '$', 'symbol_right' => '', 'decimal_point' => '.', 'thousands_point' => ',', 'decimal_places' => '2', 'decimal_precise' => '2', 'value' => 1.00000000, 'last_updated' => date('Y-m-d H:i:s')),
+		  array('title' => 'Euro',      'code' => 'EUR', 'symbol_left' => '€', 'symbol_right' => '', 'decimal_point' => ',', 'thousands_point' => '.', 'decimal_places' => '2', 'decimal_precise' => '2', 'value' => 0.75000000, 'last_updated' => date('Y-m-d H:i:s')),
+		);
+		foreach($currencies_list as $entry) db_perform(TABLE_CURRENCIES, $entry, 'insert');
+		write_configure('DEFAULT_CURRENCY', 'USD');
+		// Enter some data into table current status
+		$db->Execute("TRUNCATE TABLE " . TABLE_CURRENT_STATUS);
+		$db->Execute("insert into " . TABLE_CURRENT_STATUS . " set id = 1");
+	}
 
-	function initialize() {
+	function initialize() {//@todo
 		global $db, $messageStack, $currencies, $admin_classes;
   		try{
 	    	// load the latest currency exchange rates
@@ -208,14 +209,14 @@ class admin extends \core\classes\admin {
 			  	}
 			}
 			// load installed modules and initialize them
-			if (is_array($admin_classes)) foreach ($admin_classes as $module) {
-			  	if ($module == $this) continue; // skip this module
+			if (is_array($admin_classes)) foreach ($admin_classes as $key => $module) {
+			  	if ($key == 'phreedom') continue; // skip this module
 			  	if ($module->should_update()){
 					// add any new constants
 					if (sizeof($module->keys) > 0) foreach ($module->keys as $key => $value) {
 				  		if (!defined($key)) write_configure($key, $value);
 					}
-					admin_install_dirs($module->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/');
+					$this->install_dirs($module->dirlist, DIR_FS_MY_FILES.$_SESSION['company'].'/');
 			    	if (method_exists($module, 'update')) $module->update();
 			  	}
 			  	if (method_exists($module, 'initialize')) $module->initialize();
@@ -235,39 +236,34 @@ class admin extends \core\classes\admin {
   		return true;
   	}
 
-  function update() {
-    global $db, $messageStack;
-	$error = false;
-	$db_version = defined('MODULE_PHREEDOM_STATUS') ? MODULE_PHREEDOM_STATUS : false;
-	foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
-	if ($db_version < MODULE_PHREEDOM_STATUS) {
- 	  $db_version = $this->release_update($this->id, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
-	  if (!$db_version) return true;
+	function upgrade() {
+	    global $db, $messageStack;
+		parent::upgrade();
+		$db_version = defined('MODULE_PHREEDOM_STATUS') ? MODULE_PHREEDOM_STATUS : false;
+		foreach ($this->keys as $key => $value) if (!defined($key)) write_configure($key, $value);
+		if ($db_version < MODULE_PHREEDOM_STATUS) {
+	 	  $db_version = $this->release_update($this->id, 3.0, DIR_FS_MODULES . 'phreedom/updates/PBtoR30.php');
+		  if (!$db_version) return true;
+		}
+	  	if (MODULE_PHREEDOM_STATUS < 3.1) {
+	  	  foreach ($this->tables as $table => $create_table_sql) {
+		    if (!db_table_exists($table)) if (!$db->Execute($create_table_sql)) $error = true;
+		  }
+		  write_configure(PHREEHELP_FORCE_RELOAD, '1');
+		}
+	    if (MODULE_PHREEDOM_STATUS < 3.2) {
+		  if (!db_field_exists(TABLE_USERS, 'is_role')) $db->Execute("ALTER TABLE ".TABLE_USERS." ADD is_role ENUM('0','1') NOT NULL DEFAULT '0' AFTER admin_id");
+		}
+	    if (MODULE_PHREEDOM_STATUS < 3.4) {
+		  if (!db_field_exists(TABLE_DATA_SECURITY, 'exp_date')) $db->Execute("ALTER TABLE ".TABLE_DATA_SECURITY." ADD exp_date DATE NOT NULL DEFAULT '2049-12-31' AFTER enc_value");
+		  if (!db_field_exists(TABLE_AUDIT_LOG, 'ip_address'))   $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG    ." ADD ip_address VARCHAR(15) NOT NULL AFTER user_id");
+	    }
+	  	if (MODULE_PHREEDOM_STATUS < 3.5) {
+		  if (!db_field_exists(TABLE_EXTRA_FIELDS, 'group_by'))  $db->Execute("ALTER TABLE ".TABLE_EXTRA_FIELDS." ADD group_by varchar(64) NOT NULL default ''");
+		  if (!db_field_exists(TABLE_EXTRA_FIELDS, 'sort_order'))$db->Execute("ALTER TABLE ".TABLE_EXTRA_FIELDS." ADD sort_order varchar(64) NOT NULL default ''");
+		  if (!db_field_exists(TABLE_AUDIT_LOG, 'stats'))        $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
+	  	}
 	}
-  	if (MODULE_PHREEDOM_STATUS < 3.1) {
-  	  foreach ($this->tables as $table => $create_table_sql) {
-	    if (!db_table_exists($table)) if (!$db->Execute($create_table_sql)) $error = true;
-	  }
-	  write_configure(PHREEHELP_FORCE_RELOAD, '1');
-	}
-    if (MODULE_PHREEDOM_STATUS < 3.2) {
-	  if (!db_field_exists(TABLE_USERS, 'is_role')) $db->Execute("ALTER TABLE ".TABLE_USERS." ADD is_role ENUM('0','1') NOT NULL DEFAULT '0' AFTER admin_id");
-	}
-    if (MODULE_PHREEDOM_STATUS < 3.4) {
-	  if (!db_field_exists(TABLE_DATA_SECURITY, 'exp_date')) $db->Execute("ALTER TABLE ".TABLE_DATA_SECURITY." ADD exp_date DATE NOT NULL DEFAULT '2049-12-31' AFTER enc_value");
-	  if (!db_field_exists(TABLE_AUDIT_LOG, 'ip_address'))   $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG    ." ADD ip_address VARCHAR(15) NOT NULL AFTER user_id");
-    }
-  	if (MODULE_PHREEDOM_STATUS < 3.5) {
-	  if (!db_field_exists(TABLE_EXTRA_FIELDS, 'group_by'))  $db->Execute("ALTER TABLE ".TABLE_EXTRA_FIELDS." ADD group_by varchar(64) NOT NULL default ''");
-	  if (!db_field_exists(TABLE_EXTRA_FIELDS, 'sort_order'))$db->Execute("ALTER TABLE ".TABLE_EXTRA_FIELDS." ADD sort_order varchar(64) NOT NULL default ''");
-	  if (!db_field_exists(TABLE_AUDIT_LOG, 'stats'))        $db->Execute("ALTER TABLE ".TABLE_AUDIT_LOG." ADD `stats` VARCHAR(32) NOT NULL AFTER `ip_address`");
-  	}
-    if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->id) . '_STATUS', constant('MODULE_' . strtoupper($this->id) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->id, constant('MODULE_' . strtoupper($this->id) . '_VERSION')), 'success');
-	}
-	return $error;
-  }
 
 }
 ?>

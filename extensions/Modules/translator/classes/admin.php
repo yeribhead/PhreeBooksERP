@@ -18,9 +18,12 @@
 //
 namespace translator\classes;
 class admin extends \core\classes\admin {
-	public $module			= 'translator';
+	public $id 			= 'translator';
+	public $text		= MODULE_TRANSLATOR_TITLE;
+	public $description = MODULE_TRANSLATOR_DESCRIPTION;
 	
-  function translator_admin() {
+	
+  function __construct() {
 	$this->prerequisites = array( // modules required and rev level for this module to work properly
 	  'phreedom' => 3.3,
 	);
@@ -43,16 +46,6 @@ class admin extends \core\classes\admin {
 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci",
     );
     parent::__construct();
-  }
-
-  function update() {
-    global $db, $messageStack;
-	$error = false;
-	if (!$error) {
-	  write_configure('MODULE_'.strtoupper($this->module).'_STATUS', constant('MODULE_'.strtoupper($this->module).'_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_'.strtoupper($this->module).'_VERSION')), 'success');
-	}
-	return $error;
   }
 
 }

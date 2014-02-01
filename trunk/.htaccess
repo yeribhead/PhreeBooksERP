@@ -29,6 +29,7 @@
 #  AllowOverride Limit Options Indexes
 #</Directory>
 ###############################
+AddDefaultCharset utf-8
 
 
 ErrorDocument 400 '<h1>Sorry! 400 Bad Request</h1>           <p>The request cannot be fulfilled due to bad syntax.</p>'

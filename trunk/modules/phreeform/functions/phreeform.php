@@ -265,15 +265,14 @@ function get_report_details($id) {
 }
 
 function ImportReport($RptName = '', $RptFileName = '', $import_path = PF_DIR_DEF_REPORTS, $save_path = PF_DIR_MY_REPORTS) {
-	global $db, $messageStack;
+	global $db;
 	$rID = '';
 	if ($RptFileName <> '') { // then a locally stored report was chosen
 	  $path = $import_path . $RptFileName;
 	} else if (validate_upload('reportfile')) {
 	  $path = $_FILES['reportfile']['tmp_name'];
 	} else {
-	  $messageStack->add(PHREEFORM_IMPORT_ERROR, 'error');
-	  return false;
+	  throw new \Exception(PHREEFORM_IMPORT_ERROR);
 	}
 	$handle   = fopen($path, "r");
 	$contents = fread($handle, filesize($path));
@@ -292,8 +291,7 @@ function ImportReport($RptName = '', $RptFileName = '', $import_path = PF_DIR_DE
 	if ($result->RecordCount() > 0) { // the report name already exists, if file exists error, else write 
 	  $rID = $result->fields['id'];
 	  if (file_exists($save_path . 'pf_' . $rID)) { // file exists - error and return
-	    $messageStack->add(sprintf(PHREEFORM_REPDUP, $report->title), 'error');
-	    return false;
+	    throw new \Exception (sprintf(PHREEFORM_REPDUP, $report->title));
 	  }
 	}
 	if (!$result = save_report($report, $rID, $save_path)) return false;

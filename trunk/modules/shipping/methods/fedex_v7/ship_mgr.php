@@ -3,7 +3,6 @@
 // |                   PhreeBooks Open Source ERP                    |
 // +-----------------------------------------------------------------+
 // | Copyright(c) 2008-2013 PhreeSoft, LLC (www.PhreeSoft.com)       |
-
 // +-----------------------------------------------------------------+
 // | This program is free software: you can redistribute it and/or   |
 // | modify it under the terms of the GNU General Public License as  |
@@ -54,35 +53,35 @@
 		from " . TABLE_SHIPPING_LOG . " where carrier = '" . $method->id . "' 
 		  and ship_date like '" . $date . "%'");
 	if ($result->RecordCount() > 0) {
-	  $odd = true;
-	  while(!$result->EOF) {
-		switch ($result->fields['deliver_late']) {
-		  default:
-		  case '0': $bkgnd = ''; break;
-		  case 'T': $bkgnd = ' style="background-color:yellow"';   break;
-		  case 'L': $bkgnd = ' style="background-color:lightred"'; break;
+		$odd = true;
+		while(!$result->EOF) {
+			switch ($result->fields['deliver_late']) {
+		  		default:
+		  		case '0': $bkgnd = ''; break;
+		  		case 'T': $bkgnd = ' style="background-color:yellow"';   break;
+		  		case 'L': $bkgnd = ' style="background-color:lightred"'; break;
+			}
+			echo '  <tr class="'.($odd?'odd':'even').'">' . chr(10);
+			echo '    <td' . $bkgnd . ' align="center">' . $result->fields['shipment_id'] . '</td>' . chr(10);
+			echo '    <td' . $bkgnd . ' align="center">' . $result->fields['ref_id'] . '</td>' . chr(10);
+			echo '    <td align="center">' . constant($method->id . '_' . $result->fields['method']) . '</td>' . chr(10);
+			echo '    <td align="right">' . ($result->fields['deliver_date'] <> '0000-00-00 00:00:00' ? gen_locale_date($result->fields['deliver_date'], true) : '&nbsp;') . '</td>' . chr(10);
+			echo '    <td align="right">' . ($result->fields['actual_date']  <> '0000-00-00 00:00:00' ? gen_locale_date($result->fields['actual_date'], true)  : '&nbsp;') . '</td>' . chr(10);
+			echo '    <td align="right"><a target="_blank" href="' . FEDEX_V7_TRACKING_URL . $result->fields['tracking_id'] . '">' . $result->fields['tracking_id'] . '</a></td>' . chr(10);
+			echo '    <td align="right">' . $currencies->format_full($result->fields['cost']) . '</td>' . chr(10);
+			echo '    <td align="right" nowrap="nowrap">';
+			if ($result->fields['actual_date'] == '0000-00-00 00:00:00') // not tracked yet, show the tracking icon 
+		  		echo html_icon('phreebooks/truck-icon.png', TEXT_TRACK_CONFIRM, 'small', 'onclick="submitShipSequence(\'' . $method->id . '\', ' . $result->fields['id'] . ', \'track\')"') . chr(10);
+			echo html_icon('phreebooks/stock_id.png', 		TEXT_VIEW_SHIP_LOG,	'small', 'onclick="loadPopUp(\'' . $method->id . '\', \'edit\', ' . $result->fields['id'] . ')"') . chr(10);
+			echo html_icon('actions/document-print.png',	TEXT_PRINT,			'small', 'onclick="window.open(\'index.php?module=shipping&page=popup_label_mgr&action=view&method=' . $method->id . '&date=' . $date . '&labels=' . $result->fields['tracking_id'] . '\',\'label_mgr\',\'width=800,height=700,resizable=1,scrollbars=1,top=50,left=50\')"') . chr(10);
+			echo html_icon('emblems/emblem-unreadable.png',	TEXT_DELETE,		'small', 'onclick="if (confirm(\'' . SHIPPING_DELETE_CONFIRM . '\')) window.open(\'index.php?module=shipping&page=popup_label_mgr&method=' . $method->id . '&sID=' . $result->fields['shipment_id'] . '&action=delete\',\'popup_label_mgr\',\'width=800,height=700,resizable=1,scrollbars=1,top=50,left=50\')"') . chr(10);
+			echo '    </td>';
+			echo '  </tr>' . chr(10);
+			$result->MoveNext();
+			$odd = !$odd;
 		}
-		echo '  <tr class="'.($odd?'odd':'even').'">' . chr(10);
-		echo '    <td' . $bkgnd . ' align="center">' . $result->fields['shipment_id'] . '</td>' . chr(10);
-		echo '    <td' . $bkgnd . ' align="center">' . $result->fields['ref_id'] . '</td>' . chr(10);
-		echo '    <td align="center">' . constant($method->id . '_' . $result->fields['method']) . '</td>' . chr(10);
-		echo '    <td align="right">' . ($result->fields['deliver_date'] <> '0000-00-00 00:00:00' ? gen_locale_date($result->fields['deliver_date'], true) : '&nbsp;') . '</td>' . chr(10);
-		echo '    <td align="right">' . ($result->fields['actual_date']  <> '0000-00-00 00:00:00' ? gen_locale_date($result->fields['actual_date'], true)  : '&nbsp;') . '</td>' . chr(10);
-		echo '    <td align="right"><a target="_blank" href="' . FEDEX_V7_TRACKING_URL . $result->fields['tracking_id'] . '">' . $result->fields['tracking_id'] . '</a></td>' . chr(10);
-		echo '    <td align="right">' . $currencies->format_full($result->fields['cost']) . '</td>' . chr(10);
-		echo '    <td align="right" nowrap="nowrap">';
-		if ($result->fields['actual_date'] == '0000-00-00 00:00:00') // not tracked yet, show the tracking icon 
-		  echo html_icon('phreebooks/truck-icon.png',   TEXT_TRACK_CONFIRM, 'small', 'onclick="submitShipSequence(\'' . $method->id . '\', ' . $result->fields['id'] . ', \'track\')"') . chr(10);
-		echo html_icon('phreebooks/stock_id.png',       TEXT_VIEW_SHIP_LOG, 'small', 'onclick="loadPopUp(\'' . $method->id . '\', \'edit\', ' . $result->fields['id'] . ')"') . chr(10);
-		echo html_icon('actions/document-print.png',    TEXT_PRINT,         'small', 'onclick="window.open(\'index.php?module=shipping&amp;page=popup_label_mgr&amp;action=view&amp;method=' . $method->id . '&amp;date=' . $date . '&amp;labels=' . $result->fields['tracking_id'] . '\',\'label_mgr\',\'width=800,height=700,resizable=1,scrollbars=1,top=50,left=50\')"') . chr(10);
-		echo html_icon('emblems/emblem-unreadable.png', TEXT_DELETE,        'small', 'onclick="if (confirm(\'' . SHIPPING_DELETE_CONFIRM . '\')) window.open(\'index.php?module=shipping&amp;page=popup_label_mgr&amp;method=' . $method->id . '&amp;sID=' . $result->fields['shipment_id'] . '&amp;action=delete\',\'popup_label_mgr\',\'width=800,height=700,resizable=1,scrollbars=1,top=50,left=50\')"') . chr(10);
-		echo '    </td>';
-		echo '  </tr>' . chr(10);
-		$result->MoveNext();
-		$odd = !$odd;
-	  }
 	} else {
-	  echo '  <tr><td align="center" colspan="8">' . SHIPPING_NO_SHIPMENTS . '</td></tr>';
+		echo '  <tr><td align="center" colspan="8">' . SHIPPING_NO_SHIPMENTS . '</td></tr>';
 	}
 	?>
  </tbody>

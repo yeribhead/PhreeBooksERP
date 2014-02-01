@@ -20,7 +20,7 @@
 /**************  include page specific files    *********************/
 $topic   = $_GET['topic'];
 $subject = $_GET['subject'];
-if (!$subject || !$topic) die('The popup_setup script require a topic name and a subject name!');
+if (!$subject || !$topic) trigger_error('The popup_setup script require a topic name and a subject name!', E_USER_ERROR);
 gen_pull_language($topic, 'admin');
 gen_pull_language('phreedom','admin');
 require_once(DIR_FS_MODULES . 'phreedom/functions/phreedom.php');

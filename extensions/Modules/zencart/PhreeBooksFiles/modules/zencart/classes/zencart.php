@@ -27,6 +27,7 @@ class zencart {
 
   function submitXML($id, $action = '', $hide_success = false, $inc_image = true) {
 	global $messageStack;
+	$this->strXML = null;
 	switch ($action) {
 		case 'product_ul': 
 			if (!$this->buildProductUploadXML($id, $inc_image)) return false;
@@ -41,8 +42,7 @@ class zencart {
 			$url = 'confirm.php';
 			break;
 		default:
-			$messageStack->add(ZENCART_INVALID_ACTION, 'error');
-			return false;
+			throw new Exception(ZENCART_INVALID_ACTION);
 	}
 	$temp = ZENCART_URL;
 	if(!defined('ZENCART_URL') || empty($temp) || $temp == 'http://') throw new \Exception("the Zen Cart url is empty");

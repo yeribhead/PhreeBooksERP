@@ -35,7 +35,29 @@ class shipping {
 		$this->key[] = array('key' => 'MODULE_SHIPPING_'.strtoupper($this->id).'_SORT_ORDER',   'default' => $this->sort_order,     'text' => SORT_ORDER_DESC);
 		$this->key[] = array('key' => 'MODULE_SHIPPING_'.strtoupper($this->id).'_COST',		 	'default' => $this->shipping_cost,  'text' => SHIPPING_COST_DESC);
 		if($this->handling_cost || defined('MODULE_SHIPPING_'.strtoupper($this->id).'_HANDLING')) $this->key[] = array('key' => 'MODULE_SHIPPING_'.strtoupper($this->id).'_HANDLING',   'default' => $this->handling_cost,     'text' => SHIPPING_HANDLING_DESC);
-		$this->installed = defined('MODULE_SHIPPING_' . strtoupper($this->id) . '_STATUS');
+		if(defined('MODULE_SHIPPING_' . strtoupper($this->id) . '_STATUS')){
+			$this->installed = true;
+			$this->sort_order = constant('MODULE_SHIPPING_'.strtoupper($this->id).'_SORT_ORDER');
+		}
+
+// 		$this->service_levels[] = array('id' => 'GND', 		'text' => SHIPPING_GND, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'GDR', 		'text' => SHIPPING_GDR, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'GndFrt', 	'text' => SHIPPING_GNDFRT, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'EcoFrt', 	'text' => SHIPPING_ECOFRT, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '1DEam', 	'text' => SHIPPING_1DEAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '1Dam', 	'text' => SHIPPING_1DAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '1Dpm', 	'text' => SHIPPING_1DPM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '1DFrt',	'text' => SHIPPING_1DFRT,	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '2Dam', 	'text' => SHIPPING_2DAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '2Dpm', 	'text' => SHIPPING_2DPM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '2DFrt', 	'text' => SHIPPING_2DFRT, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '3Dam', 	'text' => SHIPPING_3DAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => '3Dpm', 	'text' => SHIPPING_3DPM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'I2DEam', 	'text' => SHIPPING_I2DEAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'I2Dam', 	'text' => SHIPPING_I2DAM, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'I3D', 		'text' => SHIPPING_I3D, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+// 		$this->service_levels[] = array('id' => 'IGND', 	'text' => SHIPPING_IGND, 	'quote' => '', 'book' => '', 'cost' => '', 'note' => '');
+  		  		
   	}
 /**
  * 

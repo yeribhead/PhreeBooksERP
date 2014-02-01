@@ -18,27 +18,28 @@
 //
 namespace core\classes;
 class journal {
-  public function __construct($id = 0) {
-	global $db, $messageStack;
-	$this->affected_accounts = array();
-	$this->repost_ids        = array();
-	$this->cogs_entry        = array();
-	if ($id) {
-	  $result = $db->Execute("select * from " . TABLE_JOURNAL_MAIN . " where id = " . (int)$id);
-	  // make sure we have a record or die (there's a problem that needs to be fixed)
-	  if ($result->RecordCount() == 0) return $this->fail_message(GL_ERROR_DIED_CREATING_RECORD . $id);
-	  foreach ($result->fields as $key => $value) $this->$key = $value;
-	  $this->journal_main_array = $this->build_journal_main_array();	// build ledger main record
-	  $result = $db->Execute("select * from " . TABLE_JOURNAL_ITEM . " where ref_id = " . (int)$id);
-	  $this->journal_rows = array();
-	  $i = 0;
-	  while (!$result->EOF) {
-		foreach ($result->fields as $key => $value) $this->journal_rows[$i][$key] = $value;
-		$i++;
-		$result->MoveNext();
-	  }
+	public $affected_accounts = array();
+	public $repost_ids        = array();
+	public $cogs_entry        = array();
+	
+	public function __construct($id = 0) {
+		global $db, $messageStack;
+		if ($id) {
+			$result = $db->Execute("select * from " . TABLE_JOURNAL_MAIN . " where id = " . (int)$id);
+			// make sure we have a record or die (there's a problem that needs to be fixed)
+		  	if ($result->RecordCount() == 0) throw new \Exception(GL_ERROR_DIED_CREATING_RECORD . $id);
+		  	foreach ($result->fields as $key => $value) $this->$key = $value;
+		  	$this->journal_main_array = $this->build_journal_main_array();	// build ledger main record
+		  	$result = $db->Execute("select * from " . TABLE_JOURNAL_ITEM . " where ref_id = " . (int)$id);
+		  	$this->journal_rows = array();
+		  	$i = 0;
+		  	while (!$result->EOF) {
+				foreach ($result->fields as $key => $value) $this->journal_rows[$i][$key] = $value;
+				$i++;
+				$result->MoveNext();
+		  	}
+		}
 	}
-  }
 
 /*******************************************************************************************************************/
 // START Post Journal Function
@@ -128,9 +129,9 @@ class journal {
 	if (!$this->unPost_inventory()) return false;
 	$messageStack->debug("\n  Deleting Journal main and rows as part of unPost ...");
 	$result = $db->Execute("delete from " . TABLE_JOURNAL_MAIN . " where id = " . $this->id);		
-	if ($result->AffectedRows() <> 1) return $this->fail_message(GL_ERROR_CANNOT_DELETE_MAIN);
+	if ($result->AffectedRows() <> 1) throw new \Exception(GL_ERROR_CANNOT_DELETE_MAIN);
 	$result = $db->Execute("delete from " . TABLE_JOURNAL_ITEM . " where ref_id = " . $this->id);
-	if ($result->AffectedRows() == 0 ) return $this->fail_message(printf(GL_ERROR_CANNOT_DELETE_ITEM, $this->id));
+	if ($result->AffectedRows() == 0 ) throw new \Exception(printf(GL_ERROR_CANNOT_DELETE_ITEM, $this->id));
 	if ($action <> 'edit') { // re-post affected entries unless edited (which is after the entry is reposted)
 	  if (is_array($this->repost_ids)) { // rePost any journal entries unPosted to rollback COGS calculation
 		while ($id = array_shift($this->repost_ids)) {
@@ -255,7 +256,7 @@ class journal {
 			  last_update = '$this->post_date' WHERE account_id = '$gl_acct' AND period = $this->period";
 		    $messageStack->debug("\n    Post chart balances: credit_amount = ".$values['credit'].", debit_amount = ".$values['debit'].", acct = $gl_acct, period = $this->period");
 		    $result = $db->Execute($sql);
-		    if ($result->AffectedRows() <> 1) return $this->fail_message(GL_ERROR_POSTING_CHART_BALANCES . ($gl_acct ? $gl_acct : TEXT_NOT_SPECIFIED));
+		    if ($result->AffectedRows() <> 1) throw new \Exception(GL_ERROR_POSTING_CHART_BALANCES . ($gl_acct ? $gl_acct : TEXT_NOT_SPECIFIED));
 		  }
 		}
 		$messageStack->debug("\n  end Posting Chart Balances.");
@@ -321,7 +322,7 @@ class journal {
 	// first find out the last period with data in the system from the current_status table
 	$sql = "select fiscal_year from " . TABLE_ACCOUNTING_PERIODS . " where period = " . $period;
 	$result = $db->Execute($sql);
-	if ($result->EOF) return $this->fail_message(GL_ERROR_BAD_ACCT_PERIOD);
+	if ($result->EOF) throw new \Exception(GL_ERROR_BAD_ACCT_PERIOD);
 	$fiscal_year = $result->fields['fiscal_year'];
 
 	$sql = "select max(period) as period from " . TABLE_ACCOUNTING_PERIODS . " where fiscal_year = " . $fiscal_year;
@@ -351,7 +352,7 @@ class journal {
 	  // select retained earnings account
 	  $sql = "select id from " . TABLE_CHART_OF_ACCOUNTS . " where account_type = 44";
 	  $result = $db->Execute($sql);
-	  if ($result->RecordCount() <> 1) $this->fail_message(GL_ERROR_NO_RETAINED_EARNINGS_ACCOUNT);
+	  if ($result->RecordCount() <> 1) throw new \Exception(GL_ERROR_NO_RETAINED_EARNINGS_ACCOUNT);
 	  $retained_earnings_acct = $result->fields['id'];
 	  $this->affected_accounts[$retained_earnings_acct] = 1;
 	  // select list of accounts that need to be closed, adjusted
@@ -401,15 +402,11 @@ class journal {
 	if ($debit_total <> $credit_total) { // Trouble in paradise, fraction of cents adjustment next
 	  $tolerance = 2 * (1 / pow(10, $currencies->currencies[DEFAULT_CURRENCY]['decimal_places'])); // i.e. 2 cents in USD
 	  $adjustment = $result->fields['credit'] - $result->fields['debit'];
-	  if (abs($adjustment) > $tolerance) {
-		return $this->fail_message(sprintf(GL_ERROR_TRIAL_BALANCE, $result->fields['debit'], $result->fields['credit'], $period));
-	  }
+	  if (abs($adjustment) > $tolerance) throw new \Exception(sprintf(GL_ERROR_TRIAL_BALANCE, $result->fields['debit'], $result->fields['credit'], $period));
 	  // find the adjustment account
 	  if (!defined('ROUNDING_GL_ACCOUNT') || ROUNDING_GL_ACCOUNT == '') {
 		$result = $db->Execute("select id from " . TABLE_CHART_OF_ACCOUNTS . " where account_type = 44 limit 1");
-		if ($result->RecordCount() == 0) {
-		  return $this->fail_message('Failed trying to locate retained earnings account to make rounding adjustment. There must be one and only one Retained Earnings account in the chart of accounts!');
-		}
+		if ($result->RecordCount() == 0) throw new \Exception('Failed trying to locate retained earnings account to make rounding adjustment. There must be one and only one Retained Earnings account in the chart of accounts!');
 		$adj_gl_account = $result->fields['id'];
 	  } else {
 		$adj_gl_account = ROUNDING_GL_ACCOUNT;
@@ -442,7 +439,7 @@ class journal {
 	  case 13:
 	  case 18:
 	  case 20:
-		if (!$this->bill_acct_id) return $this->fail_message(GL_ERROR_NO_GL_ACCT_NUMBER . 'post_account_sales_purchases.');
+		if (!$this->bill_acct_id) throw new \Exception(GL_ERROR_NO_GL_ACCT_NUMBER . 'post_account_sales_purchases.');
 		$purchase_invoice_id = $this->purchase_invoice_id ? $this->purchase_invoice_id : $this->journal_main_array['purchase_invoice_id'];
 		$history_array = array(
 		  'ref_id'              => $this->id, 
@@ -454,7 +451,7 @@ class journal {
 		  'post_date'           => $this->post_date,
 		);
 		$result = db_perform(TABLE_ACCOUNTS_HISTORY, $history_array, 'insert');
-		if ($result->AffectedRows() <> 1 ) return $this->fail_message(GL_ERROR_UPDATING_ACCOUNT_HISTORY);
+		if ($result->AffectedRows() <> 1 ) throw new \Exception(GL_ERROR_UPDATING_ACCOUNT_HISTORY);
 		$messageStack->debug(" end Posting account sales and purchases.");
 		break;
 	  case  2:
@@ -482,9 +479,9 @@ class journal {
 	  case 13:
 	  case 18:
 	  case 20:
-		if (!$this->bill_acct_id) return $this->fail_message(GL_ERROR_NO_GL_ACCT_NUMBER . 'unPost_account_sales_purchases.');
+		if (!$this->bill_acct_id) throw new \Exception(GL_ERROR_NO_GL_ACCT_NUMBER . 'unPost_account_sales_purchases.');
 		$result = $db->Execute("delete from " . TABLE_ACCOUNTS_HISTORY . " where ref_id = " . $this->id);		
-		if ($result->AffectedRows() <> 1) return $this->fail_message(GL_ERROR_DELETING_ACCOUNT_HISTORY);
+		if ($result->AffectedRows() <> 1) throw new \Exception(GL_ERROR_DELETING_ACCOUNT_HISTORY);
 		$messageStack->debug(" end unPosting account sales and purchases.");
 		break;
 	  case  2:
@@ -758,7 +755,7 @@ class journal {
 	$result = $db->Execute("select id, inventory_type from " . TABLE_INVENTORY . " where sku = '" . $sku . "'");
 	if ($result->RecordCount() == 0) {
 	  if (!INVENTORY_AUTO_ADD) {
-		return $this->fail_message(GL_ERROR_UPDATING_INVENTORY_STATUS . $sku);
+		throw new \Exception(GL_ERROR_UPDATING_INVENTORY_STATUS . $sku);
 	  } else {
 	    $id = $this->inventory_auto_add($sku, $desc, $item_cost, $full_price);
 		$result->fields['inventory_type'] = 'si';
@@ -790,7 +787,7 @@ class journal {
 	$result = $db->Execute($sql);
 	// catch sku's that are not in the inventory database but have been requested to post, error
 	if ($result->RecordCount() == 0) {
-	  if (!INVENTORY_AUTO_ADD) return $this->fail_message(GL_ERROR_CALCULATING_COGS);
+	  if (!INVENTORY_AUTO_ADD) throw new \Exception(GL_ERROR_CALCULATING_COGS);
 	  $item_cost  = 0;
 	  $full_price = 0;
 	  switch ($this->journal_id) {
@@ -801,7 +798,7 @@ class journal {
 		case 13:
 		  $full_price = $item['price']; break;
 		default:
-		  return $this->fail_message(GL_ERROR_CALCULATING_COGS);
+		  throw new \Exception(GL_ERROR_CALCULATING_COGS);
 	  }
 	  $id = $this->inventory_auto_add($item['sku'], $item['description'], $item_cost, $full_price);
 	  $result = $db->Execute($sql); // re-load now that item was created
@@ -814,8 +811,8 @@ class journal {
 	$defaults = $result->fields;
 	if (ENABLE_MULTI_BRANCH) $defaults['quantity_on_hand'] = $this->branch_qty_on_hand($item['sku'], $defaults['quantity_on_hand']);
 	// catch sku's that are serialized and the quantity is not one, error
-	if ($defaults['serialize'] && abs($item['qty']) <> 1) return $this->fail_message(GL_ERROR_SERIALIZE_QUANTITY);
-	if ($defaults['serialize'] && !$item['serialize_number']) return $this->fail_message(GL_ERROR_SERIALIZE_EMPTY);
+	if ($defaults['serialize'] && abs($item['qty']) <> 1) throw new \Exception(GL_ERROR_SERIALIZE_QUANTITY);
+	if ($defaults['serialize'] && !$item['serialize_number']) throw new \Exception(GL_ERROR_SERIALIZE_EMPTY);
 
 	if ($item['qty'] > 0) { // for positive quantities, inventory received, customer credit memos, unbuild assembly
 	  // if insert, enter SYSTEM ENTRY COGS cost only if inv on hand is negative
@@ -872,12 +869,12 @@ class journal {
 	    $sql = "select id, remaining, unit_cost from " . TABLE_INVENTORY_HISTORY . " 
 		  where sku = '" . $item['sku'] . "' and remaining > 0 and serialize_number = '" . $item['serialize_number'] . "'";
 		$result = $db->Execute($sql);
-		if ($result->RecordCount() <> 0) return $this->fail_message(GL_ERROR_SERIALIZE_COGS); 
+		if ($result->RecordCount() <> 0) throw new \Exception(GL_ERROR_SERIALIZE_COGS); 
 	  	$history_array['serialize_number'] = $item['serialize_number'];
 	  }
 	  $messageStack->debug("\n      Inserting into inventory history = " . arr2string($history_array));
 	  $result = db_perform(TABLE_INVENTORY_HISTORY, $history_array, 'insert');
-	  if ($result->AffectedRows() <> 1) return $this->fail_message(GL_ERROR_POSTING_INV_HISTORY);
+	  if ($result->AffectedRows() <> 1) throw new \Exception(GL_ERROR_POSTING_INV_HISTORY);
 	} else { // for negative quantities, i.e. sales, negative inv adjustments, assemblies, vendor credit memos
 	  // if insert, calculate COGS pulling from one or more history records (inv may go negative)
 	  // update should never happen because COGS is backed out during the unPost inventory function
@@ -888,7 +885,7 @@ class journal {
 	    $sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." 
 		  WHERE sku='".$item['sku']."' AND remaining > 0 AND serialize_number='".$item['serialize_number']."'";
 		$result = $db->Execute($sql);
-		if ($result->RecordCount() <> 1) return $this->fail_message(GL_ERROR_SERIALIZE_COGS); 
+		if ($result->RecordCount() <> 1) throw new \Exception(GL_ERROR_SERIALIZE_COGS); 
 	  } else {
 		$sql = "SELECT id, remaining, unit_cost FROM ".TABLE_INVENTORY_HISTORY." 
 		  WHERE sku='".$item['sku']."' AND remaining > 0"; // AND post_date <= '$this->post_date 23:59:59'"; // causes re-queue to owed table for negative inventory posts and rcv after sale date
@@ -946,7 +943,7 @@ class journal {
 	  }
 	  // see if there is quantity left to account for but nothing left in inventory (less than zero inv balance)
 	  if ($working_qty > 0) {
-	    if (!ALLOW_NEGATIVE_INVENTORY) return $this->fail_message(GL_ERROR_POSTING_NEGATIVE_INV);
+	    if (!ALLOW_NEGATIVE_INVENTORY) throw new \Exception(GL_ERROR_POSTING_NEGATIVE_INV);
 		// for now, estimate the cost based on the unit_price of the item, will be re-posted (corrected) when product arrives
 		$result = $db->Execute("select item_cost from " . TABLE_INVENTORY . " where sku = '" . $item['sku'] . "'");
 		switch ($this->journal_id) {
@@ -1094,7 +1091,7 @@ class journal {
 		case 12:
 		case 13:
 		case 19: $gl_type = 'soo'; $proc_type = 'sos'; break;
-		default: return $this->fail_message('Error in classes/gen_ledger, function load_so_po_balance. Bad $journal_id for this function.');
+		default: throw new \Exception('Error in classes/gen_ledger, function load_so_po_balance. Bad $journal_id for this function.');
 	  }
 	  // start by retrieving the po/so item list
 	  $sql = "select id, sku, qty from " . TABLE_JOURNAL_ITEM . " 
@@ -1136,20 +1133,20 @@ class journal {
 	$sku = $inv_list['sku'];
 	$qty = $inv_list['qty'];
 	$result = $db->Execute("select id from " . TABLE_INVENTORY . " where sku = '" . $sku . "'");
-	if ($result->RecordCount() == 0) return $this->fail_message(GL_ERROR_BAD_SKU_ENTERED);
+	if ($result->RecordCount() == 0) throw new \Exception(GL_ERROR_BAD_SKU_ENTERED);
 
 	$sku_id = $result->fields['id'];
 	$sql = "select a.sku, a.description, a.qty, i.inventory_type, i.quantity_on_hand, i.account_inventory_wage, i.item_cost as price 
 	  from " . TABLE_INVENTORY_ASSY_LIST . " a inner join " . TABLE_INVENTORY . " i on a.sku = i.sku
 	  where a.ref_id = " . $sku_id;
 	$result = $db->Execute($sql);
-	if ($result->RecordCount() == 0) return $this->fail_message(GL_ERROR_SKU_NOT_ASSY . $sku);
+	if ($result->RecordCount() == 0) throw new \Exception(GL_ERROR_SKU_NOT_ASSY . $sku);
 
 	$assy_cost = 0;
 	while (!$result->EOF) {
 	  if ($result->fields['quantity_on_hand'] < ($qty * $result->fields['qty']) && strpos(COG_ITEM_TYPES, $result->fields['inventory_type']) !== false) {
 		$messageStack->debug("\n    Not enough of SKU = " . $result->fields['sku'] . " needed " . ($qty * $result->fields['qty']) . " and had " . $result->fields['quantity_on_hand']);
-		return $this->fail_message(GL_ERROR_NOT_ENOUGH_PARTS . $result->fields['sku']);
+		throw new \Exception(GL_ERROR_NOT_ENOUGH_PARTS . $result->fields['sku']);
 	  }
 	  $result->fields['qty'] = -($qty * $result->fields['qty']);
 	  $result->fields['id']  = $this->journal_rows[0]['id'];  // placeholder ref_id
@@ -1430,7 +1427,7 @@ class journal {
 		where purchase_invoice_id = '" . $this->purchase_invoice_id . "' and journal_id = '" . $this->journal_id . "'";
 	  if ($this->id) $sql .= " and id <> " . $this->id;
 	  $result = $db->Execute($sql);
-	  if ($result->RecordCount() > 0) return $this->fail_message(sprintf(GL_ERROR_2, constant('ORD_HEADING_NUMBER_' . $this->journal_id)));
+	  if ($result->RecordCount() > 0) throw new \Exception(sprintf(GL_ERROR_2, constant('ORD_HEADING_NUMBER_' . $this->journal_id)));
 	  $this->journal_main_array['purchase_invoice_id'] = $this->purchase_invoice_id;
 	  $messageStack->debug(" specified ID but no dups, returning OK. ");
 	} else {	// generate a new order/invoice value
@@ -1450,7 +1447,7 @@ class journal {
 	  }
 	  if ($str_field) {
 		$result = $db->Execute("select " . $str_field . " from " . TABLE_CURRENT_STATUS . " limit 1");
-		if (!$result) return $this->fail_message(sprintf(GL_ERROR_CANNOT_FIND_NEXT_ID, TABLE_CURRENT_STATUS));
+		if (!$result) throw new \Exception(sprintf(GL_ERROR_CANNOT_FIND_NEXT_ID, TABLE_CURRENT_STATUS));
 		$this->journal_main_array['purchase_invoice_id'] = $result->fields[$str_field];
 	  } else {
 		$this->journal_main_array['purchase_invoice_id'] = '';
@@ -1482,7 +1479,7 @@ class journal {
 		$sql = "update " . TABLE_CURRENT_STATUS . " set " . $str_field . " = '" . $next_id . "'";
 		if (!$force) $sql .= " where " . $str_field . " = '" . $this->journal_main_array['purchase_invoice_id'] . "'";
 		$result = $db->Execute($sql);
-		if ($result->AffectedRows() <> 1) return $this->fail_message(sprintf(GL_ERROR_5, constant('ORD_HEADING_NUMBER_' . $this->journal_id)));
+		if ($result->AffectedRows() <> 1) throw new \Exception(sprintf(GL_ERROR_5, constant('ORD_HEADING_NUMBER_' . $this->journal_id)));
 	  }
 	}
 	$this->purchase_invoice_id = $this->journal_main_array['purchase_invoice_id'];
@@ -1496,7 +1493,7 @@ class journal {
 	  case 'b':
 	  case 'm': $add_type = 'bill'; break;
 	  case 's': $add_type = 'ship'; break;
-	  default: return $this->fail_message('Bad account type: ' . $type . ' passed to gen_ledger/classes/gen_ledger.php (add_account)');
+	  default: throw new \Exception('Bad account type: ' . $type . ' passed to gen_ledger/classes/gen_ledger.php (add_account)');
 	}
 	if ($add_type == 'bill' || $this->drop_ship) { // update or insert new account record, else skip to add address
 	  $short_name = ($add_type == 'bill') ? $this->short_name : $this->ship_short_name;
@@ -1518,13 +1515,13 @@ class journal {
 			$short_name = $result->fields[$auto_field];
 		}
 	  }
-	  if (!$short_name) return $this->fail_message(ACT_ERROR_NO_ACCOUNT_ID);
+	  if (!$short_name) throw new \Exception(ACT_ERROR_NO_ACCOUNT_ID);
 	  // it id exists, fetch the data, else check for duplicates
 	  $sql = "select id, store_id, dept_rep_id from " . TABLE_CONTACTS . " where "; 
 	  $sql .= ($acct_id) ? ("id = " . (int)$acct_id) : ("short_name = '" . $short_name . "' and type = '" . $acct_type . "'");
 	  $result = $db->Execute($sql);
 	  if (!$acct_id && $result->RecordCount() > 0 && !$allow_overwrite) {  // duplicate ID w/o allow_overwrite
-		return $this->fail_message(ACT_ERROR_DUPLICATE_ACCOUNT);
+		 throw new \Exception(ACT_ERROR_DUPLICATE_ACCOUNT);
 	  }
 	  $acct_id = $result->fields['id']; // will only change if no id was passed and allow_overwrite is true
 	  $sql_data_array = array();
@@ -1621,14 +1618,14 @@ class journal {
 	}
 	return $output;
   }
-
+//@todo remove
   function fail_message($message) {
 	global $db, $messageStack;
 	$db->transRollback();
 	$messageStack->add($message, 'error');
 	return false;
   }
-
+//@todo remove
   function session_message($message, $level = 'error') {
 	global $messageStack;
 	$messageStack->add($message, $level);

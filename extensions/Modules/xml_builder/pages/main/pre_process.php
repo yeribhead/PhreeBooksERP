@@ -28,9 +28,7 @@ switch ($_REQUEST['action']) {
   case 'save':
 	validate_security($security_level, 2);
   	// read the input variables
-	$mod       = $_POST['mod'];
-	$mod_admin = "\\$mod\classes\admin";
-	$mod_info  = new $mod_admin;
+	$entry       = $_POST['mod'];
 	// read the existing xml file to set as base, if it exists
 	if (file_exists(DIR_FS_MODULES . $mod . '/' . $mod . '.xml')) {
 	  $working->output = xml_to_object(file_get_contents(DIR_FS_MODULES . $mod . '/' . $mod . '.xml'));
@@ -75,7 +73,7 @@ switch ($_REQUEST['action']) {
 	// read the dirs
 	if ($working->make_dir_tree(DIR_FS_MODULES . $mod . '/', '')) $error = true;
 	// read the db
-	if ($working->make_db_info($mod_info->tables)) $error = true;
+	if ($working->make_db_info($admin_classes[$entry]->tables)) $error = true;
 	// build the output string
 //echo 'result object = '; print_r($working->output); echo '<br><br>';
 	$xmlString  = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . "\n";

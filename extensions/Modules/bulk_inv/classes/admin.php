@@ -19,24 +19,16 @@
 //
 namespace bulk_inv\classes;
 class admin extends \core\classes\admin {
-	public $module 			= 'bulk_inv';
+	public $id 			= 'bulk_inv';
+	public $text		= MODULE_BULK_INV_TITLE;
+	public $description = MODULE_BULK_INV_DESCRIPTION;
 	
-  function __construct() {
-	$this->prerequisites = array( // modules required and rev level for this module to work properly
-	  'phreedom'  => '3.3',
-	  'inventory' => '3.3',
-	);
-	parent::__construct();
-  }
-
-  function update() {
-    global $db, $messageStack;
-	$error = false;
-	if (!$error) {
-	  write_configure('MODULE_' . strtoupper($this->module) . '_STATUS', constant('MODULE_' . strtoupper($this->module) . '_VERSION'));
-   	  $messageStack->add(sprintf(GEN_MODULE_UPDATE_SUCCESS, $this->module, constant('MODULE_' . strtoupper($this->module) . '_VERSION')), 'success');
-	}
-	return $error;
-  }
+	function __construct() {
+		$this->prerequisites = array( // modules required and rev level for this module to work properly
+	  	  'phreedom'  => '3.3',
+	  	  'inventory' => '3.3',
+		);
+		parent::__construct();
+  	}
 }
 ?>

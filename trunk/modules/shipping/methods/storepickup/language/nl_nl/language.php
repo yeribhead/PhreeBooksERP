@@ -11,5 +11,5 @@
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_TITLE','Ophalen in winkel');
 define('MODULE_SHIPPING_STOREPICKUP_TEXT_DESCRIPTION','Ophalen door klant in winkel');
 // Shipping Methods
-define('storepickup_GND', 'Store Pickup');
+define('storepickup_GND', 'Zelf Op Halen');
 ?>

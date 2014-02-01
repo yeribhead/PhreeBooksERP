@@ -29,7 +29,6 @@ gen_pull_language($module);
 gen_pull_language($module, 'admin');
 /**************   page specific initialization  *************************/
 $error   = false; 
-$install = new \import_bank\classes\admin();
 $kt      = new \import_bank\classes\known_transactions();
 /***************   Act on the action request   *************************/
 switch ($_REQUEST['action']) {
@@ -62,7 +61,7 @@ switch ($_REQUEST['action']) {
 		
   		}
   	}
-	foreach ($install->keys as $key => $default) {
+	foreach ($admin_classes['import_bank']->keys as $key => $default) {
 	  $field = strtolower($key);
       if (isset($_POST[$field])) write_configure($key, $_POST[$field]);
     }
